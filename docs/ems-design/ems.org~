@@ -112,4 +112,52 @@
 	- etc
       - Keywords for which there are few questions
   - User interface
-    - 
+    - The system should be web-based, and hosted on departmental computers
+      - It's supposed to be accessible within the dept, or via vpn
+      - It's supposed to be accessible by different people, for different courses
+      - It's supposed to rely on departmental resources
+	- Storage
+	- DBMS
+	- Backup
+	- etc
+	- Note: I'll have a word with the lab administration asking them to give us the necessary space for development
+	- Note: Whether you want to host the development/deployment itself on departmental machines is a different issue
+	  - Ideally, such settings should be abstracted into configuration files, so as to make the entire system easy to move
+      - Each user should see a "dashboard" based on his roles in the current/given course
+	- In principle, the same user may have different roles in any number of courses
+      - The system should maintain the history of the activities for each user, so a user can see where they left off, and just continue naturally
+      - Searching should be based on boolean operations on keywords and strings, so as to identify a list of meta-questions that fit
+	- This list of meta-questions should then be displayed, and clicking a question should open the question for editing
+      - The user should also be able to ask for work, that is, to ask the WMS to suggest a task:
+	- If the user is currently editing a question, then the suggestion can be related to that question. For example
+	  - add keywords
+	  - validate, assuming he hasn't validated the same question in the past
+	  - etc
+	- If there is an exam pending, then tasks related to the exam should take priority over other tasks
+	- If the user is asking for a task at the outermost context, then the system should apply prioritization based on criteria listed above
+	- The priorities determine the order in which tasks are suggested. The user is still free to scroll through the list and select tasks based on various criteria, such as keywords (associating tasks with subjects) or strings
+      - When including questions in a test, the system should display information on
+	- completeness
+	  - Whether a question is lacking in any elements
+	    - solution
+	    - keywords
+	    - etc
+	- confidence
+	  - How many different people reviewed each question and its various items
+	- history
+	  - The list of exams in which the question was used
+	  - The list of changes for the given question
+  - Database
+    - The WMS is not difficult *algorithmically*, but shall involve intensive work with many items of data. This *must* be stored in a database:
+      - All versions of a meta-question must be kept in a database
+	- Names of all users who updated the meta-question, beside the changes they made
+	- For any meta-question in the system, a full roll-back should be possible to any previous version
+	- It should be possible to clone a meta-question in order to create a modified version
+	- All meta-questions and their elements should come with a confidence level that reflects the number of people who examined it:
+	  - The stem comes with its own confidence level
+	  - Each item has its own confidence level
+	  - The appendix comes with its own confidence level
+	  - The entire question comes with its own confidence level
+	  - The solutions come with their own confidence levels
+	- Confidence levels are independent of each other
+	  - 10 people validating an item does not mean that the question was validated 10 times...
