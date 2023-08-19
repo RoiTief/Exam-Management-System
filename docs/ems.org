@@ -1,0 +1,113 @@
+#+title: Outline for EMS
+#+author: Mayer Golberg
+#+options: creator:nil, toc:1
+
+* Motivation and Purpose for the Project
+- A web-based system for managing and synthesizing exams
+  - Intended to replaces current offline system
+- General problem
+  - With the increase in the size of the student body, it has become difficult to manage grading within the given time-constraints
+  - This has led many courses to adopt a multiple-choice format, which is faster to grade, and easier to analyse
+  - The creation of challenging multiple-choice tests in the sciences is a non-trivial task
+  - The client, Mayer Goldberg, has developed a theory of meta-questions and their translation into multiple-choice questions
+  - A system was created to synthesize & generate multiple-choice questions from a fixed number of categories of /meta-questions/
+  - The system has now been in use for 6-7 years in a large number of courses
+- Specific problem
+  - The system is in serious need of redesign and reimplementation to support many additional functions
+  - The new system should be
+    - Web-based
+    - Support various roles (for TAs, graders, instructors, etc)
+    - Support flexible content creation
+    - Support flexible generation of exams
+    - Support many additional features
+- What is the solution?
+- How will you evaluate the solution?
+  - Enter it into active use in 3 courses
+  - There are other faculty members who have expressed interest in using said project 
+
+* Project Description
+- Describe the project
+  - Workflow-Management System (WMS) for managing [mainly] multiple-choice exams
+    - Roles
+      - System Administrator
+	- Responsibilities
+	  - Manage WMS at the dept/university level
+	- Activities
+	  - Migrate, install, update, manage WMS system
+	    - Install WMS
+	    - Clone WMS
+	    - Update WMS
+	  - Manage courses in WMS
+	    - Create new course entry in WMS
+	    - Backup and remove course entry in WMS
+	    - Assign initial roles per course (administrator)
+	    - Remove, change roles per course (when course staff changes)
+      - Course Administrator
+	- Define course staff
+	- Assign roles to course staff
+	- Define exams
+	  - Define exam type (test, quiz)
+	  - Define the exam direction (RTL, LTR)
+	  - Define the exam length
+	  - Define the exam date
+	  - Define stylistic elements (fonts & sizes)
+	  - Define frontal matter for the exam, test
+	    - Basic headers
+	    - Instructions
+	  - Define basic layout
+	    - number of columns
+	    - number of items (4 or 5)
+	    - number of versions for the exam
+	  - Select questions
+	  - Select appendices
+	- Generate exam documents
+	  - Generate exam versions
+	  - Generate special version for reading-impaired
+	    - A4, but landscape, and 41% larger
+	  - Generate exam keys
+	    - As PDF
+	    - As CSV
+	  - Generate exam catalog document
+	  - Generate solved exam (for having out to students post exam)
+	- Inspect changes by course staff
+	  - Reject
+	  - Accept
+	  - Modify
+	  - Condition upon further validation
+      - Course Staff
+	- People
+	  - Instructors
+	  - TAs
+	  - Graders
+	- Roles
+	  - Junior: Only validate
+	  - Associate: Validate & edit
+	  - Senior: Full
+	- Activities
+	  - Add, delete, edit, validate questions
+	    - Add, delete, edit, validate stem
+	    - Add, delete, edit, validate keys
+	    - Add, delete, edit, validate distractors
+	    - Add, delete, edit, validate solutions
+	    - Add, delete, edit keywords
+  - WMS activities
+    - Log into system
+      - id, password
+      - If active in more than one course, select course
+    - Perform specific task
+      - Can search for a specific meta-question and edit it
+      - Can ask to edit the current exam, in which case, the current exam settings give focus
+	- Can still write new questions, but those are now *suggested* to the course administrator, rather than added into the exam
+	- Can work on existing questions, as per role
+    - Ask for a task
+      - WMS should offer tasks based on categories, and sorted by urgency
+    - What controls urgency
+      - If an exam is in preparation, then anything related to the exam is urgent, by definition
+      - Incomplete questions take greater urgency
+	- Questions that were marked as problematic
+	- Questions for which there are not enough items
+	- Questions for which there are no solutions
+	- Questions the elements for which were insufficiently validated
+	- Questions that lack keywords
+	- etc
+      - Keywords for which there are few questions
