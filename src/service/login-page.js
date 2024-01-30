@@ -14,7 +14,7 @@ loginButton.addEventListener("click", (e) => {
     
     if (userController.register(username, password)) {
         alert("You have successfully signed in.");
-        window.location.href = '../presentation/home-page.html';
+        location.reload();
     } else {
         loginErrorMsg.style.opacity = 1;
     }
