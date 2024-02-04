@@ -14,11 +14,9 @@ class UserController {
     
     register(username, password){
         if (this.isRegistered(username)){
-            console.log("false")
             return false;
         }
         this._users.set(username, new User(username, password));
-        console.log("true")
         this._saveUsers()
         return true;
     }
