@@ -1,0 +1,98 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kanban Board</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+
+        .add-task-form {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .add-task-form input {
+            padding: 10px;
+            margin-right: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .add-task-form button {
+            padding: 10px;
+            cursor: pointer;
+            background-color: #4CAF50;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+        }
+
+        .kanban-board {
+            display: flex;
+            width: 80%;
+            margin: auto;
+        }
+
+        .column {
+            flex: 1;
+            margin: 10px;
+            padding: 15px;
+            border-radius: 5px;
+            background-color: #fff;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .column h2 {
+            text-align: center;
+            color: #333;
+        }
+
+        .tasks {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .task {
+            background-color: #e6e6e6;
+            margin: 0 0 10px;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: move;
+        }
+    </style>
+</head>
+<body>
+
+<div class="add-task-form">
+    <label for="newTaskInput"></label><input type="text" id="newTaskInput" placeholder="Enter task name">
+    <button id="createTaskButton">Add Task</button>
+</div>
+
+<div class="kanban-board">
+    <div class="column">
+        <h2>To Do</h2>
+        <ul class="tasks" id="todo" ondrop="drop(event)" ondragover="allowDrop(event)"></ul>
+    </div>
+    <div class="column">
+        <h2>In Progress</h2>
+        <ul class="tasks" id="in-progress" ondrop="drop(event)" ondragover="allowDrop(event)"></ul>
+    </div>
+    <div class="column">
+        <h2>Done</h2>
+        <ul class="tasks" id="done" ondrop="drop(event)" ondragover="allowDrop(event)"></ul>
+    </div>
+</div>
+
+</body>
+</html>
