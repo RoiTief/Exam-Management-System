@@ -1,4 +1,9 @@
 class ApplicationFacade{
+    constructor() {
+        this.userController = new UserController();
+        this.taskController = new TaskController();
+        this.courseController = new CourseController();
+    }
 
     /**
      * register a user
@@ -8,7 +13,7 @@ class ApplicationFacade{
      * @throws Error - if the username is taken
      */
     register(username, password){
-        //todo
+        return this.userController.register(username, password);
     }
 
     /**
@@ -20,7 +25,7 @@ class ApplicationFacade{
      *                 - if the password is incorrect
      */
     signIn(username, password) {
-        //todo
+        return this.userController.signIn(username, password)
     }
 
     /**
@@ -37,11 +42,23 @@ class ApplicationFacade{
      *                 - if there is already a course with this ID
      */
     addCourse(username, courseID, courseName, courseAdminUsername){
-        //todo
+        this.userController.verifySystemAdmin(username);
+        let course = this.courseController.createCourse(courseID, courseName);
+        this.taskController.courseAdminRequestTask(courseAdminUsername, courseID, courseName);
+        return course;
     }
 
     /**
-     * add a ta to the course {@username} is Admin of
+     * set @courseAdminUsername to be the course @courseID admin
+     * @param courseID - the courseID
+     * @param courseAdminUsername - the new course admin
+     * @throws {Error} - if there is no user named courseAdminUsername
+     */
+    setUserAsCourseAdmin(courseAdminUsername, courseID){
+        this.userController.setUserAsCourseAdmin(courseAdminUsername, courseID);
+    }
+
+    /**
      * create a task for the new TA to accept being a TA of this course
      * @param username - the user who tries to add the new TA - needs to be a courseAdmin
      * @param TAUsername
@@ -54,7 +71,6 @@ class ApplicationFacade{
     }
 
     /**
-     * add a grader to the course {@username} is Admin of
      * create a task for the new grader to accept being a grader of this course
      * @param username - the user who tries to add the new grader - needs to be a courseAdmin
      * @param graderUsername
@@ -167,15 +183,16 @@ class ApplicationFacade{
     }
 
     /**
-     * progress a task - from backlog to processed or from processed to finished
+     * tag task as finished
      * @param username - the user who tries to progress a task
      * @param taskId - the taskID
-     * @throws {Error} - if there is no user with name @username
-     *                 - if there is no task with this id
+     * @param response - the user answer to the task
+     * @throws {Error} - if there is no task with this id
      *                 - if task with this ID is not assigned to the username
+     *                 - if this task is already finished
      */
-    progressATask(username, taskId){
-        //todo
+    finishATask(username, taskId, response){
+        this.taskController.finishTask(username, taskId, response, this);
     }
 
     /**
