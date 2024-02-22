@@ -162,37 +162,37 @@ function createServer(options) {
     /// Now the real handlers. Here we just CRUD on TODO blobs
 
     server.post('/todo', createTodo);
-    server.get('/todo', listTodos);
-    server.head('/todo', listTodos);
+    // server.get('/todo', listTodos);
+    // server.head('/todo', listTodos);
 
     // Return a TODO by name
 
-    server.get('/todo/:name', getTodo);
-    server.head('/todo/:name', getTodo);
+    // server.get('/todo/:name', getTodo);
+    // server.head('/todo/:name', getTodo);
 
     // Overwrite a complete TODO - here we require that the body
     // be JSON - otherwise the caller will get a 415 if they try
     // to send a different type
     // With the body parser, req.body will be the fully JSON
     // parsed document, so we just need to serialize and save
-    server.put(
-        {
-            path: '/todo/:name',
-            contentType: 'application/json'
-        },
-        putTodo
-    );
+    // server.put(
+    //     {
+    //         path: '/todo/:name',
+    //         contentType: 'application/json'
+    //     },
+    //     putTodo
+    // );
 
-    // Delete a TODO by name
-    server.del('/todo/:name', deleteTodo);
+    // // Delete a TODO by name
+    // server.del('/todo/:name', deleteTodo);
 
-    // Destroy everything
-    server.del('/todo', deleteAll, function respond(req, res, next) {
-        res.send(204);
-        next();
-    });
+    // // Destroy everything
+    // server.del('/todo', deleteAll, function respond(req, res, next) {
+    //     res.send(204);
+    //     next();
+    // });
 
-    // Register a default '/' handler
+    // // Register a default '/' handler
 
     server.get('/', function root(req, res, next) {
         var routes = [
@@ -209,15 +209,15 @@ function createServer(options) {
     });
 
     // Setup an audit logger
-    if (!options.noAudit) {
-        server.on(
-            'after',
-            restify.auditLogger({
-                body: true,
-                log: pino({ level: 'info', name: 'todoapp-audit' })
-            })
-        );
-    }
+    // if (!options.noAudit) {
+    //     server.on(
+    //         'after',
+    //         restify.auditLogger({
+    //             body: true,
+    //             log: pino({ level: 'info', name: 'todoapp-audit' })
+    //         })
+    //     );
+    // }
 
     return server;
 }

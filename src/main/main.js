@@ -25,7 +25,7 @@ var LOG = pino({ name: NAME });
     // First setup our 'database'
     var dir = path.normalize("" + '/todos');
 
-    var server = todo.createServer({
+    var server = system.createServer({
         directory: dir,
         log: LOG
     });
