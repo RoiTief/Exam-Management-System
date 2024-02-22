@@ -1,7 +1,9 @@
+var User = require('./User')
+
 class SystemAdmin extends User{
 
-    constructor() {
-        super();
+    constructor(username, password) {
+        super(username, password);
     }
 
     verifyType(type){
@@ -11,3 +13,5 @@ class SystemAdmin extends User{
     }
 
 }
+
+module.exports = SystemAdmin;

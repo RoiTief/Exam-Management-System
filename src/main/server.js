@@ -9,14 +9,7 @@ var errors = require('restify-errors');
 const corsMiddleware = require('restify-cors-middleware2')
 
 
-
-/// --- Errors 
-
-var MissingUserError = errors.makeConstructor('MissingUserError', {
-    statusCode: 409,
-    restCode: 'MissingUser',
-    message: 'user is not registered in the system'
-});
+var service = require('./service');
 
 
 ///-- Formatters
@@ -60,41 +53,6 @@ function authenticate(req, res, next) {
     }
 
     next();
-}
-
-
-///-- HANDLERS
-// took it from https://github.com/restify/node-restify/tree/master
-// todo
-function createTodo(req, res, next) {
-    if (!req.body.task) {
-        req.log.warn({ body: req.body }, 'createTodo: missing task');
-        next(new MissingTaskError());
-        return;
-    }
-
-    var todo = {
-        name: req.body.name || req.body.task.replace(/\W+/g, '_'),
-        task: req.body.task
-    };
-
-    if (req.todos.indexOf(todo.name) !== -1) {
-        req.log.warn('%s already exists', todo.name);
-        next(new TodoExistsError(todo.name));
-        return;
-    }
-
-    var p = path.normalize(req.dir + '/' + todo.name);
-    fs.writeFile(p, JSON.stringify(todo), function(err) {
-        if (err) {
-            req.log.warn(err, 'createTodo: unable to save');
-            next(err);
-        } else {
-            req.log.debug({ todo: todo }, 'createTodo: done');
-            res.send(201, todo);
-            next();
-        }
-    });
 }
 
 ///--API
@@ -172,39 +130,27 @@ function createServer(options) {
 
     /// Now the real handlers. Here we just CRUD on TODO blobs
 
-    server.post('/todo', createTodo);
-    server.get('/todo', listTodos);
-    server.head('/todo', listTodos);
-
-    // Return a TODO by name
-
-    server.get('/todo/:name', getTodo);
-    server.head('/todo/:name', getTodo);
 
     // Overwrite a complete TODO - here we require that the body
     // be JSON - otherwise the caller will get a 415 if they try
     // to send a different type
     // With the body parser, req.body will be the fully JSON
     // parsed document, so we just need to serialize and save
-    server.put(
-    {
-            path: '/todo/:name',
-    contentType: 'application/json'
-    },
-    putTodo
-    );
-
-    // Delete a TODO by name
-    server.del('/todo/:name', deleteTodo);
-
-    // Destroy everything
-    server.del('/todo', deleteAll, function respond(req, res, next) {
-    res.send(204);
-    next();
+    // server.put(
+    // {
+    //         path: '/todo/:name',
+    // contentType: 'application/json'
+    // },
+    // putTodo
+    // );
+    // Register a default '/' handler
+    server.post('/signUp', service.signUp);
+    server.get('/testing', function testPrint(req, res, next) {
+        var routes = ["testing system path"];
+        res.send(200, routes);
+        next();
     });
 
-    // Register a default '/' handler
-    
     server.get('/', function root(req, res, next) {
         var routes = [
             'GET     /',
@@ -220,15 +166,15 @@ function createServer(options) {
     });
 
     // Setup an audit logger
-    if (!options.noAudit) {
-    server.on(
-    'after',
-    restify.auditLogger({
-    body: true,
-    log: pino({ level: 'info', name: 'todoapp-audit' })
-    })
-    );
-    }
+    // if (!options.noAudit) {
+    // server.on(
+    // 'after',
+    // restify.auditLogger({
+    // body: true,
+    // log: pino({ level: 'info', name: 'todoapp-audit' })
+    // })
+    // );
+    // }
 
     return server;
 }

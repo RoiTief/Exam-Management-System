@@ -28,3 +28,6 @@ ReactApp/.env.production.local
 ReactApp/npm-debug.log*
 ReactApp/yarn-debug.log*
 ReactApp/yarn-error.log*
+/src/.idea/
+/src/.vs/
+/src/coverage/

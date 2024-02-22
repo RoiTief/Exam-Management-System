@@ -1,8 +1,7 @@
 class CourseController{
 
     constructor(){
-        let courses = JSON.parse(sessionStorage.getItem('courses'));
-        this._courses = new Map(courses);
+        this._courses = new Map();
     }
 
     createCourse(courseID, courseName) {
@@ -11,7 +10,7 @@ class CourseController{
         }
         let course = new Course(courseID, courseName);
         this._courses.set(courseID, course);
-        this._saveCourses()
+        // this._saveCourses()
         return course;
     }
 
@@ -21,3 +20,6 @@ class CourseController{
         sessionStorage.setItem('courses', JSON.stringify(courseArray))
     }
 }
+
+module.exports = CourseController;
+

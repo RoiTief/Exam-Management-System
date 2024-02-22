@@ -1,3 +1,8 @@
+const UserController  = require('./UserManager/UserController.js' );
+const TaskController = require('./TaskManager/TaskController.js');
+const CourseController = require('./CourseManager/CourseController.js');
+
+
 class ApplicationFacade{
     constructor() {
         this.userController = new UserController();
@@ -225,3 +230,5 @@ class ApplicationFacade{
 
 
 }
+
+module.exports = ApplicationFacade;
