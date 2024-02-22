@@ -1,2 +1,30 @@
 **/node_modules
 **/package-lock.json
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# dependencies
+ReactApp/node_modules
+ReactApp/.pnp
+ReactApp/.pnp.js
+
+# testing
+ReactApp//coverage
+
+# production
+ReactApp/build
+ReactApp/out
+ReactApp/.next
+
+# misc
+ReactApp/.DS_Store
+ReactApp/.eslintcache
+ReactApp/.idea
+ReactApp/.env
+ReactApp/.env.local
+ReactApp/.env.development.local
+ReactApp/.env.test.local
+ReactApp/.env.production.local
+
+ReactApp/npm-debug.log*
+ReactApp/yarn-debug.log*
+ReactApp/yarn-error.log*
