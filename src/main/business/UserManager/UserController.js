@@ -1,14 +1,11 @@
-﻿
+﻿var SystemAdmin = require('./SystemAdmin')
+var User = require('./User')
 
 class UserController {
 
-    
     constructor(){
-        let users = JSON.parse(sessionStorage.getItem('users'));
-        this._users = new Map(users);
-        if (!this._users.has("Admin")){
-            this._users.set("Admin", new SystemAdmin("Admin", "Aa123456"));
-        }
+        this._users = new Map();
+        this._users.set("Admin", new SystemAdmin("Admin", "Aa123456"));
     }
     
     _isRegistered(username){
@@ -21,7 +18,7 @@ class UserController {
         }
         let user = new User(username, password)
         this._users.set(username, user);
-        this._saveUsers()
+        // this._saveUsers()
         return user;
     }
 
@@ -68,15 +65,15 @@ class UserController {
         let user = this._users.get(courseAdminUsername);
         this._users.set(courseAdminUsername, new CourseAdmin(user, course));
         course.setUserAsCourseAdmin(courseAdminUsername);
-        this._saveUsers();
+        // this._saveUsers();
     }
 
     setUserAsTA(TAUsername, course) {
         this.verifyUser(TAUsername)
         let user = this._users.get(TAUsername);
         this._users.set(TAUsername, new TA(user, course));
-        this._saveUsers();
+        // this._saveUsers();
     }
 }
 
-
+module.exports = UserController;

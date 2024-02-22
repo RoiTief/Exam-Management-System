@@ -9,7 +9,7 @@
         "posix-getopt": "^1.2.1",
         "restify-errors": "^8.0.2",
         "restify-clients": "^3.1.0",
-        "restify": "^8.6.1",
+        "restify": "11.1.0",
         "csv": "^6.2.2",
         "escape-regexp-component": "^1.0.2",
         "ewma": "^2.0.1",

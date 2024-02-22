@@ -6,6 +6,7 @@ class User {
         this.password = password;
         this.course = null
     }
-    
 }
+
+module.exports = User;
 

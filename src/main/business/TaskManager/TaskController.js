@@ -4,21 +4,20 @@ class TaskController {
 
 
     constructor(){
-        let tasks = JSON.parse(sessionStorage.getItem('tasks'))
-        this._tasks = new Map(tasks);
+        this._tasks = new Map();
         this._id = 1
     }
 
     addTask(forWhom, priority, type, properties, description, assignedUser, action){
         this._tasks.set(forWhom, new Task(this._id, forWhom, priority, type, properties, description, assignedUser, action));
-        this._saveTasks()
+        // this._saveTasks()
         this._id += 1
         return true;
     }
 
     addTaskToSpecificUser(forWhom, priority, type, properties, description, assignedUser, action){
         this._tasks.set(assignedUser, new Task(this._id, forWhom, priority, type, properties, description, assignedUser, action));
-        this._saveTasks()
+        // this._saveTasks()
         this._id += 1
         return true;
     }
@@ -64,5 +63,8 @@ class TaskController {
 
 
 }
+
+module.exports = TaskController;
+
 
 
