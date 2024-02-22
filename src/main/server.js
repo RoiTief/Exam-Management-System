@@ -6,6 +6,8 @@ var assert = require('assert-plus');
 var pino = require('pino');
 var restify = require('restify');
 var errors = require('restify-errors');
+const corsMiddleware = require('restify-cors-middleware2')
+
 
 
 /// --- Errors 
@@ -113,7 +115,16 @@ function createServer(options) {
         name: 'ExamManagementSystem',
         version: '1.0.0'
     });
-
+    
+    const cors = corsMiddleware({
+        preflightMaxAge: 5, //Optional
+        origins: ['*'],
+        allowHeaders: ['API-Token'],
+        exposeHeaders: ['API-Token-Expiry']
+      })
+      
+      server.pre(cors.preflight)
+      server.use(cors.actual)
     // Ensure we don't drop data on uploads
     server.pre(restify.plugins.pre.pause());
 
@@ -176,11 +187,11 @@ function createServer(options) {
     // With the body parser, req.body will be the fully JSON
     // parsed document, so we just need to serialize and save
     server.put(
-        {
+    {
             path: '/todo/:name',
-            contentType: 'application/json'
-        },
-        putTodo
+    contentType: 'application/json'
+    },
+    putTodo
     );
 
     // Delete a TODO by name
@@ -188,12 +199,12 @@ function createServer(options) {
 
     // Destroy everything
     server.del('/todo', deleteAll, function respond(req, res, next) {
-        res.send(204);
-        next();
+    res.send(204);
+    next();
     });
 
     // Register a default '/' handler
-
+    
     server.get('/', function root(req, res, next) {
         var routes = [
             'GET     /',
@@ -210,13 +221,13 @@ function createServer(options) {
 
     // Setup an audit logger
     if (!options.noAudit) {
-        server.on(
-            'after',
-            restify.auditLogger({
-                body: true,
-                log: pino({ level: 'info', name: 'todoapp-audit' })
-            })
-        );
+    server.on(
+    'after',
+    restify.auditLogger({
+    body: true,
+    log: pino({ level: 'info', name: 'todoapp-audit' })
+    })
+    );
     }
 
     return server;
