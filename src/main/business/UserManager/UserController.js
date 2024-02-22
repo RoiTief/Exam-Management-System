@@ -26,9 +26,7 @@ class UserController {
     }
 
     signIn(username, password) {
-        if (!this._isRegistered(username)){
-            throw new Error("there is no user with this username");
-        }
+        this.verifyUser(username)
         let user = this.getUser(username)
         if(!user.password === password){
             throw new Error("incorrect password")
@@ -48,19 +46,35 @@ class UserController {
     }
 
     verifySystemAdmin(username) {
-        if (!this._isRegistered(username)){
-            throw new Error("there is no user with this username");
-        }
+        this.verifyUser(username)
         this.getUser(username).verifyType("SystemAdmin");
     }
 
-
-    setUserAsCourseAdmin(courseAdminUsername, courseID) {
-        if (!this._isRegistered(courseAdminUsername)){
-            throw new Error("there is no user with this username");
+    verifyUser(username) {
+        if (!this._isRegistered(username)){
+            throw new Error("there is no user with this username " + username);
         }
+    }
+
+    verifyCourseAdmin(username) {
+        this.verifyUser(username)
+        let user = this.getUser(username)
+        user.verifyType("CourseAdmin");
+        return user.course;
+    }
+
+    setUserAsCourseAdmin(courseAdminUsername, course) {
+        this.verifyUser(courseAdminUsername)
         let user = this._users.get(courseAdminUsername);
-        this._users.set(courseAdminUsername, new CourseAdmin(user, courseID));
+        this._users.set(courseAdminUsername, new CourseAdmin(user, course));
+        course.setUserAsCourseAdmin(courseAdminUsername);
+        this._saveUsers();
+    }
+
+    setUserAsTA(TAUsername, course) {
+        this.verifyUser(TAUsername)
+        let user = this._users.get(TAUsername);
+        this._users.set(TAUsername, new TA(user, course));
         this._saveUsers();
     }
 }

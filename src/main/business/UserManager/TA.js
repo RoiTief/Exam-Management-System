@@ -1,7 +1,8 @@
 class TA extends User{
 
-    constructor() {
-        super();
+    constructor(user, course) {
+        super(user.username, user.password);
+        this.course = course
     }
 
     verifyType(type){

@@ -1,10 +1,12 @@
 
 const TaskTypes = {
-    courseAdminRequest: "courseAdminRequest"
+    courseAdminRequest: "courseAdminRequest",
+    newTARequest: "newTARequest"
 }
 
 class Task {
-    constructor(forWhom, priority, type, properties, description, assignedUser, action) {
+    constructor(taskId, forWhom, priority, type, properties, description, assignedUser, action) {
+        this.taskId = taskId
         this.forWhom = forWhom;
         this.priority = priority;
         this.type = type

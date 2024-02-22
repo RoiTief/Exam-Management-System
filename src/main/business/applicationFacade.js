@@ -43,19 +43,20 @@ class ApplicationFacade{
      */
     addCourse(username, courseID, courseName, courseAdminUsername){
         this.userController.verifySystemAdmin(username);
+        this.userController.verifyUser(courseAdminUsername)
         let course = this.courseController.createCourse(courseID, courseName);
-        this.taskController.courseAdminRequestTask(courseAdminUsername, courseID, courseName);
+        this.taskController.courseAdminRequestTask(courseAdminUsername, course);
         return course;
     }
 
     /**
-     * set @courseAdminUsername to be the course @courseID admin
-     * @param courseID - the courseID
+     * set @courseAdminUsername to be the course
      * @param courseAdminUsername - the new course admin
+     * @param course
      * @throws {Error} - if there is no user named courseAdminUsername
      */
-    setUserAsCourseAdmin(courseAdminUsername, courseID){
-        this.userController.setUserAsCourseAdmin(courseAdminUsername, courseID);
+    setUserAsCourseAdmin(courseAdminUsername, course){
+        this.userController.setUserAsCourseAdmin(courseAdminUsername, course);
     }
 
     /**
@@ -67,7 +68,19 @@ class ApplicationFacade{
      *                 - if there is no user named TAUsername
      */
     addTA(username, TAUsername){
-        //todo
+        let course = this.userController.verifyCourseAdmin(username);
+        this.userController.verifyUser()
+        this.taskController.newTARequestTask(TAUsername, course);
+    }
+
+    /**
+     * set @TAUsername to be a TA in course
+     * @param TAUsername
+     * @param course
+     * @throws {Error} - if there is no user named courseAdminUsername
+     */
+    setUserAsTA(TAUsername, course){
+        this.userController.setUserAsTA(TAUsername, course);
     }
 
     /**

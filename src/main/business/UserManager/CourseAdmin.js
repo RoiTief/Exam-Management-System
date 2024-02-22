@@ -1,8 +1,8 @@
 class CourseAdmin extends User{
 
-    constructor(user, courseId) {
-        super(user);
-        this.courseId = courseId
+    constructor(user, course) {
+        super(user.username, user.password);
+        this.course = course
     }
 
     verifyType(type){
