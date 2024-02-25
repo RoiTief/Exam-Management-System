@@ -134,11 +134,10 @@ function createServer(options) {
     server.post('/signIn', service.signIn);
     server.post('/logout', service.logout);
     server.post('/systemAdmin/addCourse', service.addCourse);
-    server.get('/viewMyTasks', service.viewMyTasks);
     server.post('/finishATask', service.finishATask);
-    // server.post('/courseAdmin/addTA/:name', service.addTA);
-    // server.post('/courseAdmin/addGrader/:name', service.addGrader);
-    // server.post('/courseAdmin/setExamParameters/:name', service.setExamParameters);
+
+    server.get('/viewMyTasks', service.viewMyTasks);
+    server.get('/viewMyCourse', service.viewMyCourse);
 
     
     server.get('/', function root(req, res, next) {

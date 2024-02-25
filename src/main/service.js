@@ -95,24 +95,42 @@ function addCourse(req, res, next) {
     }
 }
 
-    /**
-     * view my tasks
-     * @return {[Task]}
-     * @throws {Error} - if there is no user logged in pid
-     */
-    function viewMyTasks(req, res, next){
-        try{
-            let tasks = application.viewMyTasks(process.pid);
-            req.log.info("user viewd his tasks");
-            res.send(200, tasks)
-            next()
-        }
-        catch(err){
-            req.log.warn(err.message, 'unable to view user tasks');
-            next(err);
-        }
+/**
+ * view a course
+ * @return {Course} the course
+ * @throws {Error} - if there is no logged in user in @pid
+ *                 - if the user logged in user in @pid is not a courseAdmin
+ */
+function viewMyCourse(req, res, next){
+    try{
+        let course = application.viewMyCourse(process.pid);
+        req.log.info("course admin viewd his course");
+        res.send(200, course)
+        next()
     }
+    catch(err){
+        req.log.warn(err.message, 'unable to view course');
+        next(err);
+    }
+}
 
+/**
+ * view my tasks
+ * @return {[Task]}
+ * @throws {Error} - if there is no user logged in pid
+ */
+function viewMyTasks(req, res, next){
+    try{
+        let tasks = application.viewMyTasks(process.pid);
+        req.log.info("user viewd his tasks");
+        res.send(200, tasks)
+        next()
+    }
+    catch(err){
+        req.log.warn(err.message, 'unable to view user tasks');
+        next(err);
+    }
+}
 
 /**
  * tag task as finished with a response
@@ -144,6 +162,7 @@ module.exports = {
     signIn: signIn, 
     logout: logout,
     addCourse: addCourse,
+    viewMyCourse: viewMyCourse,
     viewMyTasks: viewMyTasks,
     finishATask: finishATask
 };

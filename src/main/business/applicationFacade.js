@@ -68,6 +68,17 @@ class ApplicationFacade{
     }
 
     /**
+     * view a course
+     * @param pid - the process who tries to view the course - needs to be a logged in courseAdmin
+     * @return {Course} the course
+     * @throws {Error} - if there is no logged in user in @pid
+     *                 - if the user logged in user in @pid is not a courseAdmin
+     */
+    viewMyCourse(pid){
+        return this.userController.verifyCourseAdmin(pid);
+    }
+
+    /**
      * set @courseAdminUsername to be the course
      * @param courseAdminUsername - the new course admin
      * @param course
