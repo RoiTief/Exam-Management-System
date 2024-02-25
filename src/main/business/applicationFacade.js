@@ -183,12 +183,13 @@ class ApplicationFacade{
 
     /**
      * view my tasks
-     * @param username - the user who tries to view his tasks
+     * @param pid - the user who tries to view his tasks
      * @return {[Task]}
-     * @throws {Error} - if there is no user with name @username
+     * @throws {Error} - if there is no user logged in pid
      */
-    viewMyTasks(username){
-        //todo
+    viewMyTasks(pid){
+        let username = this.userController.getLoggedInName(pid);
+        return this.taskController.getTasksOf(username);
     }
 
     /**
@@ -223,7 +224,7 @@ class ApplicationFacade{
      *                 - if this task is already finished
      */
     finishATask(pid, taskId, response){
-        username = this.userController.getLoggedInName(pid)
+        let username = this.userController.getLoggedInName(pid)
         this.taskController.finishTask(username, taskId, response, this);
     }
 

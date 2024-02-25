@@ -1,5 +1,8 @@
-﻿var SystemAdmin = require('./SystemAdmin')
-var User = require('./User')
+﻿const User = require('./User');
+const SystemAdmin = require('./SystemAdmin');
+const CourseAdmin = require('./CourseAdmin');
+const TA = require('./TA');
+const Grader = require('./Grader');
 
 class UserController {
 

@@ -15,15 +15,15 @@ class Course{
     }
 
     setUserAsCourseAdmin(username){
-        this.personal.CourseAdmins.add(username)
+        this.personal.CourseAdmins.push(username)
     }
 
     setUserAsTA(username){
-        this.personal.TAs.add(username)
+        this.personal.TAs.push(username)
     }
 
     setUserAsGrader(username){
-        this.personal.Graders.add(username)
+        this.personal.Graders.push(username)
     }
 }
 

@@ -10,28 +10,25 @@ class TaskController {
     }
 
     addTask(forWhom, priority, type, properties, description, assignedUser, action){
-        this._tasks.set(forWhom, new Task(this._id, forWhom, priority, type, properties, description, assignedUser, action));
-        // this._saveTasks()
+        this._tasks.set(this._id, new Task(this._id, forWhom, priority, type, properties, description, assignedUser, action));
         this._id += 1
         return true;
     }
 
     addTaskToSpecificUser(forWhom, priority, type, properties, description, assignedUser, action){
-        this._tasks.set(assignedUser, new Task(this._id, forWhom, priority, type, properties, description, assignedUser, action));
-        // this._saveTasks()
+        this._tasks.set(this._id, new Task(this._id, forWhom, priority, type, properties, description, assignedUser, action));
         this._id += 1
         return true;
     }
 
-    _saveTasks(){
-        //save to session storage
-        let tasksArray = Array.from(this._tasks)
-        sessionStorage.setItem('tasks', JSON.stringify(tasksArray))
-
-    }
-
     getTask(taskId){
         return this._tasks.get(taskId);
+    }
+
+    getTasksOf(username){
+        return Array.from(this._tasks.values()).filter(
+            task => task.assignedUser === username
+        );
     }
 
     courseAdminRequestTask(courseAdminUsername, course) {

@@ -1,3 +1,5 @@
+var User = require('./User')
+
 class CourseAdmin extends User{
 
     constructor(user, course) {
@@ -12,3 +14,5 @@ class CourseAdmin extends User{
     }
 
 }
+
+module.exports = CourseAdmin;

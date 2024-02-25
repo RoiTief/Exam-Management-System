@@ -95,6 +95,47 @@ function addCourse(req, res, next) {
     }
 }
 
+    /**
+     * view my tasks
+     * @return {[Task]}
+     * @throws {Error} - if there is no user logged in pid
+     */
+    function viewMyTasks(req, res, next){
+        try{
+            let tasks = application.viewMyTasks(process.pid);
+            req.log.info("user viewd his tasks");
+            res.send(200, tasks)
+            next()
+        }
+        catch(err){
+            req.log.warn(err.message, 'unable to view user tasks');
+            next(err);
+        }
+    }
+
+
+/**
+ * tag task as finished with a response
+ * @param taskId - the taskid
+ * @param response - the response to the task
+ * @return {Course} the new course created
+* @throws {Error} - if there is no task with this id
+*                 - if task with this ID is not assigned to the username
+*                 - if this task is already finished
+ */
+function finishATask(req, res, next) {
+    try{
+        application.finishATask(process.pid, req.body.taskId, req.body.response);
+        req.log.info(req.body.taskId, "task is marked as finished");
+        res.send(200)
+        next()
+    }
+    catch(err){
+        req.log.warn(err.message, 'unable to marked a task as finished');
+        next(err);
+    }
+}
+
 
 
 
@@ -102,5 +143,7 @@ module.exports = {
     signUp: signUp,
     signIn: signIn, 
     logout: logout,
-    addCourse: addCourse
+    addCourse: addCourse,
+    viewMyTasks: viewMyTasks,
+    finishATask: finishATask
 };
