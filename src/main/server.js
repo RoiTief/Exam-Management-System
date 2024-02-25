@@ -120,7 +120,7 @@ function createServer(options) {
     /// Now the real handlers. Here we just CRUD on TODO blobs
     server.post('/signUp', service.signUp);
     server.post('/signIn', service.signIn);
-    server.post('/systemAdmin/addCourse/:name', service.addCourse);
+    server.post('/systemAdmin/addCourse', service.addCourse);
     // server.post('/courseAdmin/addTA/:name', service.addTA);
     // server.post('/courseAdmin/addGrader/:name', service.addGrader);
     // server.post('/courseAdmin/setExamParameters/:name', service.setExamParameters);

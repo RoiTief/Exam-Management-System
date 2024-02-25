@@ -12,7 +12,7 @@ const error = require('./error')
  */
 function signUp(req, res, next) {
     try{
-        user = application.register(req.body.username, req.body.password);
+        user = application.register(process.pid, req.body.username, req.body.password);
         req.log.info(req.body.username, 'new user registered');
         res.send(200, user)
         next()
@@ -33,7 +33,7 @@ function signUp(req, res, next) {
  */
 function signIn(req, res, next) {
     try{
-        user = application.signIn(req.body.username, req.body.password);
+        user = application.signIn(process.pid, req.body.username, req.body.password);
         req.log.info(req.body.username, 'user signed in');
         res.send(200, user)
         next()
@@ -59,7 +59,7 @@ function signIn(req, res, next) {
  */
 function addCourse(req, res, next) {
     try{
-        course = application.addCourse(req.params.name, req.body.courseId, req.body.courseName,
+        course = application.addCourse(process.pid, req.body.courseId, req.body.courseName,
             req.body.courseAdminUsername);
         req.log.info(course.courseName, "course is created, and a request to admin this course was sent");
         res.send(200, course)

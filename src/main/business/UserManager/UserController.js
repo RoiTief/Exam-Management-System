@@ -4,75 +4,92 @@ var User = require('./User')
 class UserController {
 
     constructor(){
-        this._users = new Map();
-        this._users.set("Admin", new SystemAdmin("Admin", "Aa123456"));
+        this._registered_users = new Map();
+        this._registered_users.set("Admin", new SystemAdmin("Admin", "Aa123456"));
+        this._logged_in_users = new Map();
     }
     
     _isRegistered(username){
-        return this._users.has(username);
+        return this._registered_users.has(username);
     }
     
-    register(username, password){
+    _isLoggedIn(pid){
+        return this._logged_in_users.has(pid);
+    }
+
+    _varifyNotLoggedIn(pid){
+        if (this._isLoggedIn(pid))
+            throw new Error("you are already logged in");
+    }
+
+    _varifyLogged(pid){
+        if(!this._isLoggedIn(pid))
+            throw new Error("the user is not logged in");
+    }
+    
+    register(pid, username, password){
+        this._varifyNotLoggedIn(pid);
         if (this._isRegistered(username)){
             throw new Error("this username is taken");
         }
         let user = new User(username, password)
-        this._users.set(username, user);
-        // this._saveUsers()
+        this._registered_users.set(username, user);
         return user;
     }
 
-    signIn(username, password) {
-        this.verifyUser(username)
+    signIn(pid, username, password) {
+        this._varifyNotLoggedIn(pid)
+        this.verifyUserRegistered(username)
         let user = this.getUser(username)
         if(!user.password === password){
             throw new Error("incorrect password")
         }
+        this._logged_in_users.set(pid, username)
         return user;
-    }
-
-    _saveUsers(){
-        //save to session storage
-        let usersArray = Array.from(this._users)
-        sessionStorage.setItem('users', JSON.stringify(usersArray))
-
     }
     
     getUser(username){
-        return this._users.get(username);
+        return this._registered_users.get(username);
     }
 
-    verifySystemAdmin(username) {
-        this.verifyUser(username)
+    verifySystemAdmin(pid) {
+        this._varifyLogged(pid)
+        let username = this._logged_in_users.get(pid)
         this.getUser(username).verifyType("SystemAdmin");
     }
 
-    verifyUser(username) {
+    verifyUserRegistered(username) {
         if (!this._isRegistered(username)){
             throw new Error("there is no user with this username " + username);
         }
     }
 
-    verifyCourseAdmin(username) {
-        this.verifyUser(username)
+    verifyCourseAdmin(pid) {
+        this._varifyLogged(pid)
+        let username = this._logged_in_users.get(pid)
         let user = this.getUser(username)
         user.verifyType("CourseAdmin");
         return user.course;
     }
 
     setUserAsCourseAdmin(courseAdminUsername, course) {
-        this.verifyUser(courseAdminUsername)
-        let user = this._users.get(courseAdminUsername);
-        this._users.set(courseAdminUsername, new CourseAdmin(user, course));
+        this.verifyUserRegistered(courseAdminUsername)
+        let user = this._registered_users.get(courseAdminUsername);
+        this._registered_users.set(courseAdminUsername, new CourseAdmin(user, course));
         course.setUserAsCourseAdmin(courseAdminUsername);
         // this._saveUsers();
     }
 
     setUserAsTA(TAUsername, course) {
-        this.verifyUser(TAUsername)
-        let user = this._users.get(TAUsername);
-        this._users.set(TAUsername, new TA(user, course));
+        this.verifyUserRegistered(TAUsername)
+        let user = this._registered_users.get(TAUsername);
+        this._registered_users.set(TAUsername, new TA(user, course));
         // this._saveUsers();
+    }
+
+    getLoggedInName(pid){
+        this._varifyLogged(pid);
+        return this._logged_in_users.get(pid);
     }
 }
 
