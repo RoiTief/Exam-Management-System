@@ -47,7 +47,31 @@ function signIn(req, res, next) {
 /**
  * creates new course
  * create a task for the new courseAdmin to accept being a courseAdmin
- * @param username - the user who tries to create the new course - needs to be a systemAdmin
+ * @param courseID - the new courseID - need to be unique
+ * @param courseName - the new course name
+ * @param courseAdminUsername - the new course admin
+ * @return {Course} the new course created
+ * @throws {Error} - if there is no user with name @username
+ *                 - if the user named username is not a systemAdmin
+ *                 - if there is no user named courseAdminUsername
+ *                 - if there is already a course with this ID
+ */
+function logout(req, res, next) {
+    try{
+        application.logout(process.pid);
+        req.log.info("user logged out");
+        res.send(200);
+        next()
+    }
+    catch(err){
+        req.log.warn(err.message, 'unable to log out');
+        next(err);
+    }
+}
+
+/**
+ * creates new course
+ * create a task for the new courseAdmin to accept being a courseAdmin
  * @param courseID - the new courseID - need to be unique
  * @param courseName - the new course name
  * @param courseAdminUsername - the new course admin
@@ -77,5 +101,6 @@ function addCourse(req, res, next) {
 module.exports = {
     signUp: signUp,
     signIn: signIn, 
+    logout: logout,
     addCourse: addCourse
 };

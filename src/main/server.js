@@ -132,6 +132,7 @@ function createServer(options) {
 
     server.post('/signUp', service.signUp);
     server.post('/signIn', service.signIn);
+    server.post('/logout', service.logout);
     server.post('/systemAdmin/addCourse', service.addCourse);
     // server.post('/courseAdmin/addTA/:name', service.addTA);
     // server.post('/courseAdmin/addGrader/:name', service.addGrader);

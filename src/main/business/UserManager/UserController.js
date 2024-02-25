@@ -47,6 +47,11 @@ class UserController {
         this._logged_in_users.set(pid, username)
         return user;
     }
+
+    logout(pid) {
+        this._varifyLogged(pid)
+        this._logged_in_users.delete(pid);
+    }
     
     getUser(username){
         return this._registered_users.get(username);

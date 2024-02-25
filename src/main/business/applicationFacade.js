@@ -37,6 +37,15 @@ class ApplicationFacade{
         return this.userController.signIn(pid, username, password)
     }
 
+        /**
+     * user wants to log out
+     * @param pid - the process log out
+     * @throws {Error} - if the user is not signed in
+     */
+    logout(pid) {
+        return this.userController.logout(pid)
+    }
+
     /**
      * creates new course
      * create a task for the new courseAdmin to accept being a courseAdmin
