@@ -6,6 +6,8 @@ var assert = require('assert-plus');
 var pino = require('pino');
 var restify = require('restify');
 var errors = require('restify-errors');
+const corsMiddleware = require('restify-cors-middleware2')
+
 
 var service = require('./service');
 
@@ -71,7 +73,16 @@ function createServer(options) {
         name: 'ExamManagementSystem',
         version: '1.0.0'
     });
-
+    
+    const cors = corsMiddleware({
+        preflightMaxAge: 5, //Optional
+        origins: ['*'],
+        allowHeaders: ['API-Token'],
+        exposeHeaders: ['API-Token-Expiry']
+      })
+      
+      server.pre(cors.preflight)
+      server.use(cors.actual)
     // Ensure we don't drop data on uploads
     server.pre(restify.plugins.pre.pause());
 
@@ -118,6 +129,7 @@ function createServer(options) {
     server.use(authenticate);
 
     /// Now the real handlers. Here we just CRUD on TODO blobs
+
     server.post('/signUp', service.signUp);
     server.post('/signIn', service.signIn);
     server.post('/systemAdmin/addCourse', service.addCourse);
@@ -139,6 +151,17 @@ function createServer(options) {
         res.send(200, routes);
         next();
     });
+
+    // Setup an audit logger
+    // if (!options.noAudit) {
+    // server.on(
+    // 'after',
+    // restify.auditLogger({
+    // body: true,
+    // log: pino({ level: 'info', name: 'todoapp-audit' })
+    // })
+    // );
+    // }
 
     return server;
 }
