@@ -128,14 +128,24 @@ function createServer(options) {
     });
     server.use(authenticate);
 
-    /// Now the real handlers. Here we just CRUD on TODO blobs
 
+    //{"username", "password"}
     server.post('/signUp', service.signUp);
+    //{"username", "password"}
     server.post('/signIn', service.signIn);
+    //{}
+    server.post('/logout', service.logout);
+    //{"courseId", "courseName", "courseAdminUsername"}
     server.post('/systemAdmin/addCourse', service.addCourse);
-    // server.post('/courseAdmin/addTA/:name', service.addTA);
-    // server.post('/courseAdmin/addGrader/:name', service.addGrader);
-    // server.post('/courseAdmin/setExamParameters/:name', service.setExamParameters);
+    //{"taskId"}
+    server.post('/finishATask', service.finishATask);
+    //{"TAUsername"}
+    server.post('/CourseAdmin/addTA', service.addTA)
+    //{"graderUsername"}
+    server.post('/CourseAdmin/addGrader', service.addGrader)
+
+    server.get('/viewMyTasks', service.viewMyTasks);
+    server.get('/viewMyCourse', service.viewMyCourse);
 
     
     server.get('/', function root(req, res, next) {

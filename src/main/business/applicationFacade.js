@@ -38,6 +38,15 @@ class ApplicationFacade{
     }
 
     /**
+     * user wants to log out
+     * @param pid - the process log out
+     * @throws {Error} - if the user is not signed in
+     */
+    logout(pid) {
+        return this.userController.logout(pid)
+    }
+
+    /**
      * creates new course
      * create a task for the new courseAdmin to accept being a courseAdmin
      * @param pid - the process who tries to create the new course - needs to be a logged in systemAdmin
@@ -56,6 +65,17 @@ class ApplicationFacade{
         let course = this.courseController.createCourse(courseID, courseName);
         this.taskController.courseAdminRequestTask(courseAdminUsername, course);
         return course;
+    }
+
+    /**
+     * view a course
+     * @param pid - the process who tries to view the course - needs to be a logged in courseAdmin
+     * @return {Course} the course
+     * @throws {Error} - if there is no logged in user in @pid
+     *                 - if the user logged in user in @pid is not a courseAdmin
+     */
+    viewMyCourse(pid){
+        return this.userController.verifyCourseAdmin(pid);
     }
 
     /**
@@ -94,14 +114,26 @@ class ApplicationFacade{
 
     /**
      * create a task for the new grader to accept being a grader of this course
-     * @param username - the user who tries to add the new grader - needs to be a courseAdmin
+     * @param pid - the user who tries to add the new grader - needs to be a courseAdmin
      * @param graderUsername
      * @throws {Error} - if there is no user with name @username
      *                 - if the user named username is not a courseAdminUsername or is not assigned to a course
      *                 - if there is no user named graderUsername
      */
-    addGrader(username, graderUsername){
-        //todo
+    addGrader(pid, graderUsername){
+        let course = this.userController.verifyCourseAdmin(pid);
+        this.userController.verifyUserRegistered(graderUsername)
+        this.taskController.newGraderRequestTask(graderUsername, course);
+    }
+
+    /**
+     * set @graderUsername to be a Grader in course
+     * @param graderUsername
+     * @param course
+     * @throws {Error} - if there is no user named courseAdminUsername
+     */
+    setUserAsGrader(graderUsername, course){
+        this.userController.setUserAsGrader(graderUsername, course);
     }
 
     /**
@@ -174,12 +206,13 @@ class ApplicationFacade{
 
     /**
      * view my tasks
-     * @param username - the user who tries to view his tasks
+     * @param pid - the user who tries to view his tasks
      * @return {[Task]}
-     * @throws {Error} - if there is no user with name @username
+     * @throws {Error} - if there is no user logged in pid
      */
-    viewMyTasks(username){
-        //todo
+    viewMyTasks(pid){
+        let username = this.userController.getLoggedInName(pid);
+        return this.taskController.getTasksOf(username);
     }
 
     /**
@@ -214,7 +247,7 @@ class ApplicationFacade{
      *                 - if this task is already finished
      */
     finishATask(pid, taskId, response){
-        username = this.userController.getLoggedInName(pid)
+        let username = this.userController.getLoggedInName(pid)
         this.taskController.finishTask(username, taskId, response, this);
     }
 

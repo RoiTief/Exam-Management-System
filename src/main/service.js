@@ -45,10 +45,26 @@ function signIn(req, res, next) {
 }
 
 /**
+ * user wants to log out
+ * @throws {Error} - if the user is not signed in
+ */
+function logout(req, res, next) {
+    try{
+        application.logout(process.pid);
+        req.log.info("user logged out");
+        res.send(200);
+        next()
+    }
+    catch(err){
+        req.log.warn(err.message, 'unable to log out');
+        next(err);
+    }
+}
+
+/**
  * creates new course
  * create a task for the new courseAdmin to accept being a courseAdmin
- * @param username - the user who tries to create the new course - needs to be a systemAdmin
- * @param courseID - the new courseID - need to be unique
+ * @param courseId - the new courseID - need to be unique
  * @param courseName - the new course name
  * @param courseAdminUsername - the new course admin
  * @return {Course} the new course created
@@ -71,11 +87,116 @@ function addCourse(req, res, next) {
     }
 }
 
+/**
+ * view a course
+ * @return {Course} the course
+ * @throws {Error} - if there is no logged in user in @pid
+ *                 - if the user logged in user in @pid is not a courseAdmin
+ */
+function viewMyCourse(req, res, next){
+    try{
+        let course = application.viewMyCourse(process.pid);
+        req.log.info("course admin viewd his course");
+        res.send(200, course)
+        next()
+    }
+    catch(err){
+        req.log.warn(err.message, 'unable to view course');
+        next(err);
+    }
+}
+
+/**
+ * view my tasks
+ * @return {[Task]}
+ * @throws {Error} - if there is no user logged in pid
+ */
+function viewMyTasks(req, res, next){
+    try{
+        let tasks = application.viewMyTasks(process.pid);
+        req.log.info("user viewd his tasks");
+        res.send(200, tasks)
+        next()
+    }
+    catch(err){
+        req.log.warn(err.message, 'unable to view user tasks');
+        next(err);
+    }
+}
+
+/**
+ * tag task as finished with a response
+ * @param taskId - the taskid
+ * @param response - the response to the task
+ * @return {Course} the new course created
+* @throws {Error} - if there is no task with this id
+*                 - if task with this ID is not assigned to the username
+*                 - if this task is already finished
+ */
+function finishATask(req, res, next) {
+    try{
+        application.finishATask(process.pid, req.body.taskId, req.body.response);
+        req.log.info(req.body.taskId, "task is marked as finished");
+        res.send(200)
+        next()
+    }
+    catch(err){
+        req.log.warn(err.message, 'unable to marked a task as finished');
+        next(err);
+    }
+}
+
+/**
+ * create a task for the new TA to accept being a TA of this course
+ * @param TAUsername - the new TA username
+ * @throws {Error} - if there is no user with name @username
+ *                 - if the user named username is not a courseAdminUsername (is not assigned to a course)
+ *                 - if there is no user named TAUsername
+ */
+function addTA(req, res, next){
+    try{
+        application.addTA(process.pid, req.body.TAUsername);
+        req.log.info(req.body.TAUsername, "a request was sent to user to become a TA");
+        res.send(200)
+        next()
+    }
+    catch(err){
+        req.log.warn(err.message, 'unable to request a user to become a TA');
+        next(err);
+    }
+}
+
+/**
+ * create a task for the new grader to accept being a grader of this course
+ * @param graderUsername
+ * @throws {Error} - if there is no user with name @username
+ *                 - if the user named username is not a courseAdminUsername or is not assigned to a course
+ *                 - if there is no user named graderUsername
+ */
+function addGrader(req, res, next){
+    try{
+        application.addGrader(process.pid, req.body.graderUsername);
+        req.log.info(req.body.TAUsername, "a request was sent to user to become a TA");
+        res.send(200)
+        next()
+    }
+    catch(err){
+        req.log.warn(err.message, 'unable to request a user to become a TA');
+        next(err);
+    }
+}
+
 
 
 
 module.exports = {
     signUp: signUp,
     signIn: signIn, 
-    addCourse: addCourse
+    logout: logout,
+    addCourse: addCourse,
+    viewMyCourse: viewMyCourse,
+    viewMyTasks: viewMyTasks,
+    finishATask: finishATask,
+    addTA: addTA,
+    addGrader: addGrader
 };

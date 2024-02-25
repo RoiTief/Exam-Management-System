@@ -1,5 +1,8 @@
-﻿var SystemAdmin = require('./SystemAdmin')
-var User = require('./User')
+﻿const User = require('./User');
+const SystemAdmin = require('./SystemAdmin');
+const CourseAdmin = require('./CourseAdmin');
+const TA = require('./TA');
+const Grader = require('./Grader');
 
 class UserController {
 
@@ -47,6 +50,11 @@ class UserController {
         this._logged_in_users.set(pid, username)
         return user;
     }
+
+    logout(pid) {
+        this._varifyLogged(pid)
+        this._logged_in_users.delete(pid);
+    }
     
     getUser(username){
         return this._registered_users.get(username);
@@ -77,15 +85,22 @@ class UserController {
         let user = this._registered_users.get(courseAdminUsername);
         this._registered_users.set(courseAdminUsername, new CourseAdmin(user, course));
         course.setUserAsCourseAdmin(courseAdminUsername);
-        // this._saveUsers();
     }
 
     setUserAsTA(TAUsername, course) {
         this.verifyUserRegistered(TAUsername)
         let user = this._registered_users.get(TAUsername);
         this._registered_users.set(TAUsername, new TA(user, course));
-        // this._saveUsers();
+        course.setUserAsTA(TAUsername);
     }
+    
+    setUserAsGrader(graderUsername, course) {
+        this.verifyUserRegistered(graderUsername)
+        let user = this._registered_users.get(graderUsername);
+        this._registered_users.set(graderUsername, new Grader(user, course));
+        course.setUserAsGrader(graderUsername);
+    }
+
 
     getLoggedInName(pid){
         this._varifyLogged(pid);
