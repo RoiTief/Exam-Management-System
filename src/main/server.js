@@ -130,27 +130,14 @@ function createServer(options) {
 
     /// Now the real handlers. Here we just CRUD on TODO blobs
 
-
-    // Overwrite a complete TODO - here we require that the body
-    // be JSON - otherwise the caller will get a 415 if they try
-    // to send a different type
-    // With the body parser, req.body will be the fully JSON
-    // parsed document, so we just need to serialize and save
-    // server.put(
-    // {
-    //         path: '/todo/:name',
-    // contentType: 'application/json'
-    // },
-    // putTodo
-    // );
-    // Register a default '/' handler
     server.post('/signUp', service.signUp);
-    server.get('/testing', function testPrint(req, res, next) {
-        var routes = ["testing system path"];
-        res.send(200, routes);
-        next();
-    });
+    server.post('/signIn', service.signIn);
+    server.post('/systemAdmin/addCourse', service.addCourse);
+    // server.post('/courseAdmin/addTA/:name', service.addTA);
+    // server.post('/courseAdmin/addGrader/:name', service.addGrader);
+    // server.post('/courseAdmin/setExamParameters/:name', service.setExamParameters);
 
+    
     server.get('/', function root(req, res, next) {
         var routes = [
             'GET     /',

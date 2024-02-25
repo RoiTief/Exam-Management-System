@@ -19,3 +19,4 @@ class Task {
 
 }
 
+module.exports = {Task, TaskTypes};

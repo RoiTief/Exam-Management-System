@@ -12,43 +12,47 @@ class ApplicationFacade{
 
     /**
      * register a user
+     * @param pid - the process trying to sign up from
      * @param username - the new user username - needs to be unique
      * @param password - the new user password
      * @returns {User} - returns the created user
-     * @throws Error - if the username is taken
+     * @throws Error - if the process is already logged in
+     *               - if the username is taken
      */
-    register(username, password){
-        return this.userController.register(username, password);
+    register(pid, username, password){
+        return this.userController.register(pid, username, password);
     }
 
     /**
      * signs in user
+     * @param pid - the process trying to sign in
      * @param username - the user username - need to be registered
      * @param password - the user password
      * @returns {User} - returned the signed-in user
-     * @throws {Error} - if there is no registered user with this username
+     * @throws {Error} - if the user is already signed in
+     *                 - if there is no registered user with this username
      *                 - if the password is incorrect
      */
-    signIn(username, password) {
-        return this.userController.signIn(username, password)
+    signIn(pid, username, password) {
+        return this.userController.signIn(pid, username, password)
     }
 
     /**
      * creates new course
      * create a task for the new courseAdmin to accept being a courseAdmin
-     * @param username - the user who tries to create the new course - needs to be a systemAdmin
+     * @param pid - the process who tries to create the new course - needs to be a logged in systemAdmin
      * @param courseID - the new courseID - need to be unique
      * @param courseName - the new course name
      * @param courseAdminUsername - the new course admin
      * @return {Course} the new course created
-     * @throws {Error} - if there is no user with name @username
-     *                 - if the user named username is not a systemAdmin
+     * @throws {Error} - if there is no logged in user in @pid
+     *                 - if the user logged in user in @pid is not a systemAdmin
      *                 - if there is no user named courseAdminUsername
      *                 - if there is already a course with this ID
      */
-    addCourse(username, courseID, courseName, courseAdminUsername){
-        this.userController.verifySystemAdmin(username);
-        this.userController.verifyUser(courseAdminUsername)
+    addCourse(pid, courseID, courseName, courseAdminUsername){
+        this.userController.verifySystemAdmin(pid);
+        this.userController.verifyUserRegistered(courseAdminUsername)
         let course = this.courseController.createCourse(courseID, courseName);
         this.taskController.courseAdminRequestTask(courseAdminUsername, course);
         return course;
@@ -66,15 +70,15 @@ class ApplicationFacade{
 
     /**
      * create a task for the new TA to accept being a TA of this course
-     * @param username - the user who tries to add the new TA - needs to be a courseAdmin
-     * @param TAUsername
+     * @param pid - the process who tries to add the new TA - needs to be a courseAdmin
+     * @param TAUsername - the new TA username
      * @throws {Error} - if there is no user with name @username
      *                 - if the user named username is not a courseAdminUsername (is not assigned to a course)
      *                 - if there is no user named TAUsername
      */
-    addTA(username, TAUsername){
-        let course = this.userController.verifyCourseAdmin(username);
-        this.userController.verifyUser()
+    addTA(pid, TAUsername){
+        let course = this.userController.verifyCourseAdmin(pid);
+        this.userController.verifyUserRegistered(TAUsername)
         this.taskController.newTARequestTask(TAUsername, course);
     }
 
@@ -202,14 +206,15 @@ class ApplicationFacade{
 
     /**
      * tag task as finished
-     * @param username - the user who tries to progress a task
+     * @param pid - the user who tries to progress a task
      * @param taskId - the taskID
      * @param response - the user answer to the task
      * @throws {Error} - if there is no task with this id
      *                 - if task with this ID is not assigned to the username
      *                 - if this task is already finished
      */
-    finishATask(username, taskId, response){
+    finishATask(pid, taskId, response){
+        username = this.userController.getLoggedInName(pid)
         this.taskController.finishTask(username, taskId, response, this);
     }
 

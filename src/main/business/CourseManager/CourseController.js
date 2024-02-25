@@ -1,3 +1,5 @@
+var Course = require('./Course')
+
 class CourseController{
 
     constructor(){

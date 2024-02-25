@@ -1,4 +1,5 @@
-
+var {Task} = require('./Task')
+var {TaskTypes} = require('./Task')
 
 class TaskController {
 
