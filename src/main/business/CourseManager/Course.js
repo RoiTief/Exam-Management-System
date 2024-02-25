@@ -26,3 +26,5 @@ class Course{
         this.personal.Graders.add(username)
     }
 }
+
+module.exports = Course;
