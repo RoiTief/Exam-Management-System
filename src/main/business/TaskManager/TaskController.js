@@ -40,12 +40,21 @@ class TaskController {
                                                 });
     }
 
-    newTARequestTask(TAUsername, courseId) {
-        this.addTaskToSpecificUser(null, 0, TaskTypes.newTARequest, [courseId],
-            "if you accept this request you will be a TA in course number "+courseId,
+    newTARequestTask(TAUsername, course) {
+        this.addTaskToSpecificUser(null, 0, TaskTypes.newTARequest, [course],
+            "if you accept this request you will be a TA in course number "+course.courseId,
             TAUsername, (applicationFacade, approved) => {
                 if(approved === "yes")
-                    applicationFacade.setUserAsTA(TAUsername, courseId)
+                    applicationFacade.setUserAsTA(TAUsername, course)
+            });
+    }
+
+    newGraderRequestTask(graderUsername, course) {
+        this.addTaskToSpecificUser(null, 0, TaskTypes.newTARequest, [course],
+            "if you accept this request you will be a TA in course number "+course.courseId,
+            graderUsername, (applicationFacade, approved) => {
+                if(approved === "yes")
+                    applicationFacade.setUserAsGrader(graderUsername, course)
             });
     }
 

@@ -37,7 +37,7 @@ class ApplicationFacade{
         return this.userController.signIn(pid, username, password)
     }
 
-        /**
+    /**
      * user wants to log out
      * @param pid - the process log out
      * @throws {Error} - if the user is not signed in
@@ -114,14 +114,26 @@ class ApplicationFacade{
 
     /**
      * create a task for the new grader to accept being a grader of this course
-     * @param username - the user who tries to add the new grader - needs to be a courseAdmin
+     * @param pid - the user who tries to add the new grader - needs to be a courseAdmin
      * @param graderUsername
      * @throws {Error} - if there is no user with name @username
      *                 - if the user named username is not a courseAdminUsername or is not assigned to a course
      *                 - if there is no user named graderUsername
      */
-    addGrader(username, graderUsername){
-        //todo
+    addGrader(pid, graderUsername){
+        let course = this.userController.verifyCourseAdmin(pid);
+        this.userController.verifyUserRegistered(graderUsername)
+        this.taskController.newGraderRequestTask(graderUsername, course);
+    }
+
+    /**
+     * set @graderUsername to be a Grader in course
+     * @param graderUsername
+     * @param course
+     * @throws {Error} - if there is no user named courseAdminUsername
+     */
+    setUserAsGrader(graderUsername, course){
+        this.userController.setUserAsGrader(graderUsername, course);
     }
 
     /**

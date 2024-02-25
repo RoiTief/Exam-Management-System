@@ -85,15 +85,22 @@ class UserController {
         let user = this._registered_users.get(courseAdminUsername);
         this._registered_users.set(courseAdminUsername, new CourseAdmin(user, course));
         course.setUserAsCourseAdmin(courseAdminUsername);
-        // this._saveUsers();
     }
 
     setUserAsTA(TAUsername, course) {
         this.verifyUserRegistered(TAUsername)
         let user = this._registered_users.get(TAUsername);
         this._registered_users.set(TAUsername, new TA(user, course));
-        // this._saveUsers();
+        course.setUserAsTA(TAUsername);
     }
+    
+    setUserAsGrader(graderUsername, course) {
+        this.verifyUserRegistered(graderUsername)
+        let user = this._registered_users.get(graderUsername);
+        this._registered_users.set(graderUsername, new Grader(user, course));
+        course.setUserAsGrader(graderUsername);
+    }
+
 
     getLoggedInName(pid){
         this._varifyLogged(pid);
