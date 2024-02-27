@@ -151,8 +151,20 @@ export const AuthProvider = (props) => {
     });
   };
 
-  const signUp = async (email, name, password) => {
-    throw new Error('Sign up is not implemented');
+  const signUp = async (username, password) => {
+    var response = await fetch(
+      "http://localhost:8080/signUp",
+      {method: "POST",
+      headers: {
+        'Content-Type': 'application/json',
+        'Origin' : '*'
+      },
+      body: JSON.stringify({password})
+    })
+    if(response.status !== 200){
+      throw new Error('Internal error, please try again');
+    }
+    
   };
 
   const signOut = () => {
