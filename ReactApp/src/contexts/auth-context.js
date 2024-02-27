@@ -130,17 +130,9 @@ export const AuthProvider = (props) => {
 
   const signIn = async (username, password) => {
     var response = await requestServer(serverPath.SIGN_IN, httpsMethod.POST, {username,password})
-    console.log(">>>>>>>><<<<<<")
-    console.log(response.status)
     if(response.status !== 200){
       throw new Error('Internal error, please try again');
     }
-    console.log(JSON.stringify(response))
-    // try {
-    //   window.sessionStorage.setItem('authenticated', 'true');
-    // } catch (err) {
-    //   console.error(err);
-    // }
 
     const user = {
       id: '5e86809283e28b96d2d38537',
@@ -156,15 +148,7 @@ export const AuthProvider = (props) => {
   };
 
   const signUp = async (username, password) => {
-    var response = await fetch(
-      "http://localhost:8080/signUp",
-      {method: "POST",
-      headers: {
-        'Content-Type': 'application/json',
-        'Origin' : '*'
-      },
-      body: JSON.stringify({password})
-    })
+    var response = await requestServer(serverPath.SIGN_UP, httpsMethod.POST, {username, password})
     if(response.status !== 200){
       throw new Error('Internal error, please try again');
     }
