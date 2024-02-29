@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useReducer, useRef } from 'react';
 import PropTypes from 'prop-types';
+import {httpsMethod, serverPath, requestServer} from 'src/utils/rest-api-call';
 
 const HANDLERS = {
   INITIALIZE: 'INITIALIZE',
@@ -127,15 +128,10 @@ export const AuthProvider = (props) => {
     });
   };
 
-  const signIn = async (email, password) => {
-    if (email !== 'demo@devias.io' || password !== 'Password123!') {
-      throw new Error('Please check your email and password');
-    }
-
-    try {
-      window.sessionStorage.setItem('authenticated', 'true');
-    } catch (err) {
-      console.error(err);
+  const signIn = async (username, password) => {
+    var response = await requestServer(serverPath.SIGN_IN, httpsMethod.POST, {username,password})
+    if(response.status !== 200){
+      throw new Error('Internal error, please try again');
     }
 
     const user = {
@@ -151,8 +147,12 @@ export const AuthProvider = (props) => {
     });
   };
 
-  const signUp = async (email, name, password) => {
-    throw new Error('Sign up is not implemented');
+  const signUp = async (username, password) => {
+    var response = await requestServer(serverPath.SIGN_UP, httpsMethod.POST, {username, password})
+    if(response.status !== 200){
+      throw new Error('Internal error, please try again');
+    }
+    
   };
 
   const signOut = () => {
