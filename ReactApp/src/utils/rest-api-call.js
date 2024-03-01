@@ -16,7 +16,7 @@ export const serverPath = {
 
 
 export async function requestServer(path, method, body){
-    return await fetch(SERVER_ROOT_URL + path,
+    var response = await fetch(SERVER_ROOT_URL + path,
         {method,
         headers: {
           'Content-Type': 'application/json',
@@ -24,4 +24,11 @@ export async function requestServer(path, method, body){
         },
         body: JSON.stringify(body)
       })
+    response = await response.json();
+    
+    if(response.code !== 200){
+        throw new Error(response.message)
+    }
+    var {code, ...retObject} = response
+    return retObject;
 }
