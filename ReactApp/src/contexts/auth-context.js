@@ -82,16 +82,16 @@ export const AuthProvider = (props) => {
     }
 
     if (isAuthenticated) {
-      const user = {
-        id: '5e86809283e28b96d2d38537',
-        avatar: '/assets/avatars/avatar-anika-visser.png',
-        name: 'Anika Visser',
-        email: 'anika.visser@devias.io'
-      };
+      // const user = {
+      //   id: '5e86809283e28b96d2d38537',
+      //   avatar: '/assets/avatars/avatar-anika-visser.png',
+      //   name: 'AAA',
+      //   email: 'anika.visser@devias.io'
+      // };
 
       dispatch({
         type: HANDLERS.INITIALIZE,
-        payload: user
+        // payload: user
       });
     } else {
       dispatch({

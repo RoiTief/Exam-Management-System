@@ -42,7 +42,7 @@ export const AccountPopover = (props) => {
           color="text.secondary"
           variant="body2"
         >
-          Anika Visser
+          {JSON.stringify(auth.user?.username)}
         </Typography>
       </Box>
       <Divider />
