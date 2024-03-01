@@ -129,18 +129,18 @@ export const AuthProvider = (props) => {
   };
 
   const signIn = async (username, password) => {
-    var response = await requestServer(serverPath.SIGN_IN, httpsMethod.POST, {username,password})
-    if(response.status !== 200){
-      throw new Error('Internal error, please try again');
-    }
+    var {user} = await requestServer(serverPath.SIGN_IN, httpsMethod.POST, {username,password})
+    console.log(user)
+    
 
-    const user = {
-      id: '5e86809283e28b96d2d38537',
-      avatar: '/assets/avatars/avatar-anika-visser.png',
-      name: 'Anika Visser',
-      email: 'anika.visser@devias.io'
-    };
-
+    //Original definition of user
+    // const user = {
+    //   id: '5e86809283e28b96d2d38537',
+    //   avatar: '/assets/avatars/avatar-anika-visser.png',
+    //   name: 'Anika Visser',
+    //   email: 'anika.visser@devias.io'
+    // };
+    
     dispatch({
       type: HANDLERS.SIGN_IN,
       payload: user
@@ -149,10 +149,6 @@ export const AuthProvider = (props) => {
 
   const signUp = async (username, password) => {
     var response = await requestServer(serverPath.SIGN_UP, httpsMethod.POST, {username, password})
-    if(response.status !== 200){
-      throw new Error('Internal error, please try again');
-    }
-    
   };
 
   const signOut = () => {
