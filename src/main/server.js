@@ -168,6 +168,9 @@ function createServer(options) {
 
     server.get('/viewMyTasks', service.viewMyTasks);
     server.get('/viewMyCourse', service.viewMyCourse);
+    server.get('/viewUsername', service.viewUsername);
+    server.get('/viewUserType', service.viewUserType);
+
 
 
     server.get('/', function root(req, res, next) {

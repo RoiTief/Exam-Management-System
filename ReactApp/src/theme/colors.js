@@ -28,7 +28,7 @@ export const indigo = withAlphas({
   lightest: '#F5F7FF',
   light: '#EBEEFE',
   main: '#f7941e',
-  dark: '#4338CA',
+  dark: '#d27c15',
   darkest: '#312E81',
   contrastText: '#FFFFFF'
 });

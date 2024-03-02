@@ -6,6 +6,10 @@ class CourseAdmin extends User{
         super(user.username, user.password);
         this.course = course
     }
+    
+    getUserType(){
+        return "Course Admin"
+    }
 
     verifyType(type){
         if(type !== "CourseAdmin"){

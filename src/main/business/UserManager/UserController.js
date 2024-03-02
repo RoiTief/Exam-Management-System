@@ -10,9 +10,6 @@ class UserController {
         this._registered_users = new Map();
         this._registered_users.set("Admin", new SystemAdmin("Admin", "Aa123456"));
         this._logged_in_users = new Map();
-
-        //todo - remove - for testing
-        this._registered_users.set("a", new User("a","a"))
     }
     
     _isRegistered(username){
@@ -31,6 +28,13 @@ class UserController {
     _varifyLogged(pid){
         if(!this._isLoggedIn(pid))
             throw new Error("the user is not logged in");
+    }
+
+    getType(pid){
+        this._varifyLogged(pid)
+        let username = this._logged_in_users.get(pid)
+        let user = this.getUser(username)
+        return user.getUserType()
     }
     
     register(pid, username, password){

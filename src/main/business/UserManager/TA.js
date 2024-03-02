@@ -7,6 +7,10 @@ class TA extends User{
         this.course = course
     }
 
+    getUserType(){
+        return "TA"
+    }
+
     verifyType(type){
         if(type !== "TA"){
             throw Error("the user is a TA and doesnt have the sufficient permissions");

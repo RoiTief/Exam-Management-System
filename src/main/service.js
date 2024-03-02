@@ -6,6 +6,45 @@ require('dotenv').config();
 
 
 /**
+ * get the username of the logged in user
+ * @returns {string} - returns the username
+ * @returns Error - if the prosses is not logged in to a user
+ */
+function viewUsername(req, res, next) {
+    try{
+        let username = application.getUsername(process.pid);
+        req.log.info("username request");
+        res.send(200, {code:200,username})
+        next()
+    }
+    catch(err){
+        req.log.warn(err.message, 'unable to retrieve username');
+        next(err);
+    }
+}
+
+/**
+ * get the username type- "User", "TA", "Course Admin", "Grader", "System Admin"
+ * @returns {string} - returns the type
+ * @returns Error - if the prosses is not logged in to a user
+ */
+function viewUserType(req, res, next) {
+    try{
+        let userType = application.getUserType(process.pid);
+        req.log.info("user type request");
+        res.send(200, {code:200,userType})
+        next()
+    }
+    catch(err){
+        req.log.warn(err.message, 'unable to retrieve user type');
+        next(err);
+    }
+}
+
+
+
+
+/**
  * register a user
  * @param req.username - the new user username - needs to be unique
  * @param req.password - the new user password
@@ -195,6 +234,8 @@ function addGrader(req, res, next){
 
 
 module.exports = {
+    viewUsername: viewUsername,
+    viewUserType: viewUserType,
     signUp: signUp,
     signIn: signIn, 
     logout: logout,

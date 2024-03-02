@@ -7,6 +7,10 @@ class Grader extends User{
         this.course = course
     }
 
+    getUserType(){
+        return "Grader"
+    }
+
     verifyType(type){
         if(type !== "Grader"){
             throw Error("the user is a Grader and doesnt have the sufficient permissions");

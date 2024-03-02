@@ -3,8 +3,8 @@ import { subDays, subHours } from 'date-fns';
 import { Box, Stack, Typography, Container, Unstable_Grid2 as Grid } from '@mui/material';
 import { Layout as DashboardLayout } from 'src/layouts/dashboard/layout';
 import { OverviewFAQ } from 'src/sections/overview/overview-FAQ';
-import { OverviewLatestOrders } from 'src/sections/overview/overview-latest-orders';
-import { OverviewAssignedTasks } from 'src/sections/overview/overview-latest-products';
+import { OverviewUserOptions } from 'src/sections/overview/overview-user-options';
+import { OverviewAssignedTasks } from 'src/sections/overview/overview-my-tasks';
 import { OverviewSales } from 'src/sections/overview/overview-sales';
 import { OverviewTasksProgress } from 'src/sections/overview/overview-tasks-progress';
 import { OverviewQuestionTips } from 'src/sections/overview/overview-question-tips';
@@ -24,11 +24,11 @@ const Page = () => (
       component="main"
     >
       <Container maxWidth="xl">
-        <Stack spacing={10} direction="row" justifyContent="space-between">
+        <Stack spacing={4} direction="row" justifyContent="space-between">
 
           <Stack item> 
           {/*left section*/}
-                  hello
+            <OverviewUserOptions/>
           </Stack>
 
           <Stack container item xs={8} direction="column" justifyContent="flex-end" spacing={4} >
@@ -46,7 +46,7 @@ const Page = () => (
                 <OverviewFAQ/>
               </Grid>
             </Stack>
-            <Stack container item spacing={4} direction="row" >
+            <Stack container item spacing={4} direction="row" maxWidth={600} >
               {/*lower section*/}
               <Grid item xs={12} md={6} lg={4}>
                 <OverviewAssignedTasks/>
