@@ -1,6 +1,8 @@
 const ApplicationFacade = require("./business/applicationFacade");
 const application = new ApplicationFacade();
 const error = require('./error')
+const jwt = require('jsonwebtoken');
+require('dotenv').config();
 
 
 /**
@@ -34,8 +36,11 @@ function signUp(req, res, next) {
 function signIn(req, res, next) {
     try{
         user = application.signIn(process.pid, req.body.username, req.body.password);
+        let token = jwt.sign({username: req.body.username}, process.env.SECRET_KEY, {
+            expiresIn: "1h" // token expires in 15 minutes
+        });
         req.log.info(req.body.username, 'user signed in');
-        res.send(200, {code:200,user})
+        res.send(200, {code:200,user,token})
         next()
     }
     catch(err){
