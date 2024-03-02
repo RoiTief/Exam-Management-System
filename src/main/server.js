@@ -1,3 +1,4 @@
+require('dotenv').config();
 var fs = require('fs');
 var path = require('path');
 var util = require('util');
@@ -7,11 +8,14 @@ var pino = require('pino');
 var restify = require('restify');
 var errors = require('restify-errors');
 const corsMiddleware = require('restify-cors-middleware2')
+const jwt = require('jsonwebtoken');
 
 
 var service = require('./service');
 
-
+if(!process.env.SECRET_KEY){
+    throw new Error('SECRET_KEY is required')
+}
 ///-- Formatters
 function formatReq(req, res, body, cb) {
     if (body instanceof Error) {
@@ -30,29 +34,37 @@ function formatReq(req, res, body, cb) {
 ///--- Handlers
 //todo 
 function authenticate(req, res, next) {
-    if (!req.allow) {
-        req.log.debug('skipping authentication');
-        next();
-        return;
+    
+    if (req.headers && req.headers.authorization) {
+        const parts = req.headers.authorization.split(' ');
+        if (parts.length === 2) {
+            const scheme = parts[0];
+            const credentials = parts[1];
+
+            if (/^(?:Bearer|JWT)$/i.test(scheme)) {
+                var token = credentials;
+                try {
+                    jwt.verify(token, process.env.SECRET_KEY,);
+                    return true
+                } catch (err) {
+                    console.log({ err })
+                    next(new errors.InvalidCredentialsError('Invalid token'))
+                    return false;
+                }
+            }
+            else {
+                next(new errors.InvalidCredentialsError('Format is Authorization: Bearer [token] or Jwt [token]'))
+                return false
+            }
+        } else {
+            next(new errors.InvalidCredentialsError('Format is Authorization: Bearer [token] or Jwt [token]'))
+            return false
+        }
     }
-
-    var authz = req.authorization.basic;
-
-    if (!authz) {
-        res.setHeader('WWW-Authenticate', 'Basic realm="todoapp"');
-        next(new errors.UnauthorizedError('authentication required'));
-        return;
+    else {
+        next(new errors.InvalidCredentialsError('Format is Authorization: Bearer [token] or Jwt [token]'))
+        return false
     }
-
-    if (
-        authz.username !== req.allow.user ||
-        authz.password !== req.allow.pass
-    ) {
-        next(new errors.ForbiddenError('invalid credentials'));
-        return;
-    }
-
-    next();
 }
 
 ///--API
@@ -73,16 +85,16 @@ function createServer(options) {
         name: 'ExamManagementSystem',
         version: '1.0.0'
     });
-    
+
     const cors = corsMiddleware({
         preflightMaxAge: 5, //Optional
         origins: ['*'],
-        allowHeaders: ['API-Token'],
+        allowHeaders: ['API-Token', 'Authorization'],
         exposeHeaders: ['API-Token-Expiry']
-      })
-      
-      server.pre(cors.preflight)
-      server.use(cors.actual)
+    })
+
+    server.pre(cors.preflight)
+    server.use(cors.actual)
     // Ensure we don't drop data on uploads
     server.pre(restify.plugins.pre.pause());
 
@@ -116,6 +128,17 @@ function createServer(options) {
     // Here we only use basic auth, but really you should look
     // at https://github.com/joyent/node-http-signature
     server.use(function setup(req, res, next) {
+        if ( req.url.startsWith('/signUp') || req.url.startsWith('/signIn')|| req.url.startsWith('/logout')) {
+            next();
+            return;
+        }
+        if(authenticate(req, res, next))
+            next();
+        else
+            next(new errors.UnauthorizedError('invalid credentials'));
+    });
+    
+    server.use(function setup(req, res, next) {
         req.dir = options.directory;
 
         if (options.user && options.password) {
@@ -126,8 +149,7 @@ function createServer(options) {
         }
         next();
     });
-    server.use(authenticate);
-
+    
 
     //{"username", "password"}
     server.post('/signUp', service.signUp);
@@ -147,7 +169,7 @@ function createServer(options) {
     server.get('/viewMyTasks', service.viewMyTasks);
     server.get('/viewMyCourse', service.viewMyCourse);
 
-    
+
     server.get('/', function root(req, res, next) {
         var routes = [
             'GET     /',

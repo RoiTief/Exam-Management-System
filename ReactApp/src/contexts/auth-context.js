@@ -1,6 +1,8 @@
 import { createContext, useContext, useEffect, useReducer, useRef } from 'react';
 import PropTypes from 'prop-types';
-import {httpsMethod, serverPath, requestServer} from 'src/utils/rest-api-call';
+import {httpsMethod, serverPath, requestServer,TOKEN_FIELD_NAME} from 'src/utils/rest-api-call';
+import Cookies from 'js-cookie';
+
 
 const HANDLERS = {
   INITIALIZE: 'INITIALIZE',
@@ -129,9 +131,8 @@ export const AuthProvider = (props) => {
   };
 
   const signIn = async (username, password) => {
-    var {user} = await requestServer(serverPath.SIGN_IN, httpsMethod.POST, {username,password})
-    console.log(user)
-    
+    var {user,token} = await requestServer(serverPath.SIGN_IN, httpsMethod.POST, {username,password})
+    Cookies.set(TOKEN_FIELD_NAME,token)
 
     //Original definition of user
     // const user = {
