@@ -7,39 +7,21 @@ import { Box, Button, Link, Stack, TextField, Typography } from '@mui/material';
 import { useAuth } from 'src/hooks/use-auth';
 import { Layout as AuthLayout } from 'src/layouts/auth/layout';
 
-async function signUp() {
-  var a = await fetch(
-    "http://localhost:8080/",
-    {method: "GET",
-    headers: {
-      'Content-Type': 'application/json',
-      'Origin' : '*'
-    }
-  }
-  )
-    console.log(a)
-  }
-
   const Page = () => {
     const router = useRouter();
     const auth = useAuth();
     const formik = useFormik({
       initialValues: {
-        email: '',
-        name: '',
+        username: '',
         password: '',
         submit: null
       },
       validationSchema: Yup.object({
-        email: Yup
-          .string()
-          .email('Must be a valid email')
-          .max(255)
-          .required('Email is required'),
-        name: Yup
+        
+        username: Yup
           .string()
           .max(255)
-          .required('Name is required'),
+          .required('Username is required'),
         password: Yup
           .string()
           .max(255)
@@ -47,8 +29,8 @@ async function signUp() {
       }),
       onSubmit: async (values, helpers) => {
         try {
-          await signUp(values.email, values.name, values.password);
-          router.push('/');
+          await auth.signUp(values.username, values.password);
+          router.push('/auth/login')
         } catch (err) {
           helpers.setStatus({ success: false });
           helpers.setErrors({ submit: err.message });
@@ -110,25 +92,14 @@ async function signUp() {
               >
                 <Stack spacing={3}>
                   <TextField
-                    error={!!(formik.touched.name && formik.errors.name)}
+                    error={!!(formik.touched.username && formik.errors.username)}
                     fullWidth
-                    helperText={formik.touched.name && formik.errors.name}
-                    label="Name"
-                    name="name"
+                    helperText={formik.touched.username && formik.errors.username}
+                    label="Username"
+                    name="username"
                     onBlur={formik.handleBlur}
                     onChange={formik.handleChange}
                     value={formik.values.name}
-                  />
-                  <TextField
-                    error={!!(formik.touched.email && formik.errors.email)}
-                    fullWidth
-                    helperText={formik.touched.email && formik.errors.email}
-                    label="Email Address"
-                    name="email"
-                    onBlur={formik.handleBlur}
-                    onChange={formik.handleChange}
-                    type="email"
-                    value={formik.values.email}
                   />
                   <TextField
                     error={!!(formik.touched.password && formik.errors.password)}

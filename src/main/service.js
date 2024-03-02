@@ -14,7 +14,7 @@ function signUp(req, res, next) {
     try{
         user = application.register(process.pid, req.body.username, req.body.password);
         req.log.info(req.body.username, 'new user registered');
-        res.send(200, user)
+        res.send(200, {code:200,user})
         next()
     }
     catch(err){
@@ -35,7 +35,7 @@ function signIn(req, res, next) {
     try{
         user = application.signIn(process.pid, req.body.username, req.body.password);
         req.log.info(req.body.username, 'user signed in');
-        res.send(200, user)
+        res.send(200, {code:200,user})
         next()
     }
     catch(err){

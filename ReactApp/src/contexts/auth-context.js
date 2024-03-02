@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useReducer, useRef } from 'react';
 import PropTypes from 'prop-types';
+import {httpsMethod, serverPath, requestServer} from 'src/utils/rest-api-call';
 
 const HANDLERS = {
   INITIALIZE: 'INITIALIZE',
@@ -81,16 +82,16 @@ export const AuthProvider = (props) => {
     }
 
     if (isAuthenticated) {
-      const user = {
-        id: '5e86809283e28b96d2d38537',
-        avatar: '/assets/avatars/avatar-anika-visser.png',
-        name: 'Anika Visser',
-        email: 'anika.visser@devias.io'
-      };
+      // const user = {
+      //   id: '5e86809283e28b96d2d38537',
+      //   avatar: '/assets/avatars/avatar-anika-visser.png',
+      //   name: 'AAA',
+      //   email: 'anika.visser@devias.io'
+      // };
 
       dispatch({
         type: HANDLERS.INITIALIZE,
-        payload: user
+        // payload: user
       });
     } else {
       dispatch({
@@ -127,32 +128,27 @@ export const AuthProvider = (props) => {
     });
   };
 
-  const signIn = async (email, password) => {
-    if (email !== 'demo@devias.io' || password !== 'Password123!') {
-      throw new Error('Please check your email and password');
-    }
+  const signIn = async (username, password) => {
+    var {user} = await requestServer(serverPath.SIGN_IN, httpsMethod.POST, {username,password})
+    console.log(user)
+    
 
-    try {
-      window.sessionStorage.setItem('authenticated', 'true');
-    } catch (err) {
-      console.error(err);
-    }
-
-    const user = {
-      id: '5e86809283e28b96d2d38537',
-      avatar: '/assets/avatars/avatar-anika-visser.png',
-      name: 'Anika Visser',
-      email: 'anika.visser@devias.io'
-    };
-
+    //Original definition of user
+    // const user = {
+    //   id: '5e86809283e28b96d2d38537',
+    //   avatar: '/assets/avatars/avatar-anika-visser.png',
+    //   name: 'Anika Visser',
+    //   email: 'anika.visser@devias.io'
+    // };
+    
     dispatch({
       type: HANDLERS.SIGN_IN,
       payload: user
     });
   };
 
-  const signUp = async (email, name, password) => {
-    throw new Error('Sign up is not implemented');
+  const signUp = async (username, password) => {
+    var response = await requestServer(serverPath.SIGN_UP, httpsMethod.POST, {username, password})
   };
 
   const signOut = () => {
