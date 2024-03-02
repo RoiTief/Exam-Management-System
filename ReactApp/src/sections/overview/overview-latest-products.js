@@ -1,5 +1,6 @@
 import { formatDistanceToNow } from 'date-fns';
 import PropTypes from 'prop-types';
+import {httpsMethod, serverPath, requestServer,TOKEN_FIELD_NAME} from 'src/utils/rest-api-call';
 import ArrowRightIcon from '@heroicons/react/24/solid/ArrowRightIcon';
 import EllipsisVerticalIcon from '@heroicons/react/24/solid/EllipsisVerticalIcon';
 import {
@@ -16,53 +17,38 @@ import {
   ListItemText,
   SvgIcon
 } from '@mui/material';
+import { useEffect, useState } from 'react';
 
-export const OverviewLatestProducts = (props) => {
-  const { products = [], sx } = props;
+
+export const OverviewAssignedTasks = () => {
+ const [tasks, setList] = useState([])
+
+ useEffect(() => {
+  const fetchList = async () => {
+    try {
+      const {tasks} = await requestServer(serverPath.VIEW_TASKS, httpsMethod.GET);
+      setList(tasks);
+    }
+    catch(err){
+      console.error('Error fetching task list:', err)
+    }
+  }
+
+  fetchList();
+ }, [])
+  
 
   return (
-    <Card sx={sx}>
-      <CardHeader title="Latest Products" />
+    <Card>
+      <CardHeader title="My Tasks" />
       <List>
-        {products.map((product, index) => {
-          const hasDivider = index < products.length - 1;
-          const ago = formatDistanceToNow(product.updatedAt);
-
+        {tasks.map((task) => {
           return (
-            <ListItem
-              divider={hasDivider}
-              key={product.id}
-            >
-              <ListItemAvatar>
-                {
-                  product.image
-                    ? (
-                      <Box
-                        component="img"
-                        src={product.image}
-                        sx={{
-                          borderRadius: 1,
-                          height: 48,
-                          width: 48
-                        }}
-                      />
-                    )
-                    : (
-                      <Box
-                        sx={{
-                          borderRadius: 1,
-                          backgroundColor: 'neutral.200',
-                          height: 48,
-                          width: 48
-                        }}
-                      />
-                    )
-                }
-              </ListItemAvatar>
+            <ListItem>
               <ListItemText
-                primary={product.name}
+                primary={task.type}
                 primaryTypographyProps={{ variant: 'subtitle1' }}
-                secondary={`Updated ${ago} ago`}
+                secondary={task.description}
                 secondaryTypographyProps={{ variant: 'body2' }}
               />
               <IconButton edge="end">
@@ -74,26 +60,13 @@ export const OverviewLatestProducts = (props) => {
           );
         })}
       </List>
-      <Divider />
       <CardActions sx={{ justifyContent: 'flex-end' }}>
-        <Button
-          color="inherit"
-          endIcon={(
-            <SvgIcon fontSize="small">
-              <ArrowRightIcon />
-            </SvgIcon>
-          )}
-          size="small"
-          variant="text"
-        >
-          View all
-        </Button>
       </CardActions>
     </Card>
   );
 };
 
-OverviewLatestProducts.propTypes = {
+OverviewAssignedTasks.propTypes = {
   products: PropTypes.array,
   sx: PropTypes.object
 };

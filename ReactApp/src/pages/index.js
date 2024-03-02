@@ -1,13 +1,13 @@
 import Head from 'next/head';
 import { subDays, subHours } from 'date-fns';
-import { Box, Container, Unstable_Grid2 as Grid } from '@mui/material';
+import { Box, Stack, Typography, Container, Unstable_Grid2 as Grid } from '@mui/material';
 import { Layout as DashboardLayout } from 'src/layouts/dashboard/layout';
-import { OverviewBudget } from 'src/sections/overview/overview-budget';
+import { OverviewFAQ } from 'src/sections/overview/overview-FAQ';
 import { OverviewLatestOrders } from 'src/sections/overview/overview-latest-orders';
-import { OverviewLatestProducts } from 'src/sections/overview/overview-latest-products';
+import { OverviewAssignedTasks } from 'src/sections/overview/overview-latest-products';
 import { OverviewSales } from 'src/sections/overview/overview-sales';
 import { OverviewTasksProgress } from 'src/sections/overview/overview-tasks-progress';
-import { OverviewTotalCustomers } from 'src/sections/overview/overview-total-customers';
+import { OverviewQuestionTips } from 'src/sections/overview/overview-question-tips';
 import { OverviewTotalProfit } from 'src/sections/overview/overview-total-profit';
 import { OverviewTraffic } from 'src/sections/overview/overview-traffic';
 
@@ -22,51 +22,44 @@ const Page = () => (
     </Head>
     <Box
       component="main"
-      sx={{
-        flexGrow: 1,
-        py: 8
-      }}
     >
       <Container maxWidth="xl">
-        <Grid
-          container
-          spacing={3}
-        >
-          <Grid
-            xs={12}
-            sm={6}
-            lg={3}
-          >
-            <OverviewBudget
-              difference={12}
-              positive
-              sx={{ height: '100%' }}
-              value="$24k"
-            />
-          </Grid>
-          <Grid
-            xs={12}
-            sm={6}
-            lg={3}
-          >
-            <OverviewTotalCustomers
-              difference={16}
-              positive={false}
-              sx={{ height: '100%' }}
-              value="1.6k"
-            />
-          </Grid>
-          <Grid
-            xs={12}
-            sm={6}
-            lg={3}
-          >
-            <OverviewTasksProgress
-              sx={{ height: '100%' }}
-              value={75.5}
-            />
-          </Grid>
-          <Grid
+        <Stack spacing={10} direction="row" justifyContent="space-between">
+
+          <Stack item> 
+          {/*left section*/}
+                  hello
+          </Stack>
+
+          <Stack container item xs={8} direction="column" justifyContent="flex-end" spacing={4} >
+          {/*right section*/}
+
+            <Stack container item spacing={1} direction="row" > 
+            {/*upper section*/}
+              <Grid item xs={12} sm={10} lg={2} height='100%'>
+                <OverviewTasksProgress/>
+              </Grid>
+              <Grid item xs={12} sm={10} lg={2} height='100%'>
+                <OverviewQuestionTips/>
+              </Grid>
+              <Grid item xs={12} sm={10} lg={2} height='100%'>
+                <OverviewFAQ/>
+              </Grid>
+            </Stack>
+            <Stack container item spacing={4} direction="row" >
+              {/*lower section*/}
+              <Grid item xs={12} md={6} lg={4}>
+                <OverviewAssignedTasks/>
+              </Grid>
+            </Stack>
+          </Stack>
+        </Stack>
+      </Container>
+    </Box>
+  </>
+);
+
+{/* <Grid
             xs={12}
             sm={6}
             lg={3}
@@ -105,46 +98,7 @@ const Page = () => (
               sx={{ height: '100%' }}
             />
           </Grid>
-          <Grid
-            xs={12}
-            md={6}
-            lg={4}
-          >
-            <OverviewLatestProducts
-              products={[
-                {
-                  id: '5ece2c077e39da27658aa8a9',
-                  image: '/assets/products/product-1.png',
-                  name: 'Healthcare Erbology',
-                  updatedAt: subHours(now, 6).getTime()
-                },
-                {
-                  id: '5ece2c0d16f70bff2cf86cd8',
-                  image: '/assets/products/product-2.png',
-                  name: 'Makeup Lancome Rouge',
-                  updatedAt: subDays(subHours(now, 8), 2).getTime()
-                },
-                {
-                  id: 'b393ce1b09c1254c3a92c827',
-                  image: '/assets/products/product-5.png',
-                  name: 'Skincare Soja CO',
-                  updatedAt: subDays(subHours(now, 1), 1).getTime()
-                },
-                {
-                  id: 'a6ede15670da63f49f752c89',
-                  image: '/assets/products/product-6.png',
-                  name: 'Makeup Lipstick',
-                  updatedAt: subDays(subHours(now, 3), 3).getTime()
-                },
-                {
-                  id: 'bcad5524fe3a2f8f8620ceda',
-                  image: '/assets/products/product-7.png',
-                  name: 'Healthcare Ritual',
-                  updatedAt: subDays(subHours(now, 5), 6).getTime()
-                }
-              ]}
-              sx={{ height: '100%' }}
-            />
+          
           </Grid>
           <Grid
             xs={12}
@@ -216,12 +170,9 @@ const Page = () => (
               ]}
               sx={{ height: '100%' }}
             />
-          </Grid>
-        </Grid>
-      </Container>
-    </Box>
-  </>
-);
+          </Grid> */}
+          {/* </Grid>
+          <Grid item xs = {0}/> */}
 
 Page.getLayout = (page) => (
   <DashboardLayout>

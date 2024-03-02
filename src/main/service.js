@@ -120,7 +120,7 @@ function viewMyTasks(req, res, next){
     try{
         let tasks = application.viewMyTasks(process.pid);
         req.log.info("user viewd his tasks");
-        res.send(200, tasks)
+        res.send(200, {code:200,tasks})
         next()
     }
     catch(err){

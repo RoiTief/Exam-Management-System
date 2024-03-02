@@ -1,5 +1,4 @@
 import PropTypes from 'prop-types';
-import ListBulletIcon from '@heroicons/react/24/solid/ListBulletIcon';
 import {
   Avatar,
   Box,
@@ -10,49 +9,64 @@ import {
   SvgIcon,
   Typography
 } from '@mui/material';
+import { useEffect, useState } from 'react';
+import {httpsMethod, serverPath, requestServer,TOKEN_FIELD_NAME} from 'src/utils/rest-api-call';
 
-export const OverviewTasksProgress = (props) => {
-  const { value, sx } = props;
 
+export const OverviewTasksProgress = () => {
+  const [value, setValue] = useState(0)
+
+  useEffect(() => {
+   const fetchList = async () => {
+     try {
+      const {tasks} = await requestServer(serverPath.VIEW_TASKS, httpsMethod.GET);
+      
+      var finishedTasks = tasks.filter(task => task.finished).length
+      var totalTasks = tasks.length
+      setValue((finishedTasks / totalTasks) * 100)
+     }
+     catch(err){
+       console.error('Error fetching task list:', err)
+     }
+   }
+ 
+   fetchList();
+  }, [])
+
+
+
+  
   return (
-    <Card sx={sx}>
+    <Card>
       <CardContent>
         <Stack
           alignItems="flex-start"
-          direction="row"
+          direction="column"
           justifyContent="space-between"
-          spacing={3}
+          spacing={1}
         >
           <Stack spacing={1}>
-            <Typography
-              color="text.secondary"
-              gutterBottom
-              variant="overline"
-            >
-              Task Progress
-            </Typography>
-            <Typography variant="h4">
-              {value}%
-            </Typography>
-          </Stack>
           <Avatar
             sx={{
-              backgroundColor: 'warning.main',
-              height: 56,
-              width: 56
+              width: 100,
+              height: 100,
+              backgroundColor: 'lightgray', // Adjust background color as needed
             }}
           >
-            <SvgIcon>
-              <ListBulletIcon />
-            </SvgIcon>
-          </Avatar>
+            <Typography variant="h5">
+              {value}%
+            </Typography>
+            </Avatar>
+            <Typography
+              color="text.secondary"
+              fontWeight= "bold"
+              fontSize={20}
+              align= "center"            
+              >
+              Task Progress
+            </Typography>
+          </Stack>
         </Stack>
-        <Box sx={{ mt: 3 }}>
-          <LinearProgress
-            value={value}
-            variant="determinate"
-          />
-        </Box>
       </CardContent>
     </Card>
   );
@@ -60,5 +74,4 @@ export const OverviewTasksProgress = (props) => {
 
 OverviewTasksProgress.propTypes = {
   value: PropTypes.number.isRequired,
-  sx: PropTypes.object
 };

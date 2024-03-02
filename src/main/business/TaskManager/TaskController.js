@@ -7,6 +7,10 @@ class TaskController {
     constructor(){
         this._tasks = new Map();
         this._id = 1
+
+        //to do- remove- for testing
+        this.addTaskToSpecificUser(null, 0, TaskTypes.courseAdminRequest, {}, "testing",
+                                            "a", (applicationFacade, response) => { console.log("task finished") } )
     }
 
     addTask(forWhom, priority, type, properties, description, assignedUser, action){
