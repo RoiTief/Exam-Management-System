@@ -1,6 +1,8 @@
 import { createContext, useContext, useEffect, useReducer, useRef } from 'react';
 import PropTypes from 'prop-types';
-import {httpsMethod, serverPath, requestServer} from 'src/utils/rest-api-call';
+import {httpsMethod, serverPath, requestServer,TOKEN_FIELD_NAME} from 'src/utils/rest-api-call';
+import Cookies from 'js-cookie';
+
 
 const HANDLERS = {
   INITIALIZE: 'INITIALIZE',
@@ -82,16 +84,16 @@ export const AuthProvider = (props) => {
     }
 
     if (isAuthenticated) {
-      const user = {
-        id: '5e86809283e28b96d2d38537',
-        avatar: '/assets/avatars/avatar-anika-visser.png',
-        name: 'Anika Visser',
-        email: 'anika.visser@devias.io'
-      };
+      // const user = {
+      //   id: '5e86809283e28b96d2d38537',
+      //   avatar: '/assets/avatars/avatar-anika-visser.png',
+      //   name: 'AAA',
+      //   email: 'anika.visser@devias.io'
+      // };
 
       dispatch({
         type: HANDLERS.INITIALIZE,
-        payload: user
+        // payload: user
       });
     } else {
       dispatch({
@@ -129,18 +131,17 @@ export const AuthProvider = (props) => {
   };
 
   const signIn = async (username, password) => {
-    var response = await requestServer(serverPath.SIGN_IN, httpsMethod.POST, {username,password})
-    if(response.status !== 200){
-      throw new Error('Internal error, please try again');
-    }
+    var {user,token} = await requestServer(serverPath.SIGN_IN, httpsMethod.POST, {username,password})
+    Cookies.set(TOKEN_FIELD_NAME,token)
 
-    const user = {
-      id: '5e86809283e28b96d2d38537',
-      avatar: '/assets/avatars/avatar-anika-visser.png',
-      name: 'Anika Visser',
-      email: 'anika.visser@devias.io'
-    };
-
+    //Original definition of user
+    // const user = {
+    //   id: '5e86809283e28b96d2d38537',
+    //   avatar: '/assets/avatars/avatar-anika-visser.png',
+    //   name: 'Anika Visser',
+    //   email: 'anika.visser@devias.io'
+    // };
+    
     dispatch({
       type: HANDLERS.SIGN_IN,
       payload: user
@@ -149,10 +150,6 @@ export const AuthProvider = (props) => {
 
   const signUp = async (username, password) => {
     var response = await requestServer(serverPath.SIGN_UP, httpsMethod.POST, {username, password})
-    if(response.status !== 200){
-      throw new Error('Internal error, please try again');
-    }
-    
   };
 
   const signOut = () => {
