@@ -45,8 +45,8 @@ export const Layout = (props) => {
               href="/"
               sx={{
                 display: 'inline-flex',
-                height: 32,
-                width: 32
+                height: 50,
+                width: 250
               }}
             >
               <Logo />
@@ -68,38 +68,6 @@ export const Layout = (props) => {
             }
           }}
         >
-          <Box sx={{ p: 3 }}>
-            <Typography
-              align="center"
-              color="inherit"
-              sx={{
-                fontSize: '24px',
-                lineHeight: '32px',
-                mb: 1
-              }}
-              variant="h1"
-            >
-              Welcome to{' '}
-              <Box
-                component="a"
-                sx={{ color: '#15B79E' }}
-                target="_blank"
-              >
-                Devias Kit
-              </Box>
-            </Typography>
-            <Typography
-              align="center"
-              sx={{ mb: 3 }}
-              variant="subtitle1"
-            >
-              A professional kit that comes with ready-to-use MUI components.
-            </Typography>
-            <img
-              alt=""
-              src="/assets/auth-illustration.svg"
-            />
-          </Box>
         </Grid>
       </Grid>
     </Box>
