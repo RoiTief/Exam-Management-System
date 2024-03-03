@@ -14,6 +14,7 @@ export const httpsMethod = {
 export const serverPath = {
     SIGN_UP: 'signUp',
     SIGN_IN: 'signIn',
+    SIGN_OUT: 'logout',
     VIEW_TASKS: 'viewMyTasks',
     GET_USERNAME: 'viewUsername',
     GET_USER_TYPE: 'viewUserType'

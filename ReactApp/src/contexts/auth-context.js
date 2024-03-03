@@ -144,7 +144,8 @@ export const AuthProvider = (props) => {
     var response = await requestServer(serverPath.SIGN_UP, httpsMethod.POST, {username, password})
   };
 
-  const signOut = () => {
+  const signOut = async () => {
+    var response = await requestServer(serverPath.SIGN_OUT, httpsMethod.POST, {})
     dispatch({
       type: HANDLERS.SIGN_OUT
     });

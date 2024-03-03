@@ -96,7 +96,7 @@ function logout(req, res, next) {
     try{
         application.logout(process.pid);
         req.log.info("user logged out");
-        res.send(200);
+        res.send(200, {code:200});
         next()
     }
     catch(err){
