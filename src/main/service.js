@@ -122,7 +122,7 @@ function addCourse(req, res, next) {
         course = application.addCourse(process.pid, req.body.courseId, req.body.courseName,
             req.body.courseAdminUsername);
         req.log.info(course.courseName, "course is created, and a request to admin this course was sent");
-        res.send(200, course)
+        res.send(200, {code:200,course})
         next()
     }
     catch(err){
@@ -192,16 +192,16 @@ function finishATask(req, res, next) {
 
 /**
  * create a task for the new TA to accept being a TA of this course
- * @param TAUsername - the new TA username
+ * @param username - the new TA username
  * @throws {Error} - if there is no user with name @username
  *                 - if the user named username is not a courseAdminUsername (is not assigned to a course)
  *                 - if there is no user named TAUsername
  */
 function addTA(req, res, next){
     try{
-        application.addTA(process.pid, req.body.TAUsername);
-        req.log.info(req.body.TAUsername, "a request was sent to user to become a TA");
-        res.send(200)
+        application.addTA(process.pid, req.body.username);
+        req.log.info(req.body.username, "a request was sent to user to become a TA");
+        res.send(200, {code:200})
         next()
     }
     catch(err){
@@ -212,20 +212,20 @@ function addTA(req, res, next){
 
 /**
  * create a task for the new grader to accept being a grader of this course
- * @param graderUsername
+ * @param username
  * @throws {Error} - if there is no user with name @username
  *                 - if the user named username is not a courseAdminUsername or is not assigned to a course
  *                 - if there is no user named graderUsername
  */
 function addGrader(req, res, next){
     try{
-        application.addGrader(process.pid, req.body.graderUsername);
-        req.log.info(req.body.TAUsername, "a request was sent to user to become a TA");
-        res.send(200)
+        application.addGrader(process.pid, req.body.username);
+        req.log.info(req.body.username, "a request was sent to user to become a TA");
+        res.send(200, {code:200})
         next()
     }
     catch(err){
-        req.log.warn(err.message, 'unable to request a user to become a TA');
+        req.log.warn(err.message, 'unable to request a user to become a grader');
         next(err);
     }
 }

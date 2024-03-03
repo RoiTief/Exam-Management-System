@@ -18,7 +18,9 @@ export const serverPath = {
     VIEW_TASKS: 'viewMyTasks',
     GET_USERNAME: 'viewUsername',
     GET_USER_TYPE: 'viewUserType',
-    ADD_COURSE: 'addCourse'
+    ADD_COURSE: 'addCourse',
+    ADD_TA: 'addTA',
+    ADD_GRADER: 'addGrader'
 }
 
 
