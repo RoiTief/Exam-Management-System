@@ -6,6 +6,45 @@ require('dotenv').config();
 
 
 /**
+ * get the username of the logged in user
+ * @returns {string} - returns the username
+ * @returns Error - if the prosses is not logged in to a user
+ */
+function viewUsername(req, res, next) {
+    try{
+        let username = application.getUsername(process.pid);
+        req.log.info("username request");
+        res.send(200, {code:200,username})
+        next()
+    }
+    catch(err){
+        req.log.warn(err.message, 'unable to retrieve username');
+        next(err);
+    }
+}
+
+/**
+ * get the username type- "User", "TA", "Course Admin", "Grader", "System Admin"
+ * @returns {string} - returns the type
+ * @returns Error - if the prosses is not logged in to a user
+ */
+function viewUserType(req, res, next) {
+    try{
+        let userType = application.getUserType(process.pid);
+        req.log.info("user type request");
+        res.send(200, {code:200,userType})
+        next()
+    }
+    catch(err){
+        req.log.warn(err.message, 'unable to retrieve user type');
+        next(err);
+    }
+}
+
+
+
+
+/**
  * register a user
  * @param req.username - the new user username - needs to be unique
  * @param req.password - the new user password
@@ -57,7 +96,7 @@ function logout(req, res, next) {
     try{
         application.logout(process.pid);
         req.log.info("user logged out");
-        res.send(200);
+        res.send(200, {code:200});
         next()
     }
     catch(err){
@@ -83,7 +122,7 @@ function addCourse(req, res, next) {
         course = application.addCourse(process.pid, req.body.courseId, req.body.courseName,
             req.body.courseAdminUsername);
         req.log.info(course.courseName, "course is created, and a request to admin this course was sent");
-        res.send(200, course)
+        res.send(200, {code:200,course})
         next()
     }
     catch(err){
@@ -120,7 +159,7 @@ function viewMyTasks(req, res, next){
     try{
         let tasks = application.viewMyTasks(process.pid);
         req.log.info("user viewd his tasks");
-        res.send(200, tasks)
+        res.send(200, {code:200,tasks})
         next()
     }
     catch(err){
@@ -153,16 +192,16 @@ function finishATask(req, res, next) {
 
 /**
  * create a task for the new TA to accept being a TA of this course
- * @param TAUsername - the new TA username
+ * @param username - the new TA username
  * @throws {Error} - if there is no user with name @username
  *                 - if the user named username is not a courseAdminUsername (is not assigned to a course)
  *                 - if there is no user named TAUsername
  */
 function addTA(req, res, next){
     try{
-        application.addTA(process.pid, req.body.TAUsername);
-        req.log.info(req.body.TAUsername, "a request was sent to user to become a TA");
-        res.send(200)
+        application.addTA(process.pid, req.body.username);
+        req.log.info(req.body.username, "a request was sent to user to become a TA");
+        res.send(200, {code:200})
         next()
     }
     catch(err){
@@ -173,20 +212,20 @@ function addTA(req, res, next){
 
 /**
  * create a task for the new grader to accept being a grader of this course
- * @param graderUsername
+ * @param username
  * @throws {Error} - if there is no user with name @username
  *                 - if the user named username is not a courseAdminUsername or is not assigned to a course
  *                 - if there is no user named graderUsername
  */
 function addGrader(req, res, next){
     try{
-        application.addGrader(process.pid, req.body.graderUsername);
-        req.log.info(req.body.TAUsername, "a request was sent to user to become a TA");
-        res.send(200)
+        application.addGrader(process.pid, req.body.username);
+        req.log.info(req.body.username, "a request was sent to user to become a TA");
+        res.send(200, {code:200})
         next()
     }
     catch(err){
-        req.log.warn(err.message, 'unable to request a user to become a TA');
+        req.log.warn(err.message, 'unable to request a user to become a grader');
         next(err);
     }
 }
@@ -195,6 +234,8 @@ function addGrader(req, res, next){
 
 
 module.exports = {
+    viewUsername: viewUsername,
+    viewUserType: viewUserType,
     signUp: signUp,
     signIn: signIn, 
     logout: logout,

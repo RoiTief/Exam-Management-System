@@ -17,7 +17,6 @@ import { Layout as AuthLayout } from 'src/layouts/auth/layout';
         submit: null
       },
       validationSchema: Yup.object({
-        
         username: Yup
           .string()
           .max(255)
@@ -101,6 +100,7 @@ import { Layout as AuthLayout } from 'src/layouts/auth/layout';
                     onChange={formik.handleChange}
                     value={formik.values.name}
                   />
+
                   <TextField
                     error={!!(formik.touched.password && formik.errors.password)}
                     fullWidth

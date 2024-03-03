@@ -32,3 +32,4 @@ ReactApp/yarn-error.log*
 /src/.vs/
 /src/coverage/
 .env
+.vscode

@@ -133,14 +133,6 @@ export const AuthProvider = (props) => {
   const signIn = async (username, password) => {
     var {user,token} = await requestServer(serverPath.SIGN_IN, httpsMethod.POST, {username,password})
     Cookies.set(TOKEN_FIELD_NAME,token)
-
-    //Original definition of user
-    // const user = {
-    //   id: '5e86809283e28b96d2d38537',
-    //   avatar: '/assets/avatars/avatar-anika-visser.png',
-    //   name: 'Anika Visser',
-    //   email: 'anika.visser@devias.io'
-    // };
     
     dispatch({
       type: HANDLERS.SIGN_IN,
@@ -152,7 +144,8 @@ export const AuthProvider = (props) => {
     var response = await requestServer(serverPath.SIGN_UP, httpsMethod.POST, {username, password})
   };
 
-  const signOut = () => {
+  const signOut = async () => {
+    var response = await requestServer(serverPath.SIGN_OUT, httpsMethod.POST, {})
     dispatch({
       type: HANDLERS.SIGN_OUT
     });

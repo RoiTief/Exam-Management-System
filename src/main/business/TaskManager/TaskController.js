@@ -7,6 +7,7 @@ class TaskController {
     constructor(){
         this._tasks = new Map();
         this._id = 1
+
     }
 
     addTask(forWhom, priority, type, properties, description, assignedUser, action){
