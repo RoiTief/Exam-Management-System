@@ -17,7 +17,8 @@ export const serverPath = {
     SIGN_OUT: 'logout',
     VIEW_TASKS: 'viewMyTasks',
     GET_USERNAME: 'viewUsername',
-    GET_USER_TYPE: 'viewUserType'
+    GET_USER_TYPE: 'viewUserType',
+    ADD_COURSE: 'addCourse'
 }
 
 
