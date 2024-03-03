@@ -1,12 +1,9 @@
 import PropTypes from 'prop-types';
 import {
   Avatar,
-  Box,
   Card,
   CardContent,
-  LinearProgress,
   Stack,
-  SvgIcon,
   Typography
 } from '@mui/material';
 import { useEffect, useState } from 'react';
@@ -23,7 +20,7 @@ export const OverviewTasksProgress = () => {
       
       var finishedTasks = tasks.filter(task => task.finished).length
       var totalTasks = tasks.length
-      setValue((finishedTasks / totalTasks) * 100)
+      setValue(totalTasks!=0 ? (finishedTasks / totalTasks) * 100 : 0)
      }
      catch(err){
        console.error('Error fetching task list:', err)

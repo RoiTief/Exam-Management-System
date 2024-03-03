@@ -1,35 +1,26 @@
-import { format } from 'date-fns';
-import PropTypes from 'prop-types';
-import ArrowRightIcon from '@heroicons/react/24/solid/ArrowRightIcon';
 import {
   Box,
   Button,
   Card,
-  CardActions,
   CardHeader,
-  Divider,
-  SvgIcon,
-  Table,
   Stack,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableRow
 } from '@mui/material';
-import { SeverityPill } from 'src/components/severity-pill';
 import { useEffect, useState } from 'react';
-import {httpsMethod, serverPath, requestServer,TOKEN_FIELD_NAME} from 'src/utils/rest-api-call';
-import {SERVER_ROOT_URL} from 'src/utils/rest-api-call'
+import {httpsMethod, serverPath, requestServer} from 'src/utils/rest-api-call';
+import { AddCourse } from 'src/sections/popUps/AddCoursePopup';
+import { AddPersonalToCourse } from '../popUps/AddPersonalToCoursePopup';
+import { AddQuestion } from '../popUps/AddQuestionPopup';
+import { AssignNewTask } from '../popUps/AssignNewTaskPopup';
+import { CheckStaffProgress } from '../popUps/CheckStaffProgressPopup';
+import { CreateExam } from '../popUps/CreateExamPopup';
+import { CreateTask } from '../popUps/CreateTaskPopup';
+import { ViewCourse } from '../popUps/ViewCoursePopup';
 
-const statusMap = {
-  pending: 'warning',
-  delivered: 'success',
-  refunded: 'error'
-};
 
 export const OverviewUserOptions = () => {
   const [username, setUsername] = useState('');
   const [usertype, setUseType] = useState('User');
+  const [PopupOpen, setPopupOpen] = useState(null);
 
   useEffect( () => {
     const fetchUsername = async () => {
@@ -61,70 +52,120 @@ export const OverviewUserOptions = () => {
   const buttons = [
     {
       for: ['Course Admin', 'TA'], 
-      title: 'Browse Questions',
-      path: '/allQuestions',
+      title: 'View Course',
+      action: 'ViewCourse',
     },
     {
       for: ['Course Admin', 'TA'], 
       title: 'Add Question',
-      path: '/addQuestion',
+      action: 'AddQuestion',
     },
     {
       for: ['System Admin'], 
       title: 'Add Course',
-      path: '/addCourse',
+      action: 'AddCourse',
     },
     {
       for: ['Course Admin', 'TA', 'Grader'], 
       title: 'Ask for New Task',
-      path: '/askForNewTask',
+      action: 'AssignNewTask',
     },
     {
       for: ['Course Admin'],
       title: 'Check Staff Progress',
-      path: '/checkStaffProgress',
+      action: 'CheckStaffProgress',
     },
     {
       for: ['Course Admin'],
       title: 'Add New Personal To Course',
-      path: '/addPersonal',
+      action: 'AddPersonalToCourse',
     },
     {
       for: ['Course Admin'],
       title: 'Create Task',
-      path: '/createTask',
+      action: 'CreateTask',
     },
     {
       for: ['Course Admin'],
       title: 'Create Exam',
-      path: '/createExam',
+      action: 'CreateExam',
     }
   ];
 
+  const handleButtonClick = (action) => {
+    setPopupOpen(action)
+  };
+
+  const closePopup = () => { 
+    setPopupOpen(null)
+  };
+
+  useEffect( (action) => {handleButtonClick(action)}, [])
+
+  useEffect( () => {closePopup()}, [])
 
   return (
+    <Stack>
     <Card>
       <CardHeader title={`Hello, ${username}`}/>
-        <Box sx={{ minWidth: 75 }}>
+        <Stack sx={{ minWidth: 75 }}>
           <Stack component="ul" spacing={2}>
-            {buttons.filter(button => button.for.includes(usertype))
+            {buttons
+            .filter(button => button.for.includes(usertype))
             .map((item) => {
               return (
                 <Stack>
                   <Button size="small" variant="contained"
-                  href={`${SERVER_ROOT_URL}${item.path}`} type='submit'>
-                    {`${item.title}`}
-                  </Button>
+                   type='submit' onClick={() => handleButtonClick(item.action)}>
+                    {item.title}
+                  </Button>            
                 </Stack>
-              );
+              )
             })}
-          </Stack>
-        </Box>      
+          </Stack>  
+        </Stack>
     </Card>
+      <div>
+        <AddCourse
+        isOpen={PopupOpen=='AddCourse'}
+        closePopup={() => closePopup()} />
+      </div>
+      <div>
+        <AddPersonalToCourse
+        isOpen={PopupOpen=='AddPersonalToCourse'}
+        closePopup={() => closePopup()} />
+      </div>
+      <div>
+        <AddQuestion
+        isOpen={PopupOpen=='AddQuestion'}
+        closePopup={() => closePopup()} />
+      </div>
+      <div>
+        <AssignNewTask
+        isOpen={PopupOpen=='AssignNewTask'}
+        closePopup={() => closePopup()} />
+      </div>
+      <div>
+        <CheckStaffProgress
+        isOpen={PopupOpen=='CheckStaffProgress'}
+        closePopup={() => closePopup()} />
+      </div>
+      <div>
+        <CreateExam
+        isOpen={PopupOpen=='CreateExam'}
+        closePopup={() => closePopup()} />
+      </div>
+      <div>
+        <CreateTask
+        isOpen={PopupOpen=='CreateTask'}
+        closePopup={() => closePopup()} />
+      </div>
+      <div>
+        <ViewCourse
+        isOpen={PopupOpen=='ViewCourse'}
+        closePopup={() => closePopup()} />
+      </div>
+    </Stack>
   );
 };
 
-OverviewUserOptions.prototype = {
-  orders: PropTypes.array,
-  sx: PropTypes.object
-};
