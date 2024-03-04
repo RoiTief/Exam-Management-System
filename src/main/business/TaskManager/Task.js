@@ -5,7 +5,7 @@ const TaskTypes = {
 }
 
 class Task {
-    constructor(taskId, forWhom, priority, type, properties, description, assignedUser, action) {
+    constructor(taskId, forWhom, priority, type, properties, description, options, assignedUser, action) {
         this.taskId = taskId
         this.forWhom = forWhom;
         this.priority = priority;
@@ -15,6 +15,8 @@ class Task {
         this.assignedUser = assignedUser;
         this.action = action
         this.finished = false;
+        this.options = options;
+        this.response = null;
     }
 
 }

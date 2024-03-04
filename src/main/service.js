@@ -181,7 +181,7 @@ function finishATask(req, res, next) {
     try{
         application.finishATask(process.pid, req.body.taskId, req.body.response);
         req.log.info(req.body.taskId, "task is marked as finished");
-        res.send(200)
+        res.send(200, {code:200})
         next()
     }
     catch(err){
