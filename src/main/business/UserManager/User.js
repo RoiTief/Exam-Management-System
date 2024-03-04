@@ -6,7 +6,12 @@ class User {
         this.password = password;
         this.course = null
     }
+    
+    getUserType(){
+        return "User"
+    }
 }
+
 
 module.exports = User;
 

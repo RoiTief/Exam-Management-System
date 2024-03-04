@@ -8,6 +8,33 @@ class ApplicationFacade{
         this.userController = new UserController();
         this.taskController = new TaskController();
         this.courseController = new CourseController();
+
+        //todo - remove for testing:
+        this.register(24632, "courseAdmin", 123)
+        this.register(24632, "TA", 123)
+        this.register(24632, "grader", 123)
+        this.signIn(24632, "Admin", "Aa123456")
+        this.addCourse(24632, 111, "course name", "courseAdmin")
+        this.logout(24632)
+        this.signIn(24632, "courseAdmin", 123)
+        this.finishATask(24632, 1, "yes")
+        console.log(this.getUserType(24632))
+        this.addGrader(24632, "grader")
+        this.addTA(24632, "TA")
+        this.logout(24632)
+        this.signIn(24632, "TA", 123)
+        this.finishATask(24632, 3, "yes")
+        this.logout(24632)
+        this.signIn(24632, "grader", 123)
+        this.finishATask(24632, 2, "yes")    
+    }
+
+    getUsername(pid){
+        return this.userController.getLoggedInName(pid)
+    }
+
+    getUserType(pid){
+        return this.userController.getType(pid)
     }
 
     /**

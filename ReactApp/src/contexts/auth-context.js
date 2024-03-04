@@ -137,8 +137,8 @@ export const AuthProvider = (props) => {
   };
 
   const signIn = async (username, password) => {
-    var { user, token } = await requestServer(serverPath.SIGN_IN, httpsMethod.POST, { username, password })
-    Cookies.set(TOKEN_FIELD_NAME, token)
+  var { user, token } = await requestServer(serverPath.SIGN_IN, httpsMethod.POST, { username, password })
+  Cookies.set(TOKEN_FIELD_NAME, token)
 
     //Original definition of user
     // const user = {
@@ -158,7 +158,8 @@ export const AuthProvider = (props) => {
     var response = await requestServer(serverPath.SIGN_UP, httpsMethod.POST, { username, password })
   };
 
-  const signOut = () => {
+  const signOut = async () => {
+    var response = await requestServer(serverPath.SIGN_OUT, httpsMethod.POST, {})
     dispatch({
       type: HANDLERS.SIGN_OUT
     });

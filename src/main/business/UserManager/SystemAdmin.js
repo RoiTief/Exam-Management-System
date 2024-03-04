@@ -6,6 +6,10 @@ class SystemAdmin extends User{
         super(username, password);
     }
 
+    getUserType(){
+        return "System Admin"
+    }
+
     verifyType(type){
         if(type !== "SystemAdmin"){
             throw Error("the user is a SystemAdmin and doesnt have the sufficient permissions");

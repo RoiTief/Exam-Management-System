@@ -29,6 +29,13 @@ class UserController {
         if(!this._isLoggedIn(pid))
             throw new Error("the user is not logged in");
     }
+
+    getType(pid){
+        this._varifyLogged(pid)
+        let username = this._logged_in_users.get(pid)
+        let user = this.getUser(username)
+        return user.getUserType()
+    }
     
     register(pid, username, password){
         this._varifyNotLoggedIn(pid);

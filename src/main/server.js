@@ -158,16 +158,19 @@ function createServer(options) {
     //{}
     server.post('/logout', service.logout);
     //{"courseId", "courseName", "courseAdminUsername"}
-    server.post('/systemAdmin/addCourse', service.addCourse);
+    server.post('/addCourse', service.addCourse);
     //{"taskId"}
     server.post('/finishATask', service.finishATask);
-    //{"TAUsername"}
-    server.post('/CourseAdmin/addTA', service.addTA)
-    //{"graderUsername"}
-    server.post('/CourseAdmin/addGrader', service.addGrader)
+    //{"username"}
+    server.post('/addTA', service.addTA)
+    //{"username"}
+    server.post('/addGrader', service.addGrader)
 
     server.get('/viewMyTasks', service.viewMyTasks);
     server.get('/viewMyCourse', service.viewMyCourse);
+    server.get('/viewUsername', service.viewUsername);
+    server.get('/viewUserType', service.viewUserType);
+
 
 
     server.get('/', function root(req, res, next) {
