@@ -20,7 +20,8 @@ export const serverPath = {
     GET_USER_TYPE: 'viewUserType',
     ADD_COURSE: 'addCourse',
     ADD_TA: 'addTA',
-    ADD_GRADER: 'addGrader'
+    ADD_GRADER: 'addGrader',
+    FINISH_TASK: 'finishATask'
 }
 
 

@@ -9,7 +9,7 @@ import {
   Card,
   CardActions,
   CardHeader,
-  Divider,
+  Stack,
   IconButton,
   List,
   ListItem,
@@ -18,10 +18,23 @@ import {
   SvgIcon
 } from '@mui/material';
 import { useEffect, useState } from 'react';
+import { Task } from '../popUps/TaskPopup';
 
 
 export const OverviewAssignedTasks = () => {
  const [tasks, setList] = useState([])
+ const [taskToView, setTask] = useState(null);
+
+ const handleButtonClick = (task) => {
+  setTask(task)
+};
+
+const closePopup = () => { 
+  setTask(null)
+};
+
+useEffect( (task) => {handleButtonClick(task)}, [])
+useEffect( () => {closePopup()}, [])
 
  useEffect(() => {
   const fetchList = async () => {
@@ -37,20 +50,32 @@ export const OverviewAssignedTasks = () => {
   fetchList();
  }, [])
   
+ const handleClick = () => {}
 
   return (
+    <Stack>
     <Card>
       <CardHeader title="My Tasks" />
       <List>
         {tasks.map((task) => {
           return (
             <ListItem>
+              <button 
+                onClick={() => handleButtonClick(task)}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  cursor: 'pointer',
+                  textAlign: 'left',
+                }}
+              >
               <ListItemText
                 primary={task.type}
                 primaryTypographyProps={{ variant: 'subtitle1' }}
                 secondary={task.description}
                 secondaryTypographyProps={{ variant: 'body2' }}
               />
+              </button>
               <IconButton edge="end">
                 <SvgIcon>
                   <EllipsisVerticalIcon />
@@ -63,6 +88,13 @@ export const OverviewAssignedTasks = () => {
       <CardActions sx={{ justifyContent: 'flex-end' }}>
       </CardActions>
     </Card>
+    <div>
+        <Task
+        isOpen={taskToView!=null}
+        closePopup={() => closePopup()} 
+        task = {taskToView} />
+      </div>
+    </Stack>
   );
 };
 

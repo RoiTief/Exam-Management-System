@@ -166,7 +166,7 @@ function createServer(options) {
     server.post('/logout', service.logout);
     //{"courseId", "courseName", "courseAdminUsername"}
     server.post('/addCourse', service.addCourse);
-    //{"taskId"}
+    //{"taskId", "response"}
     server.post('/finishATask', service.finishATask);
     //{"username"}
     server.post('/addTA', service.addTA)

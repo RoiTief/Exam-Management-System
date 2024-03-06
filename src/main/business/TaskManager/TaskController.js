@@ -7,17 +7,16 @@ class TaskController {
     constructor(){
         this._tasks = new Map();
         this._id = 1
-
     }
 
-    addTask(forWhom, priority, type, properties, description, assignedUser, action){
-        this._tasks.set(this._id, new Task(this._id, forWhom, priority, type, properties, description, assignedUser, action));
+    addTask(forWhom, priority, type, properties, description, options, assignedUser, action){
+        this._tasks.set(this._id, new Task(this._id, forWhom, priority, type, properties, description, options, assignedUser, action));
         this._id += 1
         return true;
     }
 
-    addTaskToSpecificUser(forWhom, priority, type, properties, description, assignedUser, action){
-        this._tasks.set(this._id, new Task(this._id, forWhom, priority, type, properties, description, assignedUser, action));
+    addTaskToSpecificUser(forWhom, priority, type, properties, description, options, assignedUser, action){
+        this._tasks.set(this._id, new Task(this._id, forWhom, priority, type, properties, description, options, assignedUser, action));
         this._id += 1
         return true;
     }
@@ -35,6 +34,7 @@ class TaskController {
     courseAdminRequestTask(courseAdminUsername, course) {
         this.addTaskToSpecificUser(null, 0, TaskTypes.courseAdminRequest, course.properties,
             "if you accept this request you will be the course admin of course "+course.properties.courseName+", do notice that this will overrun you current course assignment",
+            ["yes", "no"],
             courseAdminUsername, (applicationFacade, response) => {
                                             if(response === "yes")
                                                 applicationFacade.setUserAsCourseAdmin(courseAdminUsername, course)
@@ -42,8 +42,9 @@ class TaskController {
     }
 
     newTARequestTask(TAUsername, course) {
-        this.addTaskToSpecificUser(null, 0, TaskTypes.newTARequest, [course],
+        this.addTaskToSpecificUser(null, 0, TaskTypes.newTARequest, course.properties,
             "if you accept this request you will be a TA in course number "+course.courseId,
+            ["yes", "no"],
             TAUsername, (applicationFacade, approved) => {
                 if(approved === "yes")
                     applicationFacade.setUserAsTA(TAUsername, course)
@@ -51,8 +52,9 @@ class TaskController {
     }
 
     newGraderRequestTask(graderUsername, course) {
-        this.addTaskToSpecificUser(null, 0, TaskTypes.newTARequest, [course],
-            "if you accept this request you will be a TA in course number "+course.courseId,
+        this.addTaskToSpecificUser(null, 0, TaskTypes.newGraderRequestTask, course.properties,
+            "if you accept this request you will be a grader in course number "+course.courseId,
+            ["yes", "no"],
             graderUsername, (applicationFacade, approved) => {
                 if(approved === "yes")
                     applicationFacade.setUserAsGrader(graderUsername, course)
@@ -65,6 +67,7 @@ class TaskController {
             throw new Error("there is no task with this id");
         if(task.assignedUser !== username)
             throw new Error("the task is not assigned to you!")
+        task.response = response;
         task.action(applicationFacade, response);
         task.finished = true;
     }
