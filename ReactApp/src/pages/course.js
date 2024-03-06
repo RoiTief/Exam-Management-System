@@ -28,11 +28,11 @@ const UserTable = (userType, userData) => (
         <TableBody>
           {userData?.map((row) => (
             <TableRow
-              key={row.username}
+              key={row}
               sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
             >
               <TableCell component="th" scope="row">
-                {row.username}
+                {row}
               </TableCell>
             </TableRow>
           ))}
