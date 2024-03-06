@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useReducer, useRef } from 'react';
 import PropTypes from 'prop-types';
-import {httpsMethod, serverPath, requestServer,TOKEN_FIELD_NAME} from 'src/utils/rest-api-call';
+import { httpsMethod, serverPath, requestServer, TOKEN_FIELD_NAME } from 'src/utils/rest-api-call';
 import Cookies from 'js-cookie';
 
 
@@ -78,22 +78,21 @@ export const AuthProvider = (props) => {
     let isAuthenticated = false;
 
     try {
-      isAuthenticated = window.sessionStorage.getItem('authenticated') === 'true';
+      if (Cookies.get(TOKEN_FIELD_NAME)) {
+        isAuthenticated = true
+      }
+      else {
+        isAuthenticated = false
+      }
+
     } catch (err) {
       console.error(err);
     }
 
     if (isAuthenticated) {
-      // const user = {
-      //   id: '5e86809283e28b96d2d38537',
-      //   avatar: '/assets/avatars/avatar-anika-visser.png',
-      //   name: 'AAA',
-      //   email: 'anika.visser@devias.io'
-      // };
 
       dispatch({
         type: HANDLERS.INITIALIZE,
-        // payload: user
       });
     } else {
       dispatch({
@@ -131,9 +130,17 @@ export const AuthProvider = (props) => {
   };
 
   const signIn = async (username, password) => {
-    var {user,token} = await requestServer(serverPath.SIGN_IN, httpsMethod.POST, {username,password})
-    Cookies.set(TOKEN_FIELD_NAME,token)
-    
+  var { user, token } = await requestServer(serverPath.SIGN_IN, httpsMethod.POST, { username, password })
+  Cookies.set(TOKEN_FIELD_NAME, token)
+
+    //Original definition of user
+    // const user = {
+    //   id: '5e86809283e28b96d2d38537',
+    //   avatar: '/assets/avatars/avatar-anika-visser.png',
+    //   name: 'Anika Visser',
+    //   email: 'anika.visser@devias.io'
+    // };
+
     dispatch({
       type: HANDLERS.SIGN_IN,
       payload: user
@@ -141,7 +148,7 @@ export const AuthProvider = (props) => {
   };
 
   const signUp = async (username, password) => {
-    var response = await requestServer(serverPath.SIGN_UP, httpsMethod.POST, {username, password})
+    var response = await requestServer(serverPath.SIGN_UP, httpsMethod.POST, { username, password })
   };
 
   const signOut = async () => {
