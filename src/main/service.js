@@ -141,7 +141,7 @@ function viewMyCourse(req, res, next){
     try{
         let course = application.viewMyCourse(process.pid);
         req.log.info("course admin viewd his course");
-        res.send(200, course)
+        res.send(200, {code:200, course})
         next()
     }
     catch(err){

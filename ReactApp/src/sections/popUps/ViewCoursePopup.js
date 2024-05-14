@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
 import {overlayStyle, popupStyle} from './popup-style'
+import Page from 'src/pages/course';
 
 export const ViewCourse = (props) => {
   const { isOpen, closePopup } = props;
@@ -9,8 +10,7 @@ export const ViewCourse = (props) => {
         <div className="popup">
             <div onClick={closePopup} style={overlayStyle}></div>
             <div className="popup-content" style={popupStyle}>
-                <h2>This is view Course Popup</h2>
-                <p>This is some content inside the popup.</p>
+                <Page></Page>
                 <button onClick={closePopup}>Close</button>
             </div>
         </div>

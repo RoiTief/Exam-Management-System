@@ -31,10 +31,7 @@ function formatReq(req, res, body, cb) {
     return cb(null, body);
 }
 
-///--- Handlers
-//todo 
-function authenticate(req, res, next) {
-    
+function extractAndVerifyJwt(req, res, next){
     if (req.headers && req.headers.authorization) {
         const parts = req.headers.authorization.split(' ');
         if (parts.length === 2) {
@@ -44,26 +41,36 @@ function authenticate(req, res, next) {
             if (/^(?:Bearer|JWT)$/i.test(scheme)) {
                 var token = credentials;
                 try {
-                    jwt.verify(token, process.env.SECRET_KEY,);
-                    return true
+                    token = jwt.verify(token, process.env.SECRET_KEY);
+                    return token
                 } catch (err) {
                     console.log({ err })
                     next(new errors.InvalidCredentialsError('Invalid token'))
-                    return false;
+                    return null;
                 }
             }
             else {
                 next(new errors.InvalidCredentialsError('Format is Authorization: Bearer [token] or Jwt [token]'))
-                return false
+                return null
             }
         } else {
             next(new errors.InvalidCredentialsError('Format is Authorization: Bearer [token] or Jwt [token]'))
-            return false
+            return null
         }
     }
     else {
         next(new errors.InvalidCredentialsError('Format is Authorization: Bearer [token] or Jwt [token]'))
-        return false
+        return null
+    }
+}
+///--- Handlers
+//todo 
+function authenticate(req, res, next) {
+    let token = extractAndVerifyJwt(req, res, next)
+    if(token){
+        // Assigning all token fields to the request
+        req.username = token.username
+        next()
     }
 }
 
