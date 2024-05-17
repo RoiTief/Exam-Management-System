@@ -18,6 +18,8 @@
     "mime": "^3.0.0",
     "negotiator": "^0.6.2",
     "once": "^1.4.0",
+    "pg": "^8.11.5",
+    "pg-hstore": "^2.3.4",
     "pidusage": "^3.0.2",
     "pino": "^7.11.0",
     "posix-getopt": "^1.2.1",
@@ -28,6 +30,7 @@
     "restify-errors": "^8.0.2",
     "semver": "^7.3.8",
     "send": "^0.18.0",
+    "sequelize": "^6.37.3",
     "spdy": "^4.0.0",
     "uuid": "^9.0.0",
     "vasync": "^2.2.0"
