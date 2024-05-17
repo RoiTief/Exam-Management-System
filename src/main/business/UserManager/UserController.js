@@ -51,7 +51,7 @@ class UserController {
         this._varifyNotLoggedIn(pid)
         this.verifyUserRegistered(username)
         let user = this.getUser(username)
-        if(!user.password === password){
+        if(user.password !== password){
             throw new Error("incorrect password")
         }
         this._logged_in_users.set(pid, username)
