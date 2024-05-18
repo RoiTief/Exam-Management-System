@@ -29,11 +29,11 @@ export const items = [
     children: [
       {
         title: 'Simple Meta-Question',
-        path: '/',
+        path: '/create/simple',
       },
       {
         title: 'Appendix Meta-Question',
-        path: '/',
+        path: '/customers',
       }
     ]
   },
