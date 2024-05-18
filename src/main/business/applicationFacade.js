@@ -1,5 +1,5 @@
 const UserController  = require('./UserManager/UserController.js' );
-const TaskController = require('./TaskManager/TaskController.js');
+const TaskController = require('./Tasks/TaskController.js');
 const CourseController = require('./CourseManager/CourseController.js');
 
 
@@ -90,7 +90,6 @@ class ApplicationFacade{
         this.userController.verifySystemAdmin(pid);
         this.userController.verifyUserRegistered(courseAdminUsername)
         let course = this.courseController.createCourse(courseID, courseName);
-        this.taskController.courseAdminRequestTask(courseAdminUsername, course);
         return course;
     }
 
@@ -126,7 +125,6 @@ class ApplicationFacade{
     addTA(pid, TAUsername){
         let course = this.userController.verifyCourseAdmin(pid);
         this.userController.verifyUserRegistered(TAUsername)
-        this.taskController.newTARequestTask(TAUsername, course);
     }
 
     /**
@@ -150,7 +148,6 @@ class ApplicationFacade{
     addGrader(pid, graderUsername){
         let course = this.userController.verifyCourseAdmin(pid);
         this.userController.verifyUserRegistered(graderUsername)
-        this.taskController.newGraderRequestTask(graderUsername, course);
     }
 
     /**
@@ -237,9 +234,9 @@ class ApplicationFacade{
      * @return {[Task]}
      * @throws {Error} - if there is no user logged in pid
      */
-    viewMyTasks(pid){
+    async viewMyTasks(pid){
         let username = this.userController.getLoggedInName(pid);
-        return this.taskController.getTasksOf(username);
+        return await this.taskController.getUserTasksA(username);
     }
 
     /**
@@ -275,7 +272,7 @@ class ApplicationFacade{
      */
     finishATask(pid, taskId, response){
         let username = this.userController.getLoggedInName(pid)
-        this.taskController.finishTask(username, taskId, response, this);
+        // this.taskController.finishTask(username, taskId, response, this);
     }
 
     /**
