@@ -2,13 +2,14 @@ import React, { useState } from 'react';
 import { Box, Button, Container, TextField, Typography, IconButton } from '@mui/material';
 import { AddCircleOutline, RemoveCircleOutline, FormatTextdirectionLToR, FormatTextdirectionRToL } from '@mui/icons-material';
 import { Layout as DashboardLayout } from 'src/layouts/dashboard/layout';
-import { router } from 'next/client';
+import { useRouter } from 'next/router';
 
 const Page = () => {
   const [stem, setStem] = useState('');
-  const [correctAnswers, setCorrectAnswers] = useState([{ text: '', isRTL: false }]);
-  const [distractors, setDistractors] = useState([{ text: '', isRTL: false }]);
-  const [isStemRTL, setIsStemRTL] = useState(false);
+  const [correctAnswers, setCorrectAnswers] = useState([{ text: '', isRTL: true }]);
+  const [distractors, setDistractors] = useState([{ text: '', isRTL: true }]);
+  const [isStemRTL, setIsStemRTL] = useState(true);
+  const router = useRouter();
 
   const handleStemChange = (e) => {
     setStem(e.target.value);
@@ -27,7 +28,7 @@ const Page = () => {
   };
 
   const addCorrectAnswer = () => {
-    setCorrectAnswers([...correctAnswers, { text: '', isRTL: false }]);
+    setCorrectAnswers([...correctAnswers, { text: '', isRTL: true }]);
   };
 
   const removeCorrectAnswer = (index) => {
@@ -37,7 +38,7 @@ const Page = () => {
   };
 
   const addDistractor = () => {
-    setDistractors([...distractors, { text: '', isRTL: false }]);
+    setDistractors([...distractors, { text: '', isRTL: true }]);
   };
 
   const removeDistractor = (index) => {
@@ -75,7 +76,6 @@ const Page = () => {
   };
 
   return (
-    <>
     <Box
       sx={{
         minHeight: '100vh',
@@ -103,7 +103,7 @@ const Page = () => {
               sx={{ direction: isStemRTL ? 'rtl' : 'ltr', mb: 1 }}
             />
             <IconButton onClick={toggleStemDirection}>
-              {isStemRTL ? <FormatTextdirectionLToR /> : <FormatTextdirectionRToL />}
+              {isStemRTL ? <FormatTextdirectionRToL /> : <FormatTextdirectionLToR />}
             </IconButton>
           </Box>
           <Box sx={{ mb: 2 }}>
@@ -122,7 +122,7 @@ const Page = () => {
                   sx={{ direction: answer.isRTL ? 'rtl' : 'ltr', mr: 1 }}
                 />
                 <IconButton onClick={() => toggleCorrectAnswerDirection(index)}>
-                  {answer.isRTL ? <FormatTextdirectionLToR /> : <FormatTextdirectionRToL />}
+                  {answer.isRTL ? <FormatTextdirectionRToL /> : <FormatTextdirectionLToR />}
                 </IconButton>
                 <IconButton onClick={() => removeCorrectAnswer(index)}>
                   <RemoveCircleOutline />
@@ -149,7 +149,7 @@ const Page = () => {
                   sx={{ direction: distractor.isRTL ? 'rtl' : 'ltr', mr: 1 }}
                 />
                 <IconButton onClick={() => toggleDistractorDirection(index)}>
-                  {distractor.isRTL ? <FormatTextdirectionLToR /> : <FormatTextdirectionRToL />}
+                  {distractor.isRTL ? <FormatTextdirectionRToL /> : <FormatTextdirectionLToR />}
                 </IconButton>
                 <IconButton onClick={() => removeDistractor(index)}>
                   <RemoveCircleOutline />
@@ -166,7 +166,6 @@ const Page = () => {
         </form>
       </Container>
     </Box>
-    </>
   );
 };
 
