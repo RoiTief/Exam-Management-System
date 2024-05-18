@@ -1,9 +1,11 @@
 import NextLink from 'next/link';
 import PropTypes from 'prop-types';
-import { Box, ButtonBase } from '@mui/material';
+import { Box, ButtonBase, Collapse, List } from '@mui/material';
+import { useState} from 'react';
 
 export const SideNavItem = (props) => {
-  const { active = false, disabled, external, icon, path, title } = props;
+    const { active = false, disabled, external, icon, path, title, children } = props;
+    const [open, setOpen] = useState(false);
 
   const linkProps = path
     ? external
@@ -17,6 +19,13 @@ export const SideNavItem = (props) => {
         href: path
       }
     : {};
+
+    const handleToggle = () => {
+        if (children) {
+            setOpen((prevOpen) => !prevOpen);
+        }
+    };
+
 
   return (
     <li>
@@ -39,6 +48,7 @@ export const SideNavItem = (props) => {
           }
         }}
         {...linkProps}
+        onClick={handleToggle}
       >
         {icon && (
           <Box
@@ -78,6 +88,24 @@ export const SideNavItem = (props) => {
           {title}
         </Box>
       </ButtonBase>
+        {children && (
+            <Collapse in={open} timeout="auto" unmountOnExit>
+                <List component="div" disablePadding>
+                    {children.map((child) => (
+                        <SideNavItem
+                            key={child.title}
+                            active={active}
+                            disabled={child.disabled}
+                            external={child.external}
+                            icon={child.icon}
+                            path={child.path}
+                            title={child.title}
+                            children={child.children}
+                        />
+                    ))}
+                </List>
+            </Collapse>
+        )}
     </li>
   );
 };
@@ -88,5 +116,6 @@ SideNavItem.propTypes = {
   external: PropTypes.bool,
   icon: PropTypes.node,
   path: PropTypes.string,
-  title: PropTypes.string.isRequired
+  title: PropTypes.string.isRequired,
+  children: PropTypes.arrayOf(PropTypes.object)
 };
