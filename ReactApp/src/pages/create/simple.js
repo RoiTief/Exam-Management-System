@@ -72,6 +72,7 @@ const Page = () => {
     console.log(metaQuestion);
     router.push('/');
     // Submit the metaQuestion object to your backend or API
+
   };
 
   return (
