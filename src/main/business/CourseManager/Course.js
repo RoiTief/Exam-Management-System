@@ -25,6 +25,10 @@ class Course{
     setUserAsGrader(username){
         this.personal.Graders.push(username)
     }
+
+    addSimpleMetaQuestion(stem, correctAnswers, distractors, appendix = null){
+        this.Metaquestions.push(new MetaQuestion(stem, correctAnswers, distractors, appendix))
+    }
 }
 
 module.exports = Course;
