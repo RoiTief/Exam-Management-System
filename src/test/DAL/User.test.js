@@ -2,7 +2,7 @@
 const initSequelize = require("../../main/DAL/Sequelize");
 const defineUserModel = require("../../main/DAL/User/User");
 const UserRepository = require("../../main/DAL/User/UserRepository");
-const { PK_NOT_EXISTS, PK_ALREADY_EXISTS, EMAIL_ALREADY_EXISTS } = require("../../main/EmsError");
+const { PK_NOT_EXISTS, PK_ALREADY_EXISTS, EMAIL_ALREADY_EXISTS } = require("../../main/EMSError");
 
 const testDbConfig = {
     database: 'db_t',
@@ -20,6 +20,7 @@ firstName: 'testFirstname',
 lastName: 'testLastName',
 email: 'testEmail',
 password: 'testPassword',
+userType: 'admin',
 };
 
 
