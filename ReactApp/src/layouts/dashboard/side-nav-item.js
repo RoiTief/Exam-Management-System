@@ -1,11 +1,11 @@
 import NextLink from 'next/link';
 import PropTypes from 'prop-types';
 import { Box, ButtonBase, Collapse, List } from '@mui/material';
-import { useState} from 'react';
+import { useState } from 'react';
 
 export const SideNavItem = (props) => {
-    const { active = false, disabled, external, icon, path, title, children } = props;
-    const [open, setOpen] = useState(false);
+  const { active = false, disabled, external, icon, path, title, children, level } = props;
+  const [open, setOpen] = useState(false);
 
   const linkProps = path
     ? external
@@ -26,7 +26,6 @@ export const SideNavItem = (props) => {
         }
     };
 
-
   return (
     <li>
       <ButtonBase
@@ -35,7 +34,7 @@ export const SideNavItem = (props) => {
           borderRadius: 1,
           display: 'flex',
           justifyContent: 'flex-start',
-          pl: '16px',
+          pl: `${16 + level * 16}px`, // Increase padding based on level
           pr: '16px',
           py: '6px',
           textAlign: 'left',
@@ -88,24 +87,25 @@ export const SideNavItem = (props) => {
           {title}
         </Box>
       </ButtonBase>
-        {children && (
-            <Collapse in={open} timeout="auto" unmountOnExit>
-                <List component="div" disablePadding>
-                    {children.map((child) => (
-                        <SideNavItem
-                            key={child.title}
-                            active={active}
-                            disabled={child.disabled}
-                            external={child.external}
-                            icon={child.icon}
-                            path={child.path}
-                            title={child.title}
-                            children={child.children}
-                        />
-                    ))}
-                </List>
-            </Collapse>
-        )}
+      {children && (
+        <Collapse in={open} timeout="auto" unmountOnExit>
+          <List component="div" disablePadding>
+            {children.map((child) => (
+              <SideNavItem
+                key={child.title}
+                active={active}
+                disabled={child.disabled}
+                external={child.external}
+                icon={child.icon}
+                path={child.path}
+                title={child.title}
+                children={child.children}
+                level={level + 1} // Increase level for children
+              />
+            ))}
+          </List>
+        </Collapse>
+      )}
     </li>
   );
 };
@@ -117,5 +117,6 @@ SideNavItem.propTypes = {
   icon: PropTypes.node,
   path: PropTypes.string,
   title: PropTypes.string.isRequired,
-  children: PropTypes.arrayOf(PropTypes.object)
+  children: PropTypes.arrayOf(PropTypes.object),
+  level: PropTypes.number // Add level prop type
 };

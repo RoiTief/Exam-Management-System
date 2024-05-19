@@ -1,173 +1,236 @@
-import React, { useState } from 'react';
-import { Box, Button, Container, TextField, Typography, IconButton } from '@mui/material';
+import React from 'react';
+import { Box, Button, Container, TextField, Typography, IconButton, Chip } from '@mui/material';
 import { AddCircleOutline, RemoveCircleOutline, FormatTextdirectionLToR, FormatTextdirectionRToL } from '@mui/icons-material';
 import { Layout as DashboardLayout } from 'src/layouts/dashboard/layout';
-import { router } from 'next/client';
+import { useRouter } from 'next/router';
+import { Formik, Form, FieldArray } from 'formik';
+import * as Yup from 'yup';
+
+const validationSchema = Yup.object().shape({
+  stem: Yup.string().required('Stem is required'),
+  correctAnswers: Yup.array().of(
+    Yup.object().shape({
+      text: Yup.string().required('Correct answer text is required'),
+      explanation: Yup.string().required('Explanation is required'),
+    })
+  ),
+  distractors: Yup.array().of(
+    Yup.object().shape({
+      text: Yup.string().required('Distractor text is required'),
+      explanation: Yup.string().required('Explanation is required'),
+    })
+  ),
+  keywords: Yup.array().of(Yup.string()),
+});
 
 const Page = () => {
-  const [stem, setStem] = useState('');
-  const [correctAnswers, setCorrectAnswers] = useState([{ text: '', isRTL: false }]);
-  const [distractors, setDistractors] = useState([{ text: '', isRTL: false }]);
-  const [isStemRTL, setIsStemRTL] = useState(false);
+  const router = useRouter();
 
-  const handleStemChange = (e) => {
-    setStem(e.target.value);
-  };
-
-  const handleCorrectAnswerChange = (index, e) => {
-    const newCorrectAnswers = [...correctAnswers];
-    newCorrectAnswers[index].text = e.target.value;
-    setCorrectAnswers(newCorrectAnswers);
-  };
-
-  const handleDistractorChange = (index, e) => {
-    const newDistractors = [...distractors];
-    newDistractors[index].text = e.target.value;
-    setDistractors(newDistractors);
-  };
-
-  const addCorrectAnswer = () => {
-    setCorrectAnswers([...correctAnswers, { text: '', isRTL: false }]);
-  };
-
-  const removeCorrectAnswer = (index) => {
-    const newCorrectAnswers = [...correctAnswers];
-    newCorrectAnswers.splice(index, 1);
-    setCorrectAnswers(newCorrectAnswers);
-  };
-
-  const addDistractor = () => {
-    setDistractors([...distractors, { text: '', isRTL: false }]);
-  };
-
-  const removeDistractor = (index) => {
-    const newDistractors = [...distractors];
-    newDistractors.splice(index, 1);
-    setDistractors(newDistractors);
-  };
-
-  const toggleStemDirection = () => {
-    setIsStemRTL(!isStemRTL);
-  };
-
-  const toggleCorrectAnswerDirection = (index) => {
-    const newCorrectAnswers = [...correctAnswers];
-    newCorrectAnswers[index].isRTL = !newCorrectAnswers[index].isRTL;
-    setCorrectAnswers(newCorrectAnswers);
-  };
-
-  const toggleDistractorDirection = (index) => {
-    const newDistractors = [...distractors];
-    newDistractors[index].isRTL = !newDistractors[index].isRTL;
-    setDistractors(newDistractors);
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const handleSubmit = (values, { setSubmitting }) => {
     const metaQuestion = {
-      stem,
-      correctAnswers: correctAnswers.map((item) => item.text),
-      distractors: distractors.map((item) => item.text),
+      keywords: values.keywords,
+      stem: values.stem,
+      correctAnswers: values.correctAnswers.map((item) => ({ answer: item.text, explanation: item.explanation })),
+      distractors: values.distractors.map((item) => ({ distractor: item.text, explanation: item.explanation })),
     };
     console.log(metaQuestion);
     router.push('/');
+    setSubmitting(false);
     // Submit the metaQuestion object to your backend or API
 
   };
 
   return (
-    <>
-    <Box
-      sx={{
-        minHeight: '100vh',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        backgroundColor: '#f0f0f0', // Set the desired background color here
-        padding: 2,
+    <Formik
+      initialValues={{
+        keywords: [],
+        stem: '',
+        isStemRTL: true,
+        correctAnswers: [{ text: '', explanation: '', isTextRTL: true, isExplanationRTL: true }],
+        distractors: [{ text: '', explanation: '', isTextRTL: true, isExplanationRTL: true }],
       }}
+      validationSchema={validationSchema}
+      onSubmit={handleSubmit}
     >
-      <Container maxWidth="sm" sx={{ backgroundColor: '#ffffff', borderRadius: 2, boxShadow: 3, p: 4 }}>
-        <Typography variant="h4" component="h1" gutterBottom>
-          Create Simple Meta-Question
-        </Typography>
-        <form onSubmit={handleSubmit}>
-          <Box sx={{ mb: 2 }}>
-            <TextField
-              label="Stem"
-              value={stem}
-              onChange={handleStemChange}
-              multiline
-              rows={4}
-              fullWidth
-              variant="outlined"
-              sx={{ direction: isStemRTL ? 'rtl' : 'ltr', mb: 1 }}
-            />
-            <IconButton onClick={toggleStemDirection}>
-              {isStemRTL ? <FormatTextdirectionLToR /> : <FormatTextdirectionRToL />}
-            </IconButton>
-          </Box>
-          <Box sx={{ mb: 2 }}>
-            <Typography variant="h6" component="h3">
-              Correct Answers:
-            </Typography>
-            {correctAnswers.map((answer, index) => (
-              <Box key={index} sx={{ mb: 1, display: 'flex', alignItems: 'center' }}>
+      {({ values, handleChange, handleBlur, isSubmitting, setFieldValue }) => (
+        <Form>
+          <Box
+            sx={{
+              minHeight: '100vh',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              backgroundColor: '#f0f0f0',
+              padding: 2,
+            }}
+          >
+            <Container maxWidth="sm" sx={{ backgroundColor: '#ffffff', borderRadius: 2, boxShadow: 3, p: 4 }}>
+              <Typography variant="h4" component="h1" gutterBottom>
+                Create Simple Meta-Question
+              </Typography>
+              <Box sx={{ mb: 2 }}>
+                <Typography variant="h6" component="h3">
+                  Keywords:
+                </Typography>
+                <FieldArray name="keywords">
+                  {({ push, remove }) => (
+                    <Box sx={{ mb: 1 }}>
+                      {values.keywords.map((keyword, index) => (
+                        <Chip
+                          key={index}
+                          label={keyword}
+                          onDelete={() => remove(index)}
+                          sx={{ mr: 1, mb: 1 }}
+                        />
+                      ))}
+                      <TextField
+                        placeholder="Add Keyword"
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter' && e.target.value.trim() !== '') {
+                            push(e.target.value.trim());
+                            e.target.value = '';
+                          }
+                        }}
+                        fullWidth
+                        variant="outlined"
+                        sx={{ mb: 2 }}
+                      />
+                    </Box>
+                  )}
+                </FieldArray>
+              </Box>
+              <Box sx={{ mb: 2, display: 'flex', alignItems: 'center' }}>
                 <TextField
-                  value={answer.text}
-                  onChange={(e) => handleCorrectAnswerChange(index, e)}
+                  label="Stem"
+                  name="stem"
+                  value={values.stem}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
                   multiline
-                  rows={2}
+                  rows={4}
                   fullWidth
                   variant="outlined"
-                  sx={{ direction: answer.isRTL ? 'rtl' : 'ltr', mr: 1 }}
+                  sx={{ direction: values.isStemRTL ? 'rtl' : 'ltr', mr: 1 }}
                 />
-                <IconButton onClick={() => toggleCorrectAnswerDirection(index)}>
-                  {answer.isRTL ? <FormatTextdirectionLToR /> : <FormatTextdirectionRToL />}
-                </IconButton>
-                <IconButton onClick={() => removeCorrectAnswer(index)}>
-                  <RemoveCircleOutline />
+                <IconButton onClick={() => setFieldValue('isStemRTL', !values.isStemRTL)}>
+                  {values.isStemRTL ? <FormatTextdirectionRToL /> : <FormatTextdirectionLToR />}
                 </IconButton>
               </Box>
-            ))}
-            <IconButton onClick={addCorrectAnswer}>
-              <AddCircleOutline />
-            </IconButton>
-          </Box>
-          <Box sx={{ mb: 2 }}>
-            <Typography variant="h6" component="h3">
-              Distractors:
-            </Typography>
-            {distractors.map((distractor, index) => (
-              <Box key={index} sx={{ mb: 1, display: 'flex', alignItems: 'center' }}>
-                <TextField
-                  value={distractor.text}
-                  onChange={(e) => handleDistractorChange(index, e)}
-                  multiline
-                  rows={2}
-                  fullWidth
-                  variant="outlined"
-                  sx={{ direction: distractor.isRTL ? 'rtl' : 'ltr', mr: 1 }}
-                />
-                <IconButton onClick={() => toggleDistractorDirection(index)}>
-                  {distractor.isRTL ? <FormatTextdirectionLToR /> : <FormatTextdirectionRToL />}
-                </IconButton>
-                <IconButton onClick={() => removeDistractor(index)}>
-                  <RemoveCircleOutline />
-                </IconButton>
+              <Box sx={{ mb: 2 }}>
+                <Typography variant="h6" component="h3">
+                  Correct Answers:
+                </Typography>
+                <FieldArray name="correctAnswers">
+                  {({ remove, push }) => (
+                    <>
+                      {values.correctAnswers.map((answer, index) => (
+                        <Box key={index} sx={{ mb: 1, display: 'flex', alignItems: 'center' }}>
+                          <Box key={index} sx={{ mb: 1, flex: 4 }}>
+                            <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+                              <TextField
+                                name={`correctAnswers[${index}].text`}
+                                value={values.correctAnswers[index].text}
+                                onChange={handleChange}
+                                onBlur={handleBlur}
+                                fullWidth
+                                variant="outlined"
+                                placeholder="Answer"
+                                sx={{ direction: values.correctAnswers[index].isTextRTL ? 'rtl' : 'ltr', mr: 1 }}
+                              />
+                              <IconButton onClick={() => setFieldValue(`correctAnswers[${index}].isTextRTL`, !values.correctAnswers[index].isTextRTL)}>
+                                {values.correctAnswers[index].isTextRTL ? <FormatTextdirectionRToL /> : <FormatTextdirectionLToR />}
+                              </IconButton>
+                            </Box>
+                            <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+                              <TextField
+                                name={`correctAnswers[${index}].explanation`}
+                                value={values.correctAnswers[index].explanation}
+                                onChange={handleChange}
+                                onBlur={handleBlur}
+                                fullWidth
+                                variant="outlined"
+                                placeholder="Explanation"
+                                sx={{ direction: values.correctAnswers[index].isExplanationRTL ? 'rtl' : 'ltr', mr: 1 }}
+                              />
+                              <IconButton onClick={() => setFieldValue(`correctAnswers[${index}].isExplanationRTL`, !values.correctAnswers[index].isExplanationRTL)}>
+                                {values.correctAnswers[index].isExplanationRTL ? <FormatTextdirectionRToL /> : <FormatTextdirectionLToR />}
+                              </IconButton>
+                            </Box>
+                          </Box>
+                          <IconButton onClick={() => remove(index)}>
+                            <RemoveCircleOutline />
+                          </IconButton>
+                        </Box>
+                      ))}
+                      <IconButton onClick={() => push({ text: '', explanation: '' })}>
+                        <AddCircleOutline />
+                      </IconButton>
+                    </>
+                  )}
+                </FieldArray>
               </Box>
-            ))}
-            <IconButton onClick={addDistractor}>
-              <AddCircleOutline />
-            </IconButton>
+
+              <Box sx={{ mb: 2 }}>
+                <Typography variant="h6" component="h3">
+                  Distractors:
+                </Typography>
+                <FieldArray name="distractors">
+                  {({ remove, push }) => (
+                    <>
+                      {values.distractors.map((distractor, index) => (
+                        <Box key={index} sx={{ mb: 1, display: 'flex', alignItems: 'center' }}>
+                          <Box key={index} sx={{ mb: 1, flex: 4 }}>
+                            <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+                            <TextField
+                              name={`distractors[${index}].text`}
+                              value={values.distractors[index].text}
+                              onChange={handleChange}
+                              onBlur={handleBlur}
+                              fullWidth
+                              variant="outlined"
+                              placeholder="Distractor"
+                              sx={{ direction: values.distractors[index].isTextRTL ? 'rtl' : 'ltr', mr: 1 }}
+                            />
+                              <IconButton onClick={() => setFieldValue(`distractors[${index}].isTextRTL`, !values.distractors[index].isTextRTL)}>
+                                {values.distractors[index].isTextRTL ? <FormatTextdirectionRToL /> : <FormatTextdirectionLToR />}
+                              </IconButton>
+                            </Box>
+                            <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+                            <TextField
+                              name={`distractors[${index}].explanation`}
+                              value={values.distractors[index].explanation}
+                              onChange={handleChange}
+                              onBlur={handleBlur}
+                              fullWidth
+                              variant="outlined"
+                              placeholder="Explanation"
+                              sx={{ direction: values.distractors[index].isExplanationRTL ? 'rtl' : 'ltr', mr: 1 }}
+                            />
+                              <IconButton onClick={() => setFieldValue(`distractors[${index}].isExplanationRTL`, !values.distractors[index].isExplanationRTL)}>
+                                {values.distractors[index].isExplanationRTL ? <FormatTextdirectionRToL /> : <FormatTextdirectionLToR />}
+                              </IconButton>
+                            </Box>
+                          </Box>
+                          <IconButton onClick={() => remove(index)}>
+                            <RemoveCircleOutline />
+                          </IconButton>
+                        </Box>
+                      ))}
+                      <IconButton onClick={() => push({ text: '', explanation: '' })}>
+                        <AddCircleOutline />
+                      </IconButton>
+                    </>
+                  )}
+                </FieldArray>
+              </Box>
+              <Button variant="contained" type="submit" disabled={isSubmitting}>
+                Submit
+              </Button>
+            </Container>
           </Box>
-          <Button variant="contained" type="submit">
-            Submit
-          </Button>
-        </form>
-      </Container>
-    </Box>
-    </>
+        </Form>
+      )}
+    </Formik>
   );
 };
 

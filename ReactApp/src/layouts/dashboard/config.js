@@ -20,7 +20,6 @@ export const items = [
   },
   {
     title: 'Create New Meta-Question',
-    path: '/',
     icon: (
         <SvgIcon fontSize="small">
           <UsersIcon />
@@ -33,13 +32,17 @@ export const items = [
       },
       {
         title: 'Appendix Meta-Question',
-        path: '/customers',
+        path: '/create/simple',
+      },
+      {
+        title: 'Appendix plus Meta-Question',
+        path: '/create/appendix',
       }
     ]
   },
   {
     title: 'Edit Existing Meta Questions',
-    path: '/',
+    path: '/questions/catalog',
     icon: (
         <SvgIcon fontSize="small">
           <ShoppingBagIcon />
@@ -48,7 +51,6 @@ export const items = [
   },
   {
     title: 'Generate Views For Meta Question',
-    path: '/companies',
     icon: (
       <SvgIcon fontSize="small">
         <ShoppingBagIcon />
@@ -61,7 +63,7 @@ export const items = [
       },
       {
         title: 'View question as in catalogue',
-        path: '/',
+        path: '/questions/catalog',
       },
       {
         title: 'View question as in answer sheet',
@@ -71,7 +73,6 @@ export const items = [
   },
   {
     title: 'Course staff',
-    path: '/account',
     icon: (
       <SvgIcon fontSize="small">
         <UserIcon />
