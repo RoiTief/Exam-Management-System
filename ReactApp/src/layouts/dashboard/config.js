@@ -33,7 +33,11 @@ export const items = [
       },
       {
         title: 'Appendix Meta-Question',
-        path: '/customers',
+        path: '/create/simple',
+      },
+      {
+        title: 'Appendix plus Meta-Question',
+        path: '/create/appendix',
       }
     ]
   },
@@ -61,7 +65,7 @@ export const items = [
       },
       {
         title: 'View question as in catalogue',
-        path: '/',
+        path: '/questions/catalog',
       },
       {
         title: 'View question as in answer sheet',
