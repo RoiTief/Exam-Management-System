@@ -1,5 +1,14 @@
 import React from 'react';
-import { Box, Button, Container, TextField, Typography, IconButton, Divider } from '@mui/material';
+import {
+  Box,
+  Button,
+  Container,
+  TextField,
+  Typography,
+  IconButton,
+  Divider,
+  Chip
+} from '@mui/material';
 import { AddCircleOutline, RemoveCircleOutline, FormatTextdirectionLToR, FormatTextdirectionRToL } from '@mui/icons-material';
 import { Layout as DashboardLayout } from 'src/layouts/dashboard/layout';
 import { useRouter } from 'next/router';
@@ -7,6 +16,7 @@ import { Formik, Form, FieldArray } from 'formik';
 import * as Yup from 'yup';
 
 const validationSchema = Yup.object().shape({
+  keywords: Yup.array().of(Yup.string()),
   stem: Yup.string().required('Stem is required'),
   correctAnswers: Yup.array().of(Yup.string().required('Correct answer is required')),
   distractors: Yup.array().of(Yup.string().required('Distractor is required')),
@@ -20,6 +30,7 @@ const validationSchema = Yup.object().shape({
 const Page = () => {
   const router = useRouter();
   const initialValues = {
+    keywords: [],
     stem: '',
     isStemRTL: true,
     correctAnswers: [{ text: '', isRTL: true }],
@@ -29,6 +40,7 @@ const Page = () => {
 
   const handleSubmit = (values, { setSubmitting }) => {
     const metaQuestion = {
+      keywords: values.keywords,
       stem: values.stem,
       correctAnswers: values.correctAnswers.map((item) => item.text),
       distractors: values.distractors.map((item) => item.text),
@@ -122,6 +134,37 @@ const Page = () => {
                   py: 3
                 }}
               >
+                <Box sx={{ mb: 2 }}>
+                  <Typography variant="h6" component="h3">
+                    Keywords:
+                  </Typography>
+                  <FieldArray name="keywords">
+                    {({ push, remove }) => (
+                      <Box sx={{ mb: 1 }}>
+                        {values.keywords.map((keyword, index) => (
+                          <Chip
+                            key={index}
+                            label={keyword}
+                            onDelete={() => remove(index)}
+                            sx={{ mr: 1, mb: 1 }}
+                          />
+                        ))}
+                        <TextField
+                          placeholder="Add Keyword To Describe The Question"
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter' && e.target.value.trim() !== '') {
+                              push(e.target.value.trim());
+                              e.target.value = '';
+                            }
+                          }}
+                          fullWidth
+                          variant="outlined"
+                          sx={{ mb: 2 }}
+                        />
+                      </Box>
+                    )}
+                  </FieldArray>
+                </Box>
                 <Box sx={{ mb: 2, display: 'flex', alignItems: 'center' }}>
                   <TextField
                     label="Stem"
