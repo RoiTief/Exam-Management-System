@@ -18,8 +18,18 @@ import * as Yup from 'yup';
 const validationSchema = Yup.object().shape({
   keywords: Yup.array().of(Yup.string()),
   stem: Yup.string().required('Stem is required'),
-  correctAnswers: Yup.array().of(Yup.string().required('Correct answer is required')),
-  distractors: Yup.array().of(Yup.string().required('Distractor is required')),
+  correctAnswers: Yup.array().of(
+    Yup.object().shape({
+      text: Yup.string().required('Correct answer text is required'),
+      explanation: Yup.string().required('Explanation is required'),
+    })
+  ),
+  distractors: Yup.array().of(
+    Yup.object().shape({
+      text: Yup.string().required('Distractor text is required'),
+      explanation: Yup.string().required('Explanation is required'),
+    })
+  ),
   appendix: Yup.object().shape({
     title: Yup.string().required('Title is required'),
     tag: Yup.string().required('Tag is required'),
@@ -33,8 +43,8 @@ const Page = () => {
     keywords: [],
     stem: '',
     isStemRTL: true,
-    correctAnswers: [{ text: '', isRTL: true }],
-    distractors: [{ text: '', isRTL: true }],
+    correctAnswers: [{ text: '', explanation: '', isTextRTL: true, isExplanationRTL: true }],
+    distractors: [{ text: '', explanation: '', isTextRTL: true, isExplanationRTL: true }],
     appendix: { title: '', tag: '', content: '', isTitleRTL: true, isTagRTL: true, isContentRTL: true },
   };
 
@@ -42,8 +52,8 @@ const Page = () => {
     const metaQuestion = {
       keywords: values.keywords,
       stem: values.stem,
-      correctAnswers: values.correctAnswers.map((item) => item.text),
-      distractors: values.distractors.map((item) => item.text),
+      correctAnswers: values.correctAnswers.map((item) => ({ answer: item.text, explanation: item.explanation })),
+      distractors: values.distractors.map((item) => ({ distractor: item.text, explanation: item.explanation })),
       appendix: { title: values.appendix.title, tag: values.appendix.tag, content: values.appendix.content },
     };
     console.log(metaQuestion);
@@ -191,26 +201,44 @@ const Page = () => {
                       <>
                         {values.correctAnswers.map((answer, index) => (
                           <Box key={index} sx={{ mb: 1, display: 'flex', alignItems: 'center' }}>
-                            <TextField
-                              name={`correctAnswers[${index}].text`}
-                              value={values.correctAnswers[index].text}
-                              onChange={handleChange}
-                              onBlur={handleBlur}
-                              multiline
-                              rows={2}
-                              fullWidth
-                              variant="outlined"
-                              sx={{ direction: answer.isRTL ? 'rtl' : 'ltr', mr: 1 }}
-                            />
-                            <IconButton onClick={() => setFieldValue(`correctAnswers[${index}].isRTL`, !values.correctAnswers[index].isRTL)}>
-                              {answer.isRTL ? <FormatTextdirectionRToL /> : <FormatTextdirectionLToR />}
-                            </IconButton>
+                            <Box key={index} sx={{ mb: 1, flex: 4 }}>
+                              <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+                                <TextField
+                                  name={`correctAnswers[${index}].text`}
+                                  value={values.correctAnswers[index].text}
+                                  onChange={handleChange}
+                                  onBlur={handleBlur}
+                                  fullWidth
+                                  variant="outlined"
+                                  placeholder="Answer"
+                                  sx={{ direction: values.correctAnswers[index].isTextRTL ? 'rtl' : 'ltr', mr: 1 }}
+                                />
+                                <IconButton onClick={() => setFieldValue(`correctAnswers[${index}].isTextRTL`, !values.correctAnswers[index].isTextRTL)}>
+                                  {values.correctAnswers[index].isTextRTL ? <FormatTextdirectionRToL /> : <FormatTextdirectionLToR />}
+                                </IconButton>
+                              </Box>
+                              <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+                                <TextField
+                                  name={`correctAnswers[${index}].explanation`}
+                                  value={values.correctAnswers[index].explanation}
+                                  onChange={handleChange}
+                                  onBlur={handleBlur}
+                                  fullWidth
+                                  variant="outlined"
+                                  placeholder="Explanation"
+                                  sx={{ direction: values.correctAnswers[index].isExplanationRTL ? 'rtl' : 'ltr', mr: 1 }}
+                                />
+                                <IconButton onClick={() => setFieldValue(`correctAnswers[${index}].isExplanationRTL`, !values.correctAnswers[index].isExplanationRTL)}>
+                                  {values.correctAnswers[index].isExplanationRTL ? <FormatTextdirectionRToL /> : <FormatTextdirectionLToR />}
+                                </IconButton>
+                              </Box>
+                            </Box>
                             <IconButton onClick={() => remove(index)}>
                               <RemoveCircleOutline />
                             </IconButton>
                           </Box>
                         ))}
-                        <IconButton onClick={() => push({ text: '', isRTL: true })}>
+                        <IconButton onClick={() => push({ text: '', explanation: '' })}>
                           <AddCircleOutline />
                         </IconButton>
                       </>
@@ -226,26 +254,44 @@ const Page = () => {
                       <>
                         {values.distractors.map((distractor, index) => (
                           <Box key={index} sx={{ mb: 1, display: 'flex', alignItems: 'center' }}>
-                            <TextField
-                              name={`distractors[${index}].text`}
-                              value={values.distractors[index].text}
-                              onChange={handleChange}
-                              onBlur={handleBlur}
-                              multiline
-                              rows={2}
-                              fullWidth
-                              variant="outlined"
-                              sx={{ direction: distractor.isRTL ? 'rtl' : 'ltr', mr: 1 }}
-                            />
-                            <IconButton onClick={() => setFieldValue(`distractors[${index}].isRTL`, !values.distractors[index].isRTL)}>
-                              {distractor.isRTL ? <FormatTextdirectionRToL /> : <FormatTextdirectionLToR />}
-                            </IconButton>
+                            <Box key={index} sx={{ mb: 1, flex: 4 }}>
+                              <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+                                <TextField
+                                  name={`distractors[${index}].text`}
+                                  value={values.distractors[index].text}
+                                  onChange={handleChange}
+                                  onBlur={handleBlur}
+                                  fullWidth
+                                  variant="outlined"
+                                  placeholder="Distractor"
+                                  sx={{ direction: values.distractors[index].isTextRTL ? 'rtl' : 'ltr', mr: 1 }}
+                                />
+                                <IconButton onClick={() => setFieldValue(`distractors[${index}].isTextRTL`, !values.distractors[index].isTextRTL)}>
+                                  {values.distractors[index].isTextRTL ? <FormatTextdirectionRToL /> : <FormatTextdirectionLToR />}
+                                </IconButton>
+                              </Box>
+                              <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+                                <TextField
+                                  name={`distractors[${index}].explanation`}
+                                  value={values.distractors[index].explanation}
+                                  onChange={handleChange}
+                                  onBlur={handleBlur}
+                                  fullWidth
+                                  variant="outlined"
+                                  placeholder="Explanation"
+                                  sx={{ direction: values.distractors[index].isExplanationRTL ? 'rtl' : 'ltr', mr: 1 }}
+                                />
+                                <IconButton onClick={() => setFieldValue(`distractors[${index}].isExplanationRTL`, !values.distractors[index].isExplanationRTL)}>
+                                  {values.distractors[index].isExplanationRTL ? <FormatTextdirectionRToL /> : <FormatTextdirectionLToR />}
+                                </IconButton>
+                              </Box>
+                            </Box>
                             <IconButton onClick={() => remove(index)}>
                               <RemoveCircleOutline />
                             </IconButton>
                           </Box>
                         ))}
-                        <IconButton onClick={() => push({ text: '', isRTL: true })}>
+                        <IconButton onClick={() => push({ text: '', explanation: '' })}>
                           <AddCircleOutline />
                         </IconButton>
                       </>
