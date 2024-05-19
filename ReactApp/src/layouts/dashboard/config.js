@@ -20,7 +20,6 @@ export const items = [
   },
   {
     title: 'Create New Meta-Question',
-    path: '/',
     icon: (
         <SvgIcon fontSize="small">
           <UsersIcon />
@@ -43,7 +42,7 @@ export const items = [
   },
   {
     title: 'Edit Existing Meta Questions',
-    path: '/',
+    path: '/questions/catalog',
     icon: (
         <SvgIcon fontSize="small">
           <ShoppingBagIcon />
@@ -52,7 +51,6 @@ export const items = [
   },
   {
     title: 'Generate Views For Meta Question',
-    path: '/companies',
     icon: (
       <SvgIcon fontSize="small">
         <ShoppingBagIcon />
@@ -75,7 +73,6 @@ export const items = [
   },
   {
     title: 'Course staff',
-    path: '/account',
     icon: (
       <SvgIcon fontSize="small">
         <UserIcon />
