@@ -1,97 +1,99 @@
 import PropTypes from 'prop-types';
-import {overlayStyle, popupStyle} from './popup-style'
+import { overlayStyle, popupStyle } from './popup-style';
 import { useEffect, useState } from 'react';
-import {httpsMethod, serverPath, requestServer,TOKEN_FIELD_NAME} from 'src/utils/rest-api-call';
-
+import { httpsMethod, serverPath, requestServer, TOKEN_FIELD_NAME } from 'src/utils/rest-api-call';
+import { SvgIcon, ListItemText, ListItem, Divider, Button } from '@mui/material';
+import chevronDoubleDownIcon from '@heroicons/react/20/solid/esm/ChevronDoubleDownIcon';
 
 
 export const Question = (props) => {
-  const { isOpen, closePopup, task } = props;
-  const [showMore, setShowMore] = useState(false);
-  const [answerValue, setAnswerValue] = useState('');
-  const [error, setError] = useState('');
+  const { isOpen, closePopup, question } = props;
+  const [showAllAnswers, setShowAllAnswers] = useState(false);
+  const [showAllDistractors, setShowAllDistractors] = useState(false);
 
-  const toggleShowAll = () => {
-    setShowMore(!showMore);
+  const toggleAnswers = () => {
+    setShowAllAnswers(!showAllAnswers);
   };
 
-  const handleOptionChange = (event) => {
-    setAnswerValue(event.target.value);
+  const toggleDistractors = () => {
+    setShowAllDistractors(!showAllDistractors);
   };
-
-  const handleTextInputChange = (event) => {
-    setAnswerValue(event.target.value);
-  };
-
-  const handleSubmit = async () => {
-    try {
-      await requestServer(serverPath.FINISH_TASK, httpsMethod.POST,
-        {"taskId": task.taskId,
-          "response": answerValue});
-      closePopup();
-    } catch (err) {
-      setError(err.message);
-    }
-  }
-
-
 
   return (
-    (isOpen) ? (
+    isOpen && (
       <div className="popup">
         <div onClick={closePopup} style={overlayStyle}></div>
         <div className="popup-content" style={popupStyle}>
-          {task.finished && (
-            <div style={{ backgroundColor: 'green', color: 'white', padding: '10px', textAlign: 'center', borderRadius: '5px', maxWidth: '300px', margin: '0 auto', marginBottom: '10px' }}>
-              Task Finished!
-            </div>
-          )}
-          <h1>{task.type}</h1>
-          <div style={{ position: 'absolute', top: '10px', right: '50px', fontSize: 'smaller' }}>
-            <h4>{`Task ID: ${task.taskId}`}</h4>
-            <h4>{`Priority: ${task.priority}`}</h4>
+          <button onClick={closePopup} className="close-button">X</button>
+          <h1 className="popup-title">Meta Question</h1>
+          <div className="question-section">
+            <h2>Stem</h2>
+            <p>{question.stem}</p>
           </div>
-          <p>{task.description}</p>
-          {!task.finished ? (
-            <div>
-              {task.options !== null ? (
-                <ul style={{ listStyleType: 'none', padding: 0 }}>
-                  {task.options.map((option, index) => (
-                    <li key={index}>
-                      <label>
-                        <input type="radio" name="options" value={option} onChange={handleOptionChange}/>
-                        {option}
-                      </label>
-                    </li>
-                  ))}
-                </ul>
-              ) : (
-                <input type="text"
-                       style={{ width: '100%', padding: '8px', fontSize: '16px' }}
-                       value={answerValue} onChange={handleTextInputChange}
-                       placeholder="Enter your answer..." />
-              )}
-              <ul></ul>
-              <button onClick={handleSubmit}>Submit</button>
-              {error && <p style={{ color: 'red' }}>{error}</p>}
-            </div>
-          ): (
-            <h4>{`your response was:  ${task.response}`}</h4>
-          )}
-          <p onClick={toggleShowAll}>{`need more information?`}</p>
-          <ul>
-            {Object.keys(task.properties).map((key) => (
-              (showMore) ? (
-                <li key={key}>
-                  <strong>{key}:</strong> {task.properties[key]}
+          <Divider />
+          <div className="answers-section">
+            <h2>Correct Answers</h2>
+            <ul>
+              {question.correctAnswers.slice(0, showAllAnswers ? question.correctAnswers.length : 2).map((answer, index) => (
+                <li key={`correct-${index}`}>
+                  <ListItem>
+                    <ListItemText primary={answer.text} secondary={answer.explanation} />
+                  </ListItem>
                 </li>
-              ) : "" ))}
-          </ul>
+              ))}
+            </ul>
+            {!showAllAnswers && question.correctAnswers.length > 2 && (
+              <button onClick={toggleAnswers} className="show-more-button">Show more answers</button>
+            )}
+          </div>
+          <Divider />
+          <div className="distractors-section">
+            <h2>Distractors</h2>
+            <ul>
+              {question.distractors.slice(0, showAllDistractors ? question.distractors.length : 2).map((distractor, index) => (
+                <li key={`distractor-${index}`}>
+                  <ListItem>
+                    <ListItemText primary={distractor.text} secondary={distractor.explanation} />
+                  </ListItem>
+                </li>
+              ))}
+            </ul>
+            {!showAllDistractors && question.distractors.length > 2 && (
+              <Button onClick={toggleDistractors} className="show-more-button"
+                      startIcon={(
+                        <SvgIcon fontSize="small">
+                          <chevronDoubleDownIcon />
+                        </SvgIcon>
+                      )}
+              >Show more distractors</Button>
+            )}
+          </div>
+          <Divider />
+          <div className="keywords-section">
+            <h2>Keywords</h2>
+            <ul>
+              {question.keywords.map((keyword, index) => (
+                <li key={`keyword-${index}`}>{keyword}</li>
+              ))}
+            </ul>
+          </div>
+          {question.appendix && (
+            <div className="appendix-section">
+              <Divider />
+              <h2>Appendix</h2>
+              <h3>Title: {question.appendix.title}</h3>
+              <h3>Tag: {question.appendix.tag}</h3>
+              <p>{question.appendix.content}</p>
+            </div>
+          )}
         </div>
       </div>
-    ) : ""
+    )
   );
 };
 
-
-
+Question.propTypes = {
+  isOpen: PropTypes.bool.isRequired,
+  closePopup: PropTypes.func.isRequired,
+  question: PropTypes.object.isRequired,
+};

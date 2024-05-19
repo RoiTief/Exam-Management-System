@@ -95,7 +95,7 @@ export const items = [
   },
   {
     title: 'previews exams',
-    path: '/',
+    path: '/customers',
     icon: (
       <SvgIcon fontSize="small">
         <CogIcon />
