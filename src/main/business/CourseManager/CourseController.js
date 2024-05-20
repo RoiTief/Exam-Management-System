@@ -21,6 +21,13 @@ class CourseController{
         let courseArray = Array.from(this._courses)
         sessionStorage.setItem('courses', JSON.stringify(courseArray))
     }
+
+    getCourse(courseID){
+        if(!this._courses.has(courseID)){
+            throw Error("No course found")
+        }
+        return this._courses.get(courseID);
+    }
 }
 
 module.exports = CourseController;

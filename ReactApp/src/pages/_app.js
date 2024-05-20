@@ -27,19 +27,22 @@ const App = (props) => {
     <CacheProvider value={emotionCache}>
       <Head>
         <title>
-          Devias Kit
+          Exam Management
         </title>
         <meta
           name="viewport"
           content="initial-scale=1, width=device-width"
         />
+        <link rel="icon"
+              href="https://upload.wikimedia.org/wikipedia/en/thumb/2/29/Ben-Gurion_University_of_the_Negev.svg/1200px-Ben-Gurion_University_of_the_Negev.svg.png"
+              type="image/png"/>
       </Head>
       <LocalizationProvider dateAdapter={AdapterDateFns}>
         <AuthProvider>
           <ThemeProvider theme={theme}>
-            <CssBaseline />
+            <CssBaseline/>
             <AuthConsumer>
-              {
+            {
                 (auth) => auth.isLoading
                   ? <SplashScreen />
                   : getLayout(<Component {...pageProps} />)

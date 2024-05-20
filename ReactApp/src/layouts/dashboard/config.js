@@ -10,7 +10,7 @@ import { SvgIcon } from '@mui/material';
 
 export const items = [
   {
-    title: 'Overview',
+    title: 'Home Page',
     path: '/',
     icon: (
       <SvgIcon fontSize="small">
@@ -19,65 +19,86 @@ export const items = [
     )
   },
   {
-    title: 'Customers',
-    path: '/customers',
+    title: 'Create New Meta-Question',
     icon: (
-      <SvgIcon fontSize="small">
-        <UsersIcon />
-      </SvgIcon>
-    )
+        <SvgIcon fontSize="small">
+          <UsersIcon />
+        </SvgIcon>
+    ),
+    children: [
+      {
+        title: 'Simple Meta-Question',
+        path: '/create/simple',
+      },
+      {
+        title: 'Appendix Meta-Question',
+        path: '/create/simple',
+      },
+      {
+        title: 'Appendix plus Meta-Question',
+        path: '/create/appendix',
+      }
+    ]
   },
   {
-    title: 'Companies',
-    path: '/companies',
+    title: 'Edit Existing Meta Questions',
+    path: '/questions/catalog',
+    icon: (
+        <SvgIcon fontSize="small">
+          <ShoppingBagIcon />
+        </SvgIcon>
+    ),
+  },
+  {
+    title: 'Generate Views For Meta Question',
     icon: (
       <SvgIcon fontSize="small">
         <ShoppingBagIcon />
       </SvgIcon>
-    )
+    ),
+    children: [
+      {
+        title: 'View question as in test',
+        path: '/',
+      },
+      {
+        title: 'View question as in catalogue',
+        path: '/questions/catalog',
+      },
+      {
+        title: 'View question as in answer sheet',
+        path: '/',
+      }
+    ]
   },
   {
-    title: 'Account',
-    path: '/account',
+    title: 'Course staff',
     icon: (
       <SvgIcon fontSize="small">
         <UserIcon />
       </SvgIcon>
-    )
+    ),
+    children: [
+      {
+        title: 'view Existing staff',
+        path: '/',
+      },
+      {
+        title: 'add TA',
+        path: '/',
+      },
+      {
+        title: 'Add tester',
+        path: '/',
+      }
+    ]
   },
   {
-    title: 'Settings',
-    path: '/settings',
+    title: 'previews exams',
+    path: '/',
     icon: (
       <SvgIcon fontSize="small">
         <CogIcon />
-      </SvgIcon>
-    )
-  },
-  {
-    title: 'Login',
-    path: '/auth/login',
-    icon: (
-      <SvgIcon fontSize="small">
-        <LockClosedIcon />
-      </SvgIcon>
-    )
-  },
-  {
-    title: 'Register',
-    path: '/auth/register',
-    icon: (
-      <SvgIcon fontSize="small">
-        <UserPlusIcon />
-      </SvgIcon>
-    )
-  },
-  {
-    title: 'Error',
-    path: '/404',
-    icon: (
-      <SvgIcon fontSize="small">
-        <XCircleIcon />
       </SvgIcon>
     )
   }

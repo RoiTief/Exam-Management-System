@@ -1,4 +1,5 @@
 const { DataTypes } = require('sequelize');
+const USER_TYPES = require("../../Enums");
 
 /**
  * Defines a 'User' model within the given database
@@ -28,7 +29,12 @@ function defineUserModel(sequelize) {
             password: {
                 type: DataTypes.STRING,
                 allowNull: false
-            } 
+            },
+            userType: {
+                type: DataTypes.ENUM,
+                values: Object.values(USER_TYPES),
+                allowNull: false
+            }
         }
     );
 }

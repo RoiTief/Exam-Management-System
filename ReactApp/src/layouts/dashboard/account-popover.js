@@ -17,6 +17,13 @@ export const AccountPopover = (props) => {
     },
     [onClose, auth, router]
   );
+    const handleAccount = useCallback(
+        async () => {
+            onClose?.();
+            router.push('/account');
+        },
+        [onClose, auth, router]
+    );
 
   return (
     <Popover
@@ -56,6 +63,9 @@ export const AccountPopover = (props) => {
           }
         }}
       >
+          <MenuItem onClick={handleAccount}>
+              Account Settings
+          </MenuItem>
         <MenuItem onClick={handleSignOut}>
           Sign out
         </MenuItem>
