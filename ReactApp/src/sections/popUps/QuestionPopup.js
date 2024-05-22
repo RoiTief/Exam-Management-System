@@ -76,7 +76,8 @@ export const Question = (props) => {
           <div className="keywords-section">
             <h2 style={headerStyle}>Keywords</h2>
             <Stack direction="row"
-                   spacing={1} style={{ flexWrap: 'wrap' }}>
+                   spacing={1}
+                   style={{ flexWrap: 'wrap' }}>
               {question.keywords.map((keyword, index) => (
                 <Chip key={`keyword-${index}`}
                       label={keyword} />
@@ -119,7 +120,8 @@ export const Question = (props) => {
               ))}
             </div>
             {question.distractors.length > 2 && (
-              <Button onClick={toggleDistractors} style={buttonStyle}
+              <Button onClick={toggleDistractors}
+                      style={buttonStyle}
                       startIcon={(
                         <SvgIcon fontSize="small">
                           {showAllDistractors ? <ChevronDoubleUpIcon /> : <ChevronDoubleDownIcon />}
