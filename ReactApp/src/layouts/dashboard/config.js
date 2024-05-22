@@ -41,15 +41,6 @@ export const items = [
     ]
   },
   {
-    title: 'Edit Existing Meta Questions',
-    path: '/questions/catalog',
-    icon: (
-        <SvgIcon fontSize="small">
-          <ShoppingBagIcon />
-        </SvgIcon>
-    ),
-  },
-  {
     title: 'Generate Views For Meta Question',
     icon: (
       <SvgIcon fontSize="small">
