@@ -3,17 +3,19 @@ import {
   Box,
   Button,
   Container,
-  TextField,
   Typography,
-  IconButton,
-  Divider,
-  Chip
+  Divider
 } from '@mui/material';
-import { AddCircleOutline, RemoveCircleOutline, FormatTextdirectionLToR, FormatTextdirectionRToL } from '@mui/icons-material';
 import { Layout as DashboardLayout } from 'src/layouts/dashboard/layout';
 import { useRouter } from 'next/router';
-import { Formik, Form, FieldArray } from 'formik';
+import { Formik, Form } from 'formik';
 import * as Yup from 'yup';
+
+import KeywordsSection from 'src/sections/Meta Question/keywords-edit';
+import StemSection from 'src/sections/Meta Question/stem-edit';
+import CorrectAnswersSection from 'src/sections/Meta Question/correct-answer-edit';
+import DistractorsSection from 'src/sections/Meta Question/distractors-edit';
+import AppendixSection from 'src/sections/Meta Question/apendix-edit';
 
 const validationSchema = Yup.object().shape({
   keywords: Yup.array().of(Yup.string()),
@@ -84,58 +86,12 @@ const Page = () => {
               <Typography variant="h4" component="h1" gutterBottom>
                 Create Simple Meta-Question
               </Typography>
-              <Box sx={{ mb: 2 }}>
-                <Typography variant="h6" component="h3">
-                  Appendix:
-                </Typography>
-                <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-                  <TextField
-                    label="Title"
-                    name="appendix.title"
-                    value={values.appendix.title}
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                    fullWidth
-                    variant="outlined"
-                    sx={{ direction: values.appendix.isTitleRTL ? 'rtl' : 'ltr', mr: 1 }}
-                  />
-                  <IconButton onClick={() => setFieldValue('appendix.isTitleRTL', !values.appendix.isTitleRTL)}>
-                    {values.appendix.isTitleRTL ? <FormatTextdirectionRToL /> : <FormatTextdirectionLToR />}
-                  </IconButton>
-                </Box>
-                <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-                  <TextField
-                    label="Tag"
-                    name="appendix.tag"
-                    value={values.appendix.tag}
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                    fullWidth
-                    variant="outlined"
-                    sx={{ direction: values.appendix.isTagRTL ? 'rtl' : 'ltr', mr: 1 }}
-                  />
-                  <IconButton onClick={() => setFieldValue('appendix.isTagRTL', !values.appendix.isTagRTL)}>
-                    {values.appendix.isTagRTL ? <FormatTextdirectionRToL /> : <FormatTextdirectionLToR />}
-                  </IconButton>
-                </Box>
-                <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-                  <TextField
-                    label="Content"
-                    name="appendix.content"
-                    value={values.appendix.content}
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                    multiline
-                    rows={4}
-                    fullWidth
-                    variant="outlined"
-                    sx={{ direction: values.appendix.isContentRTL ? 'rtl' : 'ltr', mr: 1 }}
-                  />
-                  <IconButton onClick={() => setFieldValue('appendix.isContentRTL', !values.appendix.isContentRTL)}>
-                    {values.appendix.isContentRTL ? <FormatTextdirectionRToL /> : <FormatTextdirectionLToR />}
-                  </IconButton>
-                </Box>
-              </Box>
+              <AppendixSection
+                values={values}
+                handleChange={handleChange}
+                handleBlur={handleBlur}
+                setFieldValue={setFieldValue}
+              />
               <Divider sx={{ borderColor: 'neutral.700' }} />
               <Box
                 sx={{
@@ -144,160 +100,29 @@ const Page = () => {
                   py: 3
                 }}
               >
-                <Box sx={{ mb: 2 }}>
-                  <Typography variant="h6" component="h3">
-                    Keywords:
-                  </Typography>
-                  <FieldArray name="keywords">
-                    {({ push, remove }) => (
-                      <Box sx={{ mb: 1 }}>
-                        {values.keywords.map((keyword, index) => (
-                          <Chip
-                            key={index}
-                            label={keyword}
-                            onDelete={() => remove(index)}
-                            sx={{ mr: 1, mb: 1 }}
-                          />
-                        ))}
-                        <TextField
-                          placeholder="Add Keyword To Describe The Question"
-                          onKeyDown={(e) => {
-                            if (e.key === 'Enter' && e.target.value.trim() !== '') {
-                              push(e.target.value.trim());
-                              e.target.value = '';
-                            }
-                          }}
-                          fullWidth
-                          variant="outlined"
-                          sx={{ mb: 2 }}
-                        />
-                      </Box>
-                    )}
-                  </FieldArray>
-                </Box>
-                <Box sx={{ mb: 2, display: 'flex', alignItems: 'center' }}>
-                  <TextField
-                    label="Stem"
-                    name="stem"
-                    value={values.stem}
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                    multiline
-                    rows={4}
-                    fullWidth
-                    variant="outlined"
-                    sx={{ direction: values.isStemRTL ? 'rtl' : 'ltr', mr: 1 }}
-                  />
-                  <IconButton onClick={() => setFieldValue('isStemRTL', !values.isStemRTL)}>
-                    {values.isStemRTL ? <FormatTextdirectionRToL /> : <FormatTextdirectionLToR />}
-                  </IconButton>
-                </Box>
-                <Box sx={{ mb: 2 }}>
-                  <Typography variant="h6" component="h3">
-                    Correct Answers:
-                  </Typography>
-                  <FieldArray name="correctAnswers">
-                    {({ remove, push }) => (
-                      <>
-                        {values.correctAnswers.map((answer, index) => (
-                          <Box key={index} sx={{ mb: 1, display: 'flex', alignItems: 'center' }}>
-                            <Box key={index} sx={{ mb: 1, flex: 4 }}>
-                              <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-                                <TextField
-                                  name={`correctAnswers[${index}].text`}
-                                  value={values.correctAnswers[index].text}
-                                  onChange={handleChange}
-                                  onBlur={handleBlur}
-                                  fullWidth
-                                  variant="outlined"
-                                  placeholder="Answer"
-                                  sx={{ direction: values.correctAnswers[index].isTextRTL ? 'rtl' : 'ltr', mr: 1 }}
-                                />
-                                <IconButton onClick={() => setFieldValue(`correctAnswers[${index}].isTextRTL`, !values.correctAnswers[index].isTextRTL)}>
-                                  {values.correctAnswers[index].isTextRTL ? <FormatTextdirectionRToL /> : <FormatTextdirectionLToR />}
-                                </IconButton>
-                              </Box>
-                              <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-                                <TextField
-                                  name={`correctAnswers[${index}].explanation`}
-                                  value={values.correctAnswers[index].explanation}
-                                  onChange={handleChange}
-                                  onBlur={handleBlur}
-                                  fullWidth
-                                  variant="outlined"
-                                  placeholder="Explanation"
-                                  sx={{ direction: values.correctAnswers[index].isExplanationRTL ? 'rtl' : 'ltr', mr: 1 }}
-                                />
-                                <IconButton onClick={() => setFieldValue(`correctAnswers[${index}].isExplanationRTL`, !values.correctAnswers[index].isExplanationRTL)}>
-                                  {values.correctAnswers[index].isExplanationRTL ? <FormatTextdirectionRToL /> : <FormatTextdirectionLToR />}
-                                </IconButton>
-                              </Box>
-                            </Box>
-                            <IconButton onClick={() => remove(index)}>
-                              <RemoveCircleOutline />
-                            </IconButton>
-                          </Box>
-                        ))}
-                        <IconButton onClick={() => push({ text: '', explanation: '' })}>
-                          <AddCircleOutline />
-                        </IconButton>
-                      </>
-                    )}
-                  </FieldArray>
-                </Box>
-                <Box sx={{ mb: 2 }}>
-                  <Typography variant="h6" component="h3">
-                    Distractors:
-                  </Typography>
-                  <FieldArray name="distractors">
-                    {({ remove, push }) => (
-                      <>
-                        {values.distractors.map((distractor, index) => (
-                          <Box key={index} sx={{ mb: 1, display: 'flex', alignItems: 'center' }}>
-                            <Box key={index} sx={{ mb: 1, flex: 4 }}>
-                              <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-                                <TextField
-                                  name={`distractors[${index}].text`}
-                                  value={values.distractors[index].text}
-                                  onChange={handleChange}
-                                  onBlur={handleBlur}
-                                  fullWidth
-                                  variant="outlined"
-                                  placeholder="Distractor"
-                                  sx={{ direction: values.distractors[index].isTextRTL ? 'rtl' : 'ltr', mr: 1 }}
-                                />
-                                <IconButton onClick={() => setFieldValue(`distractors[${index}].isTextRTL`, !values.distractors[index].isTextRTL)}>
-                                  {values.distractors[index].isTextRTL ? <FormatTextdirectionRToL /> : <FormatTextdirectionLToR />}
-                                </IconButton>
-                              </Box>
-                              <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-                                <TextField
-                                  name={`distractors[${index}].explanation`}
-                                  value={values.distractors[index].explanation}
-                                  onChange={handleChange}
-                                  onBlur={handleBlur}
-                                  fullWidth
-                                  variant="outlined"
-                                  placeholder="Explanation"
-                                  sx={{ direction: values.distractors[index].isExplanationRTL ? 'rtl' : 'ltr', mr: 1 }}
-                                />
-                                <IconButton onClick={() => setFieldValue(`distractors[${index}].isExplanationRTL`, !values.distractors[index].isExplanationRTL)}>
-                                  {values.distractors[index].isExplanationRTL ? <FormatTextdirectionRToL /> : <FormatTextdirectionLToR />}
-                                </IconButton>
-                              </Box>
-                            </Box>
-                            <IconButton onClick={() => remove(index)}>
-                              <RemoveCircleOutline />
-                            </IconButton>
-                          </Box>
-                        ))}
-                        <IconButton onClick={() => push({ text: '', explanation: '' })}>
-                          <AddCircleOutline />
-                        </IconButton>
-                      </>
-                    )}
-                  </FieldArray>
-                </Box>
+                <KeywordsSection
+                  values={values}
+                  handleChange={handleChange}
+                  handleBlur={handleBlur}
+                />
+                <StemSection
+                  values={values}
+                  handleChange={handleChange}
+                  handleBlur={handleBlur}
+                  setFieldValue={setFieldValue}
+                />
+                <CorrectAnswersSection
+                  values={values}
+                  handleChange={handleChange}
+                  handleBlur={handleBlur}
+                  setFieldValue={setFieldValue}
+                />
+                <DistractorsSection
+                  values={values}
+                  handleChange={handleChange}
+                  handleBlur={handleBlur}
+                  setFieldValue={setFieldValue}
+                />
               </Box>
               <Button variant="contained" type="submit" disabled={isSubmitting}>
                 Submit
