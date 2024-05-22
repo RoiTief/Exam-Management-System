@@ -23,8 +23,8 @@ export const serverPath = {
     ADD_TA: 'addTA',
     ADD_GRADER: 'addGrader',
     FINISH_TASK: 'finishATask',
-    VIEW_QUESTIONS: 'viewCourseMetaQuestions'
-
+    VIEW_QUESTIONS: 'viewCourseMetaQuestions',
+    ADD_SIMPLE_META_QUESTION: 'addSimpleMetaQuestion'
 }
 
 

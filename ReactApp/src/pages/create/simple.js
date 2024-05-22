@@ -37,6 +37,7 @@ const Page = () => {
     router.push('/');
     setSubmitting(false);
     // Submit the metaQuestion object to your backend or API
+
   };
 
   return (
