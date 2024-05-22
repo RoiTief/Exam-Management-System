@@ -10,6 +10,14 @@ class User {
     getUserType(){
         return "User"
     }
+
+    setCourseID(courseID){
+        this.course = courseID
+    }
+
+    getCourseID(){
+        return this.course
+    }
 }
 
 

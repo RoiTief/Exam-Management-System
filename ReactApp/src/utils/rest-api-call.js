@@ -24,7 +24,7 @@ export const serverPath = {
     ADD_GRADER: 'addGrader',
     FINISH_TASK: 'finishATask',
     VIEW_QUESTIONS: 'viewCourseMetaQuestions'
-
+    ADD_SIMPLE_META_QUESTION: 'addSimpleMetaQuestion'
 }
 
 
