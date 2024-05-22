@@ -1,18 +1,10 @@
-import { formatDistanceToNow, subDays, subHours } from 'date-fns';
-import PropTypes from 'prop-types';
-import {httpsMethod, serverPath, requestServer,TOKEN_FIELD_NAME} from 'src/utils/rest-api-call';
-import ArrowRightIcon from '@heroicons/react/24/solid/ArrowRightIcon';
-import EllipsisVerticalIcon from '@heroicons/react/24/solid/EllipsisVerticalIcon';
-import { Box, Button, Card, CardActions, Stack, IconButton, List, ListItem, ListItemText,
-  SvgIcon, Typography, Container } from '@mui/material';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { Question } from '../../sections/popUps/QuestionPopup';
+
+import { Box, Button,Stack, SvgIcon, Typography, Container } from '@mui/material';
+import React, { useCallback, useMemo, useState } from 'react';
 import { Layout as DashboardLayout } from '../../layouts/dashboard/layout';
 import Head from 'next/head';
 import PlusIcon from '@heroicons/react/24/solid/PlusIcon';
-import { CustomersSearch } from '../../sections/customer/customers-search';
 import { useRouter } from 'next/navigation';
-import { CustomersTable } from '../../sections/customer/customers-table';
 import { applyPagination } from '../../utils/apply-pagination';
 import { MetaQuestionTable } from '../../sections/Questions/question-catalog-by-stem';
 import { QuestionsSearch } from '../../sections/Questions/question-search';
@@ -27,12 +19,28 @@ const data = [
     keywords: ['key1', 'key2', 'key3']
   },
   {
-    stem: 'long stem fdnsgifbsdfpgsnffgdvbpienefvuxcvipubguiehsfvidznvbiugunhdfvx uijggggndfxviujncvbszfxghsfghdfhnhjghdnmjhgdjhjmfhtjnmjfgvjhmnmjfghm,kfmjkfcykudyghdjfhfjbhfsyhsjtbhfxsbgifdsdfvbnfv',
+    stem: 'test stem with appendix',
     correctAnswers: [{text:'answer1', explanation: 'explanation1'},
       {text:'answer2', explanation: 'explanation2'}],
     distractors: [{text:'distractor1', explanation: 'explanation1'},
       {text:'distractor2', explanation: 'explanation2'}, {text:'distractor3', explanation: 'explanation3'}],
-    keywords: ['key1', 'key2', 'key3', 'key1', 'key2', 'key3', 'key1', 'key2', 'key3', 'key1', 'key2', 'key3']
+    keywords: ['key1', 'key2', 'key3'],
+    appendix: {title: "title", tag: "tag", content: "appendix content"}
+  },
+  {
+    stem: 'really really long stem fdnsgifbsdfpgsnffgd vbpienefvuxcvipubguiehsfvi dznvbiugunhdfvx uijggggndfx viujncvbszfxghsfghdfhnhjghdnmj hgdjhjmfhtjnmjfgvjh mnmjfghm,kfmjkfcykudyghdj hfjbhfsyhsjtb fxsbgif dsdfvbn werqw '
+      + 'dfws ewsf w eargqawe g3ew erag ergeq rgeq3 rgre thg rtwgh rtwh rtwhg eartghrthraedfrgb frswtygearg thqeagr szgsrtg'
+      + 'drgfde gbaedrgh ratfhbfstgbfbftgshser tgfd bgtfrdhgfr bfsgv',
+    correctAnswers: [{text:'answer1', explanation: 'explanation1'},
+      {text:'answer2', explanation: 'explanation2'}, {text:'answer2', explanation: 'explanation2'},
+      {text:'answer2', explanation: 'explanation2'}, {text:'answer2', explanation: 'explanation2'}],
+    distractors: [{text:'distractor1', explanation: 'explanation1'},
+      {text:'distractor2', explanation: 'explanation2'}, {text:'distractor4', explanation: 'explanation4'},
+      {text:'distractor3', explanation: 'explanation2'}, {text:'distractor3', explanation: 'explanation3'},
+      {text:'distractor2', explanation: 'explanation2'}, {text:'distractor3', explanation: 'explanation3'},
+      {text:'distractor2', explanation: 'explanation2'}, {text:'distractor3', explanation: 'explanation3'}],
+    keywords: ['key1', 'key2', 'key3', 'key1', 'key2', 'key3', 'key1', 'key2', 'key3', 'key1', 'key2', 'key3',
+       'key2', 'key3', 'key1', 'key2', 'key3', 'key1', 'key2', 'key3', 'key1', 'key2', 'key3', 'key1', 'key2', 'key3', 'key1', 'key2', 'key3', 'key1']
   }
 ]
 
