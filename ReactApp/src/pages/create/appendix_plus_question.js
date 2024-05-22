@@ -1,5 +1,11 @@
 import React from 'react';
-import { Box, Button, Container, Typography } from '@mui/material';
+import {
+  Box,
+  Button,
+  Container,
+  Typography,
+  Divider
+} from '@mui/material';
 import { Layout as DashboardLayout } from 'src/layouts/dashboard/layout';
 import { useRouter } from 'next/router';
 import { Formik, Form } from 'formik';
@@ -9,8 +15,10 @@ import KeywordsSection from 'src/sections/Meta Question/keywords-edit';
 import StemSection from 'src/sections/Meta Question/stem-edit';
 import CorrectAnswersSection from 'src/sections/Meta Question/correct-answer-edit';
 import DistractorsSection from 'src/sections/Meta Question/distractors-edit';
+import AppendixSection from 'src/sections/Meta Question/apendix-edit';
 
 const validationSchema = Yup.object().shape({
+  keywords: Yup.array().of(Yup.string()),
   stem: Yup.string().required('Stem is required'),
   correctAnswers: Yup.array().of(
     Yup.object().shape({
@@ -24,11 +32,23 @@ const validationSchema = Yup.object().shape({
       explanation: Yup.string().required('Explanation is required'),
     })
   ),
-  keywords: Yup.array().of(Yup.string()),
+  appendix: Yup.object().shape({
+    title: Yup.string().required('Title is required'),
+    tag: Yup.string().required('Tag is required'),
+    content: Yup.string().required('Content is required'),
+  }),
 });
 
 const Page = () => {
   const router = useRouter();
+  const initialValues = {
+    keywords: [],
+    stem: '',
+    isStemRTL: true,
+    correctAnswers: [{ text: '', explanation: '', isTextRTL: true, isExplanationRTL: true }],
+    distractors: [{ text: '', explanation: '', isTextRTL: true, isExplanationRTL: true }],
+    appendix: { title: '', tag: '', content: '', isTitleRTL: true, isTagRTL: true, isContentRTL: true },
+  };
 
   const handleSubmit = (values, { setSubmitting }) => {
     const metaQuestion = {
@@ -36,6 +56,7 @@ const Page = () => {
       stem: values.stem,
       correctAnswers: values.correctAnswers.map((item) => ({ answer: item.text, explanation: item.explanation })),
       distractors: values.distractors.map((item) => ({ distractor: item.text, explanation: item.explanation })),
+      appendix: { title: values.appendix.title, tag: values.appendix.tag, content: values.appendix.content },
     };
     console.log(metaQuestion);
     router.push('/');
@@ -45,13 +66,7 @@ const Page = () => {
 
   return (
     <Formik
-      initialValues={{
-        keywords: [],
-        stem: '',
-        isStemRTL: true,
-        correctAnswers: [{ text: '', explanation: '', isTextRTL: true, isExplanationRTL: true }],
-        distractors: [{ text: '', explanation: '', isTextRTL: true, isExplanationRTL: true }],
-      }}
+      initialValues={initialValues}
       validationSchema={validationSchema}
       onSubmit={handleSubmit}
     >
@@ -71,6 +86,13 @@ const Page = () => {
               <Typography variant="h4" component="h1" gutterBottom>
                 Create Simple Meta-Question
               </Typography>
+              <AppendixSection
+                values={values}
+                handleChange={handleChange}
+                handleBlur={handleBlur}
+                setFieldValue={setFieldValue}
+              />
+              <Divider sx={{ borderColor: 'neutral.700' }} />
               <Box
                 sx={{
                   flexGrow: 1,
