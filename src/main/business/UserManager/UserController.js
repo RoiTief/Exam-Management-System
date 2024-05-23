@@ -3,13 +3,16 @@ const SystemAdmin = require('./SystemAdmin');
 const CourseAdmin = require('./CourseAdmin');
 const TA = require('./TA');
 const Grader = require('./Grader');
+const userRepo = require("../../DAL/Dal");
 
 class UserController {
+    #userRepo;
 
     constructor(){
         this._registered_users = new Map();
         this._registered_users.set("Admin", new SystemAdmin("Admin", "Aa123456"));
         this._logged_in_users = new Map();
+        this.#userRepo = userRepo;
     }
     
     _isRegistered(username){
