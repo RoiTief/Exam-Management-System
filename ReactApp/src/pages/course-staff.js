@@ -17,11 +17,14 @@ import { httpsMethod, serverPath, requestServer } from 'src/utils/rest-api-call'
 import ChevronDoubleDownIcon from '@heroicons/react/20/solid/esm/ChevronDoubleDownIcon';
 import ChevronDoubleUpIcon from '@heroicons/react/20/solid/esm/ChevronDoubleUpIcon';
 import PlusIcon from '@heroicons/react/24/solid/PlusIcon';
+import { AddPersonalToCourse } from 'src/sections/popUps/AddPersonalToCoursePopup';
 
 const Page = () => {
   const [course, setCourse] = useState({});
   const [showAllAdmins, setShowAllAdmins] = useState(false);
   const [showAllTAs, setShowAllTAs] = useState(false);
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
+  const [popupState, setPopupState] = useState('');
 
   useEffect(() => {
     const getCourse = async () => {
@@ -44,8 +47,12 @@ const Page = () => {
   };
 
   const handleAddPersonal = (type) => {
-    // Implement functionality to add a new personal for the specified type (admin/TA)
-    console.log(`Adding new ${type}`);
+    setPopupState(type);
+    setIsPopupOpen(true);
+  };
+
+  const closePopup = () => {
+    setIsPopupOpen(false);
   };
 
   return (
@@ -146,6 +153,8 @@ const Page = () => {
           </Stack>
         </Paper>
       </Container>
+
+      <AddPersonalToCourse isOpen={isPopupOpen} closePopup={closePopup} state={popupState} />
     </Box>
   );
 };

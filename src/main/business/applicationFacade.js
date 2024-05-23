@@ -224,6 +224,17 @@ class ApplicationFacade{
     }
 
     /**
+     * get all usernames in the system
+     * @param pid - who is requestion the usernames - can be course admin or system admin
+     * @return {List<string>} list of usernames
+     */
+    viewAllUsers(pid){
+        //TODO
+        return ["fake username1", "fake username2", "implement viewAllUsers method in facade", "TA", "grader"]
+
+    }
+
+    /**
      * view course statistics (per question)
      * @param username - the user who tries to view the course statistics - needs to be a courseAdmin
      * @param subject

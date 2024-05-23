@@ -230,6 +230,19 @@ function addGrader(req, res, next){
     }
 }
 
+function viewAllUsers(req, res, next){
+    try{
+        let users = application.viewAllUsers(process.pid);
+        req.log.info("user asked for all user names");
+        res.send(200, {code:200,users})
+        next()
+    }
+    catch(err){
+        req.log.warn(err.message, 'unable to view user tasks');
+        next(err);
+    }
+}
+
 
 
 
@@ -244,5 +257,6 @@ module.exports = {
     viewMyTasks: viewMyTasks,
     finishATask: finishATask,
     addTA: addTA,
-    addGrader: addGrader
+    addGrader: addGrader,
+    viewAllUsers: viewAllUsers
 };
