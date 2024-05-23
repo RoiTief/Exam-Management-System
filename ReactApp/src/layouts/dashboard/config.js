@@ -60,30 +60,17 @@ export const items = [
     ]
   },
   {
-    title: 'Course staff',
+    title: 'Manage Course Staff',
     icon: (
       <SvgIcon fontSize="small">
         <UserIcon />
       </SvgIcon>
     ),
-    children: [
-      {
-        title: 'view Existing staff',
-        path: '/',
-      },
-      {
-        title: 'add TA',
-        path: '/',
-      },
-      {
-        title: 'Add tester',
-        path: '/',
-      }
-    ]
+    path: '/course-staff'
   },
   {
     title: 'previews exams',
-    path: '/customers',
+    path: '/course-stuff',
     icon: (
       <SvgIcon fontSize="small">
         <CogIcon />
