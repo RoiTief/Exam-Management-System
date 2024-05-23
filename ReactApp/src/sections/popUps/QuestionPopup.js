@@ -5,6 +5,8 @@ import { SvgIcon, ListItemText, ListItem, Divider, Button, IconButton, Chip, Sta
 import ChevronDoubleDownIcon from '@heroicons/react/20/solid/esm/ChevronDoubleDownIcon';
 import ChevronDoubleUpIcon from '@heroicons/react/20/solid/esm/ChevronDoubleUpIcon';
 import EditIcon from '@mui/icons-material/Edit';
+import 'katex/dist/katex.min.css';
+import Latex  from 'react-latex-next';
 
 export const Question = (props) => {
   const { isOpen, closePopup, question, onEdit } = props;
@@ -64,7 +66,7 @@ export const Question = (props) => {
               <h2 style={headerStyle}>Appendix</h2>
               <h3>Title: {question.appendix.title}</h3>
               <h3>Tag: {question.appendix.tag}</h3>
-              <p>{question.appendix.content}</p>
+              <p><Latex macros={{ "\\f": "#1f(#2)",  }}>{question.appendix.content}</Latex></p>
             </div>
           )}
           <Divider />

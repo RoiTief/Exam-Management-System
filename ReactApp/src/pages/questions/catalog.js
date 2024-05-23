@@ -19,12 +19,28 @@ const data = [
     keywords: ['key1', 'key2', 'key3']
   },
   {
-    stem: 'test stem 2',
+    stem: 'latex test',
     correctAnswers: [{text:'answer1', explanation: 'explanation1'},
       {text:'answer2', explanation: 'explanation2'}],
     distractors: [{text:'distractor1', explanation: 'explanation1'},
       {text:'distractor2', explanation: 'explanation2'}, {text:'distractor3', explanation: 'explanation3'}],
-    keywords: ['key1', 'key2', 'key3']
+    keywords: ['key1', 'key2', 'key5'],
+    appendix: {title: "title", tag: "tag",
+      content: "\\documentclass{article}\n"
+        + "\\usepackage{amsmath}\n"
+        + "\\usepackage{amssymb}\n"
+        + "\n"
+        + "\\begin{document}\n"
+        + "Lets try and compute $\\frac{\\partial{loss}}{\\partial{w^1_{ij}}}$:\n"
+        + "\\begin{equation*}\n"
+        + "\\begin{split}\n"
+        + "    \\frac{\\partial{loss}}{\\partial{w^1_{ij}}} & = \\frac{\\partial{loss}}{\\partial{z^1_i}} \\cdot \\frac{\\partial{z^1_i}}{\\partial{w^2_{ij}}} = \\bigstar \\\\\n"
+        + "    \\frac{\\partial{z^1_i}}{\\partial{w^2_{ij}}} & = x^1_j \\text{ --- easy :)} \\\\\n"
+        + "    \\frac{\\partial{loss}}{\\partial{z^1_i}} & = \\frac{\\partial{loss}}{\\partial{z^2}} \\cdot \\frac{\\partial{z^2}}{\\partial{g^1(z^1_i)}} \\cdot \\frac{\\partial{g^1(z^1_i)}}{\\partial{z^1_i}} = \\\\ \n"
+        + "    & = \\sum^{dim(z^2)}_{k=1}(\\frac{\\partial{loss}}{\\partial{z^2_k}} \\cdot \\frac{\\partial{z^2_k}}{\\partial{g^1(z^1_i)}} \\cdot \\frac{\\partial{g^1(z^1_i)}}{\\partial{z^1_i}}) =\n"
+        + "\\end{split}\n"
+        + "\\end{equation*}\n"
+        + "\\end{document}"}
   },
   {
     stem: 'test stem 3',
