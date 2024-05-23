@@ -4,6 +4,13 @@ import ShoppingBagIcon from '@heroicons/react/24/solid/ShoppingBagIcon';
 import UserIcon from '@heroicons/react/24/solid/UserIcon';
 import UsersIcon from '@heroicons/react/24/solid/UsersIcon';
 import { SvgIcon } from '@mui/material';
+import { HomeIcon } from '@heroicons/react/24/solid';
+import {
+  AdminPanelSettingsRounded,
+  Newspaper,
+  QuestionMark,
+  SchoolOutlined,
+} from '@mui/icons-material';
 
 export const items = [
   {
@@ -11,7 +18,16 @@ export const items = [
     path: '/',
     icon: (
       <SvgIcon fontSize="small">
-        <ChartBarIcon />
+        <HomeIcon />
+      </SvgIcon>
+    )
+  },
+  {
+    title: 'Manage Users',
+    path: '/admin/users',
+    icon: (
+      <SvgIcon fontSize="small">
+        <AdminPanelSettingsRounded />
       </SvgIcon>
     )
   },
@@ -19,7 +35,7 @@ export const items = [
     title: 'Create New Meta-Question',
     icon: (
         <SvgIcon fontSize="small">
-          <UsersIcon />
+          <QuestionMark />
         </SvgIcon>
     ),
     children: [
@@ -38,23 +54,23 @@ export const items = [
     ]
   },
   {
-    title: 'Generate Views For Meta Question',
+    title: 'All Questions',
     icon: (
       <SvgIcon fontSize="small">
-        <ShoppingBagIcon />
+        <SchoolOutlined />
       </SvgIcon>
     ),
     children: [
       {
-        title: 'View question as in test',
+        title: 'Test View',
         path: '/',
       },
       {
-        title: 'View question as in catalogue',
+        title: 'Catalogue View',
         path: '/questions/catalog',
       },
       {
-        title: 'View question as in answer sheet',
+        title: 'Answer Sheet View',
         path: '/',
       }
     ]
@@ -63,7 +79,7 @@ export const items = [
     title: 'Course staff',
     icon: (
       <SvgIcon fontSize="small">
-        <UserIcon />
+        <UsersIcon />
       </SvgIcon>
     ),
     children: [
@@ -86,7 +102,7 @@ export const items = [
     path: '/customers',
     icon: (
       <SvgIcon fontSize="small">
-        <CogIcon />
+        <Newspaper />
       </SvgIcon>
     )
   }

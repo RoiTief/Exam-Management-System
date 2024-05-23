@@ -230,6 +230,23 @@ function addGrader(req, res, next){
     }
 }
 
+/**
+ * get all users for admin
+ * @throws {Error} - if fail to get all users
+ */
+function getAllUsers(req, res, next){
+    try{
+        const users = application.getAllUsers(process.pid);
+        req.log.info(process.pid, "a request was sent to get all users");
+        res.send(200, {code:200, users})
+        next()
+    }
+    catch(err){
+        req.log.warn(err.message, 'unable to request to get all users');
+        next(err);
+    }
+}
+
 
 
 
@@ -244,5 +261,6 @@ module.exports = {
     viewMyTasks: viewMyTasks,
     finishATask: finishATask,
     addTA: addTA,
-    addGrader: addGrader
+    addGrader: addGrader,
+    getAllUsers: getAllUsers
 };
