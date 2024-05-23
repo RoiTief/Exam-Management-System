@@ -1,64 +1,33 @@
 import PropTypes from 'prop-types';
-import { format } from 'date-fns';
-import {
-  Avatar,
-  Box,
-  Card,
-  Checkbox,
-  Stack,
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TablePagination,
-  TableRow,
-  Typography
-} from '@mui/material';
+import { Box, Card, Stack, Table, TableBody, TableCell, TableHead, TablePagination, TableRow } from '@mui/material';
 import { Scrollbar } from 'src/components/scrollbar';
-import { getInitials } from 'src/utils/get-initials';
-import React, { useEffect, useState } from 'react';
-import { httpsMethod, requestServer, serverPath } from '../../utils/rest-api-call';
+import React, { useState } from 'react';
 import { Question } from '../popUps/QuestionPopup';
 
-export const MetaQuestionTable = (props) => {
-  const {
-    count = 0,
-    items = [],
-    onPageChange = () => {},
-    onRowsPerPageChange,
-    page = 0,
-    rowsPerPage = 5,
-  } = props;
-
-  const [questions, setList] = useState([])
-  const [questionToView, setQuestion] = useState(null);
+export const MetaQuestionTable = ({ data }) => {
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [selectedQuestion, setSelectedQuestion] = useState(null);
 
   const handleRowClick = (question) => {
-    setQuestion(question)
+    setSelectedQuestion(question);
   };
 
   const closePopup = () => {
-    setQuestion(null)
+    setSelectedQuestion(null);
   };
 
-  useEffect( (question) => {handleRowClick(question)}, [])
-  useEffect( () => {closePopup()}, [])
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
 
-  useEffect(() => {
-    const fetchList = async () => {
-      try {
-        const {questions} = await requestServer(serverPath.VIEW_QUESTIONS, httpsMethod.GET);
-        setList(questions);
-      }
-      catch(err){
-        console.error('Error fetching question list:', err)
-      }
-    }
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
 
-    fetchList();
-  }, [])
-
-  const handleClick = () => {}
+  const emptyRows = rowsPerPage - Math.min(rowsPerPage, data.length - page * rowsPerPage);
+  const paginatedData = data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
 
   return (
     <Stack>
@@ -68,58 +37,45 @@ export const MetaQuestionTable = (props) => {
             <Table>
               <TableHead>
                 <TableRow>
-                  <TableCell>
-                    Stem
-                  </TableCell>
-                  <TableCell>
-                    Keywords
-                  </TableCell>
+                  <TableCell>Stem</TableCell>
+                  <TableCell>Keywords</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
-                {items.map((metaquestion) => (
+                {paginatedData.map((metaquestion) => (
                   <TableRow
                     key={metaquestion.stem}
                     onClick={() => handleRowClick(metaquestion)}
                     style={{ cursor: 'pointer' }}
                   >
-                    <TableCell style={{ overflowWrap: 'break-word' }}>
-                      {metaquestion.stem}
-                    </TableCell>
-                    <TableCell>
-                      {metaquestion.keywords.join(', ')}
-                    </TableCell>
+                    <TableCell style={{ overflowWrap: 'break-word' }}>{metaquestion.stem}</TableCell>
+                    <TableCell>{metaquestion.keywords.join(', ')}</TableCell>
                   </TableRow>
                 ))}
+                {emptyRows > 0 && (
+                  <TableRow style={{ height: 53 * emptyRows }}>
+                    <TableCell colSpan={2} />
+                  </TableRow>
+                )}
               </TableBody>
             </Table>
           </Box>
         </Scrollbar>
         <TablePagination
           component="div"
-          count={count}
-          onPageChange={onPageChange}
-          onRowsPerPageChange={onRowsPerPageChange}
+          count={data.length}
+          onPageChange={handleChangePage}
+          onRowsPerPageChange={handleChangeRowsPerPage}
           page={page}
           rowsPerPage={rowsPerPage}
           rowsPerPageOptions={[5, 10, 25]}
         />
       </Card>
-      <div>
-        <Question
-          isOpen={questionToView != null}
-          closePopup={() => closePopup()}
-          question={questionToView}/>
-      </div>
+      <Question isOpen={selectedQuestion !== null} closePopup={closePopup} question={selectedQuestion} />
     </Stack>
   );
 };
 
 MetaQuestionTable.propTypes = {
-  count: PropTypes.number,
-  items: PropTypes.array,
-  onPageChange: PropTypes.func,
-  onRowsPerPageChange: PropTypes.func,
-  page: PropTypes.number,
-  rowsPerPage: PropTypes.number,
+  data: PropTypes.array.isRequired,
 };
