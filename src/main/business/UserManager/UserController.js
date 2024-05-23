@@ -113,6 +113,11 @@ class UserController {
         this._varifyLogged(pid);
         return this._logged_in_users.get(pid);
     }
+
+    getAllUsers(pid){
+        this.verifySystemAdmin(pid)
+        return this._registered_users.values()
+    }
 }
 
 module.exports = UserController;
