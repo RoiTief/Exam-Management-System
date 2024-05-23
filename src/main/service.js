@@ -235,9 +235,9 @@ function addGrader(req, res, next){
  * get all users for admin
  * @throws {Error} - if fail to get all users
  */
-function getAllUsers(req, res, next){
+function viewAllUsers(req, res, next){
     try{
-        const users = application.getAllUsers(process.pid);
+        const users = application.viewAllUsers(process.pid);
         req.log.info(process.pid, "a request was sent to get all users");
         res.send(200, {code:200, users})
         next()
