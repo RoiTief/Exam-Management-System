@@ -11,9 +11,33 @@ import { QuestionsSearch } from '../../sections/Questions/question-search';
 
 const data = [
   {
-    stem: 'test stem',
+    stem: 'test stem 1',
     correctAnswers: [{text:'answer1', explanation: 'explanation1'},
         {text:'answer2', explanation: 'explanation2'}],
+    distractors: [{text:'distractor1', explanation: 'explanation1'},
+      {text:'distractor2', explanation: 'explanation2'}, {text:'distractor3', explanation: 'explanation3'}],
+    keywords: ['key1', 'key2', 'key3']
+  },
+  {
+    stem: 'test stem 2',
+    correctAnswers: [{text:'answer1', explanation: 'explanation1'},
+      {text:'answer2', explanation: 'explanation2'}],
+    distractors: [{text:'distractor1', explanation: 'explanation1'},
+      {text:'distractor2', explanation: 'explanation2'}, {text:'distractor3', explanation: 'explanation3'}],
+    keywords: ['key1', 'key2', 'key3']
+  },
+  {
+    stem: 'test stem 3',
+    correctAnswers: [{text:'answer1', explanation: 'explanation1'},
+      {text:'answer2', explanation: 'explanation2'}],
+    distractors: [{text:'distractor1', explanation: 'explanation1'},
+      {text:'distractor2', explanation: 'explanation2'}, {text:'distractor3', explanation: 'explanation3'}],
+    keywords: ['key1', 'key2', 'key3']
+  },
+  {
+    stem: 'test stem 4',
+    correctAnswers: [{text:'answer1', explanation: 'explanation1'},
+      {text:'answer2', explanation: 'explanation2'}],
     distractors: [{text:'distractor1', explanation: 'explanation1'},
       {text:'distractor2', explanation: 'explanation2'}, {text:'distractor3', explanation: 'explanation3'}],
     keywords: ['key1', 'key2', 'key3']
@@ -24,7 +48,7 @@ const data = [
       {text:'answer2', explanation: 'explanation2'}],
     distractors: [{text:'distractor1', explanation: 'explanation1'},
       {text:'distractor2', explanation: 'explanation2'}, {text:'distractor3', explanation: 'explanation3'}],
-    keywords: ['key1', 'key2', 'key3'],
+    keywords: ['key1', 'key2', 'key5'],
     appendix: {title: "title", tag: "tag", content: "appendix content"}
   },
   {
@@ -40,7 +64,7 @@ const data = [
       {text:'distractor2', explanation: 'explanation2'}, {text:'distractor3', explanation: 'explanation3'},
       {text:'distractor2', explanation: 'explanation2'}, {text:'distractor3', explanation: 'explanation3'}],
     keywords: ['key1', 'key2', 'key3', 'key1', 'key2', 'key3', 'key1', 'key2', 'key3', 'key1', 'key2', 'key3',
-       'key2', 'key3', 'key1', 'key2', 'key3', 'key1', 'key2', 'key3', 'key1', 'key2', 'key3', 'key1', 'key2', 'key3', 'key1', 'key2', 'key3', 'key1']
+       'key2', 'key3', 'key1', 'key2', 'key3', 'key6', 'key2', 'key5', 'key1', 'key2', 'key3', 'key1', 'key2', 'key3', 'key1', 'key2', 'key3', 'key1']
   }
 ]
 
@@ -55,71 +79,32 @@ const useMetaQuestions = (page, rowsPerPage) => {
 
 const Page = () => {
   const router = useRouter();
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
-  const metaquestions = useMetaQuestions(page, rowsPerPage);
+  const [filteredData, setFilteredData] = useState(data);
 
-
-
-
-  const handlePageChange = useCallback(
-    (event, value) => {
-      setPage(value);
-    },
-    []
-  );
-
-  const handleRowsPerPageChange = useCallback(
-    (event) => {
-      setRowsPerPage(event.target.value);
-    },
-    []
-  );
+  const handleSearch = (keys) => {
+    const filteredQuestions = data.filter(question =>
+      keys.every(key => question.keywords.includes(key))
+    );
+    setFilteredData(filteredQuestions);
+  };
 
   return (
     <>
       <Head>
-        <title>
-          Meta-Questions Catalog
-        </title>
+        <title>Meta-Questions Catalog</title>
       </Head>
-      <Box
-        component="main"
-        sx={{
-          flexGrow: 1,
-          py: 8
-        }}
-      >
+      <Box component="main" sx={{ flexGrow: 1, py: 8 }}>
         <Container maxWidth="xl">
           <Stack spacing={3}>
-            <Stack
-              direction="row"
-              justifyContent="space-between"
-              spacing={4}
-            >
+            <Stack direction="row" justifyContent="space-between" spacing={4}>
               <Stack spacing={1}>
-                <Typography variant="h4">
-                  Meta-Questions Catalog
-                </Typography>
-                <Stack
-                  alignItems="center"
-                  direction="row"
-                  spacing={1}
-                >
-                </Stack>
+                <Typography variant="h4">Meta-Questions Catalog</Typography>
+                <Stack alignItems="center" direction="row" spacing={1}></Stack>
               </Stack>
-              <Stack
-                alignItems="center"
-                direction="column"
-                spacing={1}
-              >
+              <Stack alignItems="center" direction="column" spacing={1}>
                 <Button
                   color="inherit"
-                  startIcon={(
-                    <SvgIcon fontSize="small">
-                      <PlusIcon />
-                    </SvgIcon>
-                  )}
+                  startIcon={<SvgIcon fontSize="small"><PlusIcon /></SvgIcon>}
                   variant="contained"
                   onClick={() => router.push('/create/simple')}
                 >
@@ -127,11 +112,7 @@ const Page = () => {
                 </Button>
                 <Button
                   color="inherit"
-                  startIcon={(
-                    <SvgIcon fontSize="small">
-                      <PlusIcon />
-                    </SvgIcon>
-                  )}
+                  startIcon={<SvgIcon fontSize="small"><PlusIcon /></SvgIcon>}
                   variant="contained"
                   onClick={() => router.push('/create/appendix')}
                 >
@@ -139,15 +120,8 @@ const Page = () => {
                 </Button>
               </Stack>
             </Stack>
-            <QuestionsSearch />
-            <MetaQuestionTable
-              count={data.length}
-              items={metaquestions}
-              onPageChange={handlePageChange}
-              onRowsPerPageChange={handleRowsPerPageChange}
-              page={page}
-              rowsPerPage={rowsPerPage}
-            />
+            <QuestionsSearch onSearch={handleSearch} /> {/* Render QuestionsSearch */}
+            <MetaQuestionTable data={filteredData} />
           </Stack>
         </Container>
       </Box>
