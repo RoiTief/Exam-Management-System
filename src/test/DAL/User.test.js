@@ -3,16 +3,8 @@ const initSequelize = require("../../main/DAL/Sequelize");
 const defineUserModel = require("../../main/DAL/User/User");
 const UserRepository = require("../../main/DAL/User/UserRepository");
 const { PK_NOT_EXISTS, PK_ALREADY_EXISTS, EMAIL_ALREADY_EXISTS } = require("../../main/EMSError");
-
-const testDbConfig = {
-    database: 'db_t',
-    username: 'user_t',
-    password: '123',
-    host: '164.90.223.94', 
-    port: '5432',
-    dialect: 'postgres',
-    logging: true
-}
+const testDbConfig = require("./TestConfig");
+const {USER_TYPES} = require("../../main/Enums");
 
 const testUserData = {
 username: 'testUsername',
@@ -20,7 +12,7 @@ firstName: 'testFirstname',
 lastName: 'testLastName',
 email: 'testEmail',
 password: 'testPassword',
-userType: 'admin',
+userType: USER_TYPES.ADMIN,
 };
 
 
@@ -34,7 +26,7 @@ describe('UserRepository happy path tests', () => {
         await sequelize.authenticate();
         userRepository = new UserRepository(sequelize);
         User = defineUserModel(sequelize);
-        await User.sync({force: true});
+        await User.sync({force: true}); // cleans the 'Users' table
 
     });
 

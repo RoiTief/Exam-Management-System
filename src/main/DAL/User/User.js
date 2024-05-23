@@ -1,11 +1,11 @@
 const { DataTypes } = require('sequelize');
-const USER_TYPES = require("../../Enums");
+const { USER_TYPES } = require("../../Enums");
 
 /**
  * Defines a 'User' model within the given database
  */
 function defineUserModel(sequelize) {
-    return sequelize.modelManager.models.some(model => model.name == 'User') ? 
+    return sequelize.modelManager.models.some(model => model.name === 'User') ?
         sequelize.models.User :
         sequelize.define('User', {
             username: {
