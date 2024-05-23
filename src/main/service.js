@@ -230,15 +230,20 @@ function addGrader(req, res, next){
     }
 }
 
-function viewAllUsers(req, res, next){
+
+/**
+ * get all users for admin
+ * @throws {Error} - if fail to get all users
+ */
+function getAllUsers(req, res, next){
     try{
-        let users = application.viewAllUsers(process.pid);
-        req.log.info("user asked for all user names");
-        res.send(200, {code:200,users})
+        const users = application.getAllUsers(process.pid);
+        req.log.info(process.pid, "a request was sent to get all users");
+        res.send(200, {code:200, users})
         next()
     }
     catch(err){
-        req.log.warn(err.message, 'unable to view user tasks');
+        req.log.warn(err.message, 'unable to request to get all users');
         next(err);
     }
 }

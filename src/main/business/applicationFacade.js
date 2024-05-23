@@ -333,6 +333,18 @@ class ApplicationFacade{
         this.courseController.getCourse(courseID).addSimpleMetaQuestion(stem, correctAnswers, distractors)
     }
 
+    /**
+     * Add a simple meta-question
+     * @param pid - The process ID of the user performing the action
+     * @param stem - The stem of the meta-question
+     * @param correctAnswers - Array of correct answers for the meta-question
+     * @param distractors - Array of distractors for the meta-question
+     * @throws {Error} - If the user is not signed in or does not have the necessary permissions
+     */
+    getAllUsers(pid) {
+        return this.userController.getAllUsers(pid)
+    }
+
 
 }
 
