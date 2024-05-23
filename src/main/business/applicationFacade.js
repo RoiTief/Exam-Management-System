@@ -12,6 +12,9 @@ class ApplicationFacade{
         //todo - remove for testing:
         this.register(24632, "courseAdmin", "123")
         this.register(24632, "TA", "123")
+        this.register(24632, "TA1", "123")
+        this.register(24632, "TA2", "123")
+        this.register(24632, "TA3", "123")
         this.register(24632, "grader", "123")
         this.signIn(24632, "Admin", "Aa123456")
         this.addCourse(24632, 111, "course name", "courseAdmin")
@@ -21,9 +24,21 @@ class ApplicationFacade{
         console.log(this.getUserType(24632))
         this.addGrader(24632, "grader")
         this.addTA(24632, "TA")
+        this.addTA(24632, "TA1")
+        this.addTA(24632, "TA2")
+        this.addTA(24632, "TA3")
         this.logout(24632)
         this.signIn(24632, "TA", "123")
         this.finishATask(24632, 3, "yes")
+        this.logout(24632)
+        this.signIn(24632, "TA1", "123")
+        this.finishATask(24632, 4, "yes")
+        this.logout(24632)
+        this.signIn(24632, "TA2", "123")
+        this.finishATask(24632, 5, "yes")
+        this.logout(24632)
+        this.signIn(24632, "TA3", "123")
+        this.finishATask(24632, 6, "yes")
         this.logout(24632)
         this.signIn(24632, "grader", "123")
         this.finishATask(24632, 2, "yes")    
@@ -206,6 +221,17 @@ class ApplicationFacade{
      */
     viewStatistics(username){
         //todo
+    }
+
+    /**
+     * get all usernames in the system
+     * @param pid - who is requestion the usernames - can be course admin or system admin
+     * @return {List<string>} list of usernames
+     */
+    viewAllUsers(pid){
+        //TODO
+        return ["fake username1", "fake username2", "implement viewAllUsers method in facade", "TA", "grader"]
+
     }
 
     /**

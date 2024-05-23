@@ -177,6 +177,7 @@ function createServer(options) {
     server.get('/viewMyCourse', service.viewMyCourse);
     server.get('/viewUsername', service.viewUsername);
     server.get('/viewUserType', service.viewUserType);
+    server.get('/getAllUserNames', service.viewAllUsers)
 
 
 

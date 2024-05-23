@@ -230,6 +230,7 @@ function addGrader(req, res, next){
     }
 }
 
+
 /**
  * get all users for admin
  * @throws {Error} - if fail to get all users
@@ -262,5 +263,5 @@ module.exports = {
     finishATask: finishATask,
     addTA: addTA,
     addGrader: addGrader,
-    getAllUsers: getAllUsers
+    viewAllUsers: viewAllUsers
 };

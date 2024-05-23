@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import {overlayStyle, popupStyle} from './popup-style'
-import Page from 'src/pages/course';
+import Page from 'src/pages/course-staff';
 
 export const ViewCourse = (props) => {
   const { isOpen, closePopup } = props;

@@ -22,10 +22,11 @@ export const serverPath = {
     ADD_COURSE: 'addCourse',
     ADD_TA: 'addTA',
     ADD_GRADER: 'addGrader',
+    ADD_COURSE_ADMIN: 'addCourseAdmin',
     FINISH_TASK: 'finishATask',
     VIEW_QUESTIONS: 'viewCourseMetaQuestions',
     ADD_SIMPLE_META_QUESTION: 'addSimpleMetaQuestion',
-    GET_ALL_USERS: 'getAllUsers'
+    GET_ALL_USERS: 'getAllUserNames'
 }
 
 
