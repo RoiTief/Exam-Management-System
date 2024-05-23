@@ -114,7 +114,7 @@ const Page = () => {
                   color="inherit"
                   startIcon={<SvgIcon fontSize="small"><PlusIcon /></SvgIcon>}
                   variant="contained"
-                  onClick={() => router.push('/create/appendix')}
+                  onClick={() => router.push('/create/choose-appendix')}
                 >
                   Create Appendix+MetaQuestion
                 </Button>
