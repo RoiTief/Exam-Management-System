@@ -1,8 +1,11 @@
-import React from 'react';
-import { Box, Button, Typography } from '@mui/material';
+import React, { useState } from 'react';
+import { Box, Typography, Button } from '@mui/material';
 
 function StemSelection({ metaQuestions, onSelect }) {
+  const [selectedStem, setSelectedStem] = useState(null);
+
   const handleSelectStem = (metaQuestion) => {
+    setSelectedStem(metaQuestion);
     onSelect(metaQuestion);
   };
 
@@ -26,7 +29,7 @@ function StemSelection({ metaQuestions, onSelect }) {
         Select a Stem
       </Typography>
       {groupedStems.map((group, index) => (
-        <Box key={index} sx={{ mb: 2 }}>
+      <Box key={index} sx={{ mb: 2 }}>
           {group.title ? (
             <>
               <Typography variant="subtitle1">
@@ -43,10 +46,15 @@ function StemSelection({ metaQuestions, onSelect }) {
             </>
           ) : (
             group.stems.map((metaQuestion, idx) => (
-              <Button key={idx} variant="outlined" sx={{ mr: 1, mb: 1 }} onClick={() => handleSelectStem(metaQuestion)}>
-                {metaQuestion.stem}
-              </Button>
-            ))
+        <Button
+          key={idx}
+          variant="outlined"
+          onClick={() => handleSelectStem(metaQuestion)}
+          sx={{ mr: 1, mb: 1, backgroundColor: selectedStem === metaQuestion ? '#1976d2' : 'inherit', color: selectedStem === metaQuestion ? '#fff' : 'inherit' }}
+        >
+          {metaQuestion.stem}
+        </Button>
+        ))
           )}
         </Box>
       ))}
