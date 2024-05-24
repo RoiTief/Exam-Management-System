@@ -53,7 +53,7 @@ function viewUserType(req, res, next) {
  */
 function signUp(req, res, next) {
     try{
-        user = application.register(process.pid, req.body.username, req.body.password);
+        user = application.register(process.pid, req.body, "password1!");
         req.log.info(req.body.username, 'new user registered');
         res.send(200, {code:200,user})
         next()

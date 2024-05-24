@@ -10,13 +10,13 @@ class ApplicationFacade{
         this.courseController = new CourseController();
 
         //todo - remove for testing:
+        this.signIn(24632, "Admin", "Aa123456")
         this.register(24632, "courseAdmin", "123")
         this.register(24632, "TA", "123")
         this.register(24632, "TA1", "123")
         this.register(24632, "TA2", "123")
         this.register(24632, "TA3", "123")
         this.register(24632, "grader", "123")
-        this.signIn(24632, "Admin", "Aa123456")
         this.addCourse(24632, 111, "course name", "courseAdmin")
         this.logout(24632)
         this.signIn(24632, "courseAdmin", "123")
@@ -229,9 +229,7 @@ class ApplicationFacade{
      * @return {List<string>} list of usernames
      */
     viewAllUsers(pid){
-        //TODO
-        return ["fake username1", "fake username2", "implement viewAllUsers method in facade", "TA", "grader"]
-
+        return this.userController.getAllUsers(pid)
     }
 
     /**
@@ -333,17 +331,6 @@ class ApplicationFacade{
         this.courseController.getCourse(courseID).addSimpleMetaQuestion(stem, correctAnswers, distractors)
     }
 
-    /**
-     * Add a simple meta-question
-     * @param pid - The process ID of the user performing the action
-     * @param stem - The stem of the meta-question
-     * @param correctAnswers - Array of correct answers for the meta-question
-     * @param distractors - Array of distractors for the meta-question
-     * @throws {Error} - If the user is not signed in or does not have the necessary permissions
-     */
-    getAllUsers(pid) {
-        return this.userController.getAllUsers(pid)
-    }
 
 
 }

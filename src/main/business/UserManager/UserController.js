@@ -38,7 +38,7 @@ class UserController {
     }
     
     register(pid, username, password){
-        this._varifyNotLoggedIn(pid);
+        this.verifySystemAdmin(pid);
         if (this._isRegistered(username)){
             throw new Error("this username is taken");
         }
@@ -115,8 +115,12 @@ class UserController {
     }
 
     getAllUsers(pid){
-        this.verifySystemAdmin(pid)
-        return this._registered_users.values()
+        try {
+            this.verifySystemAdmin(pid)
+        } catch (e) {
+            this.verifyCourseAdmin(pid)
+        }
+        return [...this._registered_users.values()]
     }
 }
 

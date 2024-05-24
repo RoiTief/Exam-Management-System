@@ -1,7 +1,7 @@
-import React, { createContext, useReducer, useContext, useEffect } from 'react';
+import React, { createContext, useReducer, useEffect } from 'react';
 import { requestServer, serverPath, httpsMethod } from 'src/utils/rest-api-call';
 
-const UserContext = createContext(undefined);
+export const UserContext = createContext(undefined);
 
 const initialState = {
   users: []
@@ -36,7 +36,7 @@ const handlers = {
   [HANDLERS.DELETE_USER]: (state, action) => {
     return {
       ...state,
-      users: state.users.filter(user => user.id !== action.payload.id)
+      users: state.users.filter(user => user.username !== action.payload)
     };
   }
 };
@@ -61,16 +61,26 @@ export const UserProvider = ({ children }) => {
     fetchUsers();
   }, []);
 
-  const addUser = user => {
-    dispatch({ type: 'ADD_USER', payload: user });
+  const addUser = async user => {
+    try {
+      await requestServer(serverPath.SIGN_UP, httpsMethod.POST, user.username);
+      dispatch({ type: HANDLERS.ADD_USER, payload: user });
+    } catch (error){
+      console.error("failed to add user:", error)
+    }
   };
 
-  const editUser = user => {
-    dispatch({ type: 'EDIT_USER', payload: user });
+  const editUser = async user => {
+    try {
+      await requestServer(serverPath.EDIT_USER, httpsMethod.PUT, [user.username, user.type]);
+      dispatch({ type: HANDLERS.EDIT_USER, payload: user });
+    } catch (error){
+      console.error("failed to edit user:", error)
+    }
   };
 
-  const deleteUser = id => {
-    dispatch({ type: 'DELETE_USER', payload: { id } });
+  const deleteUser = username => {
+    dispatch({ type: HANDLERS.DELETE_USER, payload: username });
   };
 
   return (
@@ -79,5 +89,3 @@ export const UserProvider = ({ children }) => {
     </UserContext.Provider>
   );
 };
-
-export const useUserContext = () => useContext(UserContext);
