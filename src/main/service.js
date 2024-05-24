@@ -1,5 +1,6 @@
 const ApplicationFacade = require("./business/applicationFacade");
 const application = new ApplicationFacade();
+const latexCompiler = new LatexCompiler()
 const error = require('./error')
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
@@ -248,7 +249,18 @@ function viewAllUsers(req, res, next){
     }
 }
 
-
+function compile(req, res, next){
+    try{
+        pdfPath = latexCompiler.compile(req.body.latexCode);
+        res.sendFile(pdfPath)
+        next()
+    }
+    catch(err){
+        console.error('Error compiling latex code:', err);
+        res.status(500).send('Error compiling latex code');
+        next(err);
+    }
+}
 
 
 module.exports = {
@@ -263,5 +275,6 @@ module.exports = {
     finishATask: finishATask,
     addTA: addTA,
     addGrader: addGrader,
-    viewAllUsers: viewAllUsers
+    viewAllUsers: viewAllUsers,
+    compile: compile
 };
