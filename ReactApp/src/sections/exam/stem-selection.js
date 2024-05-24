@@ -2,12 +2,19 @@ import React, { useState } from 'react';
 import { Box, Typography, Button } from '@mui/material';
 
 function StemSelection({ metaQuestions, onSelect, reselectStem }) {
-  const [selectedStem, setSelectedStem] = useState(null);
+  const [selectedMetaQuestion, setSelectedMetaQuestion] = useState(null)
 
   const handleSelectStem = (metaQuestion) => {
-    onSelect(metaQuestion);
-    setSelectedStem(metaQuestion);
-    reselectStem(); // Reset selected distractors when a new stem is chosen
+    if (selectedMetaQuestion === metaQuestion) {
+      onSelect(null);
+      setSelectedMetaQuestion(null)
+      reselectStem();
+    }
+    else {
+      onSelect(metaQuestion);
+      setSelectedMetaQuestion(metaQuestion)
+      reselectStem(); // Reset selected distractors when a new stem is chosen
+    }
   };
 
   const groupedStems = metaQuestions.reduce((acc, question) => {
@@ -33,27 +40,35 @@ function StemSelection({ metaQuestions, onSelect, reselectStem }) {
       <Box key={index} sx={{ mb: 2 }}>
           {group.title ? (
             <>
-              <Typography variant="subtitle1">
-                Appendix: {group.title}
-              </Typography>
-              <Typography variant="body2" sx={{ mb: 1 }}>
-                {group.content}
-              </Typography>
-              {group.stems.map((metaQuestion, idx) => (
-                <Button
-                  key={idx}
-                  variant="outlined"
-                  onClick={() => handleSelectStem(metaQuestion)}
-                  sx={{
-                    mr: 1,
-                    mb: 1,
-                    backgroundColor: selectedStem === metaQuestion ? '#1976d2' : 'inherit',
-                    color: selectedStem === metaQuestion ? '#fff' : 'inherit',
-                  }}
-                >
-                  {metaQuestion.stem}
-                </Button>
-              ))}
+              <Box sx = {{ display: selectedMetaQuestion === null ||
+                                    (selectedMetaQuestion &&
+                                    selectedMetaQuestion.appendix &&
+                                    group.title === selectedMetaQuestion.appendix.title) ?
+                                    'inline-block' : 'none' }}>
+                <Typography variant="subtitle1">
+                  Appendix: {group.title}
+                </Typography>
+                <Typography variant="body2" sx={{ mb: 1 }}>
+                  {group.content}
+                </Typography>
+
+                {group.stems.map((metaQuestion, idx) => (
+                  <Button
+                    key={idx}
+                    variant="outlined"
+                    onClick={() => handleSelectStem(metaQuestion)}
+                    sx={{
+                      mr: 1,
+                      mb: 1,
+                      backgroundColor: selectedMetaQuestion === metaQuestion ? '#1976d2' : 'inherit',
+                      color: selectedMetaQuestion === metaQuestion ? '#fff' : 'inherit',
+                      display: selectedMetaQuestion === null || selectedMetaQuestion === metaQuestion ? 'inline-block' : 'none',
+                    }}
+                  >
+                    {metaQuestion.stem}
+                  </Button>
+                ))}
+              </Box>
             </>
           ) : (
             group.stems.map((metaQuestion, stemIndex) => (
@@ -64,8 +79,9 @@ function StemSelection({ metaQuestions, onSelect, reselectStem }) {
                 sx={{
                   mr: 1,
                   mb: 1,
-                  backgroundColor: selectedStem === metaQuestion ? '#1976d2' : 'inherit',
-                  color: selectedStem === metaQuestion ? '#fff' : 'inherit',
+                  backgroundColor: selectedMetaQuestion === metaQuestion ? '#1976d2' : 'inherit',
+                  color: selectedMetaQuestion === metaQuestion ? '#fff' : 'inherit',
+                  display: selectedMetaQuestion === null || selectedMetaQuestion === metaQuestion ? 'inline-block' : 'none',
                 }}
               >
                 {metaQuestion.stem}

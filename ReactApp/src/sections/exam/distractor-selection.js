@@ -5,7 +5,13 @@ function DistractorSelection({ distractors, onSelect }) {
   const [selectedDistractors, setSelectedDistractors] = useState([]);
 
   const handleSelectDistractor = (distractor) => {
-    const newSelectedDistractors = [...selectedDistractors, distractor];
+    let newSelectedDistractors;
+    if (selectedDistractors.includes(distractor)){
+      newSelectedDistractors = selectedDistractors.filter(item => item !== distractor);
+    }
+    else {
+      newSelectedDistractors = [...selectedDistractors, distractor];
+    }
     setSelectedDistractors(newSelectedDistractors);
     onSelect(newSelectedDistractors);
   };
