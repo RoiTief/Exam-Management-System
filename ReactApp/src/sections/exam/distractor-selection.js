@@ -26,7 +26,7 @@ function DistractorSelection({ distractors, onSelect }) {
           key={index}
           variant="outlined"
           onClick={() => handleSelectDistractor(distractor)}
-          sx={{ mr: 1, mb: 1, backgroundColor: selectedDistractors.includes(distractor) ? '#1976d2' : 'inherit', color: selectedDistractors.includes(distractor) ? '#fff' : 'inherit' }}
+          sx={{ mr: 1, mb: 1, backgroundColor: selectedDistractors.includes(distractor) ? '#f87217' : 'inherit', color: selectedDistractors.includes(distractor) ? '#fff' : 'inherit' }}
         >
           {distractor.text}
         </Button>

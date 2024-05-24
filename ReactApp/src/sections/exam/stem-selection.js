@@ -60,7 +60,7 @@ function StemSelection({ metaQuestions, onSelect, reselectStem }) {
                     sx={{
                       mr: 1,
                       mb: 1,
-                      backgroundColor: selectedMetaQuestion === metaQuestion ? '#1976d2' : 'inherit',
+                      backgroundColor: selectedMetaQuestion === metaQuestion ? '#f87217' : 'inherit',
                       color: selectedMetaQuestion === metaQuestion ? '#fff' : 'inherit',
                       display: selectedMetaQuestion === null || selectedMetaQuestion === metaQuestion ? 'inline-block' : 'none',
                     }}
@@ -79,7 +79,7 @@ function StemSelection({ metaQuestions, onSelect, reselectStem }) {
                 sx={{
                   mr: 1,
                   mb: 1,
-                  backgroundColor: selectedMetaQuestion === metaQuestion ? '#1976d2' : 'inherit',
+                  backgroundColor: selectedMetaQuestion === metaQuestion ? '#f87217' : 'inherit',
                   color: selectedMetaQuestion === metaQuestion ? '#fff' : 'inherit',
                   display: selectedMetaQuestion === null || selectedMetaQuestion === metaQuestion ? 'inline-block' : 'none',
                 }}

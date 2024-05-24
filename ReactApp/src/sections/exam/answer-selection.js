@@ -19,7 +19,7 @@ function AnswerSelection({ answers, onSelect }) {
           key={index}
           variant="outlined"
           onClick={() => handleSelectAnswer(answer)}
-          sx={{ mr: 1, mb: 1, backgroundColor: selectedAnswer === answer ? '#1976d2' : 'inherit', color: selectedAnswer === answer ? '#fff' : 'inherit' }}
+          sx={{ mr: 1, mb: 1, backgroundColor: selectedAnswer === answer ? '#f87217' : 'inherit', color: selectedAnswer === answer ? '#fff' : 'inherit' }}
         >
           {answer.text}
         </Button>
