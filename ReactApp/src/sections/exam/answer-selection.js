@@ -11,15 +11,15 @@ function AnswerSelection({ answers, onSelect }) {
 
   return (
     <Box sx={{ mb: 2 }}>
-      <Typography variant="h6" component="h2">
-        Select an Answer
+      <Typography variant="h5" component="h2" mb={2}>
+        Select The Correct Answer
       </Typography>
       {answers.map((answer, index) => (
         <Button
           key={index}
           variant="outlined"
           onClick={() => handleSelectAnswer(answer)}
-          sx={{ mr: 1, mb: 1, backgroundColor: selectedAnswer === answer ? '#f87217' : 'inherit', color: selectedAnswer === answer ? '#fff' : 'inherit' }}
+          sx={{ mr: 1, mb: 1, backgroundColor: selectedAnswer === answer ? '#59b61b' : 'inherit', color: selectedAnswer === answer ? '#fff' : 'inherit' }}
         >
           {answer.text}
         </Button>

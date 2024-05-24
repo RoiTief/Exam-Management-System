@@ -18,7 +18,7 @@ function DistractorSelection({ distractors, onSelect }) {
 
   return (
     <Box sx={{ mb: 2 }}>
-      <Typography variant="h6" component="h2">
+      <Typography variant="h5" component="h2" mb={2}>
         Select Distractors
       </Typography>
       {distractors.map((distractor, index) => (
@@ -26,7 +26,7 @@ function DistractorSelection({ distractors, onSelect }) {
           key={index}
           variant="outlined"
           onClick={() => handleSelectDistractor(distractor)}
-          sx={{ mr: 1, mb: 1, backgroundColor: selectedDistractors.includes(distractor) ? '#f87217' : 'inherit', color: selectedDistractors.includes(distractor) ? '#fff' : 'inherit' }}
+          sx={{ mr: 1, mb: 1, backgroundColor: selectedDistractors.includes(distractor) ? '#f84c4c' : 'inherit', color: selectedDistractors.includes(distractor) ? '#fff' : 'inherit' }}
         >
           {distractor.text}
         </Button>

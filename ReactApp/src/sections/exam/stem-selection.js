@@ -33,9 +33,6 @@ function StemSelection({ metaQuestions, onSelect, reselectStem }) {
 
   return (
     <Box>
-      <Typography variant="h6" component="h2">
-        Select a Stem
-      </Typography>
       {groupedStems.map((group, index) => (
       <Box key={index} sx={{ mb: 2 }}>
           {group.title ? (
