@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Box, Button, Typography } from '@mui/material';
 
 function DistractorSelection({ distractors, onSelect }) {
   const [selectedDistractors, setSelectedDistractors] = useState([]);
@@ -10,12 +11,16 @@ function DistractorSelection({ distractors, onSelect }) {
   };
 
   return (
-    <div>
-      <h3>Select Distractors</h3>
+    <Box sx={{ mb: 2 }}>
+      <Typography variant="h6" component="h2">
+        Select Distractors
+      </Typography>
       {distractors.map((distractor, index) => (
-        <button key={index} onClick={() => handleSelectDistractor(distractor)}>{distractor.text}</button>
+        <Button key={index} variant="outlined" sx={{ mr: 1, mb: 1 }} onClick={() => handleSelectDistractor(distractor)}>
+          {distractor.text}
+        </Button>
       ))}
-    </div>
+    </Box>
   );
 }
 

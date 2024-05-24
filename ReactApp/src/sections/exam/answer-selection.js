@@ -1,13 +1,18 @@
 import React from 'react';
+import { Box, Button, Typography } from '@mui/material';
 
 function AnswerSelection({ answers, onSelect }) {
   return (
-    <div>
-      <h3>Select an Answer</h3>
+    <Box sx={{ mb: 2 }}>
+      <Typography variant="h6" component="h2">
+        Select an Answer
+      </Typography>
       {answers.map((answer, index) => (
-        <button key={index} onClick={() => onSelect(answer)}>{answer.text}</button>
+        <Button key={index} variant="outlined" sx={{ mr: 1, mb: 1 }} onClick={() => onSelect(answer)}>
+          {answer.text}
+        </Button>
       ))}
-    </div>
+    </Box>
   );
 }
 

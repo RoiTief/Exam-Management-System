@@ -1,23 +1,37 @@
 import React from 'react';
+import { Box, Typography, Divider } from '@mui/material';
 
 function QuestionList({ questions }) {
   return (
-    <div>
-      <h2>Created Questions</h2>
+    <Box>
+      <Typography variant="h4" component="h2" gutterBottom>
+        Created Questions
+      </Typography>
       {questions.map((question, index) => (
-        <div key={index}>
-          <p>Stem: {question.stem}</p>
+        <Box key={index} sx={{ mb: 2 }}>
+          <Typography variant="h6" component="h3">
+            Stem: {question.stem}
+          </Typography>
           {question.appendix && (
-            <div>
-              <h4>Appendix: {question.appendix.title}</h4>
-              <p>{question.appendix.content}</p>
-            </div>
+            <Box sx={{ mb: 1 }}>
+              <Typography variant="subtitle1">
+                Appendix: {question.appendix.title}
+              </Typography>
+              <Typography variant="body2">
+                {question.appendix.content}
+              </Typography>
+            </Box>
           )}
-          <p>Answer: {question.answer.text}</p>
-          <p>Distractors: {question.distractors.map(d => d.text).join(', ')}</p>
-        </div>
+          <Typography variant="body1">
+            Answer: {question.answer.text}
+          </Typography>
+          <Typography variant="body2">
+            Distractors: {question.distractors.map(d => d.text).join(', ')}
+          </Typography>
+          <Divider sx={{ mt: 2 }} />
+        </Box>
       ))}
-    </div>
+    </Box>
   );
 }
 

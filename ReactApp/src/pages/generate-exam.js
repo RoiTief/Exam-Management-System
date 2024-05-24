@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { httpsMethod, serverPath, requestServer } from 'src/utils/rest-api-call';
+import { Box, Button, Container, Typography } from '@mui/material';
 import QuestionForm from '/src/sections/exam/question-form';
 import QuestionList from '/src/sections/exam/question-list';
+import { Layout as DashboardLayout } from '../layouts/dashboard/layout';
 
 const data = [
   {
@@ -49,7 +51,7 @@ const data = [
   }
 ]
 
-function App() {
+const Page = () => {
   const [questions, setQuestions] = useState([]);
   const [metaQuestions, setMetaQuestions] = useState([]);
   const [currentQuestion, setCurrentQuestion] = useState(null);
@@ -73,19 +75,44 @@ function App() {
   };
 
   return (
-    <div className="App">
-      <button onClick={() => setCurrentQuestion({})}>+ Add Question</button>
-      {currentQuestion && (
-        <QuestionForm
-          metaQuestions={metaQuestions}
-          addQuestion={addQuestion}
-          onClose={() => setCurrentQuestion(null)}
-        />
-      )}
-      <QuestionList questions={questions} />
-      <button onClick={() => console.log('Save Test')}>Save Test</button>
-    </div>
+    <Box
+      sx={{
+        minHeight: '100vh',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: '#f0f0f0',
+        p: 2,
+      }}
+    >
+      <Container maxWidth="md" sx={{ backgroundColor: '#ffffff', borderRadius: 2, boxShadow: 3, p: 4 }}>
+        <Typography variant="h4" component="h1" gutterBottom>
+          Exam Management
+        </Typography>
+        <Button variant="contained" onClick={() => setCurrentQuestion({})} sx={{ mb: 2 }}>
+          + Add Question
+        </Button>
+        {currentQuestion && (
+          <QuestionForm
+            metaQuestions={metaQuestions}
+            addQuestion={addQuestion}
+            onClose={() => setCurrentQuestion(null)}
+          />
+        )}
+        <QuestionList questions={questions} />
+        <Button variant="contained" color="primary" sx={{ mt: 2 }}>
+          Save Test
+        </Button>
+      </Container>
+    </Box>
   );
 }
 
-export default App;
+Page.getLayout = (page) => (
+  <DashboardLayout>
+    {page}
+  </DashboardLayout>
+);
+
+export default Page;

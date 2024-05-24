@@ -1,4 +1,5 @@
 import React from 'react';
+import { Box, Button, Typography } from '@mui/material';
 
 function StemSelection({ metaQuestions, onSelect }) {
   const handleSelectStem = (metaQuestion) => {
@@ -20,26 +21,36 @@ function StemSelection({ metaQuestions, onSelect }) {
   }, []);
 
   return (
-    <div>
-      <h3>Select a Stem</h3>
+    <Box>
+      <Typography variant="h6" component="h2">
+        Select a Stem
+      </Typography>
       {groupedStems.map((group, index) => (
-        <div key={index}>
+        <Box key={index} sx={{ mb: 2 }}>
           {group.title ? (
             <>
-              <h4>Appendix: {group.title}</h4>
-              <p>{group.content}</p>
+              <Typography variant="subtitle1">
+                Appendix: {group.title}
+              </Typography>
+              <Typography variant="body2" sx={{ mb: 1 }}>
+                {group.content}
+              </Typography>
               {group.stems.map((metaQuestion, idx) => (
-                <button key={idx} onClick={() => handleSelectStem(metaQuestion)}>{metaQuestion.stem}</button>
+                <Button key={idx} variant="outlined" sx={{ mr: 1, mb: 1 }} onClick={() => handleSelectStem(metaQuestion)}>
+                  {metaQuestion.stem}
+                </Button>
               ))}
             </>
           ) : (
             group.stems.map((metaQuestion, idx) => (
-              <button key={idx} onClick={() => handleSelectStem(metaQuestion)}>{metaQuestion.stem}</button>
+              <Button key={idx} variant="outlined" sx={{ mr: 1, mb: 1 }} onClick={() => handleSelectStem(metaQuestion)}>
+                {metaQuestion.stem}
+              </Button>
             ))
           )}
-        </div>
+        </Box>
       ))}
-    </div>
+    </Box>
   );
 }
 
