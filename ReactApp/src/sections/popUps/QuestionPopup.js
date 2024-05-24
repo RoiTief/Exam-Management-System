@@ -1,13 +1,10 @@
 import PropTypes from 'prop-types';
 import { useState, useEffect } from 'react';
 import { overlayStyle, popupStyle } from './popup-style';
-import { useState } from 'react';
 import { SvgIcon, ListItemText, ListItem, Divider, Button, IconButton, Chip, Stack } from '@mui/material';
 import ChevronDoubleDownIcon from '@heroicons/react/20/solid/esm/ChevronDoubleDownIcon';
 import ChevronDoubleUpIcon from '@heroicons/react/20/solid/esm/ChevronDoubleUpIcon';
 import EditIcon from '@mui/icons-material/Edit';
-import axios from 'axios';
-import { Document, Page } from 'react-pdf';
 import 'react-pdf/dist/esm/Page/AnnotationLayer.css';
 import { httpsMethod, serverPath, requestServer } from 'src/utils/rest-api-call';
 
@@ -30,10 +27,26 @@ export const Question = (props) => {
     setShowAllDistractors(!showAllDistractors);
   };
 
+  const PdfViewer = () => {
+    const response = requestServer(serverPath.COMPILE, httpsMethod.POST, {});
+    const pdfBlob = new Blob([response.data], { type: 'application/pdf' });
+    const pdfUrl =  URL.createObjectURL(pdfBlob);
+    return (
+      <div style={{ height: '100vh' }}>
+        <embed
+          src={pdfUrl}
+          type="application/pdf"
+          width="100%"
+          height="100%"
+        />
+      </div>
+    );
+  };
+
   const handleLatex = async (latexCode) => {
     try {
       //    var response = await requestServer(serverPath.SIGN_UP, httpsMethod.POST, { username, password })
-      const { filePath } = await requestServer(serverPath.COMPILE, httpsMethod.POST, { latexCode });
+      const response = await requestServer(serverPath.COMPILE, httpsMethod.POST, { latexCode });
       const pdfBlob = new Blob([response.data], { type: 'application/pdf' });
       return URL.createObjectURL(pdfBlob);
     } catch (error) {
@@ -50,29 +63,29 @@ export const Question = (props) => {
 
       // Compile appendix fields
       if (question.appendix) {
-        compiled.appendix.title = await handleLatex(question.appendix.title);
-        compiled.appendix.tag = await handleLatex(question.appendix.tag);
-        compiled.appendix.content = await handleLatex(question.appendix.content);
+        compiled.appendix.title = question.appendix.title;
+        compiled.appendix.tag = question.appendix.tag;
+        //compiled.appendix.content = await handleLatex(question.appendix.content);
       }
 
       // Compile keywords
       if (question.keywords) {
-        compiled.keywords = await Promise.all(question.keywords.map(keyword => handleLatex(keyword)));
+        compiled.keywords = question.keywords;
       }
 
       // Compile correct answers
       if (question.correctAnswers) {
         compiled.correctAnswers = await Promise.all(question.correctAnswers.map(async answer => ({
-          text: await handleLatex(answer.text),
-          explanation: await handleLatex(answer.explanation),
+          text: answer.text,
+          explanation: answer.explanation,
         })));
       }
 
       // Compile distractors
       if (question.distractors) {
         compiled.distractors = await Promise.all(question.distractors.map(async distractor => ({
-          text: await handleLatex(distractor.text),
-          explanation: await handleLatex(distractor.explanation),
+          text: distractor.text,
+          explanation: distractor.explanation,
         })));
       }
 
@@ -111,6 +124,8 @@ export const Question = (props) => {
     return null;
   }
 
+  const pdfUrl = "/document.pdf";
+
   return (
     isOpen && (
       <div className="popup">
@@ -132,9 +147,7 @@ export const Question = (props) => {
               <h3>Title: {question.appendix.title}</h3>
               <h3>Tag: {question.appendix.tag}</h3>
               <h3>Content:</h3>
-              <Document file={compiledContent.appendix.content}>
-                <Page pageNumber={1}/>
-              </Document>
+              <PdfViewer />
             </div>
           )}
           <Divider />

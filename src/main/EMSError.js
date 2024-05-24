@@ -13,10 +13,12 @@ class EMSError extends Error {
 const PK_NOT_EXISTS = 100;
 const PK_ALREADY_EXISTS = 101;
 const EMAIL_ALREADY_EXISTS = 102;
+const LATEX_COMPILATION_FAILED = 200;
 
 module.exports = {
     EMSError,
     PK_NOT_EXISTS,
     PK_ALREADY_EXISTS,
     EMAIL_ALREADY_EXISTS,
+    LATEX_COMPILATION_FAILED,
 }
