@@ -238,12 +238,30 @@ function addGrader(req, res, next){
 function viewAllUsers(req, res, next){
     try{
         const users = application.viewAllUsers(process.pid);
-        req.log.info(process.pid, "a request was sent to get all users");
+        req.log.info("a request was sent to get all users");
         res.send(200, {code:200, users})
         next()
     }
     catch(err){
         req.log.warn(err.message, 'unable to request to get all users');
+        next(err);
+    }
+}
+
+/**
+ * deleting a user from the system
+ * @param username
+ * @throws {Error} - if fail to delete user
+ */
+function deleteUser(req, res, next){
+    try{
+        application.deleteUser(process.pid, req.body);
+        req.log.info("a request was sent to delete a user");
+        res.send(200, {code:200})
+        next()
+    }
+    catch(err){
+        req.log.warn(err.message, 'unable to request to delete a user');
         next(err);
     }
 }
@@ -263,5 +281,6 @@ module.exports = {
     finishATask: finishATask,
     addTA: addTA,
     addGrader: addGrader,
-    viewAllUsers: viewAllUsers
+    viewAllUsers: viewAllUsers,
+    deleteUser: deleteUser
 };

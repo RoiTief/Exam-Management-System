@@ -331,6 +331,16 @@ class ApplicationFacade{
         this.courseController.getCourse(courseID).addSimpleMetaQuestion(stem, correctAnswers, distractors)
     }
 
+    /**
+     * Delete a user from the system
+     * @param pid - The process ID of the user performing the action
+     * @param username - The user we want to delete
+     * @throws {Error} - If the user is not signed in or does not have the necessary permissions
+     */
+    deleteUser(pid, username) {
+        this.userController.deleteUser(pid, username)
+    }
+
 
 
 }

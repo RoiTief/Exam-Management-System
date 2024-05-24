@@ -122,6 +122,14 @@ class UserController {
         }
         return [...this._registered_users.values()]
     }
+
+    deleteUser(pid, username){
+        this.verifySystemAdmin(pid)
+        if (this._registered_users.get(username).getUserType() === "System Admin"){
+            throw new Error("can't delete system admin")
+        }
+        this._registered_users.delete(username)
+    }
 }
 
 module.exports = UserController;
