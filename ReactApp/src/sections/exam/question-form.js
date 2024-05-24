@@ -25,6 +25,11 @@ function QuestionForm({ metaQuestions, addQuestion, onClose }) {
     onClose();
   };
 
+  const handleReSelectStem = () => {
+    setSelectedAnswer(null);
+    setSelectedDistractors(null);
+  }
+
   return (
     <Container maxWidth="sm" sx={{ backgroundColor: '#ffffff', borderRadius: 2, boxShadow: 3, p: 4, mt: 4 }}>
       <Typography variant="h4" component="h1" gutterBottom>
@@ -32,7 +37,11 @@ function QuestionForm({ metaQuestions, addQuestion, onClose }) {
       </Typography>
       <Divider sx={{ my: 2 }} />
       <Box sx={{ py: 2 }}>
-        <StemSelection metaQuestions={metaQuestions} onSelect={setSelectedMetaQuestion} />
+        <StemSelection
+          metaQuestions={metaQuestions}
+          onSelect={setSelectedMetaQuestion}
+          reselectStem={handleReSelectStem}
+        />
         {selectedMetaQuestion && (
           <>
             <AnswerSelection answers={selectedMetaQuestion.correctAnswers} onSelect={setSelectedAnswer} />
