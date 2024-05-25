@@ -46,9 +46,9 @@ export const AddCourse = (props) => {
     onSubmit: async (values, helpers) => {
       try {
         await requestServer(serverPath.ADD_COURSE, httpsMethod.POST, 
-          {"courseId": values.courseId,
-          "courseName": values.courseName,
-          "courseAdminUsername": values.courseAdminUsername});
+          {courseId: values.courseId,
+          courseName: values.courseName,
+          courseAdminUsername: values.courseAdminUsername});
         closePopup();
       } catch (err) {
         helpers.setStatus({ success: false });

@@ -1,7 +1,3 @@
-import ChartBarIcon from '@heroicons/react/24/solid/ChartBarIcon';
-import CogIcon from '@heroicons/react/24/solid/CogIcon';
-import ShoppingBagIcon from '@heroicons/react/24/solid/ShoppingBagIcon';
-import UserIcon from '@heroicons/react/24/solid/UserIcon';
 import UsersIcon from '@heroicons/react/24/solid/UsersIcon';
 import { SvgIcon } from '@mui/material';
 import { HomeIcon } from '@heroicons/react/24/solid';
@@ -12,6 +8,9 @@ import {
   SchoolOutlined,
 } from '@mui/icons-material';
 
+const types = require("../../../../src/main/Enums").USER_TYPES;
+
+
 export const items = [
   {
     title: 'Home Page',
@@ -20,7 +19,8 @@ export const items = [
       <SvgIcon fontSize="small">
         <HomeIcon />
       </SvgIcon>
-    )
+    ),
+    permissions: [types.LECTURER, types.ADMIN, types.TA]
   },
   {
     title: 'Manage Users',
@@ -29,7 +29,8 @@ export const items = [
       <SvgIcon fontSize="small">
         <AdminPanelSettingsRounded />
       </SvgIcon>
-    )
+    ),
+    permissions: [types.ADMIN]
   },
   {
     title: 'Create New Meta-Question',
@@ -38,6 +39,7 @@ export const items = [
           <QuestionMark />
         </SvgIcon>
     ),
+    permissions: [types.LECTURER, types.ADMIN, types.TA],
     children: [
       {
         title: 'Simple Meta-Question',
@@ -60,19 +62,20 @@ export const items = [
         <SchoolOutlined />
       </SvgIcon>
     ),
+    permissions: [types.LECTURER, types.ADMIN, types.TA],
     children: [
-      {
-        title: 'Test View',
-        path: '/',
-      },
+      // {
+      //   title: 'Test View',
+      //   path: '/',
+      // },
       {
         title: 'Catalogue View',
         path: '/questions/catalog',
       },
-      {
-        title: 'Answer Sheet View',
-        path: '/',
-      }
+      // {
+      //   title: 'Answer Sheet View',
+      //   path: '/',
+      // }
     ]
   },
   {
@@ -82,15 +85,17 @@ export const items = [
         <UsersIcon />
       </SvgIcon>
     ),
+    permissions: [types.LECTURER, types.ADMIN],
     path: '/course-staff'
   },
   {
-    title: 'previews exams',
-    path: '/',
+    title: 'generate exams',
+    path: '/generate-exam',
     icon: (
       <SvgIcon fontSize="small">
         <Newspaper />
       </SvgIcon>
-    )
+    ),
+    permissions: [types.LECTURER, types.ADMIN]
   }
 ];

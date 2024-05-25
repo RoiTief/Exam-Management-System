@@ -10,13 +10,13 @@ class ApplicationFacade{
         this.courseController = new CourseController();
 
         //todo - remove for testing:
+        this.signIn(24632, "Admin", "Aa123456")
         this.register(24632, "courseAdmin", "123")
         this.register(24632, "TA", "123")
         this.register(24632, "TA1", "123")
         this.register(24632, "TA2", "123")
         this.register(24632, "TA3", "123")
         this.register(24632, "grader", "123")
-        this.signIn(24632, "Admin", "Aa123456")
         this.addCourse(24632, 111, "course name", "courseAdmin")
         this.logout(24632)
         this.signIn(24632, "courseAdmin", "123")
@@ -226,12 +226,10 @@ class ApplicationFacade{
     /**
      * get all usernames in the system
      * @param pid - who is requestion the usernames - can be course admin or system admin
-     * @return {List<string>} list of usernames
+     * @return {List<User>} list of usernames
      */
     viewAllUsers(pid){
-        //TODO
-        return ["fake username1", "fake username2", "implement viewAllUsers method in facade", "TA", "grader"]
-
+        return this.userController.getAllUsers(pid)
     }
 
     /**
@@ -334,15 +332,85 @@ class ApplicationFacade{
     }
 
     /**
-     * Add a simple meta-question
+     * Delete a user from the system
      * @param pid - The process ID of the user performing the action
-     * @param stem - The stem of the meta-question
-     * @param correctAnswers - Array of correct answers for the meta-question
-     * @param distractors - Array of distractors for the meta-question
+     * @param username - The user we want to delete
      * @throws {Error} - If the user is not signed in or does not have the necessary permissions
      */
-    getAllUsers(pid) {
-        return this.userController.getAllUsers(pid)
+    deleteUser(pid, username) {
+        this.userController.deleteUser(pid, username)
+    }
+
+    /**
+     * return a list of meta question of the user's course
+     * @param pid - The process ID of the user performing the action
+     * @throws {Error} - If the user is not signed in or does not have the necessary permissions
+     * @return {MetaQuestion[]} all the meta question of the user's course
+     */
+    getAllMetaQuestions(pid) {
+        //TODO - implement
+        return [
+            {
+                stem: 'what did Idan listen to when he was a kid',
+                correctAnswers: [{text:'baby motzart', explanation: 'explanation1'},
+                    {text:'baby bethoven', explanation: 'explanation2'}],
+                distractors: [{text:'Machrozet Chaffla', explanation: 'explanation1'},
+                    {text:'zohar Argov', explanation: 'explanation2'}, {text:'Begins "tzachtzachim" speach', explanation: 'explanation3'}],
+                keywords: ['key1', 'key2', 'key3']
+            },
+            {
+                stem: "what is Mor's last name",
+                correctAnswers: [{text:'Abo', explanation: 'explanation1'},
+                    {text:'Abu', explanation: 'explanation2'}],
+                distractors: [{text:'abow', explanation: 'explanation1'},
+                    {text:'abou', explanation: 'explanation2'}, {text:'aboo', explanation: 'explanation3'}],
+                keywords: ['key1', 'key2', 'key5'],
+                appendix: {title: "Mor's ID", tag: "tag", content: "imagine there is my id here"}
+            },
+            {
+                stem: "What is Roi's nickname",
+                correctAnswers: [{text:'The Tief', explanation: 'explanation1'},
+                    {text:"Gali's soon to be husband", explanation: 'explanation2'}],
+                distractors: [{text:'that blonde guy', explanation: 'explanation1'},
+                    {text:'that tall guy', explanation: 'explanation2'}, {text:'the one with the black nail polish', explanation: 'explanation3'}],
+                keywords: ['key1', 'key2', 'key5'],
+                appendix: {title: "Roi picture", tag: "tag", content: "some amberesing picture of roi"}
+            },
+            {
+                stem: 'How old is Mor',
+                correctAnswers: [{text:'25', explanation: 'explanation1'},
+                    {text:'22 with "vetek"', explanation: 'explanation2'}],
+                distractors: [{text:'19 (but thank you)', explanation: 'explanation1'},
+                    {text:'30', explanation: 'explanation2'}, {text:'35', explanation: 'explanation3'}],
+                keywords: ['key1', 'key2', 'key5'],
+                appendix: {title: "Mor's ID", tag: "tag", content: "imagine there is my id here"}
+            },
+            {
+                stem: 'where does Ofek leave',
+                correctAnswers: [{text:'in Gan Yavne', explanation: 'explanation1'},
+                    {text:'next to the orange square', explanation: 'explanation2'},
+                    {text:"next to mor's brother", explanation: 'explanation1'}],
+                distractors: [{text:'at the beach - surffing', explanation: 'explanation1'},
+                    {text:'riding bike in the fields', explanation: 'explanation2'}, {text:"in may's house", explanation: 'explanation3'}],
+                keywords: ['key1', 'key2', 'key3']
+            }
+        ]
+
+    }
+
+    /**
+     * return a list of appendixes of the user's course
+     * @param pid - The process ID of the user performing the action
+     * @throws {Error} - If the user is not signed in or does not have the necessary permissions
+     * @return {Appendix[]} all the meta question of the user's course
+     */
+    getAllAppendixes(pid) {
+        //TODO - implement
+        return [
+            { title: 'Appendix A', tag: 'General', content: 'Content of Appendix A' },
+            { title: 'Appendix B', tag: 'Specific', content: 'Content of Appendix B' },
+            // Add more appendices as needed
+        ];
     }
 
 

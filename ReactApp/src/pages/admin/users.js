@@ -4,19 +4,20 @@ import { Box, Button, Container, IconButton, Table, TableBody, TableCell, TableC
 import { AddCircle, Edit, Delete } from '@mui/icons-material';
 import { Formik, Form } from 'formik';
 import * as Yup from 'yup';
-import { useUserContext } from '../../contexts/user-context';
+import { useUser } from 'src/hooks/use-user';
+import { UserProvider } from '../../contexts/user-context';
 
 const validationSchema = Yup.object().shape({
-  username: Yup.string().required('Username is required'),
-  courseName: Yup.string().required('Course name is required'),
-  type: Yup.string().required('Type is required')
+  type: Yup.string().required('Type is required').oneOf(['Lecturer', 'TA'], 'Invalid type'),
 });
 
 const ManageUsers = () => {
-  const { state, addUser, editUser, deleteUser } = useUserContext();
+  const { state, addUser, editUser, deleteUser } = useUser();
   const [open, setOpen] = useState(false);
   const [editMode, setEditMode] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
+  const [deleteUserPrompt, setDeleteUserPrompt] = useState(false);
+  const [userToDelete, setUserToDelete] = useState(null);
 
   const handleOpen = (user) => {
     setEditMode(!!user);
@@ -28,13 +29,25 @@ const ManageUsers = () => {
     setEditMode(false);
     setCurrentUser(null);
     setOpen(false);
+    setDeleteUserPrompt(false);
+    setUserToDelete(null);
+  };
+
+  const handleDeleteUser = (user) => {
+    setUserToDelete(user);
+    setDeleteUserPrompt(true);
+  };
+
+  const confirmDeleteUser = () => {
+    deleteUser(userToDelete.username);
+    setDeleteUserPrompt(false);
   };
 
   const handleSubmit = (values, { setSubmitting }) => {
     if (editMode) {
       editUser({ ...currentUser, ...values });
     } else {
-      addUser({ id: Date.now(), ...values });
+      addUser({ ...values });
     }
     setSubmitting(false);
     handleClose();
@@ -54,22 +67,20 @@ const ManageUsers = () => {
             <TableHead>
               <TableRow>
                 <TableCell>Username</TableCell>
-                <TableCell>Course Name</TableCell>
                 <TableCell>Type</TableCell>
                 <TableCell>Actions</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
               {Array.isArray(state.users) && state.users.map((user) => (
-                <TableRow key={user.id}>
+                <TableRow key={user.username}>
                   <TableCell>{user.username}</TableCell>
-                  <TableCell>{user.courseName}</TableCell>
                   <TableCell>{user.type}</TableCell>
                   <TableCell>
                     <IconButton onClick={() => handleOpen(user)}>
                       <Edit />
                     </IconButton>
-                    <IconButton onClick={() => deleteUser(user.id)}>
+                    <IconButton onClick={() => handleDeleteUser(user)}>
                       <Delete />
                     </IconButton>
                   </TableCell>
@@ -84,7 +95,6 @@ const ManageUsers = () => {
           <Formik
             initialValues={{
               username: currentUser?.username || '',
-              courseName: currentUser?.courseName || '',
               type: currentUser?.type || ''
             }}
             validationSchema={validationSchema}
@@ -105,18 +115,6 @@ const ManageUsers = () => {
                     error={touched.username && Boolean(errors.username)}
                     helperText={touched.username && errors.username}
                   />
-                  <TextField
-                    fullWidth
-                    margin="dense"
-                    id="courseName"
-                    name="courseName"
-                    label="Course Name"
-                    value={values.courseName}
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                    error={touched.courseName && Boolean(errors.courseName)}
-                    helperText={touched.courseName && errors.courseName}
-                  />
                   <Select
                     fullWidth
                     margin="dense"
@@ -127,8 +125,7 @@ const ManageUsers = () => {
                     onBlur={handleBlur}
                     error={touched.type && Boolean(errors.type)}
                   >
-                    <MenuItem value="Course admin">Course admin</MenuItem>
-                    <MenuItem value="Grader">Grader</MenuItem>
+                    <MenuItem value="Lecturer">Lecturer</MenuItem>
                     <MenuItem value="TA">TA</MenuItem>
                   </Select>
                 </DialogContent>
@@ -144,6 +141,23 @@ const ManageUsers = () => {
             )}
           </Formik>
         </Dialog>
+
+        <Dialog open={deleteUserPrompt} onClose={() => setDeleteUserPrompt(false)}>
+          <DialogTitle>Confirm Deletion</DialogTitle>
+          <DialogContent>
+            <Typography variant="body1">
+              Are you sure you want to delete the user {userToDelete?.username}?
+            </Typography>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={confirmDeleteUser} color="primary">
+              Yes
+            </Button>
+            <Button onClick={() => setDeleteUserPrompt(false)} color="primary">
+              No
+            </Button>
+          </DialogActions>
+        </Dialog>
       </Container>
     </Box>
   );
@@ -151,7 +165,9 @@ const ManageUsers = () => {
 
 ManageUsers.getLayout = (page) => (
   <DashboardLayout>
-    {page}
+    <UserProvider>
+      {page}
+    </UserProvider>
   </DashboardLayout>
 );
 
