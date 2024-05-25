@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { httpsMethod, serverPath, requestServer } from 'src/utils/rest-api-call';
+import { httpsMethod, serverPath, requestServer, latexServerPath } from 'src/utils/rest-api-call';
 import { Box, Button, Container, Typography } from '@mui/material';
 import QuestionForm from '/src/sections/exam/question-form';
 import QuestionList from '/src/sections/exam/question-list';
@@ -116,7 +116,7 @@ const Page = () => {
       <PdfLatexPopup isOpen={showPdfView}
                      closePopup={() => setShowPdfView(false)}
                      content={questions}
-                     type="exam" />
+                     type= {latexServerPath.COMPILE_TEST} />
     </Box>
   );
 }

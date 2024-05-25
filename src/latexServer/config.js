@@ -1,4 +1,4 @@
-const DEFUALT_LATEX_CONFIG = {
+const DEFAULT_LATEX_CONFIG = {
     OPENING: "\\documentclass{article}\n" +
         "\\usepackage{amsmath}\n" +
         "\\usepackage{amssymb}\n" +
@@ -7,4 +7,9 @@ const DEFUALT_LATEX_CONFIG = {
     CLOSING: "\\end{document}\n",
 }
 
-module.exports = DEFUALT_LATEX_CONFIG;
+const LATEX_SERVER = {
+    URL: 'http://164.90.223.94',
+    PORT: 3001,
+}
+
+module.exports = { DEFAULT_LATEX_CONFIG, LATEX_SERVER };

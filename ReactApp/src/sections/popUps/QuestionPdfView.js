@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import {overlayStyle, popupStyle} from './popup-style'
 import React, { useEffect, useState } from 'react';
-import { httpsMethod } from '../../utils/rest-api-call';
+import { requestLatexServer} from '../../utils/rest-api-call';
 
 export const PdfLatexPopup = (props) => {
   const { isOpen, closePopup, content, type } = props;
@@ -16,24 +16,7 @@ export const PdfLatexPopup = (props) => {
 
   const fetchPdfUrlFromServer = async () => {
     try {
-      const latexCode = 'My name is:'
-        + '    \\begin{equation*}\n'
-        + '        \\frac{Slim}{Shady}\n'
-        + '    \\end{equation*}\n'
-        + '\\end{document}';
-      const body = {latexCode};
-      // const body = {question};
-      //TODO
-      const method = httpsMethod.POST
-      const response= await fetch( "http://localhost:3001/compile",
-        {
-          method,
-          headers: {
-            'Content-Type': 'application/json',
-            'Origin': '*',
-          },
-          body: JSON.stringify(body)
-        });
+      const response= requestLatexServer(content, type);
       const blob = await response.blob();
       const url = URL.createObjectURL(blob);
       setPdfUrl(url);

@@ -4,17 +4,17 @@ const multer = require('multer');
 const cors = require('cors')
 
 const latexCompiler = require('./LatexCompiler')
+const {LATEX_SERVER} = require("./config");
 
 const app = express();
 const upload = multer();
-const port = 3001;
+const port = LATEX_SERVER.PORT;
 
 app.use(bodyParser.json());
 app.use(cors());
 
-app.post('/compile', upload.none(), (req, res) => {
-    const latexCode = req.body.latexCode;
-    latexCompiler.compile(latexCode, (err, pdfPath) => {
+const compileCallback = (res) => {
+    return (err, pdfPath) => {
         if (err) {
             res.status(500).send('Error compiling LaTeX');
             return;
@@ -25,7 +25,25 @@ app.post('/compile', upload.none(), (req, res) => {
                 res.status(500).send('Error sending PDF');
             }
         });
-    });
+    }
+}
+
+app.post('/compile', upload.none(), (req, res) => {
+    const latexCode = req.body.content;
+    console.log(test);
+    latexCompiler.compileNormal(latexCode, compileCallback(res));
+});
+
+app.post('/test', upload.none(), (req, res) => {
+    const test = req.body.content;
+    console.log(test);
+    latexCompiler.compileTest(test, compileCallback(res));
+});
+
+app.post('/metaQuestion', upload.none(), (req, res) => {
+    const metaQuestion = req.body.content;
+    console.log(metaQuestion);
+    latexCompiler.compileMetaQuestion(metaQuestion, compileCallback(res));
 });
 
 app.listen(port, () => {
