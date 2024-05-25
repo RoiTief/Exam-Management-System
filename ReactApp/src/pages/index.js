@@ -47,9 +47,6 @@ const Page = () => (
               <Grid item xs={12} md={6} lg={4}>
                 <OverviewCalander/>
               </Grid>
-              <Grid item xs={12} md={6} lg={4}>
-                <OverviewUserOptions/>
-              </Grid>
             </Stack>
           </Stack>
         </Stack>
