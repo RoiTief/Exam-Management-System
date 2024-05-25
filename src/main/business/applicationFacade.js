@@ -1,47 +1,29 @@
 const UserController  = require('./UserManager/UserController.js' );
 const TaskController = require('./TaskManager/TaskController.js');
-const CourseController = require('./CourseManager/CourseController.js');
+const MetaQuestionController = require('./MetaQuestions/MetaQuestionController.js');
+const userTypes = require('../Enums').USER_TYPES
 
 
 class ApplicationFacade{
     constructor() {
         this.userController = new UserController();
         this.taskController = new TaskController();
-        this.courseController = new CourseController();
+        this.metaQuestionController = new MetaQuestionController();
 
         //todo - remove for testing:
         this.signIn(24632, "Admin", "Aa123456")
-        this.register(24632, "courseAdmin", "123")
-        this.register(24632, "TA", "123")
-        this.register(24632, "TA1", "123")
-        this.register(24632, "TA2", "123")
-        this.register(24632, "TA3", "123")
-        this.register(24632, "grader", "123")
-        this.addCourse(24632, 111, "course name", "courseAdmin")
+        this.register(24632, "courseAdmin", userTypes.LECTURER)
+        this.register(24632, "TA", userTypes.TA)
+        this.register(24632, "TA1",  userTypes.TA)
+        this.register(24632, "TA2",  userTypes.TA)
+        this.register(24632, "TA3",  userTypes.TA)
         this.logout(24632)
         this.signIn(24632, "courseAdmin", "123")
-        this.finishATask(24632, 1, "yes")
-        console.log(this.getUserType(24632))
-        this.addGrader(24632, "grader")
         this.addTA(24632, "TA")
         this.addTA(24632, "TA1")
         this.addTA(24632, "TA2")
         this.addTA(24632, "TA3")
         this.logout(24632)
-        this.signIn(24632, "TA", "123")
-        this.finishATask(24632, 3, "yes")
-        this.logout(24632)
-        this.signIn(24632, "TA1", "123")
-        this.finishATask(24632, 4, "yes")
-        this.logout(24632)
-        this.signIn(24632, "TA2", "123")
-        this.finishATask(24632, 5, "yes")
-        this.logout(24632)
-        this.signIn(24632, "TA3", "123")
-        this.finishATask(24632, 6, "yes")
-        this.logout(24632)
-        this.signIn(24632, "grader", "123")
-        this.finishATask(24632, 2, "yes")    
     }
 
     getUsername(pid){
@@ -56,13 +38,13 @@ class ApplicationFacade{
      * register a user
      * @param pid - the process trying to sign up from
      * @param username - the new user username - needs to be unique
-     * @param password - the new user password
+     * @param type - the new user type
      * @returns {User} - returns the created user
      * @throws Error - if the process is already logged in
      *               - if the username is taken
      */
-    register(pid, username, password){
-        return this.userController.register(pid, username, password);
+    register(pid, username, type){
+        return this.userController.register(pid, username, type);
     }
 
     /**
@@ -89,45 +71,23 @@ class ApplicationFacade{
     }
 
     /**
-     * creates new course
-     * create a task for the new courseAdmin to accept being a courseAdmin
-     * @param pid - the process who tries to create the new course - needs to be a logged in systemAdmin
-     * @param courseID - the new courseID - need to be unique
-     * @param courseName - the new course name
-     * @param courseAdminUsername - the new course admin
-     * @return {Course} the new course created
+     * get all staff
+     * @param pid - the process who tries to view the staff - needs to be a logged in as lecturer
+     * @return {Staff} the staff, ordered by lecturers and TAs
      * @throws {Error} - if there is no logged in user in @pid
-     *                 - if the user logged in user in @pid is not a systemAdmin
-     *                 - if there is no user named courseAdminUsername
-     *                 - if there is already a course with this ID
+     *                 - if the user logged in user in @pid is not a lecturer
      */
-    addCourse(pid, courseID, courseName, courseAdminUsername){
-        this.userController.verifySystemAdmin(pid);
-        this.userController.verifyUserRegistered(courseAdminUsername)
-        let course = this.courseController.createCourse(courseID, courseName);
-        this.taskController.courseAdminRequestTask(courseAdminUsername, course);
-        return course;
-    }
-
-    /**
-     * view a course
-     * @param pid - the process who tries to view the course - needs to be a logged in courseAdmin
-     * @return {Course} the course
-     * @throws {Error} - if there is no logged in user in @pid
-     *                 - if the user logged in user in @pid is not a courseAdmin
-     */
-    viewMyCourse(pid){
-        return this.userController.verifyCourseAdmin(pid);
+    getAllStaff(pid){
+        return this.userController.getAllStaff(pid)
     }
 
     /**
      * set @courseAdminUsername to be the course
      * @param courseAdminUsername - the new course admin
-     * @param course
      * @throws {Error} - if there is no user named courseAdminUsername
      */
-    setUserAsCourseAdmin(courseAdminUsername, course){
-        this.userController.setUserAsCourseAdmin(courseAdminUsername, course);
+    setUserAsCourseAdmin(courseAdminUsername){
+        this.userController.setUserAsCourseAdmin(courseAdminUsername);
     }
 
     /**
@@ -139,43 +99,18 @@ class ApplicationFacade{
      *                 - if there is no user named TAUsername
      */
     addTA(pid, TAUsername){
-        let course = this.userController.verifyCourseAdmin(pid);
+        this.userController.verifyLecturer(pid);
         this.userController.verifyUserRegistered(TAUsername)
-        this.taskController.newTARequestTask(TAUsername, course);
+        this.taskController.newTARequestTask(TAUsername);
     }
 
     /**
      * set @TAUsername to be a TA in course
      * @param TAUsername
-     * @param course
      * @throws {Error} - if there is no user named courseAdminUsername
      */
-    setUserAsTA(TAUsername, course){
-        this.userController.setUserAsTA(TAUsername, course);
-    }
-
-    /**
-     * create a task for the new grader to accept being a grader of this course
-     * @param pid - the user who tries to add the new grader - needs to be a courseAdmin
-     * @param graderUsername
-     * @throws {Error} - if there is no user with name @username
-     *                 - if the user named username is not a courseAdminUsername or is not assigned to a course
-     *                 - if there is no user named graderUsername
-     */
-    addGrader(pid, graderUsername){
-        let course = this.userController.verifyCourseAdmin(pid);
-        this.userController.verifyUserRegistered(graderUsername)
-        this.taskController.newGraderRequestTask(graderUsername, course);
-    }
-
-    /**
-     * set @graderUsername to be a Grader in course
-     * @param graderUsername
-     * @param course
-     * @throws {Error} - if there is no user named courseAdminUsername
-     */
-    setUserAsGrader(graderUsername, course){
-        this.userController.setUserAsGrader(graderUsername, course);
+    setUserAsTA(TAUsername){
+        this.userController.setUserAsTA(TAUsername);
     }
 
     /**
@@ -327,8 +262,7 @@ class ApplicationFacade{
      */
     addSimpleMetaQuestion(pid, stem, correctAnswers, distractors) {
         const user = this.userController.getLoggedInName(pid);
-        const courseID = user.getCourseID()
-        this.courseController.getCourse(courseID).addSimpleMetaQuestion(stem, correctAnswers, distractors)
+        this.metaQuestionController.addSimpleMetaQuestion(stem, correctAnswers, distractors)
     }
 
     /**

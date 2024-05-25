@@ -63,7 +63,7 @@ export const UserProvider = ({ children }) => {
 
   const addUser = async user => {
     try {
-      await requestServer(serverPath.SIGN_UP, httpsMethod.POST, user.username);
+      await requestServer(serverPath.SIGN_UP, httpsMethod.POST, [user.username, user.type]);
       dispatch({ type: HANDLERS.ADD_USER, payload: user });
     } catch (error){
       console.error("failed to add user:", error)

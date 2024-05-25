@@ -1,23 +1,23 @@
 var User = require('./User')
 const types = require('../../Enums').USER_TYPES
 
-class TA extends User{
+class Lecturer extends User{
 
     constructor(username, password) {
         super(username, password);
-        this.type = types.TA
+        this.type = types.LECTURER
     }
-
+    
     getUserType(){
         return this.type
     }
 
     verifyType(type){
         if(type !== this.type){
-            throw Error("the user is a TA and doesnt have the sufficient permissions");
+            throw Error("the user is a Lecturer and doesnt have the sufficient permissions");
         }
     }
 
 }
 
-module.exports = TA;
+module.exports = Lecturer;

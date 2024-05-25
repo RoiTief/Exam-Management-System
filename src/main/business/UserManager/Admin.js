@@ -1,7 +1,7 @@
 var User = require('./User')
 const types = require('../../Enums').USER_TYPES
 
-class SystemAdmin extends User{
+class Admin extends User{
 
     constructor(username, password) {
         super(username, password);
@@ -9,15 +9,15 @@ class SystemAdmin extends User{
     }
 
     getUserType(){
-        return "System Admin"
+        return this.type
     }
 
     verifyType(type){
-        if(type !== "SystemAdmin"){
-            throw Error("the user is a SystemAdmin and doesnt have the sufficient permissions");
+        if(type !== this.type){
+            throw Error("the user is a Admin and doesnt have the sufficient permissions");
         }
     }
 
 }
 
-module.exports = SystemAdmin;
+module.exports = Admin;

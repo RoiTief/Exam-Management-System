@@ -1,14 +1,15 @@
 ﻿const User = require('./User');
-const SystemAdmin = require('./SystemAdmin');
-const CourseAdmin = require('./CourseAdmin');
+const Admin = require('./Admin');
+const Lecturer = require('./Lecturer');
 const TA = require('./TA');
-const Grader = require('./Grader');
+const types = require('../../Enums').USER_TYPES
+const DEFAULT_PASSWORD = "123"
 
 class UserController {
 
     constructor(){
         this._registered_users = new Map();
-        this._registered_users.set("Admin", new SystemAdmin("Admin", "Aa123456"));
+        this._registered_users.set("Admin", new Admin("Admin", "Aa123456"));
         this._logged_in_users = new Map();
     }
     
@@ -37,18 +38,27 @@ class UserController {
         return user.getUserType()
     }
     
-    register(pid, username, password){
+    register(pid, username, type){
         this.verifySystemAdmin(pid);
         if (this._isRegistered(username)){
             throw new Error("this username is taken");
         }
-        let user = new User(username, password)
+        let user
+        switch (type) {
+            case types.TA:
+                user = new TA(username, DEFAULT_PASSWORD)
+                break
+            case types.LECTURER:
+                user = new Lecturer(username, DEFAULT_PASSWORD)
+                break
+            default:
+                user = new Admin()
+        }
         this._registered_users.set(username, user);
         return user;
     }
 
     signIn(pid, username, password) {
-        this._varifyNotLoggedIn(pid)
         this.verifyUserRegistered(username)
         let user = this.getUser(username)
         if(user.password !== password){
@@ -70,7 +80,7 @@ class UserController {
     verifySystemAdmin(pid) {
         this._varifyLogged(pid)
         let username = this._logged_in_users.get(pid)
-        this.getUser(username).verifyType("SystemAdmin");
+        this.getUser(username).verifyType(types.ADMIN);
     }
 
     verifyUserRegistered(username) {
@@ -79,35 +89,26 @@ class UserController {
         }
     }
 
-    verifyCourseAdmin(pid) {
+    verifyLecturer(pid) {
         this._varifyLogged(pid)
         let username = this._logged_in_users.get(pid)
         let user = this.getUser(username)
-        user.verifyType("CourseAdmin");
-        return user.course;
+        user.verifyType(types.LECTURER);
+        return true;
     }
 
     setUserAsCourseAdmin(courseAdminUsername, course) {
         this.verifyUserRegistered(courseAdminUsername)
         let user = this._registered_users.get(courseAdminUsername);
-        this._registered_users.set(courseAdminUsername, new CourseAdmin(user, course));
+        this._registered_users.set(courseAdminUsername, new Lecturer(user, course));
         course.setUserAsCourseAdmin(courseAdminUsername);
     }
 
-    setUserAsTA(TAUsername, course) {
+    setUserAsTA(TAUsername) {
         this.verifyUserRegistered(TAUsername)
         let user = this._registered_users.get(TAUsername);
-        this._registered_users.set(TAUsername, new TA(user, course));
-        course.setUserAsTA(TAUsername);
+        this._registered_users.set(TAUsername, new TA(user));
     }
-    
-    setUserAsGrader(graderUsername, course) {
-        this.verifyUserRegistered(graderUsername)
-        let user = this._registered_users.get(graderUsername);
-        this._registered_users.set(graderUsername, new Grader(user, course));
-        course.setUserAsGrader(graderUsername);
-    }
-
 
     getLoggedInName(pid){
         this._varifyLogged(pid);
@@ -115,17 +116,21 @@ class UserController {
     }
 
     getAllUsers(pid){
-        try {
-            this.verifySystemAdmin(pid)
-        } catch (e) {
-            this.verifyCourseAdmin(pid)
-        }
-        return [...this._registered_users.values()]
+        this.verifySystemAdmin(pid)
+        return [...this._registered_users.values()].filter(user => user.type !== types.ADMIN)
+    }
+
+    getAllStaff(pid){
+        this.verifyLecturer(pid)
+        let allUsers = [...this._registered_users.values()].filter(user => user.type !== types.ADMIN)
+        let allTAs = allUsers.filter(user => user.type === types.TA)
+        let allLecturers = allUsers.filter(user => user.type === types.LECTURER)
+        return {"TAs": allTAs, "Lecturers": allLecturers}
     }
 
     deleteUser(pid, username){
         this.verifySystemAdmin(pid)
-        if (this._registered_users.get(username).getUserType() === "System Admin"){
+        if (this._registered_users.get(username).getUserType() === types.ADMIN){
             throw new Error("can't delete system admin")
         }
         this._registered_users.delete(username)

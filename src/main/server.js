@@ -164,8 +164,6 @@ function createServer(options) {
     server.post('/signIn', service.signIn);
     //{}
     server.post('/logout', service.logout);
-    //{"courseId", "courseName", "courseAdminUsername"}
-    server.post('/addCourse', service.addCourse);
     //{"taskId", "response"}
     server.post('/finishATask', service.finishATask);
     //{"username"}
@@ -174,7 +172,7 @@ function createServer(options) {
     server.post('/addGrader', service.addGrader)
 
     server.get('/viewMyTasks', service.viewMyTasks);
-    server.get('/viewMyCourse', service.viewMyCourse);
+    server.get('/getAllStaff', service.getAllStaff);
     server.get('/viewUsername', service.viewUsername);
     server.get('/viewUserType', service.viewUserType);
     server.get('/getAllUserNames', service.viewAllUsers);
