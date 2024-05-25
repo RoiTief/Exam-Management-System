@@ -20,13 +20,13 @@ const Page = () => {
       try {
         const { metaQuestions } = await requestServer(serverPath.GET_ALL_META_QUESTIONS, httpsMethod.GET);
         setMetaQuestions(metaQuestions);
+        handleSearch([])
       } catch (error) {
         console.error('Error fetching meta questions:', error);
       }
     }
-
-    fetchMetaQuestions();
     handleSearch([])
+    fetchMetaQuestions();
   }, []);
 
   const handleSearch = (keys) => {

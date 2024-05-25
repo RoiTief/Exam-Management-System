@@ -393,6 +393,96 @@ class ApplicationFacade{
                 distractors: [{text:'at the beach - surffing', explanation: 'explanation1'},
                     {text:'riding bike in the fields', explanation: 'explanation2'}, {text:"in may's house", explanation: 'explanation3'}],
                 keywords: ['key1', 'key2', 'key3']
+            },
+            {
+                stem: '\tThe poet John Keats once wrote (in his poem "Ode on a Grecian Urn"),\n' +
+                    'Beauty is truth, truth beauty,---that is all\n' +
+                    'Ye know on earth, and all ye need to know.\n' +
+                    '\n' +
+                    'By contrast, Plato (in The Republic) warns of poetry\'s power to make a falsehood seem true, by beautifying it.\n' +
+                    '\n' +
+                    'What, then, is the relationship between beauty, as achieved by the artist, and truth?',
+                "correctAnswers": [
+                    {
+                        "text": "Harmony between Beauty and Truth",
+                        "explanation": "Beauty in art can reveal deeper truths by presenting them in a harmonious and aesthetically pleasing way, allowing people to perceive and understand these truths more profoundly."
+                    },
+                    {
+                        "text": "Subjective Perception",
+                        "explanation": "Both beauty and truth are subjective experiences; the artist's role is to present their personal interpretation, which may resonate with or challenge the audience's own perceptions."
+                    },
+                    {
+                        "text": "Beauty as a Vehicle for Truth",
+                        "explanation": "Artistic beauty can serve as a compelling vehicle for conveying truths, making complex or abstract ideas more accessible and emotionally impactful to the audience."
+                    },
+                    {
+                        "text": "Dialectical Relationship",
+                        "explanation": "The relationship between beauty and truth is dialectical; art can both reveal and obscure truth, prompting viewers to engage critically with what is presented and discover underlying truths."
+                    },
+                    {
+                        "text": "Complementary Roles",
+                        "explanation": "Beauty and truth serve complementary roles in art, where beauty attracts attention and stimulates emotion, while truth provides substance and intellectual depth, enriching the overall experience."
+                    }
+                ],
+                "distractors": [
+                    {
+                        "text": "Beauty is Always Deceptive",
+                        "explanation": "This is incorrect because beauty in art can sometimes reveal rather than obscure truth, depending on the intent and skill of the artist."
+                    },
+                    {
+                        "text": "Truth Has No Place in Art",
+                        "explanation": "Art often seeks to express truths about the human condition, society, or the natural world, making this statement too extreme and dismissive."
+                    },
+                    {
+                        "text": "Beauty Equals Truth",
+                        "explanation": "While Keats's line suggests a close relationship, equating beauty directly with truth oversimplifies the nuanced and often complex interplay between the two."
+                    },
+                    {
+                        "text": "Art Cannot Convey Truth",
+                        "explanation": "Art has historically been a powerful medium for conveying truths, from social and political commentary to personal and philosophical insights."
+                    },
+                    {
+                        "text": "Beauty is Independent of Truth",
+                        "explanation": "Although beauty can exist without an explicit truth, in many works of art, beauty and truth are intertwined, making this statement too categorical."
+                    },
+                    {
+                        "text": "Truth Diminishes Beauty",
+                        "explanation": "Truth does not necessarily diminish beauty; in many cases, revealing truth can enhance the beauty of a work of art by adding layers of meaning and depth."
+                    },
+                    {
+                        "text": "Art is Only About Aesthetics",
+                        "explanation": "Art encompasses more than just aesthetics; it often involves conveying messages, emotions, and truths, making this statement overly reductive."
+                    },
+                    {
+                        "text": "Truth in Art is Irrelevant",
+                        "explanation": "The relevance of truth in art varies by context and intent, but it is often a crucial element, providing substance and resonance beyond mere visual appeal."
+                    },
+                    {
+                        "text": "Beauty is Incompatible with Truth",
+                        "explanation": "Beauty and truth are not inherently incompatible; they can coexist and complement each other, enriching the artistic experience."
+                    },
+                    {
+                        "text": "Art Should Avoid Truth",
+                        "explanation": "Art often aims to explore and reveal truths, whether personal, social, or universal, making the avoidance of truth contrary to many artistic endeavors."
+                    }
+                ],
+                "keywords": [
+                    "beauty",
+                    "truth",
+                    "art",
+                    "artist",
+                    "perception",
+                    "aesthetics",
+                    "interpretation",
+                    "harmony",
+                    "subjectivity",
+                    "revelation",
+                    "dialectic",
+                    "complement",
+                    "expression",
+                    "emotion",
+                    "substance"
+                ]
             }
         ]
 

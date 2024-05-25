@@ -8,6 +8,9 @@ export const popupStyle = {
   borderRadius: '8px',
   zIndex: 1001,
   boxShadow: '0 2px 10px rgba(0,0,0,0.1)',
+  maxHeight: '70vh', // Set a maximum height for the popup
+  minWidth: '80vh',
+  overflowY: 'auto', // Enable vertical scrolling
 };
   
   export const overlayStyle = {
