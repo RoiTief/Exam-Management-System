@@ -56,6 +56,8 @@ const Page = () => {
   const [questions, setQuestions] = useState([]);
   const [metaQuestions, setMetaQuestions] = useState([]);
   const [currentQuestion, setCurrentQuestion] = useState(null);
+  const [usedAnswers, setUsedAnswers] = useState({});
+  const [usedDistractors, setUsedDistractors] = useState({});
 
   useEffect(() => {
     async function fetchMetaQuestions() {
@@ -73,6 +75,20 @@ const Page = () => {
 
   const addQuestion = (question) => {
     setQuestions([...questions, question]);
+
+    const key = `${question.stem}-${question.appendix ? question.appendix.title : ''}`;
+
+    setUsedAnswers(prev => ({
+      ...prev,
+      [key]: [...(prev[key] || []), question.answer]
+    }));
+
+    setUsedDistractors(prev => ({
+      ...prev,
+      [key]: [...(prev[key] || []), ...question.distractors]
+    }));
+
+    setCurrentQuestion(null)
   };
 
   return (
@@ -98,7 +114,8 @@ const Page = () => {
             <QuestionForm
               metaQuestions={metaQuestions}
               addQuestion={addQuestion}
-              onClose={() => setCurrentQuestion(null)}
+              usedAnswers={usedAnswers}
+              usedDistractors={usedDistractors}
             />
           )}
           <QuestionList questions={questions} />
