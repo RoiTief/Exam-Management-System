@@ -283,6 +283,33 @@ function getAllMetaQuestions(req, res, next){
     }
 }
 
+/**
+ * add a simple question to the db
+ * @param - req.body = {
+ *     //       keywords: str[],
+ *     //       stem: str,
+ *     //       correctAnswers: [{
+ *     //         answer: str,
+ *     //         explanation: str
+ *     //         }],
+ *     //       distractors: [{
+ *     //         distractor: str,
+ *     //         explanation: str
+ *     //       }],
+ *     //      appendix: {
+ *     //          title: str,
+ *     //          tag: str,
+ *     //          content: str
+ *     //       }
+ *     //     }
+ *     //
+ *     appendix could be null
+ * @throws {Error} - if fail to create
+ */
+function addMetaQuestion(req, res, next){
+   //TODO - implement
+}
+
 
 
 
@@ -302,5 +329,6 @@ module.exports = {
     addGrader: addGrader,
     viewAllUsers: viewAllUsers,
     deleteUser: deleteUser,
-    getAllMetaQuestions: getAllMetaQuestions
+    getAllMetaQuestions: getAllMetaQuestions,
+    addMetaQuestion: addMetaQuestion
 };

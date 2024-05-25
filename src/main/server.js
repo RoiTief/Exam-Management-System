@@ -182,6 +182,25 @@ function createServer(options) {
      // request: {username}
     server.post('/addGrader', service.addGrader)
 
+    //request: {
+    //       keywords: str[],
+    //       stem: str,
+    //       correctAnswers: [{
+    //         answer: str,
+    //         explanation: str
+    //         }],
+    //       distractors: [{
+    //         distractor: str,
+    //         explanation: str
+    //       }],
+    //      appendix: {
+    //          title: str,
+    //          tag: str,
+    //          content: str
+    //       }
+    //     }
+    server.post('/addMetaQuestion', service.addMetaQuestion);
+
     // response: Task[]
     server.get('/viewMyTasks', service.viewMyTasks);
 

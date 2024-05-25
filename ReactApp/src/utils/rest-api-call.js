@@ -25,7 +25,7 @@ export const serverPath = {
     ADD_COURSE_ADMIN: 'addCourseAdmin',
     FINISH_TASK: 'finishATask',
     VIEW_QUESTIONS: 'viewCourseMetaQuestions',
-    ADD_SIMPLE_META_QUESTION: 'addSimpleMetaQuestion',
+    ADD_META_QUESTION: 'addMetaQuestion',
     GET_ALL_USERS: 'getAllUsers',
     GET_ALL_META_QUESTIONS: 'getAllMetaQuestions',
     DELETE_USER: 'deleteUser'
