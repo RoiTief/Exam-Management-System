@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { httpsMethod } from 'src/utils/rest-api-call';
 
-const PdfViewer = () => {
+const PdfViewer = (question) => {
   const [pdfUrl, setPdfUrl] = useState('');
   const [loading, setLoading] = useState(true);
 
@@ -18,6 +18,8 @@ const PdfViewer = () => {
         + '    \\end{equation*}\n'
         + '\\end{document}';
       const body = {latexCode};
+      // const body = {question};
+      //TODO
       const method = httpsMethod.POST
       const response= await fetch( "http://localhost:3001/compile",
           {
@@ -43,7 +45,7 @@ const PdfViewer = () => {
     { loading ? (
         <p>Loading PDF...</p>
       ) : (
-        <div style={{ height: '100vh' }}>
+        <div>
           <embed
             src={pdfUrl}
             type="application/pdf"

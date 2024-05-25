@@ -1,20 +1,26 @@
 import PropTypes from 'prop-types';
-import { Box, Card, Stack, Table, TableBody, TableCell, TableHead, TablePagination, TableRow } from '@mui/material';
+import { Box, Button, Card, Stack, Table, TableBody, TableCell, TableHead, TablePagination, TableRow } from '@mui/material';
 import { Scrollbar } from 'src/components/scrollbar';
 import React, { useState } from 'react';
 import { Question } from '../popUps/QuestionPopup';
+import { QuestionPdfView } from '../popUps/QuestionPdfView';
 
 export const MetaQuestionTable = ({ data }) => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [selectedQuestion, setSelectedQuestion] = useState(null);
+  const [showQuestionView, setShowQuestionView] = useState(false);
+  const [showPdfView, setShowPdfView] = useState(false);
 
   const handleRowClick = (question) => {
     setSelectedQuestion(question);
+    setShowQuestionView(true); // Show Question view when row is clicked
   };
 
   const closePopup = () => {
     setSelectedQuestion(null);
+    setShowQuestionView(false);
+    setShowPdfView(false)
   };
 
   const handleChangePage = (event, newPage) => {
@@ -29,6 +35,12 @@ export const MetaQuestionTable = ({ data }) => {
   const emptyRows = rowsPerPage - Math.min(rowsPerPage, data.length - page * rowsPerPage);
   const paginatedData = data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
 
+  const handlePdfButtonClick = (event, metaquestion) => {
+    event.stopPropagation();
+    setSelectedQuestion(metaquestion);
+    setShowPdfView(true); // Show PDF view when button is clicked
+  };
+
   return (
     <Stack>
       <Card>
@@ -39,6 +51,7 @@ export const MetaQuestionTable = ({ data }) => {
                 <TableRow>
                   <TableCell>Stem</TableCell>
                   <TableCell>Keywords</TableCell>
+                  <TableCell>Action</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -50,11 +63,14 @@ export const MetaQuestionTable = ({ data }) => {
                   >
                     <TableCell style={{ overflowWrap: 'break-word' }}>{metaquestion.stem}</TableCell>
                     <TableCell>{metaquestion.keywords.join(', ')}</TableCell>
+                    <TableCell>
+                      <Button variant="outlined" onClick={(event) => handlePdfButtonClick(event, metaquestion)}>View PDF</Button>
+                    </TableCell>
                   </TableRow>
                 ))}
                 {emptyRows > 0 && (
                   <TableRow style={{ height: 53 * emptyRows }}>
-                    <TableCell colSpan={2} />
+                    <TableCell colSpan={3} />
                   </TableRow>
                 )}
               </TableBody>
@@ -71,7 +87,8 @@ export const MetaQuestionTable = ({ data }) => {
           rowsPerPageOptions={[5, 10, 25]}
         />
       </Card>
-      <Question isOpen={selectedQuestion !== null} closePopup={closePopup} question={selectedQuestion} />
+      <Question isOpen={showQuestionView} closePopup={closePopup} question={selectedQuestion} />
+      <QuestionPdfView isOpen={showPdfView} closePopup={closePopup} question={selectedQuestion} /> {/* Pass selectedQuestion to QuestionPdfView */}
     </Stack>
   );
 };

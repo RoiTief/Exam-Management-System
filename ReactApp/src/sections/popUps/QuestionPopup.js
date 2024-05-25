@@ -18,6 +18,8 @@ export const Question = (props) => {
     distractors: [],
   });
 
+  console.log(JSON.stringify(question))
+
   const toggleAnswers = () => {
     setShowAllAnswers(!showAllAnswers);
   };
