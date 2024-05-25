@@ -2,6 +2,8 @@ const ApplicationFacade = require("./business/applicationFacade");
 const application = new ApplicationFacade();
 const error = require('./error')
 const jwt = require('jsonwebtoken');
+const fs = require("node:fs");
+const path = require("node:path");
 require('dotenv').config();
 
 
@@ -248,6 +250,34 @@ function viewAllUsers(req, res, next){
     }
 }
 
+function getPdf(req, res, next) {
+    try{
+        // Make a GET request to your server to fetch the PDF URL
+        const filename = req.body.filename;
+        console.log(`filename: ${filename}`);
+        const filePath = path.join(__dirname, filename);
+
+        // Check if the file exists
+        if (!fs.existsSync(filePath)) {
+            res.send(404, {code: 404, message: 'File not found'});
+            return next();
+        }
+
+        let data;
+        if (filename === 'orimi.pdf') {
+            data = "https://www.orimi.com/pdf-test.pdf";
+        } else if (filename === 'document.pdf') {
+            data = "http://localhost/document.pdf"
+        }
+        res.send(200, {code:200, data})
+        next();
+    }
+    catch(err){
+        req.log.warn(err.message, 'unable to request to get pdf');
+        next(err);
+    }
+}
+
 
 
 
@@ -263,5 +293,6 @@ module.exports = {
     finishATask: finishATask,
     addTA: addTA,
     addGrader: addGrader,
-    viewAllUsers: viewAllUsers
+    viewAllUsers: viewAllUsers,
+    getPdf: getPdf,
 };
