@@ -9,7 +9,8 @@ import KeywordsSection from 'src/sections/Meta Question/keywords-edit';
 import StemSection from 'src/sections/Meta Question/stem-edit';
 import CorrectAnswersSection from 'src/sections/Meta Question/correct-answer-edit';
 import DistractorsSection from 'src/sections/Meta Question/distractors-edit';
-import AppendixList from 'src/sections/Meta Question/choose-appendix';  // Make sure this path is correct
+import AppendixList from 'src/sections/Meta Question/choose-appendix';
+import { httpsMethod, requestServer, serverPath } from '../../utils/rest-api-call';  // Make sure this path is correct
 
 const validationSchema = Yup.object().shape({
   keywords: Yup.array().of(Yup.string()),
@@ -36,17 +37,23 @@ const validationSchema = Yup.object().shape({
 const Page = () => {
   const router = useRouter();
 
-  const handleSubmit = (values, { setSubmitting }) => {
+  const handleSubmit = async (values, { setSubmitting }) => {
     const metaQuestion = {
       keywords: values.keywords,
       stem: values.stem,
-      correctAnswers: values.correctAnswers.map((item) => ({ answer: item.text, explanation: item.explanation })),
-      distractors: values.distractors.map((item) => ({ distractor: item.text, explanation: item.explanation })),
+      correctAnswers: values.correctAnswers.map((item) => ({
+        answer: item.text,
+        explanation: item.explanation
+      })),
+      distractors: values.distractors.map((item) => ({
+        distractor: item.text,
+        explanation: item.explanation
+      })),
       appendix: values.appendix,
     };
     console.log(metaQuestion);
-    router.push('/');
-    setSubmitting(false);
+    await requestServer(serverPath.ADD_META_QUESTION, httpsMethod.POST, metaQuestion);
+    await router.push('/');
     // Submit the metaQuestion object to your backend or API
   };
 
