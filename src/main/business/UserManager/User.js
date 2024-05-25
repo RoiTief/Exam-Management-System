@@ -5,6 +5,7 @@ class User {
         this.username = username;
         this.password = password;
         this.course = null
+        this.type = null
     }
     
     getUserType(){

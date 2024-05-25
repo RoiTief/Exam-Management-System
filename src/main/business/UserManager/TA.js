@@ -1,10 +1,12 @@
 var User = require('./User')
+const types = require('../../Enums').USER_TYPES
 
 class TA extends User{
 
     constructor(user, course) {
         super(user.username, user.password);
         this.course = course
+        this.type = types.TA
     }
 
     getUserType(){
