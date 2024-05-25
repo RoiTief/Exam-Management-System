@@ -62,8 +62,9 @@ const Page = () => {
   useEffect(() => {
     async function fetchMetaQuestions() {
       try {
-        // const response = await requestServer(serverPath.GET_ALL_META_QUESTIONS, httpsMethod.GET);
-        // setMetaQuestions(response);
+        // const { metaQuestions } = await requestServer(serverPath.GET_ALL_META_QUESTIONS, httpsMethod.GET);
+        // setMetaQuestions(metaQuestions);
+        //TODO - Remove line 68 and the data and use lines 65-66
         setMetaQuestions(data)
       } catch (error) {
         console.error('Error fetching meta questions:', error);

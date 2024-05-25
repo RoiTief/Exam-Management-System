@@ -226,7 +226,7 @@ class ApplicationFacade{
     /**
      * get all usernames in the system
      * @param pid - who is requestion the usernames - can be course admin or system admin
-     * @return {List<string>} list of usernames
+     * @return {List<User>} list of usernames
      */
     viewAllUsers(pid){
         return this.userController.getAllUsers(pid)
@@ -341,6 +341,15 @@ class ApplicationFacade{
         this.userController.deleteUser(pid, username)
     }
 
+    /**
+     * return a list of meta question of the user's course
+     * @param pid - The process ID of the user performing the action
+     * @throws {Error} - If the user is not signed in or does not have the necessary permissions
+     * @return {MetaQuestion[]} all the meta question of the user's course
+     */
+    getAllMetaQuestions(pid) {
+        //TODO - implement
+    }
 
 
 }

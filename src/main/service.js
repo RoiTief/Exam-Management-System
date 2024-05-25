@@ -266,6 +266,25 @@ function deleteUser(req, res, next){
     }
 }
 
+/**
+ * return a list of meta question of the user's course
+ * @throws {Error} - if fail to fetch
+ */
+function getAllMetaQuestions(req, res, next){
+    try{
+        let metaQuestions = application.getAllMetaQuestions(process.pid);
+        req.log.info("a request was sent fetch all the meta questions");
+        res.send(200, {code:200, metaQuestions})
+        next()
+    }
+    catch(err){
+        req.log.warn(err.message, 'unable to request to delete a user');
+        next(err);
+    }
+}
+
+
+
 
 
 
@@ -282,5 +301,6 @@ module.exports = {
     addTA: addTA,
     addGrader: addGrader,
     viewAllUsers: viewAllUsers,
-    deleteUser: deleteUser
+    deleteUser: deleteUser,
+    getAllMetaQuestions: getAllMetaQuestions
 };
