@@ -252,6 +252,8 @@ function viewAllUsers(req, res, next){
 }
 
 function compile(req, res, next){
+    res.send(200, {code:200, pdfUrl: "https://www.orimi.com/pdf-test.pdf"})
+    return ;
     try{
         // await latexCompiler.compile(req.body.latexCode, res);
         const filePath = latexCompiler.getFilePath();

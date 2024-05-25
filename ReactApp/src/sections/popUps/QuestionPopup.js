@@ -58,9 +58,13 @@ export const Question = (props) => {
 
   useEffect(() => {
       const response = requestServer(serverPath.COMPILE, httpsMethod.POST, {});
-      const pdfBlob = new Blob([response.data], { type: 'application/pdf' });
-      const pdfUrl =  URL.createObjectURL(pdfBlob);
-      setPdfTest(pdfUrl);
+      response.then((result) => {
+        const pdfUrl = "https://www.orimi.com/pdf-test.pdf";
+        console.log(`pdfUrl: ${pdfUrl}`);
+        setPdfTest(pdfUrl);
+      })
+      //const pdfBlob = new Blob([response.data], { type: 'application/pdf' });
+      //const pdfUrl =  URL.createObjectURL(pdfBlob);
 
     // const compileAllLatex = async () => {
     //   if (!question) return;
@@ -130,8 +134,6 @@ export const Question = (props) => {
     return null;
   }
 
-  const pdfUrl = "/document.pdf";
-
   return (
     isOpen && (
       <div className="popup">
@@ -155,7 +157,7 @@ export const Question = (props) => {
               <h3>Content:</h3>
               <div style={{ height: '100vh' }}>
                  <embed
-                  src={pdfUrl}
+                  src={pdfTest}
                   type="application/pdf"
                   width="100%"
                   height="100%"
