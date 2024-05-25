@@ -172,7 +172,6 @@ function createServer(options) {
     server.post('/addTA', service.addTA)
     //{"username"}
     server.post('/addGrader', service.addGrader)
-    server.post('/compile', service.compile)
 
     server.get('/viewMyTasks', service.viewMyTasks);
     server.get('/viewMyCourse', service.viewMyCourse);

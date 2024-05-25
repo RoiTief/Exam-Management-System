@@ -6,7 +6,6 @@ import ChevronDoubleDownIcon from '@heroicons/react/20/solid/esm/ChevronDoubleDo
 import ChevronDoubleUpIcon from '@heroicons/react/20/solid/esm/ChevronDoubleUpIcon';
 import EditIcon from '@mui/icons-material/Edit';
 import 'react-pdf/dist/esm/Page/AnnotationLayer.css';
-import { httpsMethod, serverPath, requestServer } from 'src/utils/rest-api-call';
 
 export const Question = (props) => {
   const { isOpen, closePopup, question, onEdit } = props;
@@ -18,7 +17,6 @@ export const Question = (props) => {
     correctAnswers: [],
     distractors: [],
   });
-  const [pdfTest, setPdfTest] = useState(null)
 
   const toggleAnswers = () => {
     setShowAllAnswers(!showAllAnswers);
@@ -27,83 +25,6 @@ export const Question = (props) => {
   const toggleDistractors = () => {
     setShowAllDistractors(!showAllDistractors);
   };
-
-  // const PdfViewer = () => {
-  //   const response = requestServer(serverPath.COMPILE, httpsMethod.POST, {});
-  //   const pdfBlob = new Blob([response.data], { type: 'application/pdf' });
-  //   const pdfUrl =  URL.createObjectURL(pdfBlob);
-  //   return (
-  //     <div style={{ height: '100vh' }}>
-  //       <embed
-  //         src={pdfUrl}
-  //         type="application/pdf"
-  //         width="100%"
-  //         height="100%"
-  //       />
-  //     </div>
-  //   );
-  // };
-
-  const handleLatex = async (latexCode) => {
-    try {
-      //    var response = await requestServer(serverPath.SIGN_UP, httpsMethod.POST, { username, password })
-      const response = await requestServer(serverPath.COMPILE, httpsMethod.POST, { latexCode });
-      const pdfBlob = new Blob([response.data], { type: 'application/pdf' });
-      return URL.createObjectURL(pdfBlob);
-    } catch (error) {
-      console.error('Error compiling LaTeX:', error);
-      return null;
-    }
-  };
-
-  useEffect(() => {
-      const response = requestServer(serverPath.COMPILE, httpsMethod.POST, {});
-      response.then((result) => {
-        const pdfUrl = "https://www.orimi.com/pdf-test.pdf";
-        console.log(`pdfUrl: ${pdfUrl}`);
-        setPdfTest(pdfUrl);
-      })
-      //const pdfBlob = new Blob([response.data], { type: 'application/pdf' });
-      //const pdfUrl =  URL.createObjectURL(pdfBlob);
-
-    // const compileAllLatex = async () => {
-    //   if (!question) return;
-    //
-    //   const compiled = { appendix: {}, keywords: [], correctAnswers: [], distractors: [] };
-    //
-    //   // Compile appendix fields
-    //   if (question.appendix) {
-    //     compiled.appendix.title = question.appendix.title;
-    //     compiled.appendix.tag = question.appendix.tag;
-    //     //compiled.appendix.content = await handleLatex(question.appendix.content);
-    //   }
-    //
-    //   // Compile keywords
-    //   if (question.keywords) {
-    //     compiled.keywords = question.keywords;
-    //   }
-    //
-    //   // Compile correct answers
-    //   if (question.correctAnswers) {
-    //     compiled.correctAnswers = await Promise.all(question.correctAnswers.map(async answer => ({
-    //       text: answer.text,
-    //       explanation: answer.explanation,
-    //     })));
-    //   }
-    //
-    //   // Compile distractors
-    //   if (question.distractors) {
-    //     compiled.distractors = await Promise.all(question.distractors.map(async distractor => ({
-    //       text: distractor.text,
-    //       explanation: distractor.explanation,
-    //     })));
-    //   }
-    //
-    //   setCompiledContent(compiled);
-    // };
-    //
-    // compileAllLatex();
-  }, []);
 
   const buttonStyle = {
     background: 'none',
@@ -155,14 +76,7 @@ export const Question = (props) => {
               <h3>Title: {question.appendix.title}</h3>
               <h3>Tag: {question.appendix.tag}</h3>
               <h3>Content:</h3>
-              <div style={{ height: '100vh' }}>
-                 <embed
-                  src={pdfTest}
-                  type="application/pdf"
-                  width="100%"
-                  height="100%"
-                />
-              </div>
+              <p>{question.appendix.content}</p>
             </div>
           )}
           <Divider />

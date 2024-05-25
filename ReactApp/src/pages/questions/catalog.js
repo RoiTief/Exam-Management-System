@@ -26,12 +26,8 @@ const data = [
       {text:'distractor2', explanation: 'explanation2'}, {text:'distractor3', explanation: 'explanation3'}],
     keywords: ['key1', 'key2', 'key5'],
     appendix: {title: "title", tag: "tag",
-      content: "\\documentclass{article}\n"
-        + "\\usepackage{amsmath}\n"
-        + "\\usepackage{amssymb}\n"
-        + "\n"
-        + "\\begin{document}\n"
-        + "Lets try and compute $\\frac{\\partial{loss}}{\\partial{w^1_{ij}}}$:\n"
+      content:
+        "Lets try and compute $\\frac{\\partial{loss}}{\\partial{w^1_{ij}}}$:\n"
         + "\\begin{equation*}\n"
         + "\\begin{split}\n"
         + "    \\frac{\\partial{loss}}{\\partial{w^1_{ij}}} & = \\frac{\\partial{loss}}{\\partial{z^1_i}} \\cdot \\frac{\\partial{z^1_i}}{\\partial{w^2_{ij}}} = \\bigstar \\\\\n"
