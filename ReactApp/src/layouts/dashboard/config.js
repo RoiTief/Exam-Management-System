@@ -71,7 +71,7 @@ export const items = [
       {
         title: 'Catalogue View',
         path: '/questions/catalog',
-      }
+      },
       // {
       //   title: 'Answer Sheet View',
       //   path: '/',

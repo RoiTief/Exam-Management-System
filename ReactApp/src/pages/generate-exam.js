@@ -47,13 +47,35 @@ const Page = () => {
 
   const saveTest = async () => {
     try {
-      console.log("here")
+      console.log(JSON.stringify(questions))
       await requestServer(serverPath.CREATE_TEST, httpsMethod.POST, questions);
       await router.push('/');
     } catch (error) {
       console.error('Error fetching meta questions:', error);
     }
   }
+  
+  const removeQuestion = (index) => {
+    const questionToRemove = questions[index];
+    const updatedQuestions = questions.filter((_, i) => i !== index);
+    setQuestions(updatedQuestions);
+
+    const key = `${questionToRemove.stem}-${questionToRemove.appendix ? questionToRemove.appendix.title : ''}`;
+
+    setUsedAnswers(prevUsedAnswers => {
+      const updatedAnswers = { ...prevUsedAnswers };
+      updatedAnswers[key] = updatedAnswers[key].filter(a => a.text !== questionToRemove.answer.text);
+      return updatedAnswers;
+    });
+
+    setUsedDistractors(prevUsedDistractors => {
+      const updatedDistractors = { ...prevUsedDistractors };
+      updatedDistractors[key] = updatedDistractors[key].filter(d =>
+          !questionToRemove.distractors.some(dist => dist.text === d.text)
+      );
+      return updatedDistractors;
+    });
+  };
 
   return (
     <Box
@@ -82,7 +104,7 @@ const Page = () => {
               usedDistractors={usedDistractors}
             />
           )}
-          <QuestionList questions={questions} />
+          <QuestionList questions={questions} removeQuestion={removeQuestion} />
           <Button variant="contained" color="primary" sx={{ mt: 2 }}
           onClick={saveTest}>
             Save Test

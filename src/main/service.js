@@ -330,7 +330,7 @@ function addMetaQuestion(req, res, next){
 
 /**
  * creates a test
- * @param - req.body = {
+ * @param - req.body = [{
  *     //       stem: str,
  *     //       answer: str,
  *     //       distractors: [str],
@@ -339,7 +339,7 @@ function addMetaQuestion(req, res, next){
  *     //          tag: str,
  *     //          content: str
  *     //       }
- *     //     }
+ *     //     }]
  *     //
  *     appendix could be null
  * @throws {Error} - if fail to create
