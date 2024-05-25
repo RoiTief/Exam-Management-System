@@ -73,7 +73,7 @@ export const AddPersonalToCourse = (props) => {
             <Stack spacing={3}>
               <Autocomplete
                 fullWidth
-                options={users}
+                options={users.map(user => user.username)}
                 value={formik.values.username}
                 onChange={(event, newValue) => {
                   formik.setFieldValue('username', newValue || '');
