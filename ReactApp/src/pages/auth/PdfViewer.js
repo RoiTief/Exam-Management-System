@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { httpsMethod, serverPath, requestServer, TOKEN_FIELD_NAME } from 'src/utils/rest-api-call';
-import Cookies from 'js-cookie';
+import { httpsMethod } from 'src/utils/rest-api-call';
 
 const PdfViewer = () => {
   const [pdfUrl, setPdfUrl] = useState('');
@@ -13,24 +12,14 @@ const PdfViewer = () => {
 
   const fetchPdfUrlFromServer = async () => {
     try {
-      const filename = 'orimi.pdf';
-      const body = {filename};
+      const latexCode = 'My name is:'
+        + '    \\begin{equation*}\n'
+        + '        \\frac{Slim}{Shady}\n'
+        + '    \\end{equation*}\n'
+        + '\\end{document}';
+      const body = {latexCode};
       const method = httpsMethod.POST
-      var response;
-      if (Cookies.get(TOKEN_FIELD_NAME)) {
-        response = await fetch("http://localhost:8080/getPdf",
-          {
-            method,
-            headers: {
-              'Content-Type': 'application/json',
-              'Origin': '*',
-              'Authorization': `JWT ${Cookies.get(TOKEN_FIELD_NAME)}`
-            },
-            body: JSON.stringify(body)
-          })
-      }
-      else{
-        response = await fetch( "http://localhost:8080/getPdf",
+      const response= await fetch( "http://localhost:3001/compile",
           {
             method,
             headers: {
@@ -38,13 +27,9 @@ const PdfViewer = () => {
               'Origin': '*',
             },
             body: JSON.stringify(body)
-          })
-      }
-      response = await response.json();
-      console.log(`response: ${JSON.stringify(response)}`);
-      // const blob = await response.blob();
-      // const url = URL.createObjectURL(blob);
-      const url = response.data;
+          });
+      const blob = await response.blob();
+      const url = URL.createObjectURL(blob);
       setPdfUrl(url);
       setLoading(false);
     } catch (error) {

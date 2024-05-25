@@ -178,7 +178,6 @@ function createServer(options) {
     server.get('/viewUsername', service.viewUsername);
     server.get('/viewUserType', service.viewUserType);
     server.get('/getAllUserNames', service.viewAllUsers);
-    server.post('/getPdf', service.getPdf);
 
 
 
