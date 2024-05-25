@@ -328,7 +328,25 @@ function addMetaQuestion(req, res, next){
 }
 
 
-
+/**
+ * creates a test
+ * @param - req.body = {
+ *     //       stem: str,
+ *     //       answer: str,
+ *     //       distractors: [str],
+ *     //      appendix: {
+ *     //          title: str,
+ *     //          tag: str,
+ *     //          content: str
+ *     //       }
+ *     //     }
+ *     //
+ *     appendix could be null
+ * @throws {Error} - if fail to create
+ */
+function createTest(req, res, next){
+    //TODO - implement
+}
 
 
 
@@ -348,5 +366,6 @@ module.exports = {
     deleteUser: deleteUser,
     getAllMetaQuestions: getAllMetaQuestions,
     getAllAppendixes: getAllAppendixes,
-    addMetaQuestion: addMetaQuestion
+    addMetaQuestion: addMetaQuestion,
+    createTest: createTest
 };

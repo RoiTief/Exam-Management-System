@@ -29,7 +29,8 @@ export const serverPath = {
     GET_ALL_USERS: 'getAllUsers',
     GET_ALL_META_QUESTIONS: 'getAllMetaQuestions',
     GET_ALL_APPENDIXES: 'getAllAppendixes',
-    DELETE_USER: 'deleteUser'
+    DELETE_USER: 'deleteUser',
+    CREATE_TEST: 'createTest'
 }
 
 

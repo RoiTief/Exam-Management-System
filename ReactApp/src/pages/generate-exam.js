@@ -4,8 +4,10 @@ import { Box, Button, Container, Typography } from '@mui/material';
 import QuestionForm from '/src/sections/exam/question-form';
 import QuestionList from '/src/sections/exam/question-list';
 import { Layout as DashboardLayout } from '../layouts/dashboard/layout';
+import { useRouter } from 'next/router';
 
 const Page = () => {
+  const router = useRouter();
   const [questions, setQuestions] = useState([]);
   const [metaQuestions, setMetaQuestions] = useState([]);
   const [currentQuestion, setCurrentQuestion] = useState(null);
@@ -43,6 +45,16 @@ const Page = () => {
     setCurrentQuestion(null)
   };
 
+  const saveTest = async () => {
+    try {
+      console.log("here")
+      await requestServer(serverPath.CREATE_TEST, httpsMethod.POST, questions);
+      await router.push('/');
+    } catch (error) {
+      console.error('Error fetching meta questions:', error);
+    }
+  }
+
   return (
     <Box
       sx={{
@@ -71,7 +83,8 @@ const Page = () => {
             />
           )}
           <QuestionList questions={questions} />
-          <Button variant="contained" color="primary" sx={{ mt: 2 }}>
+          <Button variant="contained" color="primary" sx={{ mt: 2 }}
+          onClick={saveTest}>
             Save Test
           </Button>
         </Box>

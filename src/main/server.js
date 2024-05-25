@@ -201,6 +201,18 @@ function createServer(options) {
     //     }
     server.post('/addMetaQuestion', service.addMetaQuestion);
 
+    // request:
+    //  {    stem: str
+    //       appendix: {
+    //              title: str,
+    //              tag: str,
+    //              content: str
+    //        }
+    //       answer: str,
+    //       distractors: [str]
+    //  }
+    server.post('/createTest', service.createTest)
+
     // response: Task[]
     server.get('/viewMyTasks', service.viewMyTasks);
 
