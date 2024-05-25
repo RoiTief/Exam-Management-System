@@ -38,7 +38,7 @@ class UserController {
     }
     
     register(pid, username, password){
-        this._varifyNotLoggedIn(pid);
+        this.verifySystemAdmin(pid);
         if (this._isRegistered(username)){
             throw new Error("this username is taken");
         }
@@ -115,8 +115,20 @@ class UserController {
     }
 
     getAllUsers(pid){
+        try {
+            this.verifySystemAdmin(pid)
+        } catch (e) {
+            this.verifyCourseAdmin(pid)
+        }
+        return [...this._registered_users.values()]
+    }
+
+    deleteUser(pid, username){
         this.verifySystemAdmin(pid)
-        return this._registered_users.values()
+        if (this._registered_users.get(username).getUserType() === "System Admin"){
+            throw new Error("can't delete system admin")
+        }
+        this._registered_users.delete(username)
     }
 }
 

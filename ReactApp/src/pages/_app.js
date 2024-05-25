@@ -40,7 +40,6 @@ const App = (props) => {
       </Head>
       <LocalizationProvider dateAdapter={AdapterDateFns}>
         <AuthProvider>
-          <UserProvider>
             <ThemeProvider theme={theme}>
               <CssBaseline/>
               <AuthConsumer>
@@ -51,7 +50,6 @@ const App = (props) => {
                 }
               </AuthConsumer>
             </ThemeProvider>
-          </UserProvider>
         </AuthProvider>
       </LocalizationProvider>
     </CacheProvider>
