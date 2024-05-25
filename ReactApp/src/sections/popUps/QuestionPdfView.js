@@ -5,6 +5,7 @@ import { requestLatexServer} from '../../utils/rest-api-call';
 
 export const PdfLatexPopup = (props) => {
   const { isOpen, closePopup, content, type } = props;
+  console.log(`type:  ${type}`);
 
   const [pdfUrl, setPdfUrl] = useState('');
   const [loading, setLoading] = useState(true);
@@ -16,7 +17,8 @@ export const PdfLatexPopup = (props) => {
 
   const fetchPdfUrlFromServer = async () => {
     try {
-      const response= requestLatexServer(content, type);
+      console.log(`type2 :  ${type}`);
+      const response= await requestLatexServer(type, {content});
       const blob = await response.blob();
       const url = URL.createObjectURL(blob);
       setPdfUrl(url);

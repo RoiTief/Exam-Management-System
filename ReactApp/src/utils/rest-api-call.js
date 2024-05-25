@@ -36,30 +36,31 @@ export const serverPath = {
 }
 
 export const latexServerPath = {
-    COMPILE: 'compile',
-    COMPILE_TEST: 'test',
-  COMPILE_MQ: 'metaQuestion',
-}
+  COMPILE: 'compile',
+  COMPILE_TEST: 'test',
+  COMPILE_MQ: 'metaQuestion'
+};
 
-export async function requestLatexServer(path, content) {
+export async function requestLatexServer(path, body) {
+  console.log(`req: ${LATEX_SERVER_ROOT_URL + path}`)
   return (Cookies.get(TOKEN_FIELD_NAME)) ?
-    await fetch(SERVER_ROOT_URL + path,
+    await fetch(LATEX_SERVER_ROOT_URL + path,
       {     method: httpsMethod.POST,
         headers: {
           'Content-Type': 'application/json',
           'Origin': '*',
           'Authorization': `JWT ${Cookies.get(TOKEN_FIELD_NAME)}`
         },
-        body: JSON.stringify(content)
+        body: JSON.stringify(body)
       }) :
-     await fetch(SERVER_ROOT_URL + path,
+     await fetch(LATEX_SERVER_ROOT_URL + path,
       {
         method: httpsMethod.POST,
         headers: {
           'Content-Type': 'application/json',
           'Origin': '*',
         },
-        body: JSON.stringify({content})
+        body: JSON.stringify(body)
       });
 }
 

@@ -5,7 +5,6 @@ import { SvgIcon, ListItemText, ListItem, Divider, Button, IconButton, Chip, Sta
 import ChevronDoubleDownIcon from '@heroicons/react/20/solid/esm/ChevronDoubleDownIcon';
 import ChevronDoubleUpIcon from '@heroicons/react/20/solid/esm/ChevronDoubleUpIcon';
 import EditIcon from '@mui/icons-material/Edit';
-import 'react-pdf/dist/esm/Page/AnnotationLayer.css';
 
 export const Question = (props) => {
   const { isOpen, closePopup, question, onEdit } = props;

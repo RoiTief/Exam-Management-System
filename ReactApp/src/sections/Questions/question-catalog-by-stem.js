@@ -4,6 +4,7 @@ import { Scrollbar } from 'src/components/scrollbar';
 import React, { useState } from 'react';
 import { Question } from '../popUps/QuestionPopup';
 import { PdfLatexPopup, QuestionPdfView } from '../popUps/QuestionPdfView';
+import { latexServerPath } from '../../utils/rest-api-call';
 
 export const MetaQuestionTable = ({ data }) => {
   const [page, setPage] = useState(0);
@@ -87,8 +88,13 @@ export const MetaQuestionTable = ({ data }) => {
           rowsPerPageOptions={[5, 10, 25]}
         />
       </Card>
-      <Question isOpen={showQuestionView} closePopup={closePopup} question={selectedQuestion} />
-      <PdfLatexPopup isOpen={showPdfView} closePopup={closePopup} content={selectedQuestion} type="question" />
+      <Question isOpen={showQuestionView}
+                closePopup={closePopup}
+                question={selectedQuestion}/>
+      <PdfLatexPopup isOpen={showPdfView}
+                     closePopup={closePopup}
+                     content={selectedQuestion}
+                     type={latexServerPath.COMPILE_MQ}/>
     </Stack>
   );
 };
