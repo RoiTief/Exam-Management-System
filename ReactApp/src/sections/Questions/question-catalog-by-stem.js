@@ -3,7 +3,7 @@ import { Box, Button, Card, Stack, Table, TableBody, TableCell, TableHead, Table
 import { Scrollbar } from 'src/components/scrollbar';
 import React, { useState } from 'react';
 import { Question } from '../popUps/QuestionPopup';
-import { QuestionPdfView } from '../popUps/QuestionPdfView';
+import { PdfLatexPopup, QuestionPdfView } from '../popUps/QuestionPdfView';
 
 export const MetaQuestionTable = ({ data }) => {
   const [page, setPage] = useState(0);
@@ -88,7 +88,7 @@ export const MetaQuestionTable = ({ data }) => {
         />
       </Card>
       <Question isOpen={showQuestionView} closePopup={closePopup} question={selectedQuestion} />
-      <QuestionPdfView isOpen={showPdfView} closePopup={closePopup} question={selectedQuestion} /> {/* Pass selectedQuestion to QuestionPdfView */}
+      <PdfLatexPopup isOpen={showPdfView} closePopup={closePopup} content={selectedQuestion} type="question" />
     </Stack>
   );
 };
