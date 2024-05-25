@@ -42,7 +42,7 @@ const data = [
     appendix: {title: "Mor's ID", tag: "tag", content: "imagine there is my id here"}
   },
   {
-    stem: 'where does Offek leave',
+    stem: 'where does Ofek leave',
     correctAnswers: [{text:'in Gan Yavne', explanation: 'explanation1'},
       {text:'next to the orange square', explanation: 'explanation2'},
       {text:"next to mor's brother", explanation: 'explanation1'}],
@@ -80,31 +80,32 @@ const Page = () => {
       sx={{
         minHeight: '100vh',
         display: 'flex',
-        flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
         backgroundColor: '#f0f0f0',
         p: 2,
       }}
     >
-      <Container maxWidth="md" sx={{ backgroundColor: '#ffffff', borderRadius: 2, boxShadow: 3, p: 4 }}>
+      <Container maxWidth="md" sx={{ backgroundColor: '#ffffff', borderRadius: 2, boxShadow: 3, p: 4}}>
         <Typography variant="h4" component="h1" gutterBottom>
-          Exam Management
+          Create Exam
         </Typography>
-        <Button variant="contained" onClick={() => setCurrentQuestion({})} sx={{ mb: 2 }}>
-          + Add Question
-        </Button>
-        {currentQuestion && (
-          <QuestionForm
-            metaQuestions={metaQuestions}
-            addQuestion={addQuestion}
-            onClose={() => setCurrentQuestion(null)}
-          />
-        )}
-        <QuestionList questions={questions} />
-        <Button variant="contained" color="primary" sx={{ mt: 2 }}>
-          Save Test
-        </Button>
+        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
+          <Button variant="contained" onClick={() => setCurrentQuestion({})} sx={{ mb: 2 }}>
+            + Add Question
+          </Button>
+          {currentQuestion && (
+            <QuestionForm
+              metaQuestions={metaQuestions}
+              addQuestion={addQuestion}
+              onClose={() => setCurrentQuestion(null)}
+            />
+          )}
+          <QuestionList questions={questions} />
+          <Button variant="contained" color="primary" sx={{ mt: 2 }}>
+            Save Test
+          </Button>
+        </Box>
       </Container>
     </Box>
   );

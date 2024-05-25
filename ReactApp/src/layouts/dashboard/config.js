@@ -85,7 +85,7 @@ export const items = [
     path: '/course-staff'
   },
   {
-    title: 'previews exams',
+    title: 'generate exams',
     path: '/generate-exam',
     icon: (
       <SvgIcon fontSize="small">
