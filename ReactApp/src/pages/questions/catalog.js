@@ -16,17 +16,18 @@ const Page = () => {
   const [filteredData, setFilteredData] = useState(metaQuestions);
 
   useEffect(() => {
-    const fetchList = async () => {
+    async function fetchMetaQuestions() {
       try {
-        const {questions} = await requestServer(serverPath.GET_ALL_META_QUESTIONS, httpsMethod.GET);
-        setMetaQuestions(questions);
-      }
-      catch(err){
-        console.error('Error fetching question list:', err)
+        const { metaQuestions } = await requestServer(serverPath.GET_ALL_META_QUESTIONS, httpsMethod.GET);
+        setMetaQuestions(metaQuestions);
+        handleSearch([])
+      } catch (error) {
+        console.error('Error fetching meta questions:', error);
       }
     }
 
-    fetchList();
+    fetchMetaQuestions();
+    handleSearch([])
   }, []);
 
   const handleSearch = (keys) => {

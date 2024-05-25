@@ -219,6 +219,9 @@ function createServer(options) {
     // response: MetaQuestion[]
     server.get('/getAllMetaQuestions', service.getAllMetaQuestions)
 
+    // response: Appendix[]
+    server.get('/getAllAppendixes', service.getAllAppendixes)
+
     // request: username
     server.del('/deleteUser', service.deleteUser)
 
