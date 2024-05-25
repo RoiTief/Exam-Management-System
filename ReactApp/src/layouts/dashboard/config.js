@@ -8,6 +8,9 @@ import {
   SchoolOutlined,
 } from '@mui/icons-material';
 
+const types = require("../../../../src/main/Enums").USER_TYPES;
+
+
 export const items = [
   {
     title: 'Home Page',
@@ -16,7 +19,8 @@ export const items = [
       <SvgIcon fontSize="small">
         <HomeIcon />
       </SvgIcon>
-    )
+    ),
+    permissions: [types.LECTURER, types.ADMIN, types.TA]
   },
   {
     title: 'Manage Users',
@@ -25,7 +29,8 @@ export const items = [
       <SvgIcon fontSize="small">
         <AdminPanelSettingsRounded />
       </SvgIcon>
-    )
+    ),
+    permissions: [types.ADMIN]
   },
   {
     title: 'Create New Meta-Question',
@@ -34,6 +39,7 @@ export const items = [
           <QuestionMark />
         </SvgIcon>
     ),
+    permissions: [types.LECTURER, types.ADMIN, types.TA],
     children: [
       {
         title: 'Simple Meta-Question',
@@ -56,6 +62,7 @@ export const items = [
         <SchoolOutlined />
       </SvgIcon>
     ),
+    permissions: [types.LECTURER, types.ADMIN, types.TA],
     children: [
       {
         title: 'Test View',
@@ -78,6 +85,7 @@ export const items = [
         <UsersIcon />
       </SvgIcon>
     ),
+    permissions: [types.LECTURER, types.ADMIN],
     path: '/course-staff'
   },
   {
@@ -87,6 +95,7 @@ export const items = [
       <SvgIcon fontSize="small">
         <Newspaper />
       </SvgIcon>
-    )
+    ),
+    permissions: [types.LECTURER, types.ADMIN]
   }
 ];
