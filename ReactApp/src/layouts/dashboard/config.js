@@ -86,7 +86,7 @@ export const items = [
   },
   {
     title: 'previews exams',
-    path: '/course-stuff',
+    path: '/',
     icon: (
       <SvgIcon fontSize="small">
         <Newspaper />

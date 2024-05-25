@@ -27,7 +27,6 @@ export const serverPath = {
     VIEW_QUESTIONS: 'viewCourseMetaQuestions',
     ADD_SIMPLE_META_QUESTION: 'addSimpleMetaQuestion',
     GET_ALL_USERS: 'getAllUserNames',
-    COMPILE: 'compile'
 }
 
 

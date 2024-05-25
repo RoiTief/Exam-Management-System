@@ -1,10 +1,7 @@
 const ApplicationFacade = require("./business/applicationFacade");
-const LatexCompiler = require("./latex/LatexCompiler");
 const application = new ApplicationFacade();
-const latexCompiler = new LatexCompiler()
 const error = require('./error')
 const jwt = require('jsonwebtoken');
-const fs = require("node:fs");
 require('dotenv').config();
 
 
@@ -251,37 +248,6 @@ function viewAllUsers(req, res, next){
     }
 }
 
-function compile(req, res, next){
-    res.send(200, {code:200, pdfUrl: "https://www.orimi.com/pdf-test.pdf"})
-    return ;
-    try{
-        // await latexCompiler.compile(req.body.latexCode, res);
-        const filePath = latexCompiler.getFilePath();
-
-        // Ensure the file exists
-        if (!fs.existsSync(filePath)) {
-            return res.send(404, {error: 'File not found'});
-        }
-
-        // Set the response headers for PDF content
-        res.header('Content-Type', 'application/pdf');
-
-        // Stream the PDF file to the client
-        const fileStream = fs.createReadStream(filePath);
-        fileStream.pipe(res);
-
-        // Close the stream and move to the next middleware when streaming is complete
-        fileStream.on('end', () => {
-            next();
-        });
-    }
-    catch(err){
-        console.error('Error compiling latex code:', err);
-        res.status(500).send('Error compiling latex code');
-    }
-}
-
-
 module.exports = {
     viewUsername: viewUsername,
     viewUserType: viewUserType,
@@ -295,5 +261,4 @@ module.exports = {
     addTA: addTA,
     addGrader: addGrader,
     viewAllUsers: viewAllUsers,
-    compile: compile
 };
