@@ -73,7 +73,7 @@ class ApplicationFacade{
     /**
      * get all staff
      * @param pid - the process who tries to view the staff - needs to be a logged in as lecturer
-     * @return {Staff} the staff, ordered by lecturers and TAs
+     * @return {{TAs: any[], Lecturers: any[]}} the staff, ordered by lecturers and TAs
      * @throws {Error} - if there is no logged in user in @pid
      *                 - if the user logged in user in @pid is not a lecturer
      */

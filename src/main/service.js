@@ -107,19 +107,19 @@ function logout(req, res, next) {
 
 /**
  * view a course
- * @return {Course} the course
+ * @return {{TAs: any[], Lecturers: any[]}} the course staff
  * @throws {Error} - if there is no logged in user in @pid
  *                 - if the user logged in user in @pid is not a courseAdmin
  */
 function getAllStaff(req, res, next){
     try{
-        // let staff = application.getAllStaff(process.pid);
-        req.log.info("course admin viewed his course");
-        res.send(200, {code:200})
+        let staff = application.getAllStaff(process.pid);
+        req.log.info("course lecturer viewed his staff");
+        res.send(200, {code:200, staff})
         next()
     }
     catch(err){
-        req.log.warn(err.message, 'unable to view course');
+        req.log.warn(err.message, 'unable to view staff');
         next(err);
     }
 }
