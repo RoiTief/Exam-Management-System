@@ -9,7 +9,7 @@ class Admin extends User{
     }
 
     getUserType(){
-        return this.type
+        return types.ADMIN
     }
 
     verifyType(type){

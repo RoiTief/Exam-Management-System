@@ -9,7 +9,7 @@ class TA extends User{
     }
 
     getUserType(){
-        return this.type
+        return types.TA
     }
 
     verifyType(type){

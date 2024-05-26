@@ -9,7 +9,7 @@ class Lecturer extends User{
     }
     
     getUserType(){
-        return this.type
+        return types.LECTURER
     }
 
     verifyType(type){
