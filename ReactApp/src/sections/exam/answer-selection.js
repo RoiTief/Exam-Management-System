@@ -3,7 +3,6 @@ import { Box, Typography, Button, Stack } from '@mui/material';
 
 function AnswerSelection({ answers, onSelect }) {
   const [selectedAnswer, setSelectedAnswer] = useState(null);
-  console.log(`there are ${answers.length} answers`)
   const handleSelectAnswer = (answer) => {
     setSelectedAnswer(answer);
     onSelect(answer);

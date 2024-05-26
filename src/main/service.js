@@ -240,6 +240,87 @@ function deleteUser(req, res, next){
     }
 }
 
+/**
+ * return a list of meta question of the user's course
+ * @throws {Error} - if fail to fetch
+ */
+function getAllMetaQuestions(req, res, next){
+    try{
+        let metaQuestions = application.getAllMetaQuestions(process.pid);
+        req.log.info("a request was sent fetch all the meta questions");
+        res.send(200, {code:200, metaQuestions})
+        next()
+    }
+    catch(err){
+        req.log.warn(err.message, 'unable to request to delete a user');
+        next(err);
+    }
+}
+
+/**
+ * return a list of meta question of the user's course
+ * @throws {Error} - if fail to fetch
+ */
+function getAllAppendixes(req, res, next){
+    try{
+        let appendixes = application.getAllAppendixes(process.pid);
+        req.log.info("a request was sent fetch all the appendices");
+        res.send(200, {code:200, appendixes})
+        next()
+    }
+    catch(err){
+        req.log.warn(err.message, 'unable to request to delete a user');
+        next(err);
+    }
+}
+
+/**
+ * add a meta question to the db
+ * @param - req.body = {
+ *     //       keywords: str[],
+ *     //       stem: str,
+ *     //       correctAnswers: [{
+ *     //         answer: str,
+ *     //         explanation: str
+ *     //         }],
+ *     //       distractors: [{
+ *     //         distractor: str,
+ *     //         explanation: str
+ *     //       }],
+ *     //      appendix: {
+ *     //          title: str,
+ *     //          tag: str,
+ *     //          content: str
+ *     //       }
+ *     //     }
+ *     //
+ *     appendix could be null
+ * @throws {Error} - if fail to create
+ */
+function addMetaQuestion(req, res, next){
+   //TODO - implement
+}
+
+
+/**
+ * creates a test
+ * @param - req.body = [{
+ *     //       stem: str,
+ *     //       answer: str,
+ *     //       distractors: [str],
+ *     //      appendix: {
+ *     //          title: str,
+ *     //          tag: str,
+ *     //          content: str
+ *     //       }
+ *     //     }]
+ *     //
+ *     appendix could be null
+ * @throws {Error} - if fail to create
+ */
+function createTest(req, res, next){
+    //TODO - implement
+}
 
 
 
@@ -255,5 +336,9 @@ module.exports = {
     addTA: addTA,
     addGrader: addGrader,
     viewAllUsers: viewAllUsers,
-    deleteUser: deleteUser
+    deleteUser: deleteUser,
+    getAllMetaQuestions: getAllMetaQuestions,
+    getAllAppendixes: getAllAppendixes,
+    addMetaQuestion: addMetaQuestion,
+    createTest: createTest
 };

@@ -64,18 +64,18 @@ export const items = [
     ),
     permissions: [types.LECTURER, types.ADMIN, types.TA],
     children: [
-      {
-        title: 'Test View',
-        path: '/',
-      },
+      // {
+      //   title: 'Test View',
+      //   path: '/',
+      // },
       {
         title: 'Catalogue View',
         path: '/questions/catalog',
       },
-      {
-        title: 'Answer Sheet View',
-        path: '/',
-      }
+      // {
+      //   title: 'Answer Sheet View',
+      //   path: '/',
+      // }
     ]
   },
   {
