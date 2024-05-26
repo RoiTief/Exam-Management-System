@@ -168,12 +168,8 @@ function createServer(options) {
 
      // request: {}
     server.post('/logout', service.logout);
-
-     // request: {courseId, courseName, courseAdminUsername}
-     // response: {Course}
-    server.post('/addCourse', service.addCourse);
-
-     // request: {taskId, response}
+  
+    //{"taskId", "response"}
     server.post('/finishATask', service.finishATask);
 
      // request: {username}
@@ -215,11 +211,10 @@ function createServer(options) {
 
     // response: Task[]
     server.get('/viewMyTasks', service.viewMyTasks);
-
-    // response Course
-    server.get('/viewMyCourse', service.viewMyCourse);
-
-    // response: username
+  
+    // response: {TAs: [], Lecturers: []}
+    server.get('/getAllStaff', service.getAllStaff);
+  
     server.get('/viewUsername', service.viewUsername);
 
     // response: userType (str)

@@ -31,33 +31,33 @@ class TaskController {
         );
     }
 
-    courseAdminRequestTask(courseAdminUsername, course) {
-        this.addTaskToSpecificUser(null, 0, TaskTypes.courseAdminRequest, course.properties,
-            "if you accept this request you will be the course admin of course "+course.properties.courseName+", do notice that this will overrun you current course assignment",
+    courseAdminRequestTask(courseAdminUsername) {
+        this.addTaskToSpecificUser(null, 0, TaskTypes.courseAdminRequest,
+            "if you accept this request you will be the course admin, do notice that this will overrun you current course assignment",
             ["yes", "no"],
             courseAdminUsername, (applicationFacade, response) => {
                                             if(response === "yes")
-                                                applicationFacade.setUserAsCourseAdmin(courseAdminUsername, course)
+                                                applicationFacade.setUserAsCourseAdmin(courseAdminUsername)
                                                 });
     }
 
-    newTARequestTask(TAUsername, course) {
-        this.addTaskToSpecificUser(null, 0, TaskTypes.newTARequest, course.properties,
-            "if you accept this request you will be a TA in course number "+course.courseId,
+    newTARequestTask(TAUsername) {
+        this.addTaskToSpecificUser(null, 0, TaskTypes.newTARequest,
+            "if you accept this request you will be a TA",
             ["yes", "no"],
             TAUsername, (applicationFacade, approved) => {
                 if(approved === "yes")
-                    applicationFacade.setUserAsTA(TAUsername, course)
+                    applicationFacade.setUserAsTA(TAUsername)
             });
     }
 
-    newGraderRequestTask(graderUsername, course) {
-        this.addTaskToSpecificUser(null, 0, TaskTypes.newGraderRequestTask, course.properties,
-            "if you accept this request you will be a grader in course number "+course.courseId,
+    newGraderRequestTask(graderUsername) {
+        this.addTaskToSpecificUser(null, 0, TaskTypes.newGraderRequestTask,
+            "if you accept this request you will be a grader",
             ["yes", "no"],
             graderUsername, (applicationFacade, approved) => {
                 if(approved === "yes")
-                    applicationFacade.setUserAsGrader(graderUsername, course)
+                    applicationFacade.setUserAsGrader(graderUsername)
             });
     }
 

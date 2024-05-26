@@ -29,8 +29,8 @@ const Page = () => {
   useEffect(() => {
     const getCourse = async () => {
       try {
-        const { course } = await requestServer(serverPath.VIEW_COURSE, httpsMethod.GET);
-        setCourse(course);
+        const response = await requestServer(serverPath.GET_ALL_STAFF, httpsMethod.GET);
+        setCourse(response.staff);
       } catch (error) {
         console.error('Error fetching course:', error);
       }
@@ -84,7 +84,7 @@ const Page = () => {
             }}
           >
             <Typography variant="h4" component="h1" gutterBottom>
-              {course.properties?.courseName}
+              Beta Course
             </Typography>
           </Box>
 
@@ -97,13 +97,13 @@ const Page = () => {
                 <SvgIcon color="primary" component={PlusIcon} onClick={() => handleAddPersonal('admin')} sx={{ cursor: 'pointer' }} />
               </Stack>
               <List>
-                {course.personal?.['CourseAdmins']?.slice(0, showAllAdmins ? undefined : 3).map((admin, index) => (
+                {course?.['Lecturers']?.slice(0, showAllAdmins ? undefined : 3).map((admin, index) => (
                   <ListItem key={index}>
-                    <ListItemText primary={admin} />
+                    <ListItemText primary={admin.username} />
                   </ListItem>
                 ))}
               </List>
-              {course.personal?.['CourseAdmins']?.length > 3 && (
+              {course?.['Lecturers']?.length > 3 && (
                 <Button
                   variant="text"
                   color="primary"
@@ -129,13 +129,13 @@ const Page = () => {
                 <SvgIcon color="primary" component={PlusIcon} onClick={() => handleAddPersonal('TA')} sx={{ cursor: 'pointer' }} />
               </Stack>
               <List>
-                {course.personal?.['TAs']?.slice(0, showAllTAs ? undefined : 3).map((ta, index) => (
+                {course?.['TAs']?.slice(0, showAllTAs ? undefined : 3).map((ta, index) => (
                   <ListItem key={index}>
-                    <ListItemText primary={ta} />
+                    <ListItemText primary={ta.username} />
                   </ListItem>
                 ))}
               </List>
-              {course.personal?.['TAs']?.length > 3 && (
+              {course?.['TAs']?.length > 3 && (
                 <Button
                   variant="text"
                   color="primary"

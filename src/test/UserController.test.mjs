@@ -3,10 +3,9 @@
 import { expect } from 'chai';
 import UserController from '../main/business/UserManager/UserController.js';
 import User from '../main/business/UserManager/User.js';
-import SystemAdmin from '../main/business/UserManager/SystemAdmin.js';
-import CourseAdmin from '../main/business/UserManager/CourseAdmin.js';
+import SystemAdmin from '../main/business/UserManager/Admin.js';
+import CourseAdmin from '../main/business/UserManager/Lecturer.js';
 import TA from '../main/business/UserManager/TA.js';
-import Grader from '../main/business/UserManager/Grader.js';
 
 describe('UserController', function () {
     let userController;
