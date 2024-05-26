@@ -158,24 +158,78 @@ function createServer(options) {
     });
     
 
-    //{"username", "password"}
+
+     // request: username
     server.post('/signUp', service.signUp);
-    //{"username", "password"}
+
+     //request: {username, password}
+     //response: {User, token}
     server.post('/signIn', service.signIn);
-    //{}
+
+     // request: {}
     server.post('/logout', service.logout);
+  
     //{"taskId", "response"}
     server.post('/finishATask', service.finishATask);
-    //{"username"}
+
+     // request: {username}
     server.post('/addTA', service.addTA)
-    //{"username"}
+
+     // request: {username}
     server.post('/addGrader', service.addGrader)
 
+    //request: {
+    //       keywords: str[],
+    //       stem: str,
+    //       correctAnswers: [{
+    //         answer: str,
+    //         explanation: str
+    //         }],
+    //       distractors: [{
+    //         distractor: str,
+    //         explanation: str
+    //       }],
+    //      appendix: {
+    //          title: str,
+    //          tag: str,
+    //          content: str
+    //       }
+    //     }
+    server.post('/addMetaQuestion', service.addMetaQuestion);
+
+    // request:
+    //  {    stem: str
+    //       appendix: {
+    //              title: str,
+    //              tag: str,
+    //              content: str
+    //        }
+    //       answer: str,
+    //       distractors: [str]
+    //  }
+    server.post('/createTest', service.createTest)
+
+    // response: Task[]
     server.get('/viewMyTasks', service.viewMyTasks);
+  
+    // response: {TAs: [], Lecturers: []}
     server.get('/getAllStaff', service.getAllStaff);
+  
     server.get('/viewUsername', service.viewUsername);
+
+    // response: userType (str)
     server.get('/viewUserType', service.viewUserType);
-    server.get('/getAllUserNames', service.viewAllUsers);
+
+    // response: User[]
+    server.get('/getAllUsers', service.viewAllUsers);
+
+    // response: MetaQuestion[]
+    server.get('/getAllMetaQuestions', service.getAllMetaQuestions)
+
+    // response: Appendix[]
+    server.get('/getAllAppendixes', service.getAllAppendixes)
+
+    // request: username
     server.del('/deleteUser', service.deleteUser)
 
 

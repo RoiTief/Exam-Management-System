@@ -1,17 +1,28 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { RadioGroup, Radio, Paper, OutlinedInput, InputAdornment, SvgIcon } from '@mui/material';
 import MagnifyingGlassIcon from '@heroicons/react/24/solid/MagnifyingGlassIcon';
+import { httpsMethod, requestServer, serverPath } from '../../utils/rest-api-call';
 
-const appendices = [
-  { title: 'Appendix A', tag: 'General', content: 'Content of Appendix A' },
-  { title: 'Appendix B', tag: 'Specific', content: 'Content of Appendix B' },
-  // Add more appendices as needed
-];
+
 
 const AppendixList = ({ onSelectAppendix }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [searchBy, setSearchBy] = useState('title');
   const [selectedAppendix, setSelectedAppendix] = useState(null);
+  const [appendices, setAppendices] = useState([])
+
+  useEffect(() => {
+    async function fetchAppendices() {
+      try {
+        const { appendixes } = await requestServer(serverPath.GET_ALL_APPENDIXES, httpsMethod.GET);
+        setAppendices(appendixes);
+      } catch (error) {
+        console.error('Error fetching appendixes:', error);
+      }
+    }
+
+    fetchAppendices();
+  }, []);
 
   const handleSearchChange = (event) => {
     setSearchTerm(event.target.value);
