@@ -29,8 +29,8 @@ const Page = () => {
   useEffect(() => {
     const getCourse = async () => {
       try {
-        const { course } = await requestServer(serverPath.GET_ALL_STAFF, httpsMethod.GET);
-        setCourse(course);
+        const response = await requestServer(serverPath.GET_ALL_STAFF, httpsMethod.GET);
+        setCourse(response.staff);
       } catch (error) {
         console.error('Error fetching course:', error);
       }
@@ -99,7 +99,7 @@ const Page = () => {
               <List>
                 {course?.['Lecturers']?.slice(0, showAllAdmins ? undefined : 3).map((admin, index) => (
                   <ListItem key={index}>
-                    <ListItemText primary={admin} />
+                    <ListItemText primary={admin.username} />
                   </ListItem>
                 ))}
               </List>
@@ -131,7 +131,7 @@ const Page = () => {
               <List>
                 {course?.['TAs']?.slice(0, showAllTAs ? undefined : 3).map((ta, index) => (
                   <ListItem key={index}>
-                    <ListItemText primary={ta} />
+                    <ListItemText primary={ta.username} />
                   </ListItem>
                 ))}
               </List>
