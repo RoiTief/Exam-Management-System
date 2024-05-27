@@ -63,9 +63,12 @@ class LatexCompiler {
         const filename = timestamp;
         const texPath = path.join(this.#pdfDirPath, filename + EXTENSIONS.TEX);
 
-        // write latex code to the file
-        fs.writeFileSync(texPath, this.#preamble);
-        fs.writeFileSync(texPath, this.#opening, {flag: 'a'});
+        // write the preamble + open document
+        fs.writeFileSync(texPath,
+            `${this.#preamble}\n`
+            + "\\usepackage[margin=2cm, paperheight=550cm]{geometry}\n"
+            + `${this.#opening}\n`
+            + "\\pagenumbering{gobble}\n");
 
         // write the stem
         if (metaQuestion.hasOwnProperty('stem')) {
@@ -106,9 +109,24 @@ class LatexCompiler {
             fs.writeFileSync(texPath, "\n\\\\\n", {flag : 'a'});
         }
 
+        // close document
         fs.writeFileSync(texPath, this.#closing, {flag : 'a'});
 
-        this.#compile(filename, callback)
+        this.#compile(filename, (err, pdfPath) => {
+            if (err) {
+                return callback(err, null);
+            }
+            // after successful latex compilation crop trailing whitespace
+            exec(`cd ${this.#pdfDirPath} && pdfcrop --margins \'30 30 30 30\' ${pdfPath} ${pdfPath}`, (error, stdout, stderr) => {
+                if (error) {
+                    console.error(`pdfcrop Error: ${stdout}`);
+                    return callback(error, null);
+                }
+                callback(null, pdfPath);
+
+                this.#clean(filename);
+            });
+        })
     }
 
     /**
@@ -170,7 +188,7 @@ class LatexCompiler {
         const auxPath = path.join(this.#pdfDirPath, filename + EXTENSIONS.AUX);
         fs.unlinkSync(texPath);
         fs.unlinkSync(logPath);
- //       fs.unlinkSync(auxPath);
+        fs.unlinkSync(auxPath);
     }
 
     #isJsonObject(param) {
