@@ -9,14 +9,15 @@ class TaskController {
         this._id = 1
     }
 
-    addTask(forWhom, priority, type, properties, description, options, assignedUser, action){
-        this._tasks.set(this._id, new Task(this._id, forWhom, priority, type, properties, description, options, assignedUser, action));
+    addTask(addTaskProperties){
+        const task = new Task(addTaskProperties)
+        this._tasks.set(this._id, task);
         this._id += 1
-        return true;
+        return task;
     }
 
-    addTaskToSpecificUser(forWhom, priority, type, properties, description, options, assignedUser, action){
-        this._tasks.set(this._id, new Task(this._id, forWhom, priority, type, properties, description, options, assignedUser, action));
+    addTaskToSpecificUser(forWhom, priority, type, properties, description, options, assignedUsers, action){
+        this._tasks.set(this._id, new Task(this._id, forWhom, priority, type, properties, description, options, assignedUsers, action));
         this._id += 1
         return true;
     }
@@ -27,7 +28,7 @@ class TaskController {
 
     getTasksOf(username){
         return Array.from(this._tasks.values()).filter(
-            task => task.assignedUser === username
+            task => task.assignedUsers.includes(username) 
         );
     }
 
@@ -65,7 +66,7 @@ class TaskController {
         let task = this.getTask(taskId)
         if(task === undefined)
             throw new Error("there is no task with this id");
-        if(task.assignedUser !== username)
+        if(task.assignedUsers.includes(username))
             throw new Error("the task is not assigned to you!")
         task.response = response;
         task.action(applicationFacade, response);

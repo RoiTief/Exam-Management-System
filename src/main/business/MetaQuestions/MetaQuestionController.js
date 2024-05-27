@@ -1,14 +1,32 @@
 const MetaQuestion = require('./MetaQuestion')
+const {TaskTypes, TaskPriority} = require('../TaskManager/Task')
 
 class MetaQuestionController{
     #metaQuestions;
 
-    constructor(){
+    constructor(taskController,userController){
         this.#metaQuestions = new Map();
+        this.taskController = taskController;
+        this.userController = userController;
+        this.metaQuestionIds = 0
     }
 
-    createMetaQuestion(metaQuestionId) {
-        return 0
+    createMetaQuestion(metaQuestionProperties) {
+        // create a new metaQuestion
+        let metaQuestion = new MetaQuestion(metaQuestionProperties);
+
+        //set the id of the metaQuestion
+        metaQuestion.id = this.metaQuestionIds;
+        this.#metaQuestions.set(metaQuestion.id, metaQuestion);
+        const ta_s = this.userController.getAllStaff(metaQuestionProperties.pid)["TAs"]
+
+        const addTaskProperties = {...metaQuestionProperties,
+             assignedUsers: ta_s, taskType: TaskTypes.addKey,
+              taskPriority: TaskPriority.high, description: "Please add a key"}
+        
+        this.taskController.addTask(addTaskProperties)
+        this.metaQuestionIds = this.metaQuestionIds + 1
+        return metaQuestion
     }
 
     #saveMetaQuestions(){

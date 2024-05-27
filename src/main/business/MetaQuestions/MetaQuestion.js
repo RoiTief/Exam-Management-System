@@ -23,7 +23,8 @@ const metaQuestionDbMock = {
 class MetaQuestion {
 
     constructor(metaQuestionProperties) {
-        this.stem = metaQuestionProperties.stem
+        this.creator = metaQuestionProperties.creator ?? "No creator"
+        this.stem = metaQuestionProperties.stem ?? "No stem"
         this.answers = metaQuestionProperties.answers ?? [] // {id, answer, explanation}
         this.distractors = metaQuestionProperties.distractors ?? [] // {id, distractor, explanation}
         this.appendix = metaQuestionProperties.appendix ?? null
