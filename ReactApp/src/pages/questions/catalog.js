@@ -20,15 +20,18 @@ const Page = () => {
       try {
         const { metaQuestions } = await requestServer(serverPath.GET_ALL_META_QUESTIONS, httpsMethod.GET);
         setMetaQuestions(metaQuestions);
-        handleSearch([])
       } catch (error) {
         console.error('Error fetching meta questions:', error);
       }
     }
 
     fetchMetaQuestions();
-    handleSearch([])
   }, []);
+
+  useEffect(() => {
+    // Call handleSearch with an empty array once metaQuestions has been updated
+    handleSearch([]);
+  }, [metaQuestions]);
 
   const handleSearch = (keys) => {
     const filteredQuestions = metaQuestions.filter(question =>
