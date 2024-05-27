@@ -2,6 +2,7 @@ const path = require("path");
 const fs = require("fs");
 const {exec} = require("child_process");
 const { DEFAULT_LATEX_CONFIG  }= require('./config')
+const test = require("node:test");
 
 const PDF_DIR = 'pdfs';
 
@@ -13,11 +14,13 @@ const EXTENSIONS = {
 }
 
 class LatexCompiler {
+    #preamble
     #opening
     #closing
     #pdfDirPath
 
     constructor() {
+        this.#preamble = DEFAULT_LATEX_CONFIG.PREAMBLE;
         this.#opening = DEFAULT_LATEX_CONFIG.OPENING;
         this.#closing = DEFAULT_LATEX_CONFIG.CLOSING;
         this.#pdfDirPath = path.join(__dirname, PDF_DIR);
@@ -38,7 +41,9 @@ class LatexCompiler {
         const texPath = path.join(this.#pdfDirPath, filename + EXTENSIONS.TEX);
 
         // write latex code to the file
-        fs.writeFileSync(texPath, this.#opening);
+        fs.writeFileSync(texPath, this.#preamble);
+        fs.writeFileSync(texPath, this.#opening, {flag: 'a'});
+        fs.writeFileSync(filename, "\\pagenumbering{gobble}\n");
         fs.writeFileSync(texPath, latexCode, {flag : 'a'});
         fs.writeFileSync(texPath, this.#closing, {flag : 'a'});
 
@@ -51,20 +56,58 @@ class LatexCompiler {
      * @param callback Callback that handles failure/success of the compilation
      */
     compileMetaQuestion(metaQuestion, callback) {
+        if (!this.#isJsonObject(metaQuestion)) {
+            return callback(new Error("Not a JSON object"), null);
+        }
         const timestamp = Date.now();
         const filename = timestamp;
         const texPath = path.join(this.#pdfDirPath, filename + EXTENSIONS.TEX);
 
-        const dummy = "\\begin{Huge}\n"
-            + "You have just compiled\n"
-            + "\\begin{equation*}\n"
-            + "\\frac{a}{Meta-Question}\n"
-            + "\\end{equation*}\n"
-            + "\\end{Huge}\n"
-
         // write latex code to the file
-        fs.writeFileSync(texPath, this.#opening);
-        fs.writeFileSync(texPath, dummy, {flag : 'a'});
+        fs.writeFileSync(texPath, this.#preamble);
+        fs.writeFileSync(texPath, this.#opening, {flag: 'a'});
+
+        // write the stem
+        if (metaQuestion.hasOwnProperty('stem')) {
+            fs.writeFileSync(texPath, "\\section*{Stem:}\n", {flag : 'a'});
+            fs.writeFileSync(texPath, metaQuestion.stem, {flag : 'a'});
+            fs.writeFileSync(texPath, "\n\\\\\n", {flag : 'a'});
+        }
+
+        // write the keys
+        if (metaQuestion.hasOwnProperty('keys')) {
+            fs.writeFileSync(texPath, "\\section*{Keys:}\n", {flag : 'a'});
+            fs.writeFileSync(texPath, "\\begin{itemize}\n", {flag : 'a'});
+            metaQuestion.keys.forEach((key) => {
+                fs.writeFileSync(texPath,
+                    `\t\\item ${key.text} \\\\ \\textbf{Explanation: ${key.hasOwnProperty('explanation') ? key.explanation : 'none'}\n`,
+                    {flag: 'a'});
+
+            })
+            fs.writeFileSync(texPath, "\\end{itemize}", {flag : 'a'});
+            fs.writeFileSync(texPath, "\n\\\\\n", {flag : 'a'});
+        }
+
+        // write the distractors
+        if (metaQuestion.hasOwnProperty('distractors')) {
+            fs.writeFileSync(texPath, "\\section*{Distractors:}\n", {flag : 'a'});
+            fs.writeFileSync(texPath, "\\begin{itemize}\n", {flag : 'a'});
+            metaQuestion.distractors.forEach((distractor) => {
+                fs.writeFileSync(texPath,
+                    `\t\\item ${distractor.text} \\\\ \\textbf{Explanation: ${distractor.hasOwnProperty('explanation') ? distractor.explanation : 'none'}\n`,
+                    {flag: 'a'});
+            })
+            fs.writeFileSync(texPath, "\\end{itemize}", {flag : 'a'});
+            fs.writeFileSync(texPath, "\n\\\\\n", {flag : 'a'});
+        }
+
+        // write the appendix
+        if (metaQuestion.hasOwnProperty('appendix')) {
+            fs.writeFileSync(texPath, "\\section*{Appendix:}\n", {flag : 'a'});
+            fs.writeFileSync(texPath, metaQuestion.appendix.content, {flag : 'a'});
+            fs.writeFileSync(texPath, "\n\\\\\n", {flag : 'a'});
+        }
+
         fs.writeFileSync(texPath, this.#closing, {flag : 'a'});
 
         this.#compile(filename, callback)
@@ -76,6 +119,9 @@ class LatexCompiler {
      * @param callback Callback that handles failure/success of the compilation
      */
     compileTest(test, callback) {
+        if (!this.#isJsonObject(test)) {
+            return callback(new Error("Not a JSON object"), null);
+        }
         const timestamp = Date.now();
         const filename = timestamp;
         const texPath = path.join(this.#pdfDirPath, filename + EXTENSIONS.TEX);
@@ -88,7 +134,8 @@ class LatexCompiler {
             + "\\end{Huge}\n"
 
         // write latex code to the file
-        fs.writeFileSync(texPath, this.#opening);
+        fs.writeFileSync(texPath, this.#preamble);
+        fs.writeFileSync(texPath, this.#opening, {flag: 'a'});
         fs.writeFileSync(texPath, dummy, {flag : 'a'});
         fs.writeFileSync(texPath, this.#closing, {flag : 'a'});
 
@@ -126,6 +173,13 @@ class LatexCompiler {
         fs.unlinkSync(texPath);
         fs.unlinkSync(logPath);
         fs.unlinkSync(auxPath);
+    }
+
+    #isJsonObject(param) {
+        return param !== null &&
+            typeof param === 'object' &&
+            !Array.isArray(param) &&
+            Object.prototype.toString.call(param) === '[object Object]';
     }
 }
 

@@ -16,12 +16,11 @@ app.use(cors());
 const compileCallback = (res) => {
     return (err, pdfPath) => {
         if (err) {
-            res.status(500).send('Error compiling LaTeX');
+            res.status(500).send(`Error compiling: ${err.message}`);
             return;
         }
         res.sendFile(pdfPath, (err) => {
             if (err) {
-                console.error('Error sending PDF:', err);
                 res.status(500).send('Error sending PDF');
             }
         });

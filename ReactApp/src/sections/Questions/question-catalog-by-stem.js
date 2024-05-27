@@ -88,13 +88,17 @@ export const MetaQuestionTable = ({ data }) => {
           rowsPerPageOptions={[5, 10, 25]}
         />
       </Card>
+      {showQuestionView && (
       <Question isOpen={showQuestionView}
                 closePopup={closePopup}
                 question={selectedQuestion}/>
-      <PdfLatexPopup isOpen={showPdfView}
+      )}
+      {showPdfView && (
+        <PdfLatexPopup isOpen={showPdfView}
                      closePopup={closePopup}
                      content={selectedQuestion}
                      type={latexServerPath.COMPILE_MQ}/>
+        )}
     </Stack>
   );
 };

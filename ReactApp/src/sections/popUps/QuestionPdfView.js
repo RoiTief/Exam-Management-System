@@ -5,7 +5,6 @@ import { requestLatexServer} from '../../utils/rest-api-call';
 
 export const PdfLatexPopup = (props) => {
   const { isOpen, closePopup, content, type } = props;
-  console.log(`type:  ${type}`);
 
   const [pdfUrl, setPdfUrl] = useState('');
   const [loading, setLoading] = useState(true);
@@ -17,7 +16,7 @@ export const PdfLatexPopup = (props) => {
 
   const fetchPdfUrlFromServer = async () => {
     try {
-      console.log(`type2 :  ${type}`);
+      console.log(`PdfView content: ${JSON.stringify(content)}`);
       const response= await requestLatexServer(type, {content});
       const blob = await response.blob();
       const url = URL.createObjectURL(blob);
@@ -33,11 +32,13 @@ export const PdfLatexPopup = (props) => {
     (isOpen) ? (
       <div className="popup">
         <div onClick={closePopup} style={overlayStyle}></div>
-        <div className="popup-content" style={popupStyle}>
+        <div className="popup-content" style={{...popupStyle, width: '40%', height: '80'
+            + ''
+            + '%'}}>
           { loading ? (
             <p>Loading PDF...</p>
           ) : (
-            <div>
+            <div style={{width: '100%', height: '100%'}}>
               <embed
                 src={pdfUrl}
                 type="application/pdf"

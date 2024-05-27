@@ -13,11 +13,9 @@ export const Question = (props) => {
   const [compiledContent, setCompiledContent] = useState({
     appendix: { title: null, tag: null, content: null },
     keywords: [],
-    correctAnswers: [],
+    keys: [],
     distractors: [],
   });
-
-  console.log(JSON.stringify(question))
 
   const toggleAnswers = () => {
     setShowAllAnswers(!showAllAnswers);
@@ -101,14 +99,14 @@ export const Question = (props) => {
           <div className="answers-section">
             <h2 style={headerStyle}>Correct Answers</h2>
             <div>
-              {question.correctAnswers.slice(0, showAllAnswers ? question.correctAnswers.length : 2).map((answer, index) => (
+              {question.keys.slice(0, showAllAnswers ? question.keys.length : 2).map((answer, index) => (
                 <ListItem key={`correct-${index}`}>
                   <ListItemText primary={answer.text}
                                 secondary={answer.explanation} />
                 </ListItem>
               ))}
             </div>
-            {question.correctAnswers.length > 2 && (
+            {question.keys.length > 2 && (
               <Button onClick={toggleAnswers}
                       style={buttonStyle}
                       startIcon={(

@@ -1,9 +1,9 @@
 const DEFAULT_LATEX_CONFIG = {
-    OPENING: "\\documentclass{article}\n" +
+    PREAMBLE: "\\documentclass{article}\n" +
         "\\usepackage{amsmath}\n" +
         "\\usepackage{amssymb}\n" +
-        "\n" +
-        "\\begin{document}\n",
+        "\n",
+    OPENING: "\\begin{document}\n",
     CLOSING: "\\end{document}\n",
 }
 

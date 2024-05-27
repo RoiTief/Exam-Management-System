@@ -352,7 +352,7 @@ class ApplicationFacade{
         return [
             {
                 stem: 'what did Idan listen to when he was a kid',
-                correctAnswers: [{text:'baby motzart', explanation: 'explanation1'},
+                keys: [{text:'baby motzart', explanation: 'explanation1'},
                     {text:'baby bethoven', explanation: 'explanation2'}],
                 distractors: [{text:'Machrozet Chaffla', explanation: 'explanation1'},
                     {text:'zohar Argov', explanation: 'explanation2'}, {text:'Begins "tzachtzachim" speach', explanation: 'explanation3'}],
@@ -360,7 +360,7 @@ class ApplicationFacade{
             },
             {
                 stem: "what is Mor's last name",
-                correctAnswers: [{text:'Abo', explanation: 'explanation1'},
+                keys: [{text:'Abo', explanation: 'explanation1'},
                     {text:'Abu', explanation: 'explanation2'}],
                 distractors: [{text:'abow', explanation: 'explanation1'},
                     {text:'abou', explanation: 'explanation2'}, {text:'aboo', explanation: 'explanation3'}],
@@ -369,7 +369,7 @@ class ApplicationFacade{
             },
             {
                 stem: "What is Roi's nickname",
-                correctAnswers: [{text:'The Tief', explanation: 'explanation1'},
+                keys: [{text:'The Tief', explanation: 'explanation1'},
                     {text:"Gali's soon to be husband", explanation: 'explanation2'}],
                 distractors: [{text:'that blonde guy', explanation: 'explanation1'},
                     {text:'that tall guy', explanation: 'explanation2'}, {text:'the one with the black nail polish', explanation: 'explanation3'}],
@@ -378,7 +378,7 @@ class ApplicationFacade{
             },
             {
                 stem: 'How old is Mor',
-                correctAnswers: [{text:'25', explanation: 'explanation1'},
+                keys: [{text:'25', explanation: 'explanation1'},
                     {text:'22 with "vetek"', explanation: 'explanation2'}],
                 distractors: [{text:'19 (but thank you)', explanation: 'explanation1'},
                     {text:'30', explanation: 'explanation2'}, {text:'35', explanation: 'explanation3'}],
@@ -387,7 +387,7 @@ class ApplicationFacade{
             },
             {
                 stem: 'where does Ofek leave',
-                correctAnswers: [{text:'in Gan Yavne', explanation: 'explanation1'},
+                keys: [{text:'in Gan Yavne', explanation: 'explanation1'},
                     {text:'next to the orange square', explanation: 'explanation2'},
                     {text:"next to mor's brother", explanation: 'explanation1'}],
                 distractors: [{text:'at the beach - surffing', explanation: 'explanation1'},
