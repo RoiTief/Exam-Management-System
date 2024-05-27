@@ -80,12 +80,11 @@ class LatexCompiler {
             fs.writeFileSync(texPath, "\\begin{itemize}\n", {flag : 'a'});
             metaQuestion.keys.forEach((key) => {
                 fs.writeFileSync(texPath,
-                    `\t\\item ${key.text} \\\\ \\textbf{Explanation: ${key.hasOwnProperty('explanation') ? key.explanation : 'none'}\n`,
+                    `\t\\item ${key.text} \\\\ \\textbf{Explanation:} ${key.hasOwnProperty('explanation') ? key.explanation : 'none'}\n`,
                     {flag: 'a'});
 
             })
-            fs.writeFileSync(texPath, "\\end{itemize}", {flag : 'a'});
-            fs.writeFileSync(texPath, "\n\\\\\n", {flag : 'a'});
+            fs.writeFileSync(texPath, "\\end{itemize}\n", {flag : 'a'});
         }
 
         // write the distractors
@@ -94,11 +93,10 @@ class LatexCompiler {
             fs.writeFileSync(texPath, "\\begin{itemize}\n", {flag : 'a'});
             metaQuestion.distractors.forEach((distractor) => {
                 fs.writeFileSync(texPath,
-                    `\t\\item ${distractor.text} \\\\ \\textbf{Explanation: ${distractor.hasOwnProperty('explanation') ? distractor.explanation : 'none'}\n`,
+                    `\t\\item ${distractor.text} \\\\ \\textbf{Explanation:} ${distractor.hasOwnProperty('explanation') ? distractor.explanation : 'none'}\n`,
                     {flag: 'a'});
             })
-            fs.writeFileSync(texPath, "\\end{itemize}", {flag : 'a'});
-            fs.writeFileSync(texPath, "\n\\\\\n", {flag : 'a'});
+            fs.writeFileSync(texPath, "\\end{itemize}\n", {flag : 'a'});
         }
 
         // write the appendix
@@ -153,7 +151,7 @@ class LatexCompiler {
 
         exec(`cd ${this.#pdfDirPath} && xelatex ${texPath}`, (error, stdout, stderr) => {
             if (error) {
-                console.error(`xelatex Error: ${stderr}`);
+                console.error(`xelatex Error: ${stdout}`);
                 return callback(error, null);
             }
             callback(null, pdfPath);
@@ -172,7 +170,7 @@ class LatexCompiler {
         const auxPath = path.join(this.#pdfDirPath, filename + EXTENSIONS.AUX);
         fs.unlinkSync(texPath);
         fs.unlinkSync(logPath);
-        fs.unlinkSync(auxPath);
+ //       fs.unlinkSync(auxPath);
     }
 
     #isJsonObject(param) {

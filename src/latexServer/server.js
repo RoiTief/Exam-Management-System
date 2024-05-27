@@ -29,19 +29,16 @@ const compileCallback = (res) => {
 
 app.post('/compile', upload.none(), (req, res) => {
     const latexCode = req.body.content;
-    console.log(test);
     latexCompiler.compileNormal(latexCode, compileCallback(res));
 });
 
 app.post('/test', upload.none(), (req, res) => {
     const test = req.body.content;
-    console.log(test);
     latexCompiler.compileTest(test, compileCallback(res));
 });
 
 app.post('/metaQuestion', upload.none(), (req, res) => {
     const metaQuestion = req.body.content;
-    console.log(metaQuestion);
     latexCompiler.compileMetaQuestion(metaQuestion, compileCallback(res));
 });
 
