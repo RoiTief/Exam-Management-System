@@ -26,7 +26,7 @@ export const AddCourse = (props) => {
     initialValues: {
       courseName: '',
       courseId: '',
-      courseAdminUsername: '',
+      lecturerUsername: '',
       submit: null
     },
     validationSchema: Yup.object({
@@ -38,17 +38,17 @@ export const AddCourse = (props) => {
         .string()
         .max(255)
         .required('courseId is required'),
-        courseAdminUsername: Yup
+        lecturerUsername: Yup
         .string()
         .max(255)
-        .required('courseAdminUsername is required')
+        .required('lecturerUsername is required')
     }),
     onSubmit: async (values, helpers) => {
       try {
         await requestServer(serverPath.ADD_COURSE, httpsMethod.POST, 
           {courseId: values.courseId,
           courseName: values.courseName,
-          courseAdminUsername: values.courseAdminUsername});
+          lecturerUsername: values.lecturerUsername});
         closePopup();
       } catch (err) {
         helpers.setStatus({ success: false });
@@ -89,15 +89,15 @@ export const AddCourse = (props) => {
                       value={formik.values.courseId}
                     />
                     <TextField
-                      error={!!(formik.touched.courseAdminUsername && formik.errors.courseAdminUsername)}
+                      error={!!(formik.touched.lecturerUsername && formik.errors.lecturerUsername)}
                       fullWidth
-                      helperText={formik.touched.courseAdminUsername && formik.errors.courseAdminUsername}
-                      label="Course Admin Username"
-                      name="courseAdminUsername"
+                      helperText={formik.touched.lecturerUsername && formik.errors.lecturerUsername}
+                      label="lecturer Username"
+                      name="lecturerUsername"
                       onBlur={formik.handleBlur}
                       onChange={formik.handleChange}
-                      type="courseAdminUsername"
-                      value={formik.values.courseAdminUsername}
+                      type="lecturerUsername"
+                      value={formik.values.lecturerUsername}
                     />
                   </Stack>
                 {formik.errors.submit && (

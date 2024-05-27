@@ -12,13 +12,13 @@ class ApplicationFacade{
 
         //todo - remove for testing:
         this.signIn(24632, "Admin", "Aa123456")
-        this.register(24632, "courseAdmin", userTypes.LECTURER)
+        this.register(24632, "lecturer", userTypes.LECTURER)
         this.register(24632, "TA", userTypes.TA)
         this.register(24632, "TA1",  userTypes.TA)
         this.register(24632, "TA2",  userTypes.TA)
         this.register(24632, "TA3",  userTypes.TA)
         this.logout(24632)
-        this.signIn(24632, "courseAdmin", "123")
+        this.signIn(24632, "lecturer", "123")
         this.addTA(24632, "TA")
         this.addTA(24632, "TA1")
         this.addTA(24632, "TA2")
@@ -82,20 +82,20 @@ class ApplicationFacade{
     }
 
     /**
-     * set @courseAdminUsername to be the course
-     * @param courseAdminUsername - the new course admin
-     * @throws {Error} - if there is no user named courseAdminUsername
+     * set @lecturerUsername to be the course
+     * @param lecturerUsername - the new lecturer
+     * @throws {Error} - if there is no user named lecturerUsername
      */
-    setUserAsCourseAdmin(courseAdminUsername){
-        this.userController.setUserAsCourseAdmin(courseAdminUsername);
+    setUserAsLecturer(lecturerUsername){
+        this.userController.setUserAsLecturer(lecturerUsername);
     }
 
     /**
      * create a task for the new TA to accept being a TA of this course
-     * @param pid - the process who tries to add the new TA - needs to be a courseAdmin
+     * @param pid - the process who tries to add the new TA - needs to be a lecturer
      * @param TAUsername - the new TA username
      * @throws {Error} - if there is no user with name @username
-     *                 - if the user named username is not a courseAdminUsername (is not assigned to a course)
+     *                 - if the user named username is not a lecturerUsername (is not assigned to a course)
      *                 - if there is no user named TAUsername
      */
     addTA(pid, TAUsername){
@@ -107,7 +107,7 @@ class ApplicationFacade{
     /**
      * set @TAUsername to be a TA in course
      * @param TAUsername
-     * @throws {Error} - if there is no user named courseAdminUsername
+     * @throws {Error} - if there is no user named lecturerUsername
      */
     setUserAsTA(TAUsername){
         this.userController.setUserAsTA(TAUsername);
@@ -117,13 +117,13 @@ class ApplicationFacade{
      * creates a test for the course {@username} is Admin of
      * export it as a pdf and as a word file
      * adds the test to pastExams
-     * @param username - the user who tries to set the exam parameters - needs to be a courseAdmin
+     * @param username - the user who tries to set the exam parameters - needs to be a lecturer
      * @param parameters {Map<string, [number, number]>} a map of parameters that specify for each subject -
      *                                                  how many questions per subject and how many points the subject
      *                                                  is worth (notice that each question's value is the subject worth
      *                                                  devided by the number of questions
      * @throws {Error} - if there is no user with name @username
-     *                 - if the user named username is not a courseAdminUsername or is not assigned to a course
+     *                 - if the user named username is not a lecturerUsername or is not assigned to a course
      *                 - if the sum total of the subject worth is not 100
      */
     setExamParameters(username, parameters){
@@ -134,11 +134,11 @@ class ApplicationFacade{
      * creates a test for the course {@username} is Admin of
      * export it as a pdf and as a word file
      * adds the test to pastExams
-     * @param username - the user who tries to create the new exam - needs to be a courseAdmin
+     * @param username - the user who tries to create the new exam - needs to be a lecturer
      * @param reason - why you create the new exam (for example "Term A 2022" "example test for students"
      * @return {Exam}
      * @throws {Error} - if there is no user with name @username
-     *                 - if the user named username is not a courseAdminUsername or is not assigned to a course
+     *                 - if the user named username is not a lecturerUsername or is not assigned to a course
      *                 - if the course subject spread is not specified
      *                 - if there is not enough questions for a subject
      */
@@ -148,10 +148,10 @@ class ApplicationFacade{
 
     /**
      * view course statistics (per subject)
-     * @param username - the user who tries to view the course statistics - needs to be a courseAdmin
+     * @param username - the user who tries to view the course statistics - needs to be a lecturer
      * @return {Map<string,number>} per subject the precent of correct answers
      * @throws {Error} - if there is no user with name @username
-     *                 - if the user named username is not a courseAdminUsername or is not assigned to a course
+     *                 - if the user named username is not a lecturerUsername or is not assigned to a course
      *                 - if the course subject spread is not specified
      */
     viewStatistics(username){
@@ -160,7 +160,7 @@ class ApplicationFacade{
 
     /**
      * get all usernames in the system
-     * @param pid - who is requestion the usernames - can be course admin or system admin
+     * @param pid - who is requestion the usernames - can be lecturer or system admin
      * @return {List<User>} list of usernames
      */
     viewAllUsers(pid){
@@ -169,11 +169,11 @@ class ApplicationFacade{
 
     /**
      * view course statistics (per question)
-     * @param username - the user who tries to view the course statistics - needs to be a courseAdmin
+     * @param username - the user who tries to view the course statistics - needs to be a lecturer
      * @param subject
      * @return {Map<Question,number>} per question the precent of correct answers
      * @throws {Error} - if there is no user with name @username
-     *                 - if the user named username is not a courseAdminUsername or is not assigned to a course
+     *                 - if the user named username is not a lecturerUsername or is not assigned to a course
      */
     viewStatisticsPerSubject(username, subject){
         //todo
@@ -184,7 +184,7 @@ class ApplicationFacade{
      * @param username - the user who tries to view the course tasks - needs to be a systemAdmin
      * @return {[Task]}
      * @throws {Error} - if there is no user with name @username
-     *                 - if the user named username is not a courseAdminUsername or is not assigned to a course
+     *                 - if the user named username is not a lecturerUsername or is not assigned to a course
      */
     viewTasksForCourse(username){
         //todo

@@ -24,7 +24,7 @@ function viewUsername(req, res, next) {
 }
 
 /**
- * get the username type- "User", "TA", "Course Admin", "Grader", "System Admin"
+ * get the username type- "User", "TA", "Lecturer", "Grader", "System Admin"
  * @returns {string} - returns the type
  * @returns Error - if the prosses is not logged in to a user
  */
@@ -109,7 +109,7 @@ function logout(req, res, next) {
  * view a course
  * @return {{TAs: any[], Lecturers: any[]}} the course staff
  * @throws {Error} - if there is no logged in user in @pid
- *                 - if the user logged in user in @pid is not a courseAdmin
+ *                 - if the user logged in user in @pid is not a lecturer
  */
 function getAllStaff(req, res, next){
     try{
@@ -168,7 +168,7 @@ function finishATask(req, res, next) {
  * create a task for the new TA to accept being a TA of this course
  * @param username - the new TA username
  * @throws {Error} - if there is no user with name @username
- *                 - if the user named username is not a courseAdminUsername (is not assigned to a course)
+ *                 - if the user named username is not a lecturerUsername (is not assigned to a course)
  *                 - if there is no user named TAUsername
  */
 function addTA(req, res, next){
@@ -188,7 +188,7 @@ function addTA(req, res, next){
  * create a task for the new grader to accept being a grader of this course
  * @param username
  * @throws {Error} - if there is no user with name @username
- *                 - if the user named username is not a courseAdminUsername or is not assigned to a course
+ *                 - if the user named username is not a lecturerUsername or is not assigned to a course
  *                 - if there is no user named graderUsername
  */
 function addGrader(req, res, next){
