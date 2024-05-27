@@ -123,8 +123,6 @@ class LatexCompiler {
                     return callback(error, null);
                 }
                 callback(null, pdfPath);
-
-                this.#clean(filename);
             });
         })
     }
