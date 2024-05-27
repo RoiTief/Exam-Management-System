@@ -97,11 +97,11 @@ class UserController {
         return true;
     }
 
-    setUserAsCourseAdmin(courseAdminUsername, course) {
-        this.verifyUserRegistered(courseAdminUsername)
-        let user = this._registered_users.get(courseAdminUsername);
-        this._registered_users.set(courseAdminUsername, new Lecturer(user, course));
-        course.setUserAsCourseAdmin(courseAdminUsername);
+    setUserAsLecturer(lecturerUsername, course) {
+        this.verifyUserRegistered(lecturerUsername)
+        let user = this._registered_users.get(lecturerUsername);
+        this._registered_users.set(lecturerUsername, new Lecturer(user, course));
+        course.setUserAsLecturer(lecturerUsername);
     }
 
     setUserAsTA(TAUsername) {

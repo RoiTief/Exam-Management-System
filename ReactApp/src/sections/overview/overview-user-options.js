@@ -51,12 +51,12 @@ export const OverviewUserOptions = () => {
 
   const buttons = [
     {
-      for: ['Course Admin', 'TA'], 
+      for: ['Lecturer', 'TA'], 
       title: 'View Course',
       action: 'ViewCourse',
     },
     {
-      for: ['Course Admin', 'TA'], 
+      for: ['Lecturer', 'TA'], 
       title: 'Add Question',
       action: 'AddQuestion',
     },
@@ -66,27 +66,27 @@ export const OverviewUserOptions = () => {
       action: 'AddCourse',
     },
     {
-      for: ['Course Admin', 'TA', 'Grader'], 
+      for: ['Lecturer', 'TA', 'Grader'], 
       title: 'Ask for New Task',
       action: 'AssignNewTask',
     },
     {
-      for: ['Course Admin'],
+      for: ['Lecturer'],
       title: 'Check Staff Progress',
       action: 'CheckStaffProgress',
     },
     {
-      for: ['Course Admin'],
+      for: ['Lecturer'],
       title: 'Add New Personal To Course',
       action: 'AddPersonalToCourse',
     },
     {
-      for: ['Course Admin'],
+      for: ['Lecturer'],
       title: 'Create Task',
       action: 'CreateTask',
     },
     {
-      for: ['Course Admin'],
+      for: ['Lecturer'],
       title: 'Create Exam',
       action: 'CreateExam',
     }

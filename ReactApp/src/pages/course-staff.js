@@ -92,7 +92,7 @@ const Page = () => {
             <Box sx={{ flexGrow: 1 }}>
               <Stack direction="row" alignItems="center" justifyContent="space-between">
                 <Typography variant="h5" component="h2" gutterBottom>
-                  Course Admins
+                Lecturers
                 </Typography>
                 <SvgIcon color="primary" component={PlusIcon} onClick={() => handleAddPersonal('admin')} sx={{ cursor: 'pointer' }} />
               </Stack>

@@ -31,13 +31,13 @@ class TaskController {
         );
     }
 
-    courseAdminRequestTask(courseAdminUsername) {
-        this.addTaskToSpecificUser(null, 0, TaskTypes.courseAdminRequest,
-            "if you accept this request you will be the course admin, do notice that this will overrun you current course assignment",
+    lecturerRequestTask(lecturerUsername) {
+        this.addTaskToSpecificUser(null, 0, TaskTypes.lecturerRequest,
+            "if you accept this request you will be the lecturer, do notice that this will overrun you current course assignment",
             ["yes", "no"],
-            courseAdminUsername, (applicationFacade, response) => {
+            lecturerUsername, (applicationFacade, response) => {
                                             if(response === "yes")
-                                                applicationFacade.setUserAsCourseAdmin(courseAdminUsername)
+                                                applicationFacade.setUserAsLecturer(lecturerUsername)
                                                 });
     }
 

@@ -21,7 +21,7 @@ export const serverPath = {
     GET_USER_TYPE: 'viewUserType',
     ADD_TA: 'addTA',
     ADD_GRADER: 'addGrader',
-    ADD_COURSE_ADMIN: 'addCourseAdmin',
+    ADD_LECTURER: 'addLecturer',
     FINISH_TASK: 'finishATask',
     VIEW_QUESTIONS: 'viewCourseMetaQuestions',
     ADD_META_QUESTION: 'addMetaQuestion',

@@ -1,6 +1,6 @@
 
 const TaskTypes = {
-    courseAdminRequest: "courseAdminRequest",
+    lecturerRequest: "lecturerRequest",
     newTARequest: "newTARequest"
 }
 
