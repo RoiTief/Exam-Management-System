@@ -113,10 +113,12 @@ const Page = () => {
           </Button>
         </Box>
       </Container>
+      {showPdfView &&
       <PdfLatexPopup isOpen={showPdfView}
                      closePopup={() => setShowPdfView(false)}
                      content={questions}
                      type= {latexServerPath.COMPILE_TEST} />
+      }
     </Box>
   );
 }
