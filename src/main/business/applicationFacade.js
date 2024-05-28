@@ -351,6 +351,19 @@ class ApplicationFacade{
         //TODO - implement
         return [
             {
+                stem: '$e^{i\\pi} + 1 = $',
+                keys: [{text:'0', explanation: 'Using Euler\'s identity'}],
+                distractors: [{text:'$\\frac{what}{\\frac{The}{FUCK}}$', explanation: 'This is a fraction?'},
+                    {text:'\\begin{turn}{180}This answer is upside-down\\end{turn}', explanation: 'Rotated answer'}, {text:'$\\mathbb{N}\\mathbb{I}\\mathbb{C}\\mathbb{E}$', explanation: 'This is nice, but not close to the answer.'}],
+                appendix: {
+                    title: "Euler's identity: ",
+                    tag: "tag",
+                    content: "\\setlength{\\fboxsep}{10pt} % Set the padding (default is 3pt)\n"
+                    + "\\fbox{\\huge $e^{i\\theta} = \\cos{\\theta} + i\\sin{\\theta}$}"
+                },
+                keywords: ['key1', 'key2', 'key3']
+            },
+            {
                 stem: 'what did Idan listen to when he was a kid',
                 keys: [{text:'baby motzart', explanation: 'explanation1'},
                     {text:'baby bethoven', explanation: 'explanation2'}],

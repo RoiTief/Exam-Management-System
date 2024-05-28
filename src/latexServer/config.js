@@ -1,7 +1,9 @@
 const DEFAULT_LATEX_CONFIG = {
     PREAMBLE: "\\documentclass{article}\n" +
         "\\usepackage{amsmath}\n" +
+        "\\usepackage{amsfonts}\n" +
         "\\usepackage{amssymb}\n" +
+        "\\usepackage{rotating}\n" +
         "\n",
     OPENING: "\\begin{document}\n",
     CLOSING: "\\end{document}\n",
