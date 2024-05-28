@@ -133,6 +133,7 @@ class LatexCompiler {
      * @param callback Callback that handles failure/success of the compilation
      */
     compileTest(test, callback) {
+	    console.log(test);
         if (!this.#isJsonObject(test)) {
             return callback(new Error("Not a JSON object"), null);
         }
@@ -167,7 +168,7 @@ class LatexCompiler {
 
         exec(`cd ${this.#pdfDirPath} && xelatex ${texPath}`, (error, stdout, stderr) => {
             if (error) {
-                console.error(`xelatex Error: ${stdout}`);
+                console.log(`xelatex Error: ${stdout}`);
                 return callback(error, null);
             }
             callback(null, pdfPath);
@@ -184,7 +185,7 @@ class LatexCompiler {
         const texPath = path.join(this.#pdfDirPath, filename + EXTENSIONS.TEX);
         const logPath = path.join(this.#pdfDirPath, filename + EXTENSIONS.LOG);
         const auxPath = path.join(this.#pdfDirPath, filename + EXTENSIONS.AUX);
-        fs.unlinkSync(texPath);
+ //       fs.unlinkSync(texPath);
         fs.unlinkSync(logPath);
         fs.unlinkSync(auxPath);
     }
