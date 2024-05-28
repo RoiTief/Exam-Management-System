@@ -28,7 +28,7 @@ class MetaQuestion {
         
         this.stem = metaQuestionProperties.stem 
         this.creator = metaQuestionProperties.creator ?? "No creator"
-        this.answers = metaQuestionProperties.answers ?? [] // {id, answer, explanation}
+        this.correctAnswers = metaQuestionProperties.correctAnswers ?? [] // {id, answer, explanation}
         this.distractors = metaQuestionProperties.distractors ?? [] // {id, distractor, explanation}
         this.appendix = metaQuestionProperties.appendix ?? null
         this.keywords = metaQuestionProperties.keywords ?? []
@@ -42,8 +42,8 @@ class MetaQuestion {
         return this.stem
     }
 
-    getAnswers() {
-        return this.answers
+    getCorrectAnswers() {
+        return this.correctAnswers
     }
     
     getDiversions() {
@@ -66,16 +66,16 @@ class MetaQuestion {
 
     // Add and Remove
     async addAnswer(answer) {
-        if (this.answers.includes(answer)) throw new Error(`"${answer}" already exists`)
+        if (this.correctAnswers.includes(answer)) throw new Error(`"${answer}" already exists`)
         const answerId = await this.db.addAnswer(this, answer)
         answer = { ...answer, id: answerId }
-        this.answers.push(answer)
+        this.correctAnswers.push(answer)
     }
 
     async removeAnswer(answerId) {
-        if (!this.answers.includes(answer)) throw new Error(`"${answer}" does not exist`)
+        if (!this.correctAnswers.includes(answer)) throw new Error(`"${answer}" does not exist`)
         await this.db.removeAnswer(answerId)
-        this.answers = this.answers.filter(a => a.id !== answerId)
+        this.correctAnswers = this.correctAnswers.filter(a => a.id !== answerId)
     }
 
     async addDistractor(distractor) {
@@ -105,7 +105,7 @@ class MetaQuestion {
     // edit
     async editAnswer(newAnswer) { // newAnswer = {id, answer, explanation}
         await this.db.editAnswer(answerId, newAnswer)
-        const answer = this.answers.find(answer => answer.id === answerId);
+        const answer = this.correctAnswers.find(answer => answer.id === answerId);
         answer.answer = newAnswer.answer;
         answer.explanation = newAnswer.explanation;
     }
