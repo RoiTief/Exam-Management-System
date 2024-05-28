@@ -23,12 +23,17 @@ const metaQuestionDbMock = {
 class MetaQuestion {
 
     constructor(metaQuestionProperties) {
-        this.stem = metaQuestionProperties.stem
+        //check valid stem
+        if (!metaQuestionProperties.stem) throw new Error("Stem is required")
+        
+        this.stem = metaQuestionProperties.stem 
+        this.creator = metaQuestionProperties.creator ?? "No creator"
         this.answers = metaQuestionProperties.answers ?? [] // {id, answer, explanation}
         this.distractors = metaQuestionProperties.distractors ?? [] // {id, distractor, explanation}
         this.appendix = metaQuestionProperties.appendix ?? null
         this.keywords = metaQuestionProperties.keywords ?? []
         this.db = metaQuestionProperties.metaQuestionDb ?? metaQuestionDbMock
+
 
     }
 

@@ -1,24 +1,31 @@
 
 const TaskTypes = {
-    lecturerRequest: "lecturerRequest",
-    newTARequest: "newTARequest"
+    LECTURER_REQUEST: "lecturerRequest",
+    NEW_TA_REQUEST: "newTARequest",
+    ADD_KEY: "addKey"
+}
+
+const TaskPriority = {
+    LOW: "low",
+    MEDIUM: "medium",
+    HIGH: "high"
 }
 
 class Task {
-    constructor(taskId, forWhom, priority, type, properties, description, options, assignedUser, action) {
-        this.taskId = taskId
-        this.forWhom = forWhom;
-        this.priority = priority;
-        this.type = type
-        this.properties = properties;
-        this.description = description;
-        this.assignedUser = assignedUser;
-        this.action = action
-        this.finished = false;
-        this.options = options;
-        this.response = null;
+    constructor(addTaskProperty) {
+        this.taskId = addTaskProperty.taskId ??  null
+        this.forWhom = addTaskProperty.forWhom ?? null
+        this.taskPriority = addTaskProperty.taskPriority ?? null
+        this.type = addTaskProperty.type ?? null
+        this.properties = addTaskProperty.properties ?? null
+        this.description = addTaskProperty.description ?? null
+        this.assignedUsers = addTaskProperty.assignedUsers ?? null
+        this.action = addTaskProperty.action ?? null
+        this.finished = addTaskProperty.false ?? null
+        this.options = addTaskProperty.options ?? null
+        this.response = addTaskProperty.null ?? null
     }
 
 }
 
-module.exports = {Task, TaskTypes};
+module.exports = {Task, TaskTypes, TaskPriority};

@@ -298,7 +298,17 @@ function getAllAppendixes(req, res, next){
  * @throws {Error} - if fail to create
  */
 function addMetaQuestion(req, res, next){
-   //TODO - implement
+    try{
+        req.body = {...req.body, pid:process.pid}
+        let metaQuestion = application.addMetaQuestion(req.body)
+        req.log.info("request to create metaQuestion");
+        res.send(200, {code:200, metaQuestion})
+        next()
+    }
+    catch(err){
+        req.log.warn(err.message, 'failed to create meta questions');
+        next(err);
+    }
 }
 
 

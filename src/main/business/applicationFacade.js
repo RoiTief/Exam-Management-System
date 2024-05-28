@@ -7,8 +7,8 @@ const userTypes = require('../Enums').USER_TYPES
 class ApplicationFacade{
     constructor() {
         this.userController = new UserController();
-        this.taskController = new TaskController();
-        this.metaQuestionController = new MetaQuestionController();
+        this.taskController = new TaskController(this.userController);
+        this.metaQuestionController = new MetaQuestionController(this.taskController, this.userController);
 
         //todo - remove for testing:
         this.signIn(24632, "Admin", "Aa123456")
@@ -253,16 +253,11 @@ class ApplicationFacade{
     }
 
     /**
-     * Add a simple meta-question
-     * @param pid - The process ID of the user performing the action
-     * @param stem - The stem of the meta-question
-     * @param correctAnswers - Array of correct answers for the meta-question
-     * @param distractors - Array of distractors for the meta-question
-     * @throws {Error} - If the user is not signed in or does not have the necessary permissions
+     * add meta-question, look for values in MetaQuestion.js
+     *7
      */
-    addSimpleMetaQuestion(pid, stem, correctAnswers, distractors) {
-        const user = this.userController.getLoggedInName(pid);
-        this.metaQuestionController.addSimpleMetaQuestion(stem, correctAnswers, distractors)
+    addMetaQuestion(createMetaQuestionProperties) {
+        return this.metaQuestionController.createMetaQuestion(createMetaQuestionProperties)
     }
 
     /**
@@ -346,7 +341,7 @@ class ApplicationFacade{
             // Add more appendices as needed
         ];
     }
-
+    
 
 }
 
