@@ -23,6 +23,9 @@ const metaQuestionDbMock = {
 class MetaQuestion {
 
     constructor(metaQuestionProperties) {
+        //check valid stem
+        if (!metaQuestionProperties.stem) throw new Error("Stem is required")
+        
         this.stem = metaQuestionProperties.stem 
         this.creator = metaQuestionProperties.creator ?? "No creator"
         this.answers = metaQuestionProperties.answers ?? [] // {id, answer, explanation}
@@ -31,8 +34,6 @@ class MetaQuestion {
         this.keywords = metaQuestionProperties.keywords ?? []
         this.db = metaQuestionProperties.metaQuestionDb ?? metaQuestionDbMock
 
-        //check valid stem
-        if (!this.stem) throw new Error("Stem is required")
 
     }
 

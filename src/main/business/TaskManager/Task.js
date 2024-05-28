@@ -1,14 +1,14 @@
 
 const TaskTypes = {
-    lecturerRequest: "lecturerRequest",
-    newTARequest: "newTARequest",
-    addKey: "addKey"
+    LECTURER_REQUEST: "lecturerRequest",
+    NEW_TA_REQUEST: "newTARequest",
+    ADD_KEY: "addKey"
 }
 
 const TaskPriority = {
-    low: "low",
-    medium: "medium",
-    high: "high"
+    LOW: "low",
+    MEDIUM: "medium",
+    HIGH: "high"
 }
 
 class Task {

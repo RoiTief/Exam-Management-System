@@ -23,7 +23,7 @@ class MetaQuestionController{
         const ta_s = this.#userController.getAllStaff(metaQuestionProperties.pid)["TAs"]
 
         const addTaskProperties = {...metaQuestionProperties,
-             assignedUsers: ta_s, taskType: TaskTypes.addKey,
+             assignedUsers: ta_s, taskType: TaskTypes.ADD_KEY,
               taskPriority: TaskPriority.high, description: "Please add a key"}
         
         this.#taskController.addTask(addTaskProperties)

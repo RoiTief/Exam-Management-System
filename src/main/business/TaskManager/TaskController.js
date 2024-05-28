@@ -33,7 +33,7 @@ class TaskController {
     }
 
     lecturerRequestTask(lecturerUsername) {
-        this.addTaskToSpecificUser(null, 0, TaskTypes.lecturerRequest,
+        this.addTaskToSpecificUser(null, 0, TaskTypes.LECTURER_REQUEST,
             "if you accept this request you will be the lecturer, do notice that this will overrun you current course assignment",
             ["yes", "no"],
             lecturerUsername, (applicationFacade, response) => {
@@ -43,7 +43,7 @@ class TaskController {
     }
 
     newTARequestTask(TAUsername) {
-        this.addTaskToSpecificUser(null, 0, TaskTypes.newTARequest,
+        this.addTaskToSpecificUser(null, 0, TaskTypes.NEW_TA_REQUEST,
             "if you accept this request you will be a TA",
             ["yes", "no"],
             TAUsername, (applicationFacade, approved) => {
