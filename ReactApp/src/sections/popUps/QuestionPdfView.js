@@ -8,6 +8,7 @@ export const PdfLatexPopup = (props) => {
 
   const [pdfUrl, setPdfUrl] = useState('');
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     // Fetch PDF URL from server
@@ -16,14 +17,17 @@ export const PdfLatexPopup = (props) => {
 
   const fetchPdfUrlFromServer = async () => {
     try {
-      console.log(`PdfView content: ${JSON.stringify(content)}`);
       const response= await requestLatexServer(type, {content});
       const blob = await response.blob();
       const url = URL.createObjectURL(blob);
       setPdfUrl(url);
       setLoading(false);
     } catch (error) {
-      console.error('Error fetching PDF:', error);
+      console.error('Error fetching PDF:', error.message);
+      setLoading(false);
+      if (error.message === 'Failed to fetch') {
+        setError('Server unreachable');
+      }
       // Handle error
     }
   };
@@ -38,6 +42,9 @@ export const PdfLatexPopup = (props) => {
           { loading ? (
             <p>Loading PDF...</p>
           ) : (
+            error ? (
+              <p>Error: {error}</p>
+            ) : (
             <div style={{width: '100%', height: '100%'}}>
               <embed
                 src={pdfUrl}
@@ -46,8 +53,7 @@ export const PdfLatexPopup = (props) => {
                 height="100%"
               />
             </div>
-          )
-          }
+          ))}
         </div>
       </div>
     ) : ""
