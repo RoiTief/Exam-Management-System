@@ -16,7 +16,9 @@ app.use(cors());
 const compileCallback = (res) => {
     return (err, pdfPath) => {
         if (err) {
-            res.status(500).send(`Error compiling: ${err.message}`);
+	    const message = `Error compiling: ${err.message}`;
+	    console.log(message);
+            res.status(500).send(message);
             return;
         }
         res.sendFile(pdfPath, (err) => {
