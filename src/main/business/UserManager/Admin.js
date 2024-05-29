@@ -6,6 +6,7 @@ class Admin extends User{
     constructor(username, password) {
         super(username, password);
         this.type = types.ADMIN
+        this.firstSignIn = false;
     }
 
     getUserType(){
