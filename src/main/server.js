@@ -166,6 +166,10 @@ function createServer(options) {
      //response: {User, token}
     server.post('/signIn', service.signIn);
 
+    //request: {username, newPassword}
+    //response: {User, token}
+    server.post('/changePassword', service.changePassword);
+
      // request: {}
     server.post('/logout', service.logout);
   

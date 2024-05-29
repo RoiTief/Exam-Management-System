@@ -106,6 +106,30 @@ function logout(req, res, next) {
 }
 
 /**
+ * change user password after first sign in
+ * @param req.username - the user's username
+ * @param req.newPassword - the user new password
+ * @returns {User} - returned the signed-in user
+ * @returns {Error} - if there is no registered user with this username
+ *                 - if the password is incorrect
+ */
+function changePassword(req, res, next) {
+    try{
+        user = application.changePassword(process.pid, req.body.username, req.body.newPassword);
+        let token = jwt.sign({username: req.body.username}, process.env.SECRET_KEY, {
+            expiresIn: "1h" // token expires in 15 minutes
+        });
+        req.log.info(req.body.username, 'user signed in');
+        res.send(200, {code:200,user,token})
+        next()
+    }
+    catch(err){
+        req.log.warn(err.message, 'user unable to signIn');
+        next(err);
+    }
+}
+
+/**
  * view a course
  * @return {{TAs: any[], Lecturers: any[]}} the course staff
  * @throws {Error} - if there is no logged in user in @pid
@@ -340,6 +364,7 @@ module.exports = {
     signUp: signUp,
     signIn: signIn, 
     logout: logout,
+    changePassword: changePassword,
     getAllStaff: getAllStaff,
     viewMyTasks: viewMyTasks,
     finishATask: finishATask,

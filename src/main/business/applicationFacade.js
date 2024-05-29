@@ -71,6 +71,19 @@ class ApplicationFacade{
     }
 
     /**
+     * change password
+     * @param pid - the process trying to sign in
+     * @param username - the user username - need to be registered
+     * @param newPassword - the user new password
+     * @returns {User} - returned the signed-in user
+     * @throws {Error} - if the user is already signed in
+     *                 - if there is no registered user with this username
+     */
+    changePassword(pid, username, newPassword) {
+        return this.userController.changePasswordAfterFirstSignIn(pid, username, newPassword)
+    }
+
+    /**
      * get all staff
      * @param pid - the process who tries to view the staff - needs to be a logged in as lecturer
      * @return {{TAs: any[], Lecturers: any[]}} the staff, ordered by lecturers and TAs
