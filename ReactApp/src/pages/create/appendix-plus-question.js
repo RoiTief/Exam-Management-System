@@ -56,11 +56,11 @@ const Page = () => {
       keywords: values.keywords,
       stem: values.stem,
       keys: values.keys.map((item) => ({
-        answer: item.text,
+        text: item.text,
         explanation: item.explanation
       })),
       distractors: values.distractors.map((item) => ({
-        distractor: item.text,
+        text: item.text,
         explanation: item.explanation
       })),
       appendix: {

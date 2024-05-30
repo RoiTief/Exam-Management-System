@@ -33,8 +33,8 @@ const Page = () => {
     const key = `${question.stem}-${question.appendix ? question.appendix.title : ''}`;
 
     setUsedAnswers(prev => ({
-      ...prev,
-      [key]: [...(prev[key] || []), question.answer]
+          ...prev,
+      [key]: [...(prev[key] || []), question.key]
     }));
 
     setUsedDistractors(prev => ({
@@ -64,7 +64,7 @@ const Page = () => {
 
     setUsedAnswers(prevUsedAnswers => {
       const updatedAnswers = { ...prevUsedAnswers };
-      updatedAnswers[key] = updatedAnswers[key].filter(a => a.text !== questionToRemove.answer.text);
+      updatedAnswers[key] = updatedAnswers[key].filter(a => a.text !== questionToRemove.key.text);
       return updatedAnswers;
     });
 
