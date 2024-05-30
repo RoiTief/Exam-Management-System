@@ -34,7 +34,7 @@ function QuestionForm({ metaQuestions, addQuestion, usedAnswers, usedDistractors
   };
 
   const filteredAnswers = selectedMetaQuestion
-    ? getFilteredOptions(selectedMetaQuestion.correctAnswers, usedAnswers, `${selectedMetaQuestion.stem}-${selectedMetaQuestion.appendix?.title || ''}`)
+    ? getFilteredOptions(selectedMetaQuestion.keys, usedAnswers, `${selectedMetaQuestion.stem}-${selectedMetaQuestion.appendix?.title || ''}`)
     : [];
 
   const filteredDistractors = selectedMetaQuestion

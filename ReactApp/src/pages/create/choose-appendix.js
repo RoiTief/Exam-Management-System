@@ -7,7 +7,7 @@ import * as Yup from 'yup';
 
 import KeywordsSection from 'src/sections/Meta Question/keywords-edit';
 import StemSection from 'src/sections/Meta Question/stem-edit';
-import CorrectAnswersSection from 'src/sections/Meta Question/correct-answer-edit';
+import KeysSection from 'src/sections/Meta Question/correct-answer-edit';
 import DistractorsSection from 'src/sections/Meta Question/distractors-edit';
 import AppendixList from 'src/sections/Meta Question/choose-appendix';
 import { httpsMethod, requestServer, serverPath } from '../../utils/rest-api-call';  // Make sure this path is correct
@@ -15,7 +15,7 @@ import { httpsMethod, requestServer, serverPath } from '../../utils/rest-api-cal
 const validationSchema = Yup.object().shape({
   keywords: Yup.array().of(Yup.string()),
   stem: Yup.string().required('Stem is required'),
-  correctAnswers: Yup.array().of(
+  keys: Yup.array().of(
     Yup.object().shape({
       text: Yup.string().required('Correct answer text is required'),
       explanation: Yup.string().required('Explanation is required'),
@@ -41,7 +41,7 @@ const Page = () => {
     const metaQuestion = {
       keywords: values.keywords,
       stem: values.stem,
-      correctAnswers: values.correctAnswers.map((item) => ({
+      keys: values.keys.map((item) => ({
         answer: item.text,
         explanation: item.explanation
       })),
@@ -63,7 +63,7 @@ const Page = () => {
         keywords: [],
         stem: '',
         isStemRTL: true,
-        correctAnswers: [{ text: '', explanation: '', isTextRTL: true, isExplanationRTL: true }],
+        keys: [{ text: '', explanation: '', isTextRTL: true, isExplanationRTL: true }],
         distractors: [{ text: '', explanation: '', isTextRTL: true, isExplanationRTL: true }],
         appendix: { title: '', tag: '', content: '' },
       }}
@@ -106,7 +106,7 @@ const Page = () => {
                     handleBlur={handleBlur}
                     setFieldValue={setFieldValue}
                   />
-                  <CorrectAnswersSection
+                  <KeysSection
                     values={values}
                     handleChange={handleChange}
                     handleBlur={handleBlur}

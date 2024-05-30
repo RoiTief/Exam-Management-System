@@ -181,7 +181,7 @@ function createServer(options) {
     //request: {
     //       keywords: str[],
     //       stem: str,
-    //       correctAnswers: [{
+    //       keys: [{
     //         answer: str,
     //         explanation: str
     //         }],

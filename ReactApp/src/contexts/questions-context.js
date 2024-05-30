@@ -32,8 +32,8 @@ export const MetaQuestionProvider = (props) => {
   const { children } = props;
   const [state, dispatch] = useReducer(reducer, initialState);
 
-  const addSimpleMetaQuestion = async (stem, correctAnswers, distractors) => {
-    const response = await BaseContext.request(serverPath.ADD_META_QUESTION, httpsMethod.POST, { stem, correctAnswers, distractors });
+  const addSimpleMetaQuestion = async (stem, keys, distractors) => {
+    const response = await BaseContext.request(serverPath.ADD_META_QUESTION, httpsMethod.POST, { stem, keys, distractors });
     dispatch({ type: HANDLERS.ADD_META_QUESTION, payload: response });
   };
 

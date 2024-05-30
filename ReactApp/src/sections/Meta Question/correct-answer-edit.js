@@ -3,43 +3,43 @@ import { Box, TextField, IconButton, Typography } from '@mui/material';
 import { FieldArray } from 'formik';
 import { AddCircleOutline, RemoveCircleOutline, FormatTextdirectionLToR, FormatTextdirectionRToL } from '@mui/icons-material';
 
-const CorrectAnswersSection = ({ values, handleChange, handleBlur, setFieldValue }) => (
+const KeysSection = ({ values, handleChange, handleBlur, setFieldValue }) => (
   <Box sx={{ mb: 2 }}>
     <Typography variant="h6" component="h3">Correct Answers:</Typography>
-    <FieldArray name="correctAnswers">
+    <FieldArray name="keys">
       {({ remove, push }) => (
         <>
-          {values.correctAnswers.map((answer, index) => (
+          {values.keys.map((answer, index) => (
             <Box key={index} sx={{ mb: 1, display: 'flex', alignItems: 'center' }}>
               <Box key={index} sx={{ mb: 1, flex: 4 }}>
                 <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
                   <TextField
-                    name={`correctAnswers[${index}].text`}
-                    value={values.correctAnswers[index].text}
+                    name={`keys[${index}].text`}
+                    value={values.keys[index].text}
                     onChange={handleChange}
                     onBlur={handleBlur}
                     fullWidth
                     variant="outlined"
                     placeholder="Answer"
-                    sx={{ direction: values.correctAnswers[index].isTextRTL ? 'rtl' : 'ltr', mr: 1 }}
+                    sx={{ direction: values.keys[index].isTextRTL ? 'rtl' : 'ltr', mr: 1 }}
                   />
-                  <IconButton onClick={() => setFieldValue(`correctAnswers[${index}].isTextRTL`, !values.correctAnswers[index].isTextRTL)}>
-                    {values.correctAnswers[index].isTextRTL ? <FormatTextdirectionRToL /> : <FormatTextdirectionLToR />}
+                  <IconButton onClick={() => setFieldValue(`keys[${index}].isTextRTL`, !values.keys[index].isTextRTL)}>
+                    {values.keys[index].isTextRTL ? <FormatTextdirectionRToL /> : <FormatTextdirectionLToR />}
                   </IconButton>
                 </Box>
                 <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
                   <TextField
-                    name={`correctAnswers[${index}].explanation`}
-                    value={values.correctAnswers[index].explanation}
+                    name={`keys[${index}].explanation`}
+                    value={values.keys[index].explanation}
                     onChange={handleChange}
                     onBlur={handleBlur}
                     fullWidth
                     variant="outlined"
                     placeholder="Explanation"
-                    sx={{ direction: values.correctAnswers[index].isExplanationRTL ? 'rtl' : 'ltr', mr: 1 }}
+                    sx={{ direction: values.keys[index].isExplanationRTL ? 'rtl' : 'ltr', mr: 1 }}
                   />
-                  <IconButton onClick={() => setFieldValue(`correctAnswers[${index}].isExplanationRTL`, !values.correctAnswers[index].isExplanationRTL)}>
-                    {values.correctAnswers[index].isExplanationRTL ? <FormatTextdirectionRToL /> : <FormatTextdirectionLToR />}
+                  <IconButton onClick={() => setFieldValue(`keys[${index}].isExplanationRTL`, !values.keys[index].isExplanationRTL)}>
+                    {values.keys[index].isExplanationRTL ? <FormatTextdirectionRToL /> : <FormatTextdirectionLToR />}
                   </IconButton>
                 </Box>
               </Box>
@@ -57,4 +57,4 @@ const CorrectAnswersSection = ({ values, handleChange, handleBlur, setFieldValue
   </Box>
 );
 
-export default CorrectAnswersSection;
+export default KeysSection;
