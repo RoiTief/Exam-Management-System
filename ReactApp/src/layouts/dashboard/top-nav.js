@@ -57,6 +57,9 @@ export const TopNav = (props) => {
             alignItems="right"
             direction="row"
             spacing={2}
+            sx={{
+              paddingTop: '11px'
+            }}
           >
             <Avatar
               onClick={accountPopover.handleOpen}
