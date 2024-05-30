@@ -25,7 +25,7 @@ class MetaQuestionController{
              assignedUsers: ta_s, taskType: TaskTypes.ADD_KEY,
               taskPriority: TaskPriority.high, description: "Please add a key"}
         this.#taskController.addTask(addTaskProperties)
-        this.metaQuestionId = this.metaQuestionId + 1
+        this.#metaQuestionId = this.#metaQuestionId + 1
         return metaQuestion
     }
 
