@@ -1,14 +1,15 @@
 const UserController  = require('./UserManager/UserController.js' );
 const TaskController = require('./TaskManager/TaskController.js');
 const MetaQuestionController = require('./MetaQuestions/MetaQuestionController.js');
+const ExamController = require('./ExamManager/ExamController.js');
 const userTypes = require('../Enums').USER_TYPES
-
 
 class ApplicationFacade{
     constructor() {
         this.userController = new UserController();
         this.taskController = new TaskController(this.userController);
         this.metaQuestionController = new MetaQuestionController(this.taskController, this.userController);
+        this.examController = new ExamController(this.taskController, this.userController)
 
         //todo - remove for testing:
         this.signIn(24632, "Admin", "Aa123456")
@@ -114,7 +115,7 @@ class ApplicationFacade{
     }
 
     /**
-     * creates a test for the course {@username} is Admin of
+     * creates an Exam for the course {@username} is Admin of
      * export it as a pdf and as a word file
      * adds the test to pastExams
      * @param username - the user who tries to set the exam parameters - needs to be a lecturer
@@ -131,19 +132,17 @@ class ApplicationFacade{
     }
 
     /**
-     * creates a test for the course {@username} is Admin of
+     * creates an Exam for the course {@username} is Admin of
      * export it as a pdf and as a word file
      * adds the test to pastExams
-     * @param username - the user who tries to create the new exam - needs to be a lecturer
-     * @param reason - why you create the new exam (for example "Term A 2022" "example test for students"
      * @return {Exam}
      * @throws {Error} - if there is no user with name @username
      *                 - if the user named username is not a lecturerUsername or is not assigned to a course
      *                 - if the course subject spread is not specified
      *                 - if there is not enough questions for a subject
      */
-    createExam(username, reason){
-        //todo
+    createExam(createExamProperties){
+        return this.examController.createExam(createExamProperties)
     }
 
     /**

@@ -47,8 +47,7 @@ const Page = () => {
 
   const saveTest = async () => {
     try {
-      console.log(JSON.stringify(questions))
-      await requestServer(serverPath.CREATE_TEST, httpsMethod.POST, questions);
+      await requestServer(serverPath.CREATE_EXAM, httpsMethod.POST, {questions});
       await router.push('/');
     } catch (error) {
       console.error('Error fetching meta questions:', error);
