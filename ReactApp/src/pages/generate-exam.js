@@ -100,7 +100,7 @@ const Page = () => {
             <QuestionForm
               metaQuestions={metaQuestions}
               addQuestion={addQuestion}
-              usedAnswers={usedAnswers}
+              usedKeys={usedAnswers}
               usedDistractors={usedDistractors}
             />
           )}

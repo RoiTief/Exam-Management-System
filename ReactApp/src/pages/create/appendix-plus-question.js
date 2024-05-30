@@ -13,7 +13,7 @@ import * as Yup from 'yup';
 
 import KeywordsSection from 'src/sections/Meta Question/keywords-edit';
 import StemSection from 'src/sections/Meta Question/stem-edit';
-import KeysSection from 'src/sections/Meta Question/correct-answer-edit';
+import KeysSection from 'src/sections/Meta Question/correct-key-edit';
 import DistractorsSection from 'src/sections/Meta Question/distractors-edit';
 import AppendixSection from 'src/sections/Meta Question/apendix-edit';
 import { httpsMethod, requestServer, serverPath } from '../../utils/rest-api-call';
