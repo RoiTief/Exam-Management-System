@@ -184,7 +184,7 @@ class LatexCompiler {
         Object.values(appendicesMap)
             .sort((a, b) => a.number - b.number)
             .forEach(appendix => {
-                fs.writeFileSync(texPath, `\\subsection{${appendix.title}\n`
+                fs.writeFileSync(texPath, `\\subsection{${appendix.title}}\n`
                     + `\\zlabel{app:${appendix.tag}}\n`
                     + `${appendix.content} \n\n`,
                     {flag: 'a'});
