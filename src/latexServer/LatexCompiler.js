@@ -134,25 +134,65 @@ class LatexCompiler {
      */
     compileTest(test, callback) {
 	    console.log(test);
-        if (!this.#isJsonObject(test)) {
-            return callback(new Error("Not a JSON object"), null);
+        if (!Array.isArray(test)) {
+            return callback(new Error("Not an array"), null);
         }
         const timestamp = Date.now();
         const filename = timestamp;
         const texPath = path.join(this.#pdfDirPath, filename + EXTENSIONS.TEX);
 
-        const dummy = "\\begin{Huge}\n"
-            + "You have just compiled\n"
-            + "\\begin{equation*}\n"
-            + "\\frac{a}{Test}\n"
-            + "\\end{equation*}\n"
-            + "\\end{Huge}\n"
+        const appendicesMap = {};
+        let appendixNumbering = 1;
 
-        // write latex code to the file
-        fs.writeFileSync(texPath, this.#preamble);
-        fs.writeFileSync(texPath, this.#opening, {flag: 'a'});
-        fs.writeFileSync(texPath, dummy, {flag : 'a'});
-        fs.writeFileSync(texPath, this.#closing, {flag : 'a'});
+        // write the preamble + open document
+        fs.writeFileSync(texPath,
+            `${this.#preamble}\n`
+            + "\\usepackage{zref-user}\n"
+            + "\\renewcommand{\\labelenumi}{\\arabic{enumi}.}"
+            + "\\renewcommand{\\labelenumii}{(\\arabic{enumii})}"
+            + `${this.#opening}\n`);
+
+        // Print questions
+        fs.writeFileSync(texPath,
+            '\\section{Questions} \n'
+            + '\\begin{enumerate}\n',
+            {flag: 'a'});
+        test.forEach((question)  => {
+            fs.writeFileSync(texPath, '\\item ', {flag: 'a'});
+            // Relate to appendix
+            if (question.hasOwnProperty('appendix')) {
+                if (!appendicesMap.hasOwnProperty(question.appendix.tag)) {
+                    appendicesMap[question.appendix.tag] = question.appendix;
+                    appendicesMap[question.appendix.tag]['number'] = appendixNumbering++;
+                }
+                const appendixNumber = appendicesMap[question.appendix.tag].number;
+                fs.writeFileSync(texPath,
+                    `\\textbf{This question relates to appendix 2.${appendixNumber} in page {\\zpageref{app:${question.appendix.tag}}}} \\\\\n`,
+                    {flag: 'a'});
+            }
+            // stem
+            fs.writeFileSync(texPath, `${question.stem}\n`, {flag: 'a'});
+            // scrambled answers
+        });
+        fs.writeFileSync(texPath,
+            '\\end{enumerate}\n\n'
+            + '\\newpage \n\n',
+            {flag: 'a'});
+
+        // Print appendices
+        fs.writeFileSync(texPath, '\\section{Appendices} \n\n', {flag: 'a'});
+        Object.values(appendicesMap)
+            .sort((a, b) => a.number - b.number)
+            .forEach(appendix => {
+                fs.writeFileSync(texPath, `\\subsection{${appendix.title}\n`
+                    + `\\zlabel{app:${appendix.tag}}\n`
+                    + `${appendix.content} \n\n`,
+                    {flag: 'a'});
+            });
+
+        // Print answer sheet
+
+        // Print solved questions
 
         this.#compile(filename, callback)
     }
@@ -195,6 +235,26 @@ class LatexCompiler {
             typeof param === 'object' &&
             !Array.isArray(param) &&
             Object.prototype.toString.call(param) === '[object Object]';
+    }
+
+    /**
+     * Shuffle given array's elements in a random order
+     * @param array array to shuffle
+     */
+    #shuffle(array) {
+        let currentIndex = array.length;
+
+        // While there remain elements to shuffle...
+        while (currentIndex !== 0) {
+
+            // Pick a remaining element...
+            let randomIndex = Math.floor(Math.random() * currentIndex);
+            currentIndex--;
+
+            // And swap it with the current element.
+            [array[currentIndex], array[randomIndex]] = [
+                array[randomIndex], array[currentIndex]];
+        }
     }
 }
 
