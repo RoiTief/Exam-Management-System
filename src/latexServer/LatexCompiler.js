@@ -194,6 +194,9 @@ class LatexCompiler {
 
         // Print solved questions
 
+        // close document
+        fs.writeFileSync(texPath, this.#closing, {flag : 'a'});
+
         this.#compile(filename, callback)
     }
 
@@ -206,7 +209,7 @@ class LatexCompiler {
         const texPath = path.join(this.#pdfDirPath, filename + EXTENSIONS.TEX);
         const pdfPath = path.join(this.#pdfDirPath, filename + EXTENSIONS.PDF);
 
-        exec(`cd ${this.#pdfDirPath} && xelatex ${texPath}`, (error, stdout, stderr) => {
+        exec(`cd ${this.#pdfDirPath} && xelatex -interaction=nonstopmode ${texPath}`, (error, stdout, stderr) => {
             if (error) {
                 console.log(`xelatex Error: ${stdout}`);
                 return callback(error, null);
