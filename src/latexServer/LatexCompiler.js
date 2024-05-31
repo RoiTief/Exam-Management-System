@@ -148,8 +148,8 @@ class LatexCompiler {
         fs.writeFileSync(texPath,
             `${this.#preamble}\n`
             + "\\usepackage{zref-user}\n"
-            + "\\renewcommand{\\labelenumi}{\\arabic{enumi}.}"
-            + "\\renewcommand{\\labelenumii}{(\\arabic{enumii})}"
+            + "\\renewcommand{\\labelenumi}{\\arabic{enumi}.}\n"
+            + "\\renewcommand{\\labelenumii}{(\\arabic{enumii})}\n"
             + `${this.#opening}\n`);
 
         // Print questions
