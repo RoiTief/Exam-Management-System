@@ -1,13 +1,14 @@
 import React from 'react';
 import { Box, Typography, Divider, IconButton, Stack } from '@mui/material';
 import { RemoveCircleOutline } from '@mui/icons-material';
+import { EXAM } from '../../constants';
 
 function QuestionList({ questions, removeQuestion }) {
   return (
     questions.length > 0 && (
       <Box>
         <Typography variant="h4" component="h2" gutterBottom>
-          Created Questions
+          {EXAM.CREATED_QUESTIONS_HEADING}
         </Typography>
         {questions.map((question, index) => (
           <Box key={index} sx={{ mb: 2 }}>
@@ -16,7 +17,7 @@ function QuestionList({ questions, removeQuestion }) {
                 {question.appendix && (
                   <Box sx={{ mb: 1 }}>
                     <Typography variant="subtitle1">
-                      Appendix: {question.appendix.title}
+                      {EXAM.APPENDIX_TITLE} {question.appendix.title}
                     </Typography>
                     <Typography variant="body2">
                       {question.appendix.content}
@@ -24,11 +25,11 @@ function QuestionList({ questions, removeQuestion }) {
                   </Box>
                 )}
                 <Typography variant="h6" component="h3">
-                  Question: {question.stem}
+                  {EXAM.QUESTION_HEADING}: {question.stem}
                 </Typography>
                 <Box sx={{ display: 'flex', alignItems: 'baseline', mt: 1 }}>
                   <Typography variant="body1" sx={{ minWidth: '80px' }}>
-                    Answer:
+                    {EXAM.ANSWER_HEADING}:
                   </Typography>
                   <Typography variant="body2">
                     - {question.key.text}
@@ -36,7 +37,7 @@ function QuestionList({ questions, removeQuestion }) {
                 </Box>
                 <Box sx={{ display: 'flex', alignItems: 'baseline', mt: 1 }}>
                   <Typography variant="body1" sx={{ minWidth: '80px' }}>
-                    Distractors:
+                    {EXAM.DISTRACTORS_HEADING}:
                   </Typography>
                   <Box>
                     {question.distractors.map((d, i) => (

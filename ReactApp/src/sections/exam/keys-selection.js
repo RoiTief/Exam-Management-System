@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Box, Typography, Button, Stack } from '@mui/material';
+import { EXAM } from '../../constants';
 
 function KeySelection({ keys, onSelect }) {
   const [selectedKey, setSelectedKey] = useState(null);
@@ -11,7 +12,7 @@ function KeySelection({ keys, onSelect }) {
   return (
     <Box sx={{ mb: 2 }}>
       <Typography variant="h5" component="h2" mb={2}>
-        Select The Correct Key
+        {EXAM.SELECT_KEY_HEADING}
       </Typography>
       {keys.length != 0 ? (
         <>
@@ -29,14 +30,13 @@ function KeySelection({ keys, onSelect }) {
       )  : (
         <Stack>
           <Typography variant="h10" component="h7" mb={2}>
-            There are no available keys for this question!
+            {EXAM.NO_KEYS_MESSAGE_1}
           </Typography>
           <Typography variant="h10" component="h7" mb={2}>
-            Please choose a different question
+            {EXAM.NO_KEYS_MESSAGE_2}
           </Typography>
         </Stack>
-      )
-      }
+      )}
     </Box>
   );
 }

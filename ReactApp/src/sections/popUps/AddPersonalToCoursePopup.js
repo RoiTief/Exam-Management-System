@@ -2,18 +2,16 @@ import PropTypes from 'prop-types';
 import { overlayStyle, popupStyle } from './popup-style';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
-import { httpsMethod, serverPath, requestServer, TOKEN_FIELD_NAME } from 'src/utils/rest-api-call';
+import { httpsMethod, serverPath, requestServer } from 'src/utils/rest-api-call';
 import {
   Button,
-  FormControl,
-  InputLabel,
-  MenuItem,
   Stack,
   TextField,
   Typography,
   Autocomplete
 } from '@mui/material';
 import { useEffect, useState } from 'react';
+import { COURSE_STAFF } from '../../constants';
 
 export const AddPersonalToCourse = (props) => {
   const { isOpen, closePopup, state } = props;
@@ -43,7 +41,7 @@ export const AddPersonalToCourse = (props) => {
       username: Yup
         .string()
         .max(255)
-        .required('Username is required')
+        .required(COURSE_STAFF.USERNAME_REQUIRED)
     }),
     onSubmit: async (values, helpers) => {
       try {
@@ -64,7 +62,7 @@ export const AddPersonalToCourse = (props) => {
         <div onClick={closePopup} style={overlayStyle}></div>
         <div className="popup-content" style={{ ...popupStyle, width: '30%' }}>
           <Typography variant="h6" component="h2" gutterBottom>
-            Add Personal To Course
+            {COURSE_STAFF.ADD_PERSONAL_TITLE}
           </Typography>
           <form
             noValidate
@@ -78,7 +76,7 @@ export const AddPersonalToCourse = (props) => {
                 onChange={(event, newValue) => {
                   formik.setFieldValue('username', newValue || '');
                 }}
-                renderInput={(params) => <TextField {...params} label="Username" variant="outlined" />}
+                renderInput={(params) => <TextField {...params} label={COURSE_STAFF.USERNAME_LABEL} variant="outlined" />}
               />
             </Stack>
             {formik.errors.submit && (
@@ -97,7 +95,7 @@ export const AddPersonalToCourse = (props) => {
               type="submit"
               variant="contained"
             >
-              Add Personal
+              {COURSE_STAFF.ADD_PERSONAL_BUTTON}
             </Button>
           </form>
         </div>

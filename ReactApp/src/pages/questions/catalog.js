@@ -1,18 +1,17 @@
-
-import { Box, Button,Stack, SvgIcon, Typography, Container } from '@mui/material';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { Box, Button, Stack, SvgIcon, Typography, Container } from '@mui/material';
+import React, { useEffect, useState } from 'react';
 import { Layout as DashboardLayout } from '../../layouts/dashboard/layout';
 import Head from 'next/head';
 import PlusIcon from '@heroicons/react/24/solid/PlusIcon';
 import { useRouter } from 'next/navigation';
-import { applyPagination } from '../../utils/apply-pagination';
 import { MetaQuestionTable } from '../../sections/Questions/question-catalog-by-stem';
 import { QuestionsSearch } from '../../sections/Questions/question-search';
 import { httpsMethod, requestServer, serverPath } from '../../utils/rest-api-call';
+import { QUESTIONS_CATALOG } from '../../constants';
 
 const Page = () => {
   const router = useRouter();
-  const [metaQuestions, setMetaQuestions] = useState([])
+  const [metaQuestions, setMetaQuestions] = useState([]);
   const [filteredData, setFilteredData] = useState(metaQuestions);
 
   useEffect(() => {
@@ -43,14 +42,14 @@ const Page = () => {
   return (
     <>
       <Head>
-        <title>Meta-Questions Catalog</title>
+        <title>{QUESTIONS_CATALOG.PAGE_TITLE}</title>
       </Head>
       <Box component="main" sx={{ flexGrow: 1, py: 8 }}>
         <Container maxWidth="xl">
           <Stack spacing={3}>
             <Stack direction="row" justifyContent="space-between" spacing={4}>
               <Stack spacing={1}>
-                <Typography variant="h4">Meta-Questions Catalog</Typography>
+                <Typography variant="h4">{QUESTIONS_CATALOG.HEADING}</Typography>
                 <Stack alignItems="center" direction="row" spacing={1}></Stack>
               </Stack>
               <Stack alignItems="center" direction="column" spacing={1}>
@@ -60,7 +59,7 @@ const Page = () => {
                   variant="contained"
                   onClick={() => router.push('/create/simple')}
                 >
-                  Create Simple MetaQuestion
+                  {QUESTIONS_CATALOG.CREATE_SIMPLE_BUTTON}
                 </Button>
                 <Button
                   color="inherit"
@@ -68,7 +67,7 @@ const Page = () => {
                   variant="contained"
                   onClick={() => router.push('/create/choose-appendix')}
                 >
-                  Create Appendix+MetaQuestion
+                  {QUESTIONS_CATALOG.CREATE_APPENDIX_BUTTON}
                 </Button>
               </Stack>
             </Stack>

@@ -13,6 +13,8 @@ import { Logo } from 'src/components/logo';
 import { Scrollbar } from 'src/components/scrollbar';
 import { items } from './config';
 import { SideNavItem } from './side-nav-item';
+import { APP_NAME } from '../../constants';
+
 
 export const SideNav = (props) => {
   const { open, onClose } = props;
@@ -77,7 +79,7 @@ export const SideNav = (props) => {
                 color="inherit"
                 variant="subtitle1"
               >
-                Exam Management System
+                {APP_NAME}
               </Typography>
             </div>
           </Box>

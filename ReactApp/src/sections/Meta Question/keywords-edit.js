@@ -1,10 +1,11 @@
 import React from 'react';
 import { Box, TextField, Chip, Typography } from '@mui/material';
 import { FieldArray } from 'formik';
+import { CREATE_QUESTION } from '../../constants';
 
 const KeywordsSection = ({ values, handleChange, handleBlur }) => (
   <Box sx={{ mb: 2 }}>
-    <Typography variant="h6" component="h3">Keywords: (press enter for each keyword) </Typography>
+    <Typography variant="h6" component="h3">{CREATE_QUESTION.KEY_TITLE}</Typography>
     <FieldArray name="keywords">
       {({ push, remove }) => (
         <Box sx={{ mb: 1 }}>

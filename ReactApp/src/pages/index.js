@@ -1,18 +1,12 @@
-import Head from 'next/head';
-import { subDays, subHours } from 'date-fns';
-import { Box, Stack, Typography, Container, Unstable_Grid2 as Grid } from '@mui/material';
+import { Box, Stack, Container, Unstable_Grid2 as Grid, Typography } from '@mui/material';
 import { Layout as DashboardLayout } from 'src/layouts/dashboard/layout';
 import { OverviewFAQ } from 'src/sections/overview/overview-FAQ';
-import { OverviewUserOptions } from 'src/sections/overview/overview-user-options';
 import { OverviewAssignedTasks } from 'src/sections/overview/overview-my-tasks';
-import { OverviewSales } from 'src/sections/overview/overview-sales';
 import { OverviewTasksProgress } from 'src/sections/overview/overview-tasks-progress';
 import { OverviewQuestionTips } from 'src/sections/overview/overview-question-tips';
-import { OverviewTotalProfit } from 'src/sections/overview/overview-total-profit';
-import { OverviewTraffic } from 'src/sections/overview/overview-traffic';
 import {OverviewCalander} from "../sections/overview/overview-calender";
+import {HELLO_USER } from '../constants';
 
-const now = new Date();
 
 const Page = () => (
   <>
@@ -24,7 +18,12 @@ const Page = () => (
 
           <Stack item> 
           {/*left section*/}
-            <OverviewAssignedTasks/>
+            <Stack container item spacing={4}>
+              <Typography variant="h4">
+                {HELLO_USER(JSON.parse(localStorage.getItem("user"))["username"])}
+              </Typography>
+              <OverviewAssignedTasks/>
+            </Stack>
           </Stack>
 
           <Stack container item xs={8} direction="column" justifyContent="flex-end" spacing={4} >

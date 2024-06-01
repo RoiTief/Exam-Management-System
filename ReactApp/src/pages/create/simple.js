@@ -10,19 +10,20 @@ import StemSection from 'src/sections/Meta Question/stem-edit';
 import KeysSection from 'src/sections/Meta Question/correct-key-edit';
 import DistractorsSection from 'src/sections/Meta Question/distractors-edit';
 import { httpsMethod, requestServer, serverPath } from '../../utils/rest-api-call';
+import { CREATE_QUESTION } from '../../constants';
 
 const validationSchema = Yup.object().shape({
-  stem: Yup.string().required('Stem is required'),
+  stem: Yup.string().required(CREATE_QUESTION.STEM_REQUIRED),
   keys: Yup.array().of(
     Yup.object().shape({
-      text: Yup.string().required('Correct answer text is required'),
-      explanation: Yup.string().required('Explanation is required'),
+      text: Yup.string().required(CREATE_QUESTION.CORRECT_ANSWER_REQUIRED),
+      explanation: Yup.string().required(CREATE_QUESTION.EXPLANATION_REQUIRED),
     })
   ),
   distractors: Yup.array().of(
     Yup.object().shape({
-      text: Yup.string().required('Distractor text is required'),
-      explanation: Yup.string().required('Explanation is required'),
+      text: Yup.string().required(CREATE_QUESTION.DISTRACTOR_REQUIRED),
+      explanation: Yup.string().required(CREATE_QUESTION.EXPLANATION_REQUIRED),
     })
   ),
   keywords: Yup.array().of(Yup.string()),
@@ -75,7 +76,7 @@ const Page = () => {
           >
             <Container maxWidth="sm" sx={{ backgroundColor: '#ffffff', borderRadius: 2, boxShadow: 3, p: 4 }}>
               <Typography variant="h4" component="h1" gutterBottom>
-                Create Simple Meta-Question
+                {CREATE_QUESTION.CREATE_SIMPLE_TITLE}
               </Typography>
               <Box
                 sx={{
@@ -109,7 +110,7 @@ const Page = () => {
                 />
               </Box>
               <Button variant="contained" type="submit" disabled={isSubmitting}>
-                Submit
+                {CREATE_QUESTION.SUBMIT_BUTTON}
               </Button>
             </Container>
           </Box>

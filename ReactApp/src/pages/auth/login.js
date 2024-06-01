@@ -1,6 +1,5 @@
-import { useCallback, useState } from 'react';
+import { useState } from 'react';
 import Head from 'next/head';
-import NextLink from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
@@ -17,11 +16,12 @@ import {
 } from '@mui/material';
 import { useAuth } from 'src/hooks/use-auth';
 import { Layout as AuthLayout } from 'src/layouts/auth/layout';
+import { LOGIN } from '../../constants';
 
 const Page = () => {
   const router = useRouter();
   const auth = useAuth();
-  const [method, setMethod] = useState('username');
+  const [method] = useState('username');
   const [changePasswordOpen, setChangePasswordOpen] = useState(false);
   const [changePasswordValues, setChangePasswordValues] = useState({ newPassword: '', confirmNewPassword: '' });
   const [user, setUser] = useState(null)
@@ -61,16 +61,15 @@ const Page = () => {
 
   const handleChangePassword = async () => {
     if (changePasswordValues.newPassword !== changePasswordValues.confirmNewPassword) {
-      alert("Passwords do not match");
+      alert(LOGIN.PASSWORDS_DO_NOT_MATCH);
       return;
     }
     try {
-      // Call your change password API here
       await auth.changePassword(user.username, changePasswordValues.newPassword);
       setChangePasswordOpen(false);
       router.push('/');
     } catch (err) {
-      console.error("Failed to change password:", err);
+      console.error(LOGIN.FAILED_TO_CHANGE_PASSWORD, err);
     }
   };
 
@@ -78,7 +77,7 @@ const Page = () => {
     <>
       <Head>
         <title>
-          Login
+          {LOGIN.PAGE_TITLE}
         </title>
       </Head>
       <Box
@@ -104,7 +103,7 @@ const Page = () => {
               sx={{ mb: 3 }}
             >
               <Typography variant="h4">
-                Login
+                {LOGIN.HEADING}
               </Typography>
             </Stack>
             {method === 'username' && (
@@ -117,7 +116,7 @@ const Page = () => {
                     error={!!(formik.touched.username && formik.errors.username)}
                     fullWidth
                     helperText={formik.touched.username && formik.errors.username}
-                    label="Username"
+                    label={LOGIN.USERNAME_LABEL}
                     name="username"
                     onBlur={formik.handleBlur}
                     onChange={formik.handleChange}
@@ -128,7 +127,7 @@ const Page = () => {
                     error={!!(formik.touched.password && formik.errors.password)}
                     fullWidth
                     helperText={formik.touched.password && formik.errors.password}
-                    label="Password"
+                    label={LOGIN.PASSWORD_LABEL}
                     name="password"
                     onBlur={formik.handleBlur}
                     onChange={formik.handleChange}
@@ -152,7 +151,7 @@ const Page = () => {
                   type="submit"
                   variant="contained"
                 >
-                  Continue
+                  {LOGIN.CONTINUE_BUTTON}
                 </Button>
               </form>
             )}
@@ -161,12 +160,12 @@ const Page = () => {
       </Box>
 
       <Dialog open={changePasswordOpen} onClose={() => setChangePasswordOpen(false)}>
-        <DialogTitle>Change Password</DialogTitle>
+        <DialogTitle>{LOGIN.CHANGE_PASSWORD_TITLE}</DialogTitle>
         <DialogContent>
           <TextField
             margin="dense"
             id="newPassword"
-            label="New Password"
+            label={LOGIN.NEW_PASSWORD_LABEL}
             type="password"
             fullWidth
             value={changePasswordValues.newPassword}
@@ -175,7 +174,7 @@ const Page = () => {
           <TextField
             margin="dense"
             id="confirmNewPassword"
-            label="Confirm New Password"
+            label={LOGIN.CONFIRM_NEW_PASSWORD_LABEL}
             type="password"
             fullWidth
             value={changePasswordValues.confirmNewPassword}
@@ -183,8 +182,8 @@ const Page = () => {
           />
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setChangePasswordOpen(false)}>Cancel</Button>
-          <Button onClick={handleChangePassword}>Change Password</Button>
+          <Button onClick={() => setChangePasswordOpen(false)}>{LOGIN.CANCEL_BUTTON}</Button>
+          <Button onClick={handleChangePassword}>{LOGIN.CHANGE_PASSWORD_BUTTON}</Button>
         </DialogActions>
       </Dialog>
     </>

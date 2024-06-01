@@ -14,10 +14,11 @@ import {
 } from '@mui/material';
 import { Layout as DashboardLayout } from 'src/layouts/dashboard/layout';
 import { httpsMethod, serverPath, requestServer } from 'src/utils/rest-api-call';
-import ChevronDoubleDownIcon from '@heroicons/react/20/solid/esm/ChevronDoubleDownIcon';
-import ChevronDoubleUpIcon from '@heroicons/react/20/solid/esm/ChevronDoubleUpIcon';
+import ChevronDoubleDownIcon from '@heroicons/react/20/solid/ChevronDoubleDownIcon';
+import ChevronDoubleUpIcon from '@heroicons/react/20/solid/ChevronDoubleUpIcon';
 import PlusIcon from '@heroicons/react/24/solid/PlusIcon';
 import { AddPersonalToCourse } from 'src/sections/popUps/AddPersonalToCoursePopup';
+import { COURSE_STAFF } from '../constants';
 
 const Page = () => {
   const [course, setCourse] = useState({});
@@ -78,13 +79,13 @@ const Page = () => {
             sx={{
               backgroundColor: 'rgba(0, 0, 0, 0.3)',
               borderRadius: 2,
-              p: '0.5em', // Adjust padding here
+              p: '0.5em',
               mb: 4,
               textAlign: 'center',
             }}
           >
             <Typography variant="h4" component="h1" gutterBottom>
-              Beta Course
+              {COURSE_STAFF.HEADING}
             </Typography>
           </Box>
 
@@ -92,7 +93,7 @@ const Page = () => {
             <Box sx={{ flexGrow: 1 }}>
               <Stack direction="row" alignItems="center" justifyContent="space-between">
                 <Typography variant="h5" component="h2" gutterBottom>
-                Lecturers
+                  {COURSE_STAFF.LECTURERS_HEADING}
                 </Typography>
                 <SvgIcon color="primary" component={PlusIcon} onClick={() => handleAddPersonal('admin')} sx={{ cursor: 'pointer' }} />
               </Stack>
@@ -114,7 +115,7 @@ const Page = () => {
                     </SvgIcon>
                   )}
                 >
-                  {showAllAdmins ? 'Show less admins' : 'Show more admins'}
+                  {showAllAdmins ? COURSE_STAFF.SHOW_LESS_ADMINS : COURSE_STAFF.SHOW_MORE_ADMINS}
                 </Button>
               )}
             </Box>
@@ -124,7 +125,7 @@ const Page = () => {
             <Box sx={{ flexGrow: 1 }}>
               <Stack direction="row" alignItems="center" justifyContent="space-between">
                 <Typography variant="h5" component="h2" gutterBottom>
-                  TAs
+                  {COURSE_STAFF.TAS_HEADING}
                 </Typography>
                 <SvgIcon color="primary" component={PlusIcon} onClick={() => handleAddPersonal('TA')} sx={{ cursor: 'pointer' }} />
               </Stack>
@@ -146,7 +147,7 @@ const Page = () => {
                     </SvgIcon>
                   )}
                 >
-                  {showAllTAs ? 'Show less TAs' : 'Show more TAs'}
+                  {showAllTAs ? COURSE_STAFF.SHOW_LESS_TAS : COURSE_STAFF.SHOW_MORE_TAS}
                 </Button>
               )}
             </Box>

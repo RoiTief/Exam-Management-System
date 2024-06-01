@@ -5,6 +5,7 @@ import React, { useState } from 'react';
 import { Question } from '../popUps/QuestionPopup';
 import { PdfLatexPopup, QuestionPdfView } from '../popUps/QuestionPdfView';
 import { latexServerPath } from '../../utils/rest-api-call';
+import { QUESTIONS_CATALOG } from '../../constants';
 
 export const MetaQuestionTable = ({ data }) => {
   const [page, setPage] = useState(0);
@@ -50,9 +51,9 @@ export const MetaQuestionTable = ({ data }) => {
             <Table>
               <TableHead>
                 <TableRow>
-                  <TableCell>Stem</TableCell>
-                  <TableCell>Keywords</TableCell>
-                  <TableCell>Action</TableCell>
+                  <TableCell>{QUESTIONS_CATALOG.STEM_HEADING}</TableCell>
+                  <TableCell>{QUESTIONS_CATALOG.KEYWORDS_HEADING}</TableCell>
+                  <TableCell>{QUESTIONS_CATALOG.ACTION}</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -65,7 +66,7 @@ export const MetaQuestionTable = ({ data }) => {
                     <TableCell style={{ overflowWrap: 'break-word' }}>{metaquestion.stem}</TableCell>
                     <TableCell>{metaquestion.keywords.join(', ')}</TableCell>
                     <TableCell>
-                      <Button variant="outlined" onClick={(event) => handlePdfButtonClick(event, metaquestion)}>View PDF</Button>
+                      <Button variant="outlined" onClick={(event) => handlePdfButtonClick(event, metaquestion)}>{QUESTIONS_CATALOG.VIEW_PDF_BUTTON}</Button>
                     </TableCell>
                   </TableRow>
                 ))}
@@ -89,16 +90,16 @@ export const MetaQuestionTable = ({ data }) => {
         />
       </Card>
       {showQuestionView && (
-      <Question isOpen={showQuestionView}
-                closePopup={closePopup}
-                question={selectedQuestion}/>
+        <Question isOpen={showQuestionView}
+                  closePopup={closePopup}
+                  question={selectedQuestion}/>
       )}
       {showPdfView && (
         <PdfLatexPopup isOpen={showPdfView}
-                     closePopup={closePopup}
-                     content={selectedQuestion}
-                     type={latexServerPath.COMPILE_MQ}/>
-        )}
+                       closePopup={closePopup}
+                       content={selectedQuestion}
+                       type={latexServerPath.COMPILE_MQ}/>
+      )}
     </Stack>
   );
 };

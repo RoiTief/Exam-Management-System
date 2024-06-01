@@ -6,6 +6,7 @@ import { Formik, Form } from 'formik';
 import * as Yup from 'yup';
 import { useUser } from 'src/hooks/use-user';
 import { UserProvider } from '../../contexts/user-context';
+import { SIDE_BAR, USERS } from '../../constants';
 
 const validationSchema = Yup.object().shape({
   type: Yup.string().required('Type is required').oneOf(['Lecturer', 'TA'], 'Invalid type'),
@@ -57,18 +58,18 @@ const ManageUsers = () => {
     <Box sx={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: '#f0f0f0', padding: 2 }}>
       <Container maxWidth="md" sx={{ backgroundColor: '#ffffff', borderRadius: 2, boxShadow: 3, p: 4 }}>
         <Typography variant="h4" component="h1" gutterBottom>
-          Manage Users
+          {SIDE_BAR.MANAGE_USERS}
         </Typography>
         <Button startIcon={<AddCircle />} variant="contained" onClick={() => handleOpen(null)} sx={{ mb: 2 }}>
-          Add User
+          {USERS.ADD_USER}
         </Button>
         <TableContainer>
           <Table>
             <TableHead>
               <TableRow>
-                <TableCell>Username</TableCell>
-                <TableCell>Type</TableCell>
-                <TableCell>Actions</TableCell>
+                <TableCell>{USERS.USERNAME}</TableCell>
+                <TableCell>{USERS.TYPE}</TableCell>
+                <TableCell>{USERS.ACTIONS}</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -91,7 +92,7 @@ const ManageUsers = () => {
         </TableContainer>
 
         <Dialog open={open} onClose={handleClose}>
-          <DialogTitle>{editMode ? 'Edit User' : 'Add User'}</DialogTitle>
+          <DialogTitle>{editMode ? USERS.EDIT_USER : USERS.ADD_USER}</DialogTitle>
           <Formik
             initialValues={{
               username: currentUser?.username || '',
@@ -108,7 +109,7 @@ const ManageUsers = () => {
                     margin="dense"
                     id="username"
                     name="username"
-                    label="Username"
+                    label= {USERS.USERNAME}
                     value={values.username}
                     onChange={handleChange}
                     onBlur={handleBlur}
@@ -120,21 +121,22 @@ const ManageUsers = () => {
                     margin="dense"
                     id="type"
                     name="type"
+                    label= {USERS.TYPE}
                     value={values.type}
                     onChange={handleChange}
                     onBlur={handleBlur}
                     error={touched.type && Boolean(errors.type)}
                   >
-                    <MenuItem value="Lecturer">Lecturer</MenuItem>
-                    <MenuItem value="TA">TA</MenuItem>
+                    <MenuItem value="Lecturer">{USERS.LECTURER}</MenuItem>
+                    <MenuItem value="TA">{USERS.TA}</MenuItem>
                   </Select>
                 </DialogContent>
                 <DialogActions>
                   <Button onClick={handleClose} color="primary">
-                    Cancel
+                    {USERS.CANCEL_ACTION}
                   </Button>
                   <Button type="submit" color="primary" disabled={isSubmitting}>
-                    {editMode ? 'Save Changes' : 'Add User'}
+                    {editMode ? USERS.SAVE_ACTION : USERS.ADD_USER}
                   </Button>
                 </DialogActions>
               </Form>
@@ -143,10 +145,10 @@ const ManageUsers = () => {
         </Dialog>
 
         <Dialog open={deleteUserPrompt} onClose={() => setDeleteUserPrompt(false)}>
-          <DialogTitle>Confirm Deletion</DialogTitle>
+          <DialogTitle> { USERS.CONFIRM_DELETION } </DialogTitle>
           <DialogContent>
             <Typography variant="body1">
-              Are you sure you want to delete the user {userToDelete?.username}?
+              {USERS.CONFIRM_DELETION_MSG(userToDelete?.username)}
             </Typography>
           </DialogContent>
           <DialogActions>

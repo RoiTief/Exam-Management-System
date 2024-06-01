@@ -14,12 +14,12 @@ class MetaQuestionController{
         this.#metaQuestionId = 1
     }
 
-    createMetaQuestion(metaQuestionProperties) {
+    createMetaQuestion(pid, metaQuestionProperties) {
         // create a new metaQuestion
         metaQuestionProperties = {...metaQuestionProperties, id: this.#metaQuestionId}
         let metaQuestion = new MetaQuestion(metaQuestionProperties);
         this.#metaQuestions.set(this.#metaQuestionId, metaQuestion);
-        const ta_s = this.#userController.getAllStaff(metaQuestionProperties.pid)["TAs"]
+        const ta_s = this.#userController.getAllStaff(pid)["TAs"]
 
         const addTaskProperties = {...metaQuestionProperties,
              assignedUsers: ta_s, taskType: TaskTypes.ADD_KEY,

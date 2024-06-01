@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Box, Typography, Button, Stack } from '@mui/material';
+import { EXAM } from '../../constants';
 
 function DistractorSelection({ distractors, onSelect }) {
   const [selectedDistractors, setSelectedDistractors] = useState([]);
@@ -19,7 +20,7 @@ function DistractorSelection({ distractors, onSelect }) {
   return (
     <Box sx={{ mb: 2 }}>
       <Typography variant="h5" component="h2" mb={2}>
-        Select Distractors
+        {EXAM.SELECT_DISTRACTORS_HEADING}
       </Typography>
       {distractors.length != 0 ? (
         <>
@@ -37,14 +38,13 @@ function DistractorSelection({ distractors, onSelect }) {
       )  : (
         <Stack>
           <Typography variant="h10" component="h7" mb={2}>
-            There are no available distractors for this question!
+            {EXAM.NO_DISTRACTORS_MESSAGE_1}
           </Typography>
           <Typography variant="h10" component="h7" mb={2}>
-            Please choose a different question
+            {EXAM.NO_DISTRACTORS_MESSAGE_2}
           </Typography>
         </Stack>
-      )
-      }
+      )}
     </Box>
   );
 }
