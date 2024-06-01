@@ -303,7 +303,7 @@ class LatexCompiler {
         const texPath = path.join(this.#pdfDirPath, filename + EXTENSIONS.TEX);
         const logPath = path.join(this.#pdfDirPath, filename + EXTENSIONS.LOG);
         const auxPath = path.join(this.#pdfDirPath, filename + EXTENSIONS.AUX);
- //       fs.unlinkSync(texPath);
+        fs.unlinkSync(texPath);
         fs.unlinkSync(logPath);
         fs.unlinkSync(auxPath);
     }
