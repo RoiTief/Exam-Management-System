@@ -50,7 +50,7 @@ const Page = () => {
   const saveTest = async () => {
     try {
       setShowPdfView(true)
-      await requestServer(serverPath.CREATE_EXAM, httpsMethod.POST, {questions});
+      // await requestServer(serverPath.CREATE_EXAM, httpsMethod.POST, questions);
       await router.push('/');
     } catch (error) {
       console.error('Error fetching meta questions:', error);

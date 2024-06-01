@@ -27,6 +27,7 @@ Array.prototype.scramble = function() {
         [this[currentIndex], this[randomIndex]] = [
             this[randomIndex], this[currentIndex]];
     }
+    return this;
 }
 
 class LatexCompiler {
@@ -233,7 +234,7 @@ class LatexCompiler {
 
         fs.writeFileSync(texPath, '\\begin{multicols}{3} \\begin{enumerate}', {flag: 'a'}); // solved answer sheet
         exam.forEach((question) => {
-            fs.writeFileSync(texPath, `\\item \\solved{${question.scrambled.length}}{${question.scrambled.indexOf(question.key.text)}}\n`, {flag: 'a'});
+            fs.writeFileSync(texPath, `\\item \\solved{${question.scrambled.length}}{${question.scrambled.indexOf(question.key.text) + 1}}\n`, {flag: 'a'});
         })
         fs.writeFileSync(texPath, '\\end{enumerate} \\end{multicols}', {flag: 'a'}); // solved answer sheet
 
