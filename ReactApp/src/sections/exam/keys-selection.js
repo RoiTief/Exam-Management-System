@@ -1,35 +1,35 @@
 import React, { useState } from 'react';
 import { Box, Typography, Button, Stack } from '@mui/material';
 
-function AnswerSelection({ answers, onSelect }) {
-  const [selectedAnswer, setSelectedAnswer] = useState(null);
-  const handleSelectAnswer = (answer) => {
-    setSelectedAnswer(answer);
-    onSelect(answer);
+function KeySelection({ keys, onSelect }) {
+  const [selectedKey, setSelectedKey] = useState(null);
+  const handleSelectKey = (key) => {
+    setSelectedKey(key);
+    onSelect(key);
   };
 
   return (
     <Box sx={{ mb: 2 }}>
       <Typography variant="h5" component="h2" mb={2}>
-        Select The Correct Answer
+        Select The Correct Key
       </Typography>
-      {answers.length != 0 ? (
+      {keys.length != 0 ? (
         <>
-          {answers.map((answer, index) => (
+          {keys.map((key, index) => (
             <Button
               key={index}
               variant="outlined"
-              onClick={() => handleSelectAnswer(answer)}
-              sx={{ mr: 1, mb: 1, backgroundColor: selectedAnswer === answer ? '#59b61b' : 'inherit', color: selectedAnswer === answer ? '#fff' : 'inherit' }}
+              onClick={() => handleSelectKey(key)}
+              sx={{ mr: 1, mb: 1, backgroundColor: selectedKey === key ? '#59b61b' : 'inherit', color: selectedKey === key ? '#fff' : 'inherit' }}
             >
-              {answer.text}
+              {key.answer}
             </Button>
           ))}
         </>
       )  : (
         <Stack>
           <Typography variant="h10" component="h7" mb={2}>
-            There are no available answers for this question!
+            There are no available keys for this question!
           </Typography>
           <Typography variant="h10" component="h7" mb={2}>
             Please choose a different question
@@ -41,4 +41,4 @@ function AnswerSelection({ answers, onSelect }) {
   );
 }
 
-export default AnswerSelection;
+export default KeySelection;

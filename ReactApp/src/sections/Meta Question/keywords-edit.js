@@ -4,7 +4,7 @@ import { FieldArray } from 'formik';
 
 const KeywordsSection = ({ values, handleChange, handleBlur }) => (
   <Box sx={{ mb: 2 }}>
-    <Typography variant="h6" component="h3">Keywords:</Typography>
+    <Typography variant="h6" component="h3">Keywords: (press enter for each keyword) </Typography>
     <FieldArray name="keywords">
       {({ push, remove }) => (
         <Box sx={{ mb: 1 }}>
