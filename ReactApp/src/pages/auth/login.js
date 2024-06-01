@@ -1,6 +1,5 @@
-import { useCallback, useState } from 'react';
+import { useState } from 'react';
 import Head from 'next/head';
-import NextLink from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
@@ -21,7 +20,7 @@ import { Layout as AuthLayout } from 'src/layouts/auth/layout';
 const Page = () => {
   const router = useRouter();
   const auth = useAuth();
-  const [method, setMethod] = useState('username');
+  const [method] = useState('username');
   const [changePasswordOpen, setChangePasswordOpen] = useState(false);
   const [changePasswordValues, setChangePasswordValues] = useState({ newPassword: '', confirmNewPassword: '' });
   const [user, setUser] = useState(null)
