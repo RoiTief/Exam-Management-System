@@ -107,6 +107,11 @@ class ExamCompiler {
         fs.writeFileSync(this.#texPath, '\\section*{Answer Sheet} \n', {flag: 'a'});
         fs.writeFileSync(this.#texPath, `${this.#latexConfs.ANSWER_SHEET_COMMANDS}\n`, {flag: 'a'});
 
+        if (exam.length === 0) {
+            this.#newpage();
+            return;
+        }
+
         fs.writeFileSync(this.#texPath, '\\begin{multicols}{3} \\begin{enumerate}\n', {flag: 'a'}); // answer sheet
         exam.forEach((question) => {
             fs.writeFileSync(this.#texPath, `\\item \\unsolved{${question.scrambled.length}}\n`, {flag: 'a'});
