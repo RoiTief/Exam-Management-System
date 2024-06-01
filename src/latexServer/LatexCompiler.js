@@ -242,6 +242,8 @@ class LatexCompiler {
 
         // Print solved questions
         fs.writeFileSync(texPath, '\\section*{Solved Questions} \n', {flag: 'a'});
+        fs.writeFileSync(texPath, `${DEFAULT_LATEX_CONFIG.SOLVED_QUESTIONS_COMMANDS}\n`, {flag: 'a'});
+
         fs.writeFileSync(texPath, '\\begin{enumerate}\n', {flag: 'a'}); // questions
         exam.forEach((question)  => {
             fs.writeFileSync(texPath, '\\item ', {flag: 'a'});
