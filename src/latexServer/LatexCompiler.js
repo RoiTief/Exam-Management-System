@@ -2,7 +2,6 @@ const path = require("path");
 const fs = require("fs");
 const {exec} = require("child_process");
 const { DEFAULT_LATEX_CONFIG  }= require('./config')
-const test = require("node:test");
 
 const PDF_DIR = 'pdfs';
 
@@ -122,6 +121,10 @@ class LatexCompiler {
         // write the appendix
         if (metaQuestion.hasOwnProperty('appendix')) {
             fs.writeFileSync(texPath, "\\section*{Appendix:}\n", {flag : 'a'});
+            if (metaQuestion.appendix.title !== '') {
+                fs.writeFileSync(texPath, `\\subsection*{Title: ${metaQuestion.appendix.title}}\n`, {flag : 'a'});
+            }
+            fs.writeFileSync(texPath, `\\subsection*{Tag: ${metaQuestion.appendix.tag}}\n`, {flag : 'a'});
             fs.writeFileSync(texPath, metaQuestion.appendix.content, {flag : 'a'});
             fs.writeFileSync(texPath, "\n\\\\\n", {flag : 'a'});
         }
