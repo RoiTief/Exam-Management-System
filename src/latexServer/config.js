@@ -9,7 +9,8 @@ const DEFAULT_LATEX_CONFIG = {
         "\\usepackage{zref}\n" +
         "\\usepackage{zref-user}\n" +
         "\\usepackage{multicol}\n" +
-        "\\usepackage{tikz}\n",
+        "\\usepackage{tikz}\n" +
+        "\\usepackage{tcolorbox}",
     OPENING: "\\begin{document}\n",
     CLOSING: "\\end{document}\n",
     QUESTION_COMMANDS:
