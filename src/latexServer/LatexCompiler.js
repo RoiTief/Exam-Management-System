@@ -2,6 +2,7 @@ const path = require("path");
 const fs = require("fs");
 const {exec} = require("child_process");
 const { DEFAULT_LATEX_CONFIG  }= require('./config')
+const ExamCompiler = require("./ExamCompiler");
 
 const PDF_DIR = 'pdfs';
 
