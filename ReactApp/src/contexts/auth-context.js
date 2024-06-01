@@ -29,6 +29,7 @@ const handlers = {
             user
           }
           : {
+            isAuthenticated: false,
             isLoading: false
           }
       )
@@ -97,12 +98,13 @@ export const AuthProvider = (props) => {
 
   const signIn = async (username, password) => {
       const { user, token } = await requestServer(serverPath.SIGN_IN, httpsMethod.POST, { username, password });
-      Cookies.set(TOKEN_FIELD_NAME, token);
+      Cookies.set(TOKEN_FIELD_NAME, token, {expires: 1 / 96});
       localStorage.setItem('user', JSON.stringify(user)); // Store user details in localStorage
       dispatch({
         type: HANDLERS.SIGN_IN,
         payload: user
       });
+      return user;
   };
 
   const signUp = async (username, password) => {
@@ -126,13 +128,24 @@ export const AuthProvider = (props) => {
     }
   };
 
+  const changePassword = async (username, newPassword) => {
+    const { user, token } = await requestServer(serverPath.CHANGE_PASSWORD, httpsMethod.POST, { username, newPassword });
+    Cookies.set(TOKEN_FIELD_NAME, token, {expires: 1 / 96});
+    localStorage.setItem('user', JSON.stringify(user)); // Store user details in localStorage
+    dispatch({
+      type: HANDLERS.SIGN_IN,
+      payload: user
+    });
+  };
+
   return (
     <AuthContext.Provider
       value={{
         ...state,
         signIn,
         signUp,
-        signOut
+        signOut,
+        changePassword
       }}
     >
       {children}

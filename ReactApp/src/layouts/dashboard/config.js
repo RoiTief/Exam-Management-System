@@ -33,7 +33,7 @@ export const items = [
     permissions: [types.ADMIN]
   },
   {
-    title: 'Create New Meta-Question',
+    title: 'Create Meta-Question',
     icon: (
         <SvgIcon fontSize="small">
           <QuestionMark />

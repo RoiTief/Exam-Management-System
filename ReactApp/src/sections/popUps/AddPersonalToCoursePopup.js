@@ -47,7 +47,7 @@ export const AddPersonalToCourse = (props) => {
     }),
     onSubmit: async (values, helpers) => {
       try {
-        const request = (state === 'TA') ? serverPath.ADD_TA : serverPath.ADD_COURSE_ADMIN;
+        const request = (state === 'TA') ? serverPath.ADD_TA : serverPath.ADD_LECTURER;
         await requestServer(request, httpsMethod.POST, { username: values.username });
         closePopup();
       } catch (err) {

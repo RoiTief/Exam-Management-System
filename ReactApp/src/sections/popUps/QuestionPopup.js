@@ -41,13 +41,18 @@ export const Question = (props) => {
     right: '10px'
   };
 
+  const headerContainerStyle = {
+    display: 'flex',
+    margin: '20px 0'
+  };
+
   const headerStyle = {
     backgroundColor: '#f9cb9c',
     borderRadius: '20px',
     padding: '10px 20px',
     textAlign: 'center',
     color: 'inherit',
-    margin: '20px 0'
+    display: 'inline-block'
   };
 
   if (!isOpen || !question) {
@@ -62,7 +67,7 @@ export const Question = (props) => {
         <div className="popup-content"
              style={popupStyle}>
           <div style={{ position: 'relative' }}>
-            <h1 style={{textAlign: 'center'}}>Meta Question</h1>
+            <h1 style={{ textAlign: 'center' }}>Meta Question</h1>
             <IconButton onClick={onEdit}
                         style={editButtonStyle}>
               <EditIcon />
@@ -71,7 +76,9 @@ export const Question = (props) => {
           {question.appendix && (
             <div className="appendix-section">
               <Divider />
-              <h2 style={headerStyle}>Appendix</h2>
+              <div style={headerContainerStyle}>
+                <h2 style={headerStyle}>Appendix</h2>
+              </div>
               <h3>Title: {question.appendix.title}</h3>
               <h3>Tag: {question.appendix.tag}</h3>
               <h3>Content:</h3>
@@ -80,12 +87,16 @@ export const Question = (props) => {
           )}
           <Divider />
           <div className="question-section">
-            <h2 style={headerStyle}>Stem</h2>
+            <div style={headerContainerStyle}>
+              <h2 style={headerStyle}>Stem</h2>
+            </div>
             <p>{question.stem}</p>
           </div>
           <Divider />
           <div className="keywords-section">
-            <h2 style={headerStyle}>Keywords</h2>
+            <div style={headerContainerStyle}>
+              <h2 style={headerStyle}>Keywords</h2>
+            </div>
             <Stack direction="row"
                    spacing={1}
                    style={{ flexWrap: 'wrap' }}>
@@ -97,7 +108,9 @@ export const Question = (props) => {
           </div>
           <Divider />
           <div className="answers-section">
-            <h2 style={headerStyle}>Correct Answers</h2>
+            <div style={headerContainerStyle}>
+              <h2 style={headerStyle}>Correct Answers</h2>
+            </div>
             <div>
               {question.keys.slice(0, showAllAnswers ? question.keys.length : 2).map((answer, index) => (
                 <ListItem key={`correct-${index}`}>
@@ -121,7 +134,9 @@ export const Question = (props) => {
           </div>
           <Divider />
           <div className="distractors-section">
-            <h2 style={headerStyle}>Distractors</h2>
+            <div style={headerContainerStyle}>
+              <h2 style={headerStyle}>Distractors</h2>
+            </div>
             <div>
               {question.distractors.slice(0, showAllDistractors ? question.distractors.length : 2).map((distractor, index) => (
                 <ListItem key={`distractor-${index}`}>

@@ -35,8 +35,8 @@ const Page = () => {
     const key = `${question.stem}-${question.appendix ? question.appendix.title : ''}`;
 
     setUsedAnswers(prev => ({
-      ...prev,
-      [key]: [...(prev[key] || []), question.answer]
+          ...prev,
+      [key]: [...(prev[key] || []), question.key]
     }));
 
     setUsedDistractors(prev => ({
@@ -50,7 +50,7 @@ const Page = () => {
   const saveTest = async () => {
     try {
       setShowPdfView(true)
-      await requestServer(serverPath.CREATE_TEST, httpsMethod.POST, questions);
+      await requestServer(serverPath.CREATE_EXAM, httpsMethod.POST, {questions});
       await router.push('/');
     } catch (error) {
       console.error('Error fetching meta questions:', error);
@@ -66,7 +66,7 @@ const Page = () => {
 
     setUsedAnswers(prevUsedAnswers => {
       const updatedAnswers = { ...prevUsedAnswers };
-      updatedAnswers[key] = updatedAnswers[key].filter(a => a.text !== questionToRemove.answer.text);
+      updatedAnswers[key] = updatedAnswers[key].filter(a => a.text !== questionToRemove.key.text);
       return updatedAnswers;
     });
 
@@ -102,7 +102,7 @@ const Page = () => {
             <QuestionForm
               metaQuestions={metaQuestions}
               addQuestion={addQuestion}
-              usedAnswers={usedAnswers}
+              usedKeys={usedAnswers}
               usedDistractors={usedDistractors}
             />
           )}

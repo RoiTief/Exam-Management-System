@@ -24,7 +24,7 @@ function viewUsername(req, res, next) {
 }
 
 /**
- * get the username type- "User", "TA", "Course Admin", "Grader", "System Admin"
+ * get the username type- "User", "TA", "Lecturer", "Grader", "System Admin"
  * @returns {string} - returns the type
  * @returns Error - if the prosses is not logged in to a user
  */
@@ -53,7 +53,7 @@ function viewUserType(req, res, next) {
  */
 function signUp(req, res, next) {
     try{
-        user = application.register(process.pid, req.body, "password1!");
+        user = application.register(process.pid, req.body[0], req.body[1]);
         req.log.info(req.body.username, 'new user registered');
         res.send(200, {code:200,user})
         next()
@@ -106,46 +106,44 @@ function logout(req, res, next) {
 }
 
 /**
- * creates new course
- * create a task for the new courseAdmin to accept being a courseAdmin
- * @param courseId - the new courseID - need to be unique
- * @param courseName - the new course name
- * @param courseAdminUsername - the new course admin
- * @return {Course} the new course created
- * @throws {Error} - if there is no user with name @username
- *                 - if the user named username is not a systemAdmin
- *                 - if there is no user named courseAdminUsername
- *                 - if there is already a course with this ID
+ * change user password after first sign in
+ * @param req.username - the user's username
+ * @param req.newPassword - the user new password
+ * @returns {User} - returned the signed-in user
+ * @returns {Error} - if there is no registered user with this username
+ *                 - if the password is incorrect
  */
-function addCourse(req, res, next) {
+function changePassword(req, res, next) {
     try{
-        course = application.addCourse(process.pid, req.body.courseId, req.body.courseName,
-            req.body.courseAdminUsername);
-        req.log.info(course.courseName, "course is created, and a request to admin this course was sent");
-        res.send(200, {code:200,course})
+        user = application.changePassword(process.pid, req.body.username, req.body.newPassword);
+        let token = jwt.sign({username: req.body.username}, process.env.SECRET_KEY, {
+            expiresIn: "1h" // token expires in 15 minutes
+        });
+        req.log.info(req.body.username, 'user signed in');
+        res.send(200, {code:200,user,token})
         next()
     }
     catch(err){
-        req.log.warn(err.message, 'unable to create course');
+        req.log.warn(err.message, 'user unable to signIn');
         next(err);
     }
 }
 
 /**
  * view a course
- * @return {Course} the course
+ * @return {{TAs: any[], Lecturers: any[]}} the course staff
  * @throws {Error} - if there is no logged in user in @pid
- *                 - if the user logged in user in @pid is not a courseAdmin
+ *                 - if the user logged in user in @pid is not a lecturer
  */
-function viewMyCourse(req, res, next){
+function getAllStaff(req, res, next){
     try{
-        let course = application.viewMyCourse(process.pid);
-        req.log.info("course admin viewd his course");
-        res.send(200, {code:200, course})
+        let staff = application.getAllStaff(process.pid);
+        req.log.info("course lecturer viewed his staff");
+        res.send(200, {code:200, staff})
         next()
     }
     catch(err){
-        req.log.warn(err.message, 'unable to view course');
+        req.log.warn(err.message, 'unable to view staff');
         next(err);
     }
 }
@@ -194,7 +192,7 @@ function finishATask(req, res, next) {
  * create a task for the new TA to accept being a TA of this course
  * @param username - the new TA username
  * @throws {Error} - if there is no user with name @username
- *                 - if the user named username is not a courseAdminUsername (is not assigned to a course)
+ *                 - if the user named username is not a lecturerUsername (is not assigned to a course)
  *                 - if there is no user named TAUsername
  */
 function addTA(req, res, next){
@@ -214,7 +212,7 @@ function addTA(req, res, next){
  * create a task for the new grader to accept being a grader of this course
  * @param username
  * @throws {Error} - if there is no user with name @username
- *                 - if the user named username is not a courseAdminUsername or is not assigned to a course
+ *                 - if the user named username is not a lecturerUsername or is not assigned to a course
  *                 - if there is no user named graderUsername
  */
 function addGrader(req, res, next){
@@ -305,7 +303,7 @@ function getAllAppendixes(req, res, next){
  * @param - req.body = {
  *     //       keywords: str[],
  *     //       stem: str,
- *     //       correctAnswers: [{
+ *     //       keys: [{
  *     //         answer: str,
  *     //         explanation: str
  *     //         }],
@@ -324,12 +322,22 @@ function getAllAppendixes(req, res, next){
  * @throws {Error} - if fail to create
  */
 function addMetaQuestion(req, res, next){
-   //TODO - implement
+    try{
+        req.body = {...req.body, pid:process.pid}
+        let metaQuestion = application.addMetaQuestion(req.body)
+        req.log.info("request to create metaQuestion");
+        res.send(200, {code:200, metaQuestion})
+        next()
+    }
+    catch(err){
+        req.log.warn(err.message, 'failed to create meta questions');
+        next(err);
+    }
 }
 
 
 /**
- * creates a test
+ * creates an Exam
  * @param - req.body = [{
  *     //       stem: str,
  *     //       answer: str,
@@ -344,11 +352,33 @@ function addMetaQuestion(req, res, next){
  *     appendix could be null
  * @throws {Error} - if fail to create
  */
-function createTest(req, res, next){
-    //TODO - implement
+function createExam(req, res, next){
+    try{
+        req.log.info("request to create Exam");
+        req.body = {...req.body, pid:process.pid}
+        const exam = application.createExam(req.body)
+        res.send(200, {code:200,exam})
+        next()
+    }
+    catch(err){
+        req.log.warn(err.message, 'failed to create meta questions');
+        next(err);
+    }
 }
 
-
+function getAllExams(req, res, next){
+    try{
+        req.log.info("request to get all exams");
+        req.body = {...req.body, pid:process.pid}
+        const exams = application.getAllExams(req.body)
+        res.send(200, {code:200,exams})
+        next()
+    }
+    catch(err){
+        req.log.warn(err.message, 'failed to get all exams');
+        next(err);
+    }
+}
 
 module.exports = {
     viewUsername: viewUsername,
@@ -356,8 +386,8 @@ module.exports = {
     signUp: signUp,
     signIn: signIn, 
     logout: logout,
-    addCourse: addCourse,
-    viewMyCourse: viewMyCourse,
+    changePassword: changePassword,
+    getAllStaff: getAllStaff,
     viewMyTasks: viewMyTasks,
     finishATask: finishATask,
     addTA: addTA,
@@ -367,5 +397,6 @@ module.exports = {
     getAllMetaQuestions: getAllMetaQuestions,
     getAllAppendixes: getAllAppendixes,
     addMetaQuestion: addMetaQuestion,
-    createTest: createTest
+    createExam,
+    getAllExams,
 };

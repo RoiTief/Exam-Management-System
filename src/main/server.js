@@ -166,14 +166,14 @@ function createServer(options) {
      //response: {User, token}
     server.post('/signIn', service.signIn);
 
+    //request: {username, newPassword}
+    //response: {User, token}
+    server.post('/changePassword', service.changePassword);
+
      // request: {}
     server.post('/logout', service.logout);
-
-     // request: {courseId, courseName, courseAdminUsername}
-     // response: {Course}
-    server.post('/addCourse', service.addCourse);
-
-     // request: {taskId, response}
+  
+    //{"taskId", "response"}
     server.post('/finishATask', service.finishATask);
 
      // request: {username}
@@ -185,7 +185,7 @@ function createServer(options) {
     //request: {
     //       keywords: str[],
     //       stem: str,
-    //       correctAnswers: [{
+    //       keys: [{
     //         answer: str,
     //         explanation: str
     //         }],
@@ -202,7 +202,9 @@ function createServer(options) {
     server.post('/addMetaQuestion', service.addMetaQuestion);
 
     // request:
-    //  {    stem: str
+    //  {    questions:[
+    //   {
+    //    stem: str
     //       appendix: {
     //              title: str,
     //              tag: str,
@@ -210,16 +212,19 @@ function createServer(options) {
     //        }
     //       answer: str,
     //       distractors: [str]
+    //     }]
+    //   }
     //  }
-    server.post('/createTest', service.createTest)
+    server.post('/createExam', service.createExam)
+
+    server.get('/getAllExams',service.getAllExams)
 
     // response: Task[]
     server.get('/viewMyTasks', service.viewMyTasks);
-
-    // response Course
-    server.get('/viewMyCourse', service.viewMyCourse);
-
-    // response: username
+  
+    // response: {TAs: [], Lecturers: []}
+    server.get('/getAllStaff', service.getAllStaff);
+  
     server.get('/viewUsername', service.viewUsername);
 
     // response: userType (str)

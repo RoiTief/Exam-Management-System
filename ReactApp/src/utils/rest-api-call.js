@@ -16,15 +16,14 @@ export const httpsMethod = {
 export const serverPath = {
     SIGN_UP: 'signUp',
     SIGN_IN: 'signIn',
-    VIEW_COURSE : 'viewMyCourse',
+    GET_ALL_STAFF : 'getAllStaff',
     SIGN_OUT: 'logout',
     VIEW_TASKS: 'viewMyTasks',
     GET_USERNAME: 'viewUsername',
     GET_USER_TYPE: 'viewUserType',
-    ADD_COURSE: 'addCourse',
     ADD_TA: 'addTA',
     ADD_GRADER: 'addGrader',
-    ADD_COURSE_ADMIN: 'addCourseAdmin',
+    ADD_LECTURER: 'addLecturer',
     FINISH_TASK: 'finishATask',
     VIEW_QUESTIONS: 'viewCourseMetaQuestions',
     ADD_META_QUESTION: 'addMetaQuestion',
@@ -32,7 +31,9 @@ export const serverPath = {
     GET_ALL_META_QUESTIONS: 'getAllMetaQuestions',
     GET_ALL_APPENDIXES: 'getAllAppendixes',
     DELETE_USER: 'deleteUser',
-    CREATE_TEST: 'createTest'
+    CREATE_EXAM: 'createExam',
+    GET_ALL_EXAMS: 'getAllExams',
+    CHANGE_PASSWORD: 'changePassword'
 }
 
 export const latexServerPath = {

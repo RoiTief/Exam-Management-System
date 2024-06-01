@@ -31,7 +31,7 @@ function QuestionList({ questions, removeQuestion }) {
                     Answer:
                   </Typography>
                   <Typography variant="body2">
-                    - {question.answer.text}
+                    - {question.key.text}
                   </Typography>
                 </Box>
                 <Box sx={{ display: 'flex', alignItems: 'baseline', mt: 1 }}>
