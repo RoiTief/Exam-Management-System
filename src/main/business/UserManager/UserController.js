@@ -135,6 +135,13 @@ class UserController {
         }
         this._registered_users.delete(username)
     }
+
+    changePasswordAfterFirstSignIn(pid, username, password){
+        this._varifyLogged(pid)
+        let user = this.getUser(username)
+        this._registered_users.get(username).changePasswordAfterFirstSignIn(password)
+        return user
+    }
 }
 
 module.exports = UserController;
