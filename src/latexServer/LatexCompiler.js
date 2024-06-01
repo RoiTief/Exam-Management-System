@@ -154,7 +154,11 @@ class LatexCompiler {
      * @param callback Callback that handles failure/success of the compilation
      */
     compileExam(exam, callback) {
-        const examCompiler = new ExamCompiler(this.#pdfDirPath,
+        const timestamp = Date.now();
+        const filename = timestamp;
+        const texPath = path.join(this.#pdfDirPath, filename + EXTENSIONS.TEX);
+
+        const examCompiler = new ExamCompiler(texPath,
             {
                 PREAMBLE: `${this.#preamble}\n${DEFAULT_LATEX_CONFIG.EXAM_PREAMBLE}`,
                 OPENING: this.#opening,
@@ -164,10 +168,6 @@ class LatexCompiler {
                 CLOSING: this.#closing,
             }
         );
-
-        const timestamp = Date.now();
-        const filename = timestamp;
-        const texPath = path.join(this.#pdfDirPath, filename + EXTENSIONS.TEX);
 
         examCompiler.compile(exam, texPath, () => {
             this.#compile(filename, callback)
