@@ -5,7 +5,7 @@ import { AddCircleOutline, RemoveCircleOutline, FormatTextdirectionLToR, FormatT
 
 const KeysSection = ({ values, handleChange, handleBlur, setFieldValue }) => (
   <Box sx={{ mb: 2 }}>
-    <Typography variant="h6" component="h3">Correct Answers:</Typography>
+    <Typography variant="h6" component="h3">Keys</Typography>
     <FieldArray name="keys">
       {({ remove, push }) => (
         <>

@@ -22,7 +22,7 @@ function KeySelection({ keys, onSelect }) {
               onClick={() => handleSelectKey(key)}
               sx={{ mr: 1, mb: 1, backgroundColor: selectedKey === key ? '#59b61b' : 'inherit', color: selectedKey === key ? '#fff' : 'inherit' }}
             >
-              {key.answer}
+              {key.text}
             </Button>
           ))}
         </>

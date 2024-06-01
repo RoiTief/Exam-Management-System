@@ -202,7 +202,9 @@ function createServer(options) {
     server.post('/addMetaQuestion', service.addMetaQuestion);
 
     // request:
-    //  {    stem: str
+    //  {    questions:[
+    //   {
+    //    stem: str
     //       appendix: {
     //              title: str,
     //              tag: str,
@@ -210,8 +212,10 @@ function createServer(options) {
     //        }
     //       answer: str,
     //       distractors: [str]
+    //     }]
+    //   }
     //  }
-    server.post('/createTest', service.createTest)
+    server.post('/createExam', service.createExam)
 
     // response: Task[]
     server.get('/viewMyTasks', service.viewMyTasks);

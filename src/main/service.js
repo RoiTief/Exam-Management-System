@@ -337,7 +337,7 @@ function addMetaQuestion(req, res, next){
 
 
 /**
- * creates a test
+ * creates an Exam
  * @param - req.body = [{
  *     //       stem: str,
  *     //       answer: str,
@@ -352,8 +352,18 @@ function addMetaQuestion(req, res, next){
  *     appendix could be null
  * @throws {Error} - if fail to create
  */
-function createTest(req, res, next){
-    //TODO - implement
+function createExam(req, res, next){
+    try{
+        req.log.info("request to create Exam");
+        req.body = {...req.body, pid:process.pid}
+        const exam = application.createExam(req.body)
+        res.send(200, {code:200,exam})
+        next()
+    }
+    catch(err){
+        req.log.warn(err.message, 'failed to create meta questions');
+        next(err);
+    }
 }
 
 
@@ -375,5 +385,5 @@ module.exports = {
     getAllMetaQuestions: getAllMetaQuestions,
     getAllAppendixes: getAllAppendixes,
     addMetaQuestion: addMetaQuestion,
-    createTest: createTest
+    createExam,
 };

@@ -1,14 +1,15 @@
 const UserController  = require('./UserManager/UserController.js' );
 const TaskController = require('./TaskManager/TaskController.js');
 const MetaQuestionController = require('./MetaQuestions/MetaQuestionController.js');
+const ExamController = require('./ExamManager/ExamController.js');
 const userTypes = require('../Enums').USER_TYPES
-
 
 class ApplicationFacade{
     constructor() {
         this.userController = new UserController();
         this.taskController = new TaskController(this.userController);
         this.metaQuestionController = new MetaQuestionController(this.taskController, this.userController);
+        this.examController = new ExamController(this.taskController, this.userController)
 
         //todo - remove for testing:
         this.signIn(24632, "Admin", "Aa123456")
@@ -127,7 +128,7 @@ class ApplicationFacade{
     }
 
     /**
-     * creates a test for the course {@username} is Admin of
+     * creates an Exam for the course {@username} is Admin of
      * export it as a pdf and as a word file
      * adds the test to pastExams
      * @param username - the user who tries to set the exam parameters - needs to be a lecturer
@@ -144,19 +145,17 @@ class ApplicationFacade{
     }
 
     /**
-     * creates a test for the course {@username} is Admin of
+     * creates an Exam for the course {@username} is Admin of
      * export it as a pdf and as a word file
      * adds the test to pastExams
-     * @param username - the user who tries to create the new exam - needs to be a lecturer
-     * @param reason - why you create the new exam (for example "Term A 2022" "example test for students"
      * @return {Exam}
      * @throws {Error} - if there is no user with name @username
      *                 - if the user named username is not a lecturerUsername or is not assigned to a course
      *                 - if the course subject spread is not specified
      *                 - if there is not enough questions for a subject
      */
-    createExam(username, reason){
-        //todo
+    createExam(createExamProperties){
+        return this.examController.createExam(createExamProperties)
     }
 
     /**
@@ -288,9 +287,54 @@ class ApplicationFacade{
      * @param pid - The process ID of the user performing the action
      * @throws {Error} - If the user is not signed in or does not have the necessary permissions
      * @return {MetaQuestion[]} all the meta question of the user's course
+     *  return [
+            {
+                stem: 'what did Idan listen to when he was a kid',
+                keys: [{text:'baby motzart', explanation: 'explanation1'},
+                    {text:'baby bethoven', explanation: 'explanation2'}],
+                distractors: [{text:'Machrozet Chaffla', explanation: 'explanation1'},
+                    {text:'zohar Argov', explanation: 'explanation2'}, {text:'Begins "tzachtzachim" speach', explanation: 'explanation3'}],
+                keywords: ['key1', 'key2', 'key3']
+            },
+            {
+                stem: "what is Mor's last name",
+                keys: [{text:'Abo', explanation: 'explanation1'},
+                    {text:'Abu', explanation: 'explanation2'}],
+                distractors: [{text:'abow', explanation: 'explanation1'},
+                    {text:'abou', explanation: 'explanation2'}, {text:'aboo', explanation: 'explanation3'}],
+                keywords: ['key1', 'key2', 'key5'],
+                appendix: {title: "Mor's ID", tag: "tag", content: "imagine there is my id here"}
+            },
+            {
+                stem: "What is Roi's nickname",
+                keys: [{text:'The Tief', explanation: 'explanation1'},
+                    {text:"Gali's soon to be husband", explanation: 'explanation2'}],
+                distractors: [{text:'that blonde guy', explanation: 'explanation1'},
+                    {text:'that tall guy', explanation: 'explanation2'}, {text:'the one with the black nail polish', explanation: 'explanation3'}],
+                keywords: ['key1', 'key2', 'key5'],
+                appendix: {title: "Roi picture", tag: "tag", content: "some amberesing picture of roi"}
+            },
+            {
+                stem: 'How old is Mor',
+                keys: [{text:'25', explanation: 'explanation1'},
+                    {text:'22 with "vetek"', explanation: 'explanation2'}],
+                distractors: [{text:'19 (but thank you)', explanation: 'explanation1'},
+                    {text:'30', explanation: 'explanation2'}, {text:'35', explanation: 'explanation3'}],
+                keywords: ['key1', 'key2', 'key5'],
+                appendix: {title: "Mor's ID", tag: "tag", content: "imagine there is my id here"}
+            },
+            {
+                stem: 'where does Ofek leave',
+                keys: [{text:'in Gan Yavne', explanation: 'explanation1'},
+                    {text:'next to the orange square', explanation: 'explanation2'},
+                    {text:"next to mor's brother", explanation: 'explanation1'}],
+                distractors: [{text:'at the beach - surffing', explanation: 'explanation1'},
+                    {text:'riding bike in the fields', explanation: 'explanation2'}, {text:"in may's house", explanation: 'explanation3'}],
+                keywords: ['key1', 'key2', 'key3']
+            }
+        ]
      */
-    getAllMetaQuestions(pid) {
-        //TODO - implement
+    getAllMetaQuestions(pid) {    
         return this.metaQuestionController.getAllMetaQuestions()
     }
 
