@@ -71,19 +71,19 @@ class LatexCompiler {
             + "\\pagenumbering{gobble}\n");
 
         // write the stem
-        if (metaQuestion.hasOwnProperty('stem')) {
+        if (metaQuestion.stem) {
             fs.writeFileSync(texPath, "\\section*{Stem:}\n", {flag : 'a'});
             fs.writeFileSync(texPath, metaQuestion.stem, {flag : 'a'});
             fs.writeFileSync(texPath, "\n\\\\\n", {flag : 'a'});
         }
 
         // write the keys
-        if (metaQuestion.hasOwnProperty('keys')) {
+        if (metaQuestion.keys) {
             fs.writeFileSync(texPath, "\\section*{Keys:}\n", {flag : 'a'});
             fs.writeFileSync(texPath, "\\begin{itemize}\n", {flag : 'a'});
             metaQuestion.keys.forEach((key) => {
                 fs.writeFileSync(texPath,
-                    `\t\\item ${key.text} \\\\ \\textbf{Explanation:} ${key.hasOwnProperty('explanation') ? key.explanation : 'none'}\n`,
+                    `\t\\item ${key.text} \\\\ \\textbf{Explanation:} ${key.explanation ? key.explanation : 'none'}\n`,
                     {flag: 'a'});
 
             })
@@ -91,19 +91,19 @@ class LatexCompiler {
         }
 
         // write the distractors
-        if (metaQuestion.hasOwnProperty('distractors')) {
+        if (metaQuestion.distractors) {
             fs.writeFileSync(texPath, "\\section*{Distractors:}\n", {flag : 'a'});
             fs.writeFileSync(texPath, "\\begin{itemize}\n", {flag : 'a'});
             metaQuestion.distractors.forEach((distractor) => {
                 fs.writeFileSync(texPath,
-                    `\t\\item ${distractor.text} \\\\ \\textbf{Explanation:} ${distractor.hasOwnProperty('explanation') ? distractor.explanation : 'none'}\n`,
+                    `\t\\item ${distractor.text} \\\\ \\textbf{Explanation:} ${distractor.explanation ? distractor.explanation : 'none'}\n`,
                     {flag: 'a'});
             })
             fs.writeFileSync(texPath, "\\end{itemize}\n", {flag : 'a'});
         }
 
         // write the appendix
-        if (metaQuestion.hasOwnProperty('appendix')) {
+        if (metaQuestion.appendix) {
             fs.writeFileSync(texPath, "\\section*{Appendix:}\n", {flag : 'a'});
             if (metaQuestion.appendix.title !== '') {
                 fs.writeFileSync(texPath, `\\subsection*{Title: ${metaQuestion.appendix.title}}\n`, {flag : 'a'});

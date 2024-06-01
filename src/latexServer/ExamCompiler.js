@@ -74,8 +74,8 @@ class ExamCompiler {
         exam.forEach((question)  => {
             fs.writeFileSync(this.#texPath, '\\item ', {flag: 'a'});
             // Relate to appendix
-            if (question.hasOwnProperty('appendix')) {
-                if (!this.#appendicesMap.hasOwnProperty(question.appendix.tag)) {
+            if (question.appendix) {
+                if (!this.#appendicesMap[question.appendix.tag]) {
                     this.#appendicesMap[question.appendix.tag] = question.appendix;
                     this.#appendicesMap[question.appendix.tag]['number'] = appendicesNumbering++;
                 }
@@ -179,7 +179,7 @@ class ExamCompiler {
         exam.forEach((question)  => {
             fs.writeFileSync(this.#texPath, '\\item ', {flag: 'a'});
             // Relate to appendix
-            if (question.hasOwnProperty('appendix')) {
+            if (question.appendix) {
                 const appendixNumber = this.#appendicesMap[question.appendix.tag].number;
                 fs.writeFileSync(this.#texPath,
                     `\\textbf{This question relates to appendix 2.${appendixNumber} in page {\\pageref{app:${question.appendix.tag}}}} \\\\\n`,
