@@ -182,7 +182,7 @@ class LatexCompiler {
                 }
                 const appendixNumber = appendicesMap[question.appendix.tag].number;
                 fs.writeFileSync(texPath,
-                    `\\textbf{This question relates to appendix 2.${appendixNumber} in page {\\zpageref{app:${question.appendix.tag}}}} \\\\\n`,
+                    `\\textbf{This question relates to appendix 2.${appendixNumber} in page {\\pageref{app:${question.appendix.tag}}}} \\\\\n`,
                     {flag: 'a'});
             }
             // stem
@@ -210,7 +210,7 @@ class LatexCompiler {
             .forEach(appendix => {
                 fs.writeFileSync(texPath,
                     `\\subsection{${appendix.title}}\n` +
-                    `\\zlabel{app:${appendix.tag}}\n` +
+                    `\\label{app:${appendix.tag}}\n` +
                     `${appendix.content} \n\n`,
                     {flag: 'a'});
             });
@@ -251,7 +251,7 @@ class LatexCompiler {
             if (question.hasOwnProperty('appendix')) {
                 const appendixNumber = appendicesMap[question.appendix.tag].number;
                 fs.writeFileSync(texPath,
-                    `\\textbf{This question relates to appendix 2.${appendixNumber} in page {\\zpageref{app:${question.appendix.tag}}}} \\\\\n`,
+                    `\\textbf{This question relates to appendix 2.${appendixNumber} in page {\\pageref{app:${question.appendix.tag}}}} \\\\\n`,
                     {flag: 'a'});
             }
             // stem
@@ -281,7 +281,7 @@ class LatexCompiler {
         const texPath = path.join(this.#pdfDirPath, filename + EXTENSIONS.TEX);
         const pdfPath = path.join(this.#pdfDirPath, filename + EXTENSIONS.PDF);
 
-        exec(`cd ${this.#pdfDirPath} && xelatex -interaction=nonstopmode ${texPath}`, (error, stdout, stderr) => {
+        exec(`cd ${this.#pdfDirPath} && xelatex -interaction=nonstopmode ${texPath} && xelatex -interaction=nonstopmode ${texPath} `, (error, stdout, stderr) => {
             if (error) {
                 console.log(`xelatex Error: ${stdout}`);
                 return callback(error, null);

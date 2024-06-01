@@ -6,8 +6,6 @@ const DEFAULT_LATEX_CONFIG = {
         "\\usepackage{amssymb}\n" +
         "\\usepackage{rotating}\n",
     EXAM_PREAMBLE:
-        "\\usepackage{zref}\n" +
-        "\\usepackage{zref-user}\n" +
         "\\usepackage{multicol}\n" +
         "\\usepackage{tikz}\n" +
         "\\usepackage{tcolorbox}",
