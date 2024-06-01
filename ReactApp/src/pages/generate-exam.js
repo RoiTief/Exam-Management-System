@@ -117,7 +117,7 @@ const Page = () => {
       <PdfLatexPopup isOpen={showPdfView}
                      closePopup={() => setShowPdfView(false)}
                      content={questions}
-                     type= {latexServerPath.COMPILE_TEST} />
+                     type= {latexServerPath.COMPILE_EXAM} />
       }
     </Box>
   );

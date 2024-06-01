@@ -37,7 +37,7 @@ export const serverPath = {
 
 export const latexServerPath = {
   COMPILE: 'compile',
-  COMPILE_TEST: 'test',
+  COMPILE_EXAM: 'exam',
   COMPILE_MQ: 'metaQuestion'
 };
 

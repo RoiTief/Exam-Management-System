@@ -13,6 +13,22 @@ const EXTENSIONS = {
     PDF: '.pdf',
 }
 
+Array.prototype.scramble = function() {
+    let currentIndex = this.length;
+
+    // While there remain elements to shuffle...
+    while (currentIndex !== 0) {
+
+        // Pick a remaining element...
+        let randomIndex = Math.floor(Math.random() * currentIndex);
+        currentIndex--;
+
+        // And swap it with the current element.
+        [this[currentIndex], this[randomIndex]] = [
+            this[randomIndex], this[currentIndex]];
+    }
+}
+
 class LatexCompiler {
     #preamble
     #opening
@@ -128,13 +144,13 @@ class LatexCompiler {
     }
 
     /**
-     * Compiles given test JSON to test format and sends the pdf to the callback.
-     * @param test JSON holding all information needed to generate the test.
+     * Compiles given exam JSON to test format and sends the pdf to the callback.
+     * @param exam JSON holding all information needed to generate the test.
      * @param callback Callback that handles failure/success of the compilation
      */
-    compileTest(test, callback) {
-	    console.log(test);
-        if (!Array.isArray(test)) {
+    compileExam(exam, callback) {
+	    console.log(exam);
+        if (!Array.isArray(exam)) {
             return callback(new Error("Not an array"), null);
         }
         const timestamp = Date.now();
@@ -147,17 +163,16 @@ class LatexCompiler {
         // write the preamble + open document
         fs.writeFileSync(texPath,
             `${this.#preamble}\n`
-            + "\\usepackage{zref-user}\n"
-            + "\\renewcommand{\\labelenumi}{\\arabic{enumi}.}\n"
-            + "\\renewcommand{\\labelenumii}{(\\arabic{enumii})}\n"
+            + `${DEFAULT_LATEX_CONFIG.EXAM_PREAMBLE}\n`
             + `${this.#opening}\n`);
 
         // Print questions
-        fs.writeFileSync(texPath,
-            '\\section{Questions} \n'
-            + '\\begin{enumerate}\n',
-            {flag: 'a'});
-        test.forEach((question)  => {
+        fs.writeFileSync(texPath, '\\section{Questions} \n', {flag: 'a'});
+        fs.writeFileSync(texPath, DEFAULT_LATEX_CONFIG.QUESTION_COMMANDS, {flag: 'a'});
+
+
+        fs.writeFileSync(texPath, '\\begin{enumerate}\n', {flag: 'a'}); // questions
+        exam.forEach((question)  => {
             fs.writeFileSync(texPath, '\\item ', {flag: 'a'});
             // Relate to appendix
             if (question.hasOwnProperty('appendix')) {
@@ -173,14 +188,23 @@ class LatexCompiler {
             // stem
             fs.writeFileSync(texPath, `${question.stem}\n`, {flag: 'a'});
             // scrambled answers
+            question['scrambled'] = question.distractors
+                .map(d => d.text)
+                .concat(question.key.text)
+                .scramble();
+            fs.writeFileSync(texPath, '\\begin{enumerate}\n', {flag: 'a'}); // answers
+            question.scrambled.forEach(answer => {
+                fs.writeFileSync(texPath, `\\item ${answer}\n`, {flag: 'a'});
+            });
+            fs.writeFileSync(texPath, '\\end{enumerate}\n\n', {flag: 'a'}); // answers
         });
-        fs.writeFileSync(texPath,
-            '\\end{enumerate}\n\n'
-            + '\\newpage \n\n',
-            {flag: 'a'});
+        fs.writeFileSync(texPath, '\\end{enumerate}\n\n', {flag: 'a'}); // questions
+
+        fs.writeFileSync(texPath, '\\newpage\n\n', {flag: 'a'});
 
         // Print appendices
         fs.writeFileSync(texPath, '\\section{Appendices} \n\n', {flag: 'a'});
+
         Object.values(appendicesMap)
             .sort((a, b) => a.number - b.number)
             .forEach(appendix => {
@@ -190,9 +214,35 @@ class LatexCompiler {
                     {flag: 'a'});
             });
 
+        fs.writeFileSync(texPath, '\\newpage\n\n', {flag: 'a'});
+
         // Print answer sheet
+        fs.writeFileSync(texPath, '\\section*{Answer Sheet} \n', {flag: 'a'});
+        fs.writeFileSync(texPath, `${DEFAULT_LATEX_CONFIG.ANSWER_SHEET_COMMANDS}\n`, {flag: 'a'});
+
+        fs.writeFileSync(texPath, '\\begin{multicols}{3} \\begin{enumerate}', {flag: 'a'}); // answer sheet
+        exam.forEach((question) => {
+            fs.writeFileSync(texPath, `\\item \\unsolved{${question.scrambled.length}}\n`, {flag: 'a'});
+        })
+        fs.writeFileSync(texPath, '\\end{enumerate} \\end{multicols}', {flag: 'a'}); // answer sheet
+
+        fs.writeFileSync(texPath, '\\newpage\n\n', {flag: 'a'});
+
+        // Print solved answer sheet
+        fs.writeFileSync(texPath, '\\section*{Solved Answer Sheet} \n', {flag: 'a'});
+
+        fs.writeFileSync(texPath, '\\begin{multicols}{3} \\begin{enumerate}', {flag: 'a'}); // solved answer sheet
+        exam.forEach((question) => {
+            fs.writeFileSync(texPath, `\\item \\solved{${question.scrambled.length}}{${question.scrambled.indexOf(question.key.text)}}\n`, {flag: 'a'});
+        })
+        fs.writeFileSync(texPath, '\\end{enumerate} \\end{multicols}', {flag: 'a'}); // solved answer sheet
+
+        fs.writeFileSync(texPath, '\\newpage\n\n', {flag: 'a'});
 
         // Print solved questions
+        fs.writeFileSync(texPath, '\\section*{Solved Questions} \n', {flag: 'a'});
+
+        fs.writeFileSync(texPath, '\\newpage\n\n', {flag: 'a'});
 
         // close document
         fs.writeFileSync(texPath, this.#closing, {flag : 'a'});
