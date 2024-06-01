@@ -6,6 +6,7 @@ const DEFAULT_LATEX_CONFIG = {
         "\\usepackage{amssymb}\n" +
         "\\usepackage{rotating}\n",
     EXAM_PREAMBLE:
+        "\\usepackage{zref}\n" +
         "\\usepackage{zref-user}\n" +
         "\\usepackage{multicol}\n" +
         "\\usepackage{tikz}\n",
@@ -39,6 +40,12 @@ const DEFAULT_LATEX_CONFIG = {
         "        \\circled{\\x}%\n" +
         "    \\fi%\n" +
         "  }\n" +
+        "}\n",
+    SOLVED_QUESTIONS_COMMANDS:
+        "\\newenvironment{boxedtext}{%\n" +
+        "    \\begin{tcolorbox}[colback=white,boxrule=0.5pt,colframe=black]%\n" +
+        "}{%\n" +
+        "    \\end{tcolorbox}%\n" +
         "}\n",
 }
 
