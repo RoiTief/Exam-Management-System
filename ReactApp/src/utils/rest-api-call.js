@@ -30,6 +30,7 @@ export const serverPath = {
     GET_ALL_APPENDIXES: 'getAllAppendixes',
     DELETE_USER: 'deleteUser',
     CREATE_EXAM: 'createExam',
+    GET_ALL_EXAMS: 'getAllExams',
     CHANGE_PASSWORD: 'changePassword'
 }
 
