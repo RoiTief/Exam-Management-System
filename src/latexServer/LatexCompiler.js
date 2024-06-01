@@ -169,7 +169,7 @@ class LatexCompiler {
             }
         );
 
-        examCompiler.compile(exam, texPath, () => {
+        examCompiler.compile(exam, () => {
             this.#compile(filename, callback)
         });
     }
