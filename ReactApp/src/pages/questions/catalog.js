@@ -25,9 +25,8 @@ const Page = () => {
         console.error('Error fetching meta questions:', error);
       }
     }
-
-    fetchMetaQuestions();
     handleSearch([])
+    fetchMetaQuestions();
   }, []);
 
   const handleSearch = (keys) => {
