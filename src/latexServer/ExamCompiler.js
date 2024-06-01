@@ -1,5 +1,22 @@
 const fs = require("fs");
 
+Array.prototype.scramble = function() {
+    let currentIndex = this.length;
+
+    // While there remain elements to shuffle...
+    while (currentIndex !== 0) {
+
+        // Pick a remaining element...
+        let randomIndex = Math.floor(Math.random() * currentIndex);
+        currentIndex--;
+
+        // And swap it with the current element.
+        [this[currentIndex], this[randomIndex]] = [
+            this[randomIndex], this[currentIndex]];
+    }
+    return this;
+}
+
 /**
  * Encapsulates the process of creating PDF for a single exam.
  * Should be discarded after use.
@@ -15,8 +32,12 @@ class ExamCompiler {
         this.#latexConfs = latexConfs;
     }
 
+    /**
+     * Writes the LaTeX code for the exam at this.#texPath
+     * @param exam An array of questions to build an exam out of
+     * @param callback void function that'll be called once procedure is done
+     */
     compile(exam, callback) {
-        console.log(exam);
         if (!Array.isArray(exam)) {
             return callback(new Error("Not an array"), null);
         }
