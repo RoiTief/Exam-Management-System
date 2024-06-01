@@ -1,11 +1,10 @@
 
 import { Box, Button,Stack, SvgIcon, Typography, Container } from '@mui/material';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Layout as DashboardLayout } from '../../layouts/dashboard/layout';
 import Head from 'next/head';
 import PlusIcon from '@heroicons/react/24/solid/PlusIcon';
 import { useRouter } from 'next/navigation';
-import { applyPagination } from '../../utils/apply-pagination';
 import { MetaQuestionTable } from '../../sections/Questions/question-catalog-by-stem';
 import { QuestionsSearch } from '../../sections/Questions/question-search';
 import { httpsMethod, requestServer, serverPath } from '../../utils/rest-api-call';
