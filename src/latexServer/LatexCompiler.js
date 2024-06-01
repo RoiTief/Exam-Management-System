@@ -2,7 +2,6 @@ const path = require("path");
 const fs = require("fs");
 const {exec} = require("child_process");
 const { DEFAULT_LATEX_CONFIG  }= require('./config')
-const test = require("node:test");
 
 const PDF_DIR = 'pdfs';
 
@@ -122,6 +121,10 @@ class LatexCompiler {
         // write the appendix
         if (metaQuestion.hasOwnProperty('appendix')) {
             fs.writeFileSync(texPath, "\\section*{Appendix:}\n", {flag : 'a'});
+            if (metaQuestion.appendix.title !== '') {
+                fs.writeFileSync(texPath, `\\subsection*{Title: ${metaQuestion.appendix.title}}\n`, {flag : 'a'});
+            }
+            fs.writeFileSync(texPath, `\\subsection*{Tag: ${metaQuestion.appendix.tag}}\n`, {flag : 'a'});
             fs.writeFileSync(texPath, metaQuestion.appendix.content, {flag : 'a'});
             fs.writeFileSync(texPath, "\n\\\\\n", {flag : 'a'});
         }
@@ -171,7 +174,6 @@ class LatexCompiler {
         fs.writeFileSync(texPath, '\\section{Questions} \n', {flag: 'a'});
         fs.writeFileSync(texPath, DEFAULT_LATEX_CONFIG.QUESTION_COMMANDS, {flag: 'a'});
 
-
         fs.writeFileSync(texPath, '\\begin{enumerate}\n', {flag: 'a'}); // questions
         exam.forEach((question)  => {
             fs.writeFileSync(texPath, '\\item ', {flag: 'a'});
@@ -183,7 +185,7 @@ class LatexCompiler {
                 }
                 const appendixNumber = appendicesMap[question.appendix.tag].number;
                 fs.writeFileSync(texPath,
-                    `\\textbf{This question relates to appendix 2.${appendixNumber} in page {\\zpageref{app:${question.appendix.tag}}}} \\\\\n`,
+                    `\\textbf{This question relates to appendix 2.${appendixNumber} in page {\\pageref{app:${question.appendix.tag}}}} \\\\\n`,
                     {flag: 'a'});
             }
             // stem
@@ -209,9 +211,10 @@ class LatexCompiler {
         Object.values(appendicesMap)
             .sort((a, b) => a.number - b.number)
             .forEach(appendix => {
-                fs.writeFileSync(texPath, `\\subsection{${appendix.title}}\n`
-                    + `\\zlabel{app:${appendix.tag}}\n`
-                    + `${appendix.content} \n\n`,
+                fs.writeFileSync(texPath,
+                    `\\subsection{${appendix.title}}\n` +
+                    `\\label{app:${appendix.tag}}\n` +
+                    `${appendix.content} \n\n`,
                     {flag: 'a'});
             });
 
@@ -221,29 +224,50 @@ class LatexCompiler {
         fs.writeFileSync(texPath, '\\section*{Answer Sheet} \n', {flag: 'a'});
         fs.writeFileSync(texPath, `${DEFAULT_LATEX_CONFIG.ANSWER_SHEET_COMMANDS}\n`, {flag: 'a'});
 
-        fs.writeFileSync(texPath, '\\begin{multicols}{3} \\begin{enumerate}', {flag: 'a'}); // answer sheet
+        fs.writeFileSync(texPath, '\\begin{multicols}{3} \\begin{enumerate}\n', {flag: 'a'}); // answer sheet
         exam.forEach((question) => {
             fs.writeFileSync(texPath, `\\item \\unsolved{${question.scrambled.length}}\n`, {flag: 'a'});
         })
-        fs.writeFileSync(texPath, '\\end{enumerate} \\end{multicols}', {flag: 'a'}); // answer sheet
+        fs.writeFileSync(texPath, '\\end{enumerate} \\end{multicols}\n\n', {flag: 'a'}); // answer sheet
 
         fs.writeFileSync(texPath, '\\newpage\n\n', {flag: 'a'});
 
         // Print solved answer sheet
         fs.writeFileSync(texPath, '\\section*{Solved Answer Sheet} \n', {flag: 'a'});
 
-        fs.writeFileSync(texPath, '\\begin{multicols}{3} \\begin{enumerate}', {flag: 'a'}); // solved answer sheet
+        fs.writeFileSync(texPath, '\\begin{multicols}{3} \\begin{enumerate}\n', {flag: 'a'}); // solved answer sheet
         exam.forEach((question) => {
             fs.writeFileSync(texPath, `\\item \\solved{${question.scrambled.length}}{${question.scrambled.indexOf(question.key.text) + 1}}\n`, {flag: 'a'});
         })
-        fs.writeFileSync(texPath, '\\end{enumerate} \\end{multicols}', {flag: 'a'}); // solved answer sheet
+        fs.writeFileSync(texPath, '\\end{enumerate} \\end{multicols}\n\n', {flag: 'a'}); // solved answer sheet
 
         fs.writeFileSync(texPath, '\\newpage\n\n', {flag: 'a'});
 
         // Print solved questions
         fs.writeFileSync(texPath, '\\section*{Solved Questions} \n', {flag: 'a'});
+        fs.writeFileSync(texPath, `${DEFAULT_LATEX_CONFIG.SOLVED_QUESTIONS_COMMANDS}\n`, {flag: 'a'});
 
-        fs.writeFileSync(texPath, '\\newpage\n\n', {flag: 'a'});
+        fs.writeFileSync(texPath, '\\begin{enumerate}\n', {flag: 'a'}); // questions
+        exam.forEach((question)  => {
+            fs.writeFileSync(texPath, '\\item ', {flag: 'a'});
+            // Relate to appendix
+            if (question.hasOwnProperty('appendix')) {
+                const appendixNumber = appendicesMap[question.appendix.tag].number;
+                fs.writeFileSync(texPath,
+                    `\\textbf{This question relates to appendix 2.${appendixNumber} in page {\\pageref{app:${question.appendix.tag}}}} \\\\\n`,
+                    {flag: 'a'});
+            }
+            // stem
+            fs.writeFileSync(texPath, `${question.stem}\n`, {flag: 'a'});
+            fs.writeFileSync(texPath, '\\begin{enumerate}\n', {flag: 'a'}); // answers
+            // key
+            fs.writeFileSync(texPath, `\\item \\begin{boxedtext}${question.key.text}\\end{boxedtext}\n`, {flag: 'a'});
+            question.distractors.forEach(d => {
+                fs.writeFileSync(texPath, `\\item ${d.text}\n`, {flag: 'a'});
+            });
+            fs.writeFileSync(texPath, '\\end{enumerate}\n\n', {flag: 'a'}); // answers
+        });
+        fs.writeFileSync(texPath, '\\end{enumerate}\n\n', {flag: 'a'}); // questions
 
         // close document
         fs.writeFileSync(texPath, this.#closing, {flag : 'a'});
@@ -260,7 +284,7 @@ class LatexCompiler {
         const texPath = path.join(this.#pdfDirPath, filename + EXTENSIONS.TEX);
         const pdfPath = path.join(this.#pdfDirPath, filename + EXTENSIONS.PDF);
 
-        exec(`cd ${this.#pdfDirPath} && xelatex -interaction=nonstopmode ${texPath}`, (error, stdout, stderr) => {
+        exec(`cd ${this.#pdfDirPath} && xelatex -interaction=nonstopmode ${texPath} && xelatex -interaction=nonstopmode ${texPath} `, (error, stdout, stderr) => {
             if (error) {
                 console.log(`xelatex Error: ${stdout}`);
                 return callback(error, null);
@@ -279,7 +303,7 @@ class LatexCompiler {
         const texPath = path.join(this.#pdfDirPath, filename + EXTENSIONS.TEX);
         const logPath = path.join(this.#pdfDirPath, filename + EXTENSIONS.LOG);
         const auxPath = path.join(this.#pdfDirPath, filename + EXTENSIONS.AUX);
- //       fs.unlinkSync(texPath);
+        fs.unlinkSync(texPath);
         fs.unlinkSync(logPath);
         fs.unlinkSync(auxPath);
     }
