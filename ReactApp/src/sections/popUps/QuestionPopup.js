@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
+import { useState, useEffect } from 'react';
 import { overlayStyle, popupStyle } from './popup-style';
-import { useState } from 'react';
 import { SvgIcon, ListItemText, ListItem, Divider, Button, IconButton, Chip, Stack } from '@mui/material';
 import ChevronDoubleDownIcon from '@heroicons/react/20/solid/esm/ChevronDoubleDownIcon';
 import ChevronDoubleUpIcon from '@heroicons/react/20/solid/esm/ChevronDoubleUpIcon';
@@ -10,6 +10,12 @@ export const Question = (props) => {
   const { isOpen, closePopup, question, onEdit } = props;
   const [showAllAnswers, setShowAllAnswers] = useState(false);
   const [showAllDistractors, setShowAllDistractors] = useState(false);
+  const [compiledContent, setCompiledContent] = useState({
+    appendix: { title: null, tag: null, content: null },
+    keywords: [],
+    keys: [],
+    distractors: [],
+  });
 
   const toggleAnswers = () => {
     setShowAllAnswers(!showAllAnswers);
@@ -49,6 +55,10 @@ export const Question = (props) => {
     display: 'inline-block'
   };
 
+  if (!isOpen || !question) {
+    return null;
+  }
+
   return (
     isOpen && (
       <div className="popup">
@@ -71,6 +81,7 @@ export const Question = (props) => {
               </div>
               <h3>Title: {question.appendix.title}</h3>
               <h3>Tag: {question.appendix.tag}</h3>
+              <h3>Content:</h3>
               <p>{question.appendix.content}</p>
             </div>
           )}

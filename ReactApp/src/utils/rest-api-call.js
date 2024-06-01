@@ -1,6 +1,8 @@
 import Cookies from 'js-cookie';
 export const TOKEN_FIELD_NAME = "jwt_exam_token"
 const SERVER_ROOT_URL = "http://localhost:8080/"
+const LATEX_SERVER_ROOT_URL = "http://164.90.223.94:3001/"
+
 export const httpsMethod = {
     GET: 'GET',
     POST: 'POST',
@@ -34,6 +36,34 @@ export const serverPath = {
     CHANGE_PASSWORD: 'changePassword'
 }
 
+export const latexServerPath = {
+  COMPILE: 'compile',
+  COMPILE_EXAM: 'exam',
+  COMPILE_MQ: 'metaQuestion'
+};
+
+export async function requestLatexServer(path, body) {
+  console.log(`req: ${LATEX_SERVER_ROOT_URL + path}`)
+  return (Cookies.get(TOKEN_FIELD_NAME)) ?
+    await fetch(LATEX_SERVER_ROOT_URL + path,
+      {     method: httpsMethod.POST,
+        headers: {
+          'Content-Type': 'application/json',
+          'Origin': '*',
+          'Authorization': `JWT ${Cookies.get(TOKEN_FIELD_NAME)}`
+        },
+        body: JSON.stringify(body)
+      }) :
+     await fetch(LATEX_SERVER_ROOT_URL + path,
+      {
+        method: httpsMethod.POST,
+        headers: {
+          'Content-Type': 'application/json',
+          'Origin': '*',
+        },
+        body: JSON.stringify(body)
+      });
+}
 
 export async function requestServer(path, method, body) {
     var response

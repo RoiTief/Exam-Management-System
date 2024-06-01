@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { httpsMethod, serverPath, requestServer } from 'src/utils/rest-api-call';
+import { httpsMethod, serverPath, requestServer, latexServerPath } from 'src/utils/rest-api-call';
 import { Box, Button, Container, Typography } from '@mui/material';
 import QuestionForm from '/src/sections/exam/question-form';
 import QuestionList from '/src/sections/exam/question-list';
 import { Layout as DashboardLayout } from '../layouts/dashboard/layout';
 import { useRouter } from 'next/router';
+import { PdfLatexPopup } from '../sections/popUps/QuestionPdfView';
 
 const Page = () => {
   const router = useRouter();
@@ -13,6 +14,7 @@ const Page = () => {
   const [currentQuestion, setCurrentQuestion] = useState(null);
   const [usedAnswers, setUsedAnswers] = useState({});
   const [usedDistractors, setUsedDistractors] = useState({});
+  const [showPdfView, setShowPdfView] = useState(false);
 
   useEffect(() => {
     async function fetchMetaQuestions() {
@@ -47,7 +49,8 @@ const Page = () => {
 
   const saveTest = async () => {
     try {
-      await requestServer(serverPath.CREATE_EXAM, httpsMethod.POST, {questions});
+      setShowPdfView(true)
+      // await requestServer(serverPath.CREATE_EXAM, httpsMethod.POST, questions);
       await router.push('/');
     } catch (error) {
       console.error('Error fetching meta questions:', error);
@@ -110,6 +113,12 @@ const Page = () => {
           </Button>
         </Box>
       </Container>
+      {showPdfView &&
+      <PdfLatexPopup isOpen={showPdfView}
+                     closePopup={() => setShowPdfView(false)}
+                     content={questions}
+                     type= {latexServerPath.COMPILE_EXAM} />
+      }
     </Box>
   );
 }
