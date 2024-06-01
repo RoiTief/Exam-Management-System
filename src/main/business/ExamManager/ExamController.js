@@ -16,7 +16,7 @@ class ExamController{
     }
 
     // get exams as array
-    getExams(){
+    getAllExams(getAllExamsProperties){
         return [...this.#exams.values()]
     }
 

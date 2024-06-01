@@ -366,7 +366,19 @@ function createExam(req, res, next){
     }
 }
 
-
+function getAllExams(req, res, next){
+    try{
+        req.log.info("request to get all exams");
+        req.body = {...req.body, pid:process.pid}
+        const exams = application.getAllExams(req.body)
+        res.send(200, {code:200,exams})
+        next()
+    }
+    catch(err){
+        req.log.warn(err.message, 'failed to get all exams');
+        next(err);
+    }
+}
 
 module.exports = {
     viewUsername: viewUsername,
@@ -386,4 +398,5 @@ module.exports = {
     getAllAppendixes: getAllAppendixes,
     addMetaQuestion: addMetaQuestion,
     createExam,
+    getAllExams,
 };

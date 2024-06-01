@@ -158,6 +158,11 @@ class ApplicationFacade{
         return this.examController.createExam(createExamProperties)
     }
 
+
+    getAllExams(getAllExamsProperties){
+        return this.examController.getAllExams(getAllExamsProperties)
+    }
+
     /**
      * view course statistics (per subject)
      * @param username - the user who tries to view the course statistics - needs to be a lecturer

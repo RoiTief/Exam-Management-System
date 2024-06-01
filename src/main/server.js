@@ -217,6 +217,8 @@ function createServer(options) {
     //  }
     server.post('/createExam', service.createExam)
 
+    server.get('/getAllExams',service.getAllExams)
+
     // response: Task[]
     server.get('/viewMyTasks', service.viewMyTasks);
   
