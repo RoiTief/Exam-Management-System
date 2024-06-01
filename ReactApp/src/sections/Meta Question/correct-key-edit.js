@@ -2,10 +2,11 @@ import React from 'react';
 import { Box, TextField, IconButton, Typography } from '@mui/material';
 import { FieldArray } from 'formik';
 import { AddCircleOutline, RemoveCircleOutline, FormatTextdirectionLToR, FormatTextdirectionRToL } from '@mui/icons-material';
+import { CREATE_QUESTION } from '../../constants';
 
 const KeysSection = ({ values, handleChange, handleBlur, setFieldValue }) => (
   <Box sx={{ mb: 2 }}>
-    <Typography variant="h6" component="h3">Keys</Typography>
+    <Typography variant="h6" component="h3">{CREATE_QUESTION.KEY_TITLE}</Typography>
     <FieldArray name="keys">
       {({ remove, push }) => (
         <>

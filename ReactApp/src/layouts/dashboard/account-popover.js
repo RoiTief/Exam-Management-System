@@ -3,6 +3,7 @@ import { useRouter } from 'next/navigation';
 import PropTypes from 'prop-types';
 import { Box, Divider, MenuItem, MenuList, Popover, Typography } from '@mui/material';
 import { useAuth } from 'src/hooks/use-auth';
+import { ACCOUNT } from '../../constants';
 
 export const AccountPopover = (props) => {
   const { anchorEl, onClose, open } = props;
@@ -43,7 +44,7 @@ export const AccountPopover = (props) => {
         }}
       >
         <Typography variant="overline">
-          Account
+          {ACCOUNT.ACCOUNT}
         </Typography>
         <Typography
           color="text.secondary"
@@ -64,10 +65,10 @@ export const AccountPopover = (props) => {
         }}
       >
           <MenuItem onClick={handleAccount}>
-              Account Settings
+            {ACCOUNT.ACCOUNT_SETTINGS}
           </MenuItem>
         <MenuItem onClick={handleSignOut}>
-          Sign out
+          {ACCOUNT.SIGN_OUT}
         </MenuItem>
       </MenuList>
     </Popover>

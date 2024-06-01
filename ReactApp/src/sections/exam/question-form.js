@@ -9,6 +9,7 @@ import {
 import StemSelection from './stem-selection';
 import KeySelection from './keys-selection';
 import DistractorSelection from './distractor-selection';
+import { EXAM } from '../../constants';
 
 function QuestionForm({ metaQuestions, addQuestion, usedKeys, usedDistractors}) {
   const [selectedMetaQuestion, setSelectedMetaQuestion] = useState(null);
@@ -30,8 +31,6 @@ function QuestionForm({ metaQuestions, addQuestion, usedKeys, usedDistractors}) 
   };
 
   const getFilteredOptions = (options, usedOptions, key) => {
-    console.log({usedOptions})
-    console.log({key})
     return options.filter(option => !usedOptions[key]?.some(usedOption => usedOption.text === option.text));
   };
 
@@ -46,7 +45,7 @@ function QuestionForm({ metaQuestions, addQuestion, usedKeys, usedDistractors}) 
   return (
     <Container maxWidth="sm" sx={{ backgroundColor: '#ffffff', borderRadius: 2, boxShadow: 3, p: 4, mt: 4 }}>
       <Typography variant="h4" component="h1" gutterBottom>
-        Select a Question:
+        {EXAM.SELECT_QUESTION_HEADING}
       </Typography>
       <Divider sx={{ my: 2 }} />
       <Box sx={{ py: 2 }}>
@@ -63,7 +62,7 @@ function QuestionForm({ metaQuestions, addQuestion, usedKeys, usedDistractors}) 
         )}
       </Box>
       <Button variant="contained" onClick={handleSaveQuestion} disabled={!selectedMetaQuestion || !selectedKey}>
-        Save Question
+        {EXAM.SAVE_QUESTION_BUTTON}
       </Button>
     </Container>
   );

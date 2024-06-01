@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Box, Typography, Button } from '@mui/material';
+import { EXAM } from '../../constants';
 
 function StemSelection({ metaQuestions, onSelect, reselectStem }) {
   const [selectedMetaQuestion, setSelectedMetaQuestion] = useState(null)
@@ -34,16 +35,16 @@ function StemSelection({ metaQuestions, onSelect, reselectStem }) {
   return (
     <Box>
       {groupedStems.map((group, index) => (
-      <Box key={index} sx={{ mb: 2 }}>
+        <Box key={index} sx={{ mb: 2 }}>
           {group.title ? (
             <>
               <Box sx = {{ display: selectedMetaQuestion === null ||
-                                    (selectedMetaQuestion &&
-                                    selectedMetaQuestion.appendix &&
-                                    group.title === selectedMetaQuestion.appendix.title) ?
-                                    'inline-block' : 'none' }}>
+                (selectedMetaQuestion &&
+                  selectedMetaQuestion.appendix &&
+                  group.title === selectedMetaQuestion.appendix.title) ?
+                  'inline-block' : 'none' }}>
                 <Typography variant="subtitle1">
-                  Appendix: {group.title}
+                  {EXAM.APPENDIX_TITLE} {group.title}
                 </Typography>
                 <Typography variant="body2" sx={{ mb: 1 }}>
                   {group.content}

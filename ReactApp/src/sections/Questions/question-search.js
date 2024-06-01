@@ -1,6 +1,7 @@
 import { Card, Chip, InputAdornment, OutlinedInput, SvgIcon, Stack } from '@mui/material';
 import { useState } from 'react';
 import MagnifyingGlassIcon from '@heroicons/react/24/solid/MagnifyingGlassIcon';
+import { QUESTIONS_CATALOG } from '../../constants';
 
 export const QuestionsSearch = ({ onSearch }) => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -31,7 +32,7 @@ export const QuestionsSearch = ({ onSearch }) => {
       <Stack direction="row" alignItems="center" spacing={1}>
         <OutlinedInput
           value={searchTerm}
-          placeholder="Search question by keyword"
+          placeholder={QUESTIONS_CATALOG.SEARCH_PLACEHOLDER}
           onChange={handleSearchTermChange}
           onKeyDown={handleKeyPress}
           startAdornment={

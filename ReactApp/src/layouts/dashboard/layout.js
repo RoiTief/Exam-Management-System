@@ -47,7 +47,7 @@ export const Layout = withAuthGuard((props) => {
 
   return (
     <>
-      <TopNav onNavOpen={() => setOpenNav(true)} />
+      <TopNav />
       <SideNav
         onClose={() => setOpenNav(false)}
         open={openNav}

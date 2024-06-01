@@ -1,21 +1,16 @@
 import PropTypes from 'prop-types';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { overlayStyle, popupStyle } from './popup-style';
 import { SvgIcon, ListItemText, ListItem, Divider, Button, IconButton, Chip, Stack } from '@mui/material';
-import ChevronDoubleDownIcon from '@heroicons/react/20/solid/esm/ChevronDoubleDownIcon';
-import ChevronDoubleUpIcon from '@heroicons/react/20/solid/esm/ChevronDoubleUpIcon';
+import ChevronDoubleDownIcon from '@heroicons/react/20/solid/ChevronDoubleDownIcon';
+import ChevronDoubleUpIcon from '@heroicons/react/20/solid/ChevronDoubleUpIcon';
 import EditIcon from '@mui/icons-material/Edit';
+import { QUESTIONS_CATALOG } from '../../constants';
 
 export const Question = (props) => {
   const { isOpen, closePopup, question, onEdit } = props;
   const [showAllAnswers, setShowAllAnswers] = useState(false);
   const [showAllDistractors, setShowAllDistractors] = useState(false);
-  const [compiledContent, setCompiledContent] = useState({
-    appendix: { title: null, tag: null, content: null },
-    keywords: [],
-    keys: [],
-    distractors: [],
-  });
 
   const toggleAnswers = () => {
     setShowAllAnswers(!showAllAnswers);
@@ -67,7 +62,7 @@ export const Question = (props) => {
         <div className="popup-content"
              style={popupStyle}>
           <div style={{ position: 'relative' }}>
-            <h1 style={{ textAlign: 'center' }}>Meta Question</h1>
+            <h1 style={{ textAlign: 'center' }}>{QUESTIONS_CATALOG.META_QUESTION_TITLE}</h1>
             <IconButton onClick={onEdit}
                         style={editButtonStyle}>
               <EditIcon />
@@ -77,7 +72,7 @@ export const Question = (props) => {
             <div className="appendix-section">
               <Divider />
               <div style={headerContainerStyle}>
-                <h2 style={headerStyle}>Appendix</h2>
+                <h2 style={headerStyle}>{QUESTIONS_CATALOG.APPENDIX_TITLE}</h2>
               </div>
               <h3>Title: {question.appendix.title}</h3>
               <h3>Tag: {question.appendix.tag}</h3>
@@ -88,14 +83,14 @@ export const Question = (props) => {
           <Divider />
           <div className="question-section">
             <div style={headerContainerStyle}>
-              <h2 style={headerStyle}>Stem</h2>
+              <h2 style={headerStyle}>{QUESTIONS_CATALOG.STEM_HEADING}</h2>
             </div>
             <p>{question.stem}</p>
           </div>
           <Divider />
           <div className="keywords-section">
             <div style={headerContainerStyle}>
-              <h2 style={headerStyle}>Keywords</h2>
+              <h2 style={headerStyle}>{QUESTIONS_CATALOG.KEYWORDS_HEADING}</h2>
             </div>
             <Stack direction="row"
                    spacing={1}
@@ -109,7 +104,7 @@ export const Question = (props) => {
           <Divider />
           <div className="answers-section">
             <div style={headerContainerStyle}>
-              <h2 style={headerStyle}>Correct Answers</h2>
+              <h2 style={headerStyle}>{QUESTIONS_CATALOG.CORRECT_ANSWERS_HEADING}</h2>
             </div>
             <div>
               {question.keys.slice(0, showAllAnswers ? question.keys.length : 2).map((answer, index) => (
@@ -128,14 +123,14 @@ export const Question = (props) => {
                         </SvgIcon>
                       )}
               >
-                {showAllAnswers ? 'Show less answers' : 'Show more answers'}
+                {showAllAnswers ? QUESTIONS_CATALOG.SHOW_LESS_ANSWERS : QUESTIONS_CATALOG.SHOW_MORE_ANSWERS}
               </Button>
             )}
           </div>
           <Divider />
           <div className="distractors-section">
             <div style={headerContainerStyle}>
-              <h2 style={headerStyle}>Distractors</h2>
+              <h2 style={headerStyle}>{QUESTIONS_CATALOG.DISTRACTORS_HEADING}</h2>
             </div>
             <div>
               {question.distractors.slice(0, showAllDistractors ? question.distractors.length : 2).map((distractor, index) => (
@@ -154,7 +149,7 @@ export const Question = (props) => {
                         </SvgIcon>
                       )}
               >
-                {showAllDistractors ? 'Show less distractors' : 'Show more distractors'}
+                {showAllDistractors ? QUESTIONS_CATALOG.SHOW_LESS_DISTRACTORS : QUESTIONS_CATALOG.SHOW_MORE_DISTRACTORS}
               </Button>
             )}
           </div>

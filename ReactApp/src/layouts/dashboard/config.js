@@ -7,13 +7,14 @@ import {
   QuestionMark,
   SchoolOutlined,
 } from '@mui/icons-material';
+import { ACCOUNT, SIDE_BAR } from '../../constants';
 
 const types = require("../../../../src/main/Enums").USER_TYPES;
 
 
 export const items = [
   {
-    title: 'Home Page',
+    title: SIDE_BAR.HOME_PAGE,
     path: '/',
     icon: (
       <SvgIcon fontSize="small">
@@ -23,7 +24,7 @@ export const items = [
     permissions: [types.LECTURER, types.ADMIN, types.TA]
   },
   {
-    title: 'Manage Users',
+    title: SIDE_BAR.MANAGE_USERS,
     path: '/admin/users',
     icon: (
       <SvgIcon fontSize="small">
@@ -33,7 +34,7 @@ export const items = [
     permissions: [types.ADMIN]
   },
   {
-    title: 'Create Meta-Question',
+    title: SIDE_BAR.CREATE_META_QUESTION,
     icon: (
         <SvgIcon fontSize="small">
           <QuestionMark />
@@ -42,21 +43,21 @@ export const items = [
     permissions: [types.LECTURER, types.ADMIN, types.TA],
     children: [
       {
-        title: 'Simple Meta-Question',
+        title: SIDE_BAR.SIMPLE_META_QUESTION,
         path: '/create/simple',
       },
       {
-        title: 'Appendix Meta-Question',
+        title: SIDE_BAR.APPENDIX_META_QUESTION,
         path: '/create/choose-appendix',
       },
       {
-        title: 'Appendix plus Meta-Question',
+        title: SIDE_BAR.APPENDIX_PLUS_META_QUESTION,
         path: '/create/appendix-plus-question',
       }
     ]
   },
   {
-    title: 'All Questions',
+    title: SIDE_BAR.META_QUESTIONS,
     icon: (
       <SvgIcon fontSize="small">
         <SchoolOutlined />
@@ -69,7 +70,7 @@ export const items = [
       //   path: '/',
       // },
       {
-        title: 'Catalogue View',
+        title: SIDE_BAR.CATALOG_VIEW,
         path: '/questions/catalog',
       },
       // {
@@ -79,7 +80,7 @@ export const items = [
     ]
   },
   {
-    title: 'Manage Course Staff',
+    title: SIDE_BAR.MANAGE_COURSE_STAFF,
     icon: (
       <SvgIcon fontSize="small">
         <UsersIcon />
@@ -89,7 +90,7 @@ export const items = [
     path: '/course-staff'
   },
   {
-    title: 'generate exams',
+    title: SIDE_BAR.GENERATE_EXAM,
     path: '/generate-exam',
     icon: (
       <SvgIcon fontSize="small">

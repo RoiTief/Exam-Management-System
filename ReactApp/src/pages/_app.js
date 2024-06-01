@@ -9,6 +9,7 @@ import { useNProgress } from 'src/hooks/use-nprogress';
 import { createTheme } from 'src/theme';
 import { createEmotionCache } from 'src/utils/create-emotion-cache';
 import 'simplebar-react/dist/simplebar.min.css';
+import { APP_HEADER } from '../constants';
 
 const clientSideEmotionCache = createEmotionCache();
 
@@ -27,7 +28,7 @@ const App = (props) => {
     <CacheProvider value={emotionCache}>
       <Head>
         <title>
-          Exam Management
+          {APP_HEADER}
         </title>
         <meta
           name="viewport"

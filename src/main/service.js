@@ -323,8 +323,7 @@ function getAllAppendixes(req, res, next){
  */
 function addMetaQuestion(req, res, next){
     try{
-        req.body = {...req.body, pid:process.pid}
-        let metaQuestion = application.addMetaQuestion(req.body)
+        let metaQuestion = application.addMetaQuestion(process.pid, req.body)
         req.log.info("request to create metaQuestion");
         res.send(200, {code:200, metaQuestion})
         next()

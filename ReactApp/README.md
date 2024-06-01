@@ -88,7 +88,6 @@ material-kit-react
 		├── products.js
 		└──  auth
 			├── login.js
-			└── register.js
 ```
 
 ## Resources

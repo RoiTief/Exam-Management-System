@@ -1,10 +1,11 @@
-import { Box, Stack, Container, Unstable_Grid2 as Grid } from '@mui/material';
+import { Box, Stack, Container, Unstable_Grid2 as Grid, Typography } from '@mui/material';
 import { Layout as DashboardLayout } from 'src/layouts/dashboard/layout';
 import { OverviewFAQ } from 'src/sections/overview/overview-FAQ';
 import { OverviewAssignedTasks } from 'src/sections/overview/overview-my-tasks';
 import { OverviewTasksProgress } from 'src/sections/overview/overview-tasks-progress';
 import { OverviewQuestionTips } from 'src/sections/overview/overview-question-tips';
 import {OverviewCalander} from "../sections/overview/overview-calender";
+import {HELLO_USER } from '../constants';
 
 
 const Page = () => (
@@ -17,7 +18,12 @@ const Page = () => (
 
           <Stack item> 
           {/*left section*/}
-            <OverviewAssignedTasks/>
+            <Stack container item spacing={4}>
+              <Typography variant="h4">
+                {HELLO_USER(JSON.parse(localStorage.getItem("user"))["username"])}
+              </Typography>
+              <OverviewAssignedTasks/>
+            </Stack>
           </Stack>
 
           <Stack container item xs={8} direction="column" justifyContent="flex-end" spacing={4} >

@@ -8,6 +8,7 @@ import {
 } from '@mui/material';
 import { useEffect, useState } from 'react';
 import {httpsMethod, serverPath, requestServer,TOKEN_FIELD_NAME} from 'src/utils/rest-api-call';
+import { TASK_PROGRESS } from '../../constants';
 
 
 export const OverviewTasksProgress = () => {
@@ -60,7 +61,7 @@ export const OverviewTasksProgress = () => {
               fontSize={20}
               align= "center"            
               >
-              Task Progress
+              {TASK_PROGRESS.TASK_PROGRESS}
             </Typography>
           </Stack>
         </Stack>

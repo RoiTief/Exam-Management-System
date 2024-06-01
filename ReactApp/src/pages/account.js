@@ -3,12 +3,13 @@ import { Box, Container, Stack, Typography, Unstable_Grid2 as Grid } from '@mui/
 import { Layout as DashboardLayout } from 'src/layouts/dashboard/layout';
 import { AccountProfile } from 'src/sections/account/account-profile';
 import { AccountProfileDetails } from 'src/sections/account/account-profile-details';
+import { ACCOUNT } from '../constants';
 
 const Page = () => (
   <>
     <Head>
       <title>
-        Account | Devias Kit
+        {ACCOUNT.ACCOUNT}
       </title>
     </Head>
     <Box
@@ -22,7 +23,7 @@ const Page = () => (
         <Stack spacing={3}>
           <div>
             <Typography variant="h4">
-              Account
+              {ACCOUNT.ACCOUNT}
             </Typography>
           </div>
           <div>

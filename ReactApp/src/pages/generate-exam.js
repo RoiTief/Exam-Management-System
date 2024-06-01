@@ -6,6 +6,7 @@ import QuestionList from '/src/sections/exam/question-list';
 import { Layout as DashboardLayout } from '../layouts/dashboard/layout';
 import { useRouter } from 'next/router';
 import { PdfLatexPopup } from '../sections/popUps/QuestionPdfView';
+import { EXAM } from '../constants';
 
 const Page = () => {
   const router = useRouter();
@@ -35,7 +36,7 @@ const Page = () => {
     const key = `${question.stem}-${question.appendix ? question.appendix.title : ''}`;
 
     setUsedAnswers(prev => ({
-          ...prev,
+      ...prev,
       [key]: [...(prev[key] || []), question.key]
     }));
 
@@ -55,7 +56,7 @@ const Page = () => {
       console.error('Error fetching meta questions:', error);
     }
   }
-  
+
   const removeQuestion = (index) => {
     const questionToRemove = questions[index];
     const updatedQuestions = questions.filter((_, i) => i !== index);
@@ -72,7 +73,7 @@ const Page = () => {
     setUsedDistractors(prevUsedDistractors => {
       const updatedDistractors = { ...prevUsedDistractors };
       updatedDistractors[key] = updatedDistractors[key].filter(d =>
-          !questionToRemove.distractors.some(dist => dist.text === d.text)
+        !questionToRemove.distractors.some(dist => dist.text === d.text)
       );
       return updatedDistractors;
     });
@@ -91,11 +92,11 @@ const Page = () => {
     >
       <Container maxWidth="md" sx={{ backgroundColor: '#ffffff', borderRadius: 2, boxShadow: 3, p: 4}}>
         <Typography variant="h4" component="h1" gutterBottom>
-          Create Exam
+          {EXAM.PAGE_TITLE}
         </Typography>
         <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
           <Button variant="contained" onClick={() => setCurrentQuestion({})} sx={{ mb: 2 }}>
-            + Add Question
+            {EXAM.ADD_QUESTION_BUTTON}
           </Button>
           {currentQuestion && (
             <QuestionForm
@@ -107,16 +108,16 @@ const Page = () => {
           )}
           <QuestionList questions={questions} removeQuestion={removeQuestion} />
           <Button variant="contained" color="primary" sx={{ mt: 2 }}
-          onClick={saveTest}>
-            Save Test
+                  onClick={saveTest}>
+            {EXAM.SAVE_TEST_BUTTON}
           </Button>
         </Box>
       </Container>
       {showPdfView &&
-      <PdfLatexPopup isOpen={showPdfView}
-                     closePopup={() => setShowPdfView(false)}
-                     content={questions}
-                     type= {latexServerPath.COMPILE_EXAM} />
+        <PdfLatexPopup isOpen={showPdfView}
+                       closePopup={() => setShowPdfView(false)}
+                       content={questions}
+                       type= {latexServerPath.COMPILE_EXAM} />
       }
     </Box>
   );

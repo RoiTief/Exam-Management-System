@@ -2,8 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { RadioGroup, Radio, Paper, OutlinedInput, InputAdornment, SvgIcon } from '@mui/material';
 import MagnifyingGlassIcon from '@heroicons/react/24/solid/MagnifyingGlassIcon';
 import { httpsMethod, requestServer, serverPath } from '../../utils/rest-api-call';
-
-
+import { CREATE_QUESTION } from '../../constants';
 
 const AppendixList = ({ onSelectAppendix }) => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -79,15 +78,15 @@ const AppendixList = ({ onSelectAppendix }) => {
               padding: '10px',
               marginBottom: '10px',
               backgroundColor: 'rgba(0, 0, 0, 0.3)',
-              cursor: 'pointer', // Add cursor style to indicate clickability
-              display: 'flex', // Add flex display to control item positioning
-              alignItems: 'center', // Center align items vertically
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
             }}
             onClick={() => handleAppendixClick(appendix)}
           >
             <Radio checked={selectedAppendix === appendix} />
             <div style={{ marginLeft: '10px' }}>
-              <h3>{appendix.title}</h3>
+              <h3>{CREATE_QUESTION.APPENDIX_TITLE}{appendix.title}</h3>
               <p>Tag: {appendix.tag}</p>
               <p>{appendix.content}</p>
             </div>
