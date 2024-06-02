@@ -1,15 +1,11 @@
 import NextLink from 'next/link';
 import { usePathname } from 'next/navigation';
 import PropTypes from 'prop-types';
-import ArrowTopRightOnSquareIcon from '@heroicons/react/24/solid/ArrowTopRightOnSquareIcon';
-import ChevronUpDownIcon from '@heroicons/react/24/solid/ChevronUpDownIcon';
 import {
   Box,
-  Button,
   Divider,
   Drawer,
   Stack,
-  SvgIcon,
   Typography,
   useMediaQuery
 } from '@mui/material';
@@ -17,11 +13,23 @@ import { Logo } from 'src/components/logo';
 import { Scrollbar } from 'src/components/scrollbar';
 import { items } from './config';
 import { SideNavItem } from './side-nav-item';
+import { APP_NAME } from '../../constants';
+
 
 export const SideNav = (props) => {
   const { open, onClose } = props;
   const pathname = usePathname();
   const lgUp = useMediaQuery((theme) => theme.breakpoints.up('lg'));
+
+  const checkPermissions = (item) =>
+  {
+    try {
+      const userType = JSON.parse(global.localStorage.getItem("user"))["type"]
+      return item.permissions.includes(userType)
+    } catch (e){
+      return false
+    }
+  }
 
   const content = (
     <Scrollbar
@@ -71,7 +79,7 @@ export const SideNav = (props) => {
                 color="inherit"
                 variant="subtitle1"
               >
-                Exam Management System
+                {APP_NAME}
               </Typography>
             </div>
           </Box>
@@ -95,21 +103,23 @@ export const SideNav = (props) => {
             }}
           >
             {items.map((item) => {
-              const active = item.path ? (pathname === item.path) : false;
+              if(checkPermissions(item)) {
+                const active = item.path ? (pathname === item.path) : false;
 
-              return (
-                <SideNavItem
-                  active={active}
-                  disabled={item.disabled}
-                  external={item.external}
-                  icon={item.icon}
-                  key={item.title}
-                  path={item.path}
-                  title={item.title}
-                  children={item.children}
-                  level={0}  // Add level prop to root items
-                />
-              );
+                return (
+                  <SideNavItem
+                    active={active}
+                    disabled={item.disabled}
+                    external={item.external}
+                    icon={item.icon}
+                    key={item.title}
+                    path={item.path}
+                    title={item.title}
+                    children={item.children}
+                    level={0}  // Add level prop to root items
+                  />
+                );
+              }
             })}
           </Stack>
         </Box>

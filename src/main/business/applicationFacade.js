@@ -1,32 +1,99 @@
 const UserController  = require('./UserManager/UserController.js' );
 const TaskController = require('./TaskManager/TaskController.js');
-const CourseController = require('./CourseManager/CourseController.js');
-
+const MetaQuestionController = require('./MetaQuestions/MetaQuestionController.js');
+const ExamController = require('./ExamManager/ExamController.js');
+const userTypes = require('../Enums').USER_TYPES
 
 class ApplicationFacade{
     constructor() {
         this.userController = new UserController();
-        this.taskController = new TaskController();
-        this.courseController = new CourseController();
+        this.taskController = new TaskController(this.userController);
+        this.metaQuestionController = new MetaQuestionController(this.taskController, this.userController);
+        this.examController = new ExamController(this.taskController, this.userController)
 
         //todo - remove for testing:
-        this.register(24632, "courseAdmin", 123)
-        this.register(24632, "TA", 123)
-        this.register(24632, "grader", 123)
         this.signIn(24632, "Admin", "Aa123456")
-        this.addCourse(24632, 111, "course name", "courseAdmin")
+        this.register(24632, "lecturer", userTypes.LECTURER)
+        this.register(24632, "TA", userTypes.TA)
+        this.register(24632, "TA1",  userTypes.TA)
+        this.register(24632, "TA2",  userTypes.TA)
+        this.register(24632, "TA3",  userTypes.TA)
         this.logout(24632)
-        this.signIn(24632, "courseAdmin", 123)
-        this.finishATask(24632, 1, "yes")
-        console.log(this.getUserType(24632))
-        this.addGrader(24632, "grader")
+        this.signIn(24632, "lecturer", "123")
         this.addTA(24632, "TA")
+        this.addTA(24632, "TA1")
+        this.addTA(24632, "TA2")
+        this.addTA(24632, "TA3")
+        this.addMetaQuestion(24632, {
+            stem: '$e^{i\\pi} + 1 = $',
+            keys: [{text:'0', explanation: 'Using Euler\'s identity'}],
+            distractors: [{text:'$\\frac{what}{\\frac{The}{FUCK}}$', explanation: 'This is a fraction?'},
+                {text:'\\begin{turn}{180}This answer is upside-down\\end{turn}', explanation: 'Rotated answer'}, {text:'$\\mathbb{N}\\mathbb{I}\\mathbb{C}\\mathbb{E}$', explanation: 'This is nice, but not close to the answer.'}],
+            appendix: {
+                title: "Euler's identity: ",
+                tag: "tag",
+                content: "\\setlength{\\fboxsep}{10pt} % Set the padding (default is 3pt)\n"
+                    + "\\fbox{\\huge $e^{i\\theta} = \\cos{\\theta} + i\\sin{\\theta}$}"
+            },
+            keywords: ['key1', 'key2', 'key3']
+        })
+
+        this.addMetaQuestion(24632,
+                {
+                    stem: 'what did Idan listen to when he was a kid',
+                    keys: [{text:'baby motzart', explanation: 'explanation1'},
+                        {text:'baby bethoven', explanation: 'explanation2'}],
+                    distractors: [{text:'Machrozet Chaffla', explanation: 'explanation1'},
+                        {text:'zohar Argov', explanation: 'explanation2'}, {text:'Begins "tzachtzachim" speach', explanation: 'explanation3'}],
+                    keywords: ['key1', 'key2', 'key3']
+                }
+        )
+        this.addMetaQuestion(24632,
+                {
+                    stem: "what is Mor's last name",
+                    keys: [{text:'Abo', explanation: 'explanation1'},
+                        {text:'Abu', explanation: 'explanation2'}],
+                    distractors: [{text:'abow', explanation: 'explanation1'},
+                        {text:'abou', explanation: 'explanation2'}, {text:'aboo', explanation: 'explanation3'}],
+                    keywords: ['key1', 'key2', 'key5'],
+                    appendix: {title: "Mor's ID", tag: "tag", content: "imagine there is my id here"}
+                }
+        )
+        this.addMetaQuestion(24632,
+                {
+                    stem: "What is Roi's nickname",
+                    keys: [{text:'The Tief', explanation: 'explanation1'},
+                        {text:"Gali's soon to be husband", explanation: 'explanation2'}],
+                    distractors: [{text:'that blonde guy', explanation: 'explanation1'},
+                        {text:'that tall guy', explanation: 'explanation2'}, {text:'the one with the black nail polish', explanation: 'explanation3'}],
+                    keywords: ['key1', 'key2', 'key5'],
+                    appendix: {title: "Roi picture", tag: "tag", content: "some amberesing picture of roi"}
+                }
+        )
+        this.addMetaQuestion(24632,
+                {
+                    stem: 'How old is Mor',
+                    keys: [{text:'25', explanation: 'explanation1'},
+                        {text:'22 with "vetek"', explanation: 'explanation2'}],
+                    distractors: [{text:'19 (but thank you)', explanation: 'explanation1'},
+                        {text:'30', explanation: 'explanation2'}, {text:'35', explanation: 'explanation3'}],
+                    keywords: ['key1', 'key2', 'key5'],
+                    appendix: {title: "Mor's ID", tag: "tag", content: "imagine there is my id here"}
+                }
+        )
+        this.addMetaQuestion(24632,
+                {
+                    stem: 'where does Ofek leave',
+                    keys: [{text:'in Gan Yavne', explanation: 'explanation1'},
+                        {text:'next to the orange square', explanation: 'explanation2'},
+                        {text:"next to mor's brother", explanation: 'explanation1'}],
+                    distractors: [{text:'at the beach - surffing', explanation: 'explanation1'},
+                        {text:'riding bike in the fields', explanation: 'explanation2'}, {text:"in may's house", explanation: 'explanation3'}],
+                    keywords: ['key1', 'key2', 'key3']
+                }
+        )
+
         this.logout(24632)
-        this.signIn(24632, "TA", 123)
-        this.finishATask(24632, 3, "yes")
-        this.logout(24632)
-        this.signIn(24632, "grader", 123)
-        this.finishATask(24632, 2, "yes")    
     }
 
     getUsername(pid){
@@ -41,13 +108,13 @@ class ApplicationFacade{
      * register a user
      * @param pid - the process trying to sign up from
      * @param username - the new user username - needs to be unique
-     * @param password - the new user password
+     * @param type - the new user type
      * @returns {User} - returns the created user
      * @throws Error - if the process is already logged in
      *               - if the username is taken
      */
-    register(pid, username, password){
-        return this.userController.register(pid, username, password);
+    register(pid, username, type){
+        return this.userController.register(pid, username, type);
     }
 
     /**
@@ -74,106 +141,72 @@ class ApplicationFacade{
     }
 
     /**
-     * creates new course
-     * create a task for the new courseAdmin to accept being a courseAdmin
-     * @param pid - the process who tries to create the new course - needs to be a logged in systemAdmin
-     * @param courseID - the new courseID - need to be unique
-     * @param courseName - the new course name
-     * @param courseAdminUsername - the new course admin
-     * @return {Course} the new course created
-     * @throws {Error} - if there is no logged in user in @pid
-     *                 - if the user logged in user in @pid is not a systemAdmin
-     *                 - if there is no user named courseAdminUsername
-     *                 - if there is already a course with this ID
+     * change password
+     * @param pid - the process trying to sign in
+     * @param username - the user username - need to be registered
+     * @param newPassword - the user new password
+     * @returns {User} - returned the signed-in user
+     * @throws {Error} - if the user is already signed in
+     *                 - if there is no registered user with this username
      */
-    addCourse(pid, courseID, courseName, courseAdminUsername){
-        this.userController.verifySystemAdmin(pid);
-        this.userController.verifyUserRegistered(courseAdminUsername)
-        let course = this.courseController.createCourse(courseID, courseName);
-        this.taskController.courseAdminRequestTask(courseAdminUsername, course);
-        return course;
+    changePassword(pid, username, newPassword) {
+        return this.userController.changePasswordAfterFirstSignIn(pid, username, newPassword)
     }
 
     /**
-     * view a course
-     * @param pid - the process who tries to view the course - needs to be a logged in courseAdmin
-     * @return {Course} the course
+     * get all staff
+     * @param pid - the process who tries to view the staff - needs to be a logged in as lecturer
+     * @return {{TAs: any[], Lecturers: any[]}} the staff, ordered by lecturers and TAs
      * @throws {Error} - if there is no logged in user in @pid
-     *                 - if the user logged in user in @pid is not a courseAdmin
+     *                 - if the user logged in user in @pid is not a lecturer
      */
-    viewMyCourse(pid){
-        return this.userController.verifyCourseAdmin(pid);
+    getAllStaff(pid){
+        return this.userController.getAllStaff(pid)
     }
 
     /**
-     * set @courseAdminUsername to be the course
-     * @param courseAdminUsername - the new course admin
-     * @param course
-     * @throws {Error} - if there is no user named courseAdminUsername
+     * set @lecturerUsername to be the course
+     * @param lecturerUsername - the new lecturer
+     * @throws {Error} - if there is no user named lecturerUsername
      */
-    setUserAsCourseAdmin(courseAdminUsername, course){
-        this.userController.setUserAsCourseAdmin(courseAdminUsername, course);
+    setUserAsLecturer(lecturerUsername){
+        this.userController.setUserAsLecturer(lecturerUsername);
     }
 
     /**
      * create a task for the new TA to accept being a TA of this course
-     * @param pid - the process who tries to add the new TA - needs to be a courseAdmin
+     * @param pid - the process who tries to add the new TA - needs to be a lecturer
      * @param TAUsername - the new TA username
      * @throws {Error} - if there is no user with name @username
-     *                 - if the user named username is not a courseAdminUsername (is not assigned to a course)
+     *                 - if the user named username is not a lecturerUsername (is not assigned to a course)
      *                 - if there is no user named TAUsername
      */
     addTA(pid, TAUsername){
-        let course = this.userController.verifyCourseAdmin(pid);
+        this.userController.verifyLecturer(pid);
         this.userController.verifyUserRegistered(TAUsername)
-        this.taskController.newTARequestTask(TAUsername, course);
+        this.taskController.newTARequestTask(TAUsername);
     }
 
     /**
      * set @TAUsername to be a TA in course
      * @param TAUsername
-     * @param course
-     * @throws {Error} - if there is no user named courseAdminUsername
+     * @throws {Error} - if there is no user named lecturerUsername
      */
-    setUserAsTA(TAUsername, course){
-        this.userController.setUserAsTA(TAUsername, course);
+    setUserAsTA(TAUsername){
+        this.userController.setUserAsTA(TAUsername);
     }
 
     /**
-     * create a task for the new grader to accept being a grader of this course
-     * @param pid - the user who tries to add the new grader - needs to be a courseAdmin
-     * @param graderUsername
-     * @throws {Error} - if there is no user with name @username
-     *                 - if the user named username is not a courseAdminUsername or is not assigned to a course
-     *                 - if there is no user named graderUsername
-     */
-    addGrader(pid, graderUsername){
-        let course = this.userController.verifyCourseAdmin(pid);
-        this.userController.verifyUserRegistered(graderUsername)
-        this.taskController.newGraderRequestTask(graderUsername, course);
-    }
-
-    /**
-     * set @graderUsername to be a Grader in course
-     * @param graderUsername
-     * @param course
-     * @throws {Error} - if there is no user named courseAdminUsername
-     */
-    setUserAsGrader(graderUsername, course){
-        this.userController.setUserAsGrader(graderUsername, course);
-    }
-
-    /**
-     * creates a test for the course {@username} is Admin of
+     * creates an Exam for the course {@username} is Admin of
      * export it as a pdf and as a word file
      * adds the test to pastExams
-     * @param username - the user who tries to set the exam parameters - needs to be a courseAdmin
+     * @param username - the user who tries to set the exam parameters - needs to be a lecturer
      * @param parameters {Map<string, [number, number]>} a map of parameters that specify for each subject -
      *                                                  how many questions per subject and how many points the subject
      *                                                  is worth (notice that each question's value is the subject worth
      *                                                  devided by the number of questions
      * @throws {Error} - if there is no user with name @username
-     *                 - if the user named username is not a courseAdminUsername or is not assigned to a course
+     *                 - if the user named username is not a lecturerUsername or is not assigned to a course
      *                 - if the sum total of the subject worth is not 100
      */
     setExamParameters(username, parameters){
@@ -181,27 +214,30 @@ class ApplicationFacade{
     }
 
     /**
-     * creates a test for the course {@username} is Admin of
+     * creates an Exam for the course {@username} is Admin of
      * export it as a pdf and as a word file
      * adds the test to pastExams
-     * @param username - the user who tries to create the new exam - needs to be a courseAdmin
-     * @param reason - why you create the new exam (for example "Term A 2022" "example test for students"
      * @return {Exam}
      * @throws {Error} - if there is no user with name @username
-     *                 - if the user named username is not a courseAdminUsername or is not assigned to a course
+     *                 - if the user named username is not a lecturerUsername or is not assigned to a course
      *                 - if the course subject spread is not specified
      *                 - if there is not enough questions for a subject
      */
-    createExam(username, reason){
-        //todo
+    createExam(createExamProperties){
+        return this.examController.createExam(createExamProperties)
+    }
+
+
+    getAllExams(getAllExamsProperties){
+        return this.examController.getAllExams(getAllExamsProperties)
     }
 
     /**
      * view course statistics (per subject)
-     * @param username - the user who tries to view the course statistics - needs to be a courseAdmin
+     * @param username - the user who tries to view the course statistics - needs to be a lecturer
      * @return {Map<string,number>} per subject the precent of correct answers
      * @throws {Error} - if there is no user with name @username
-     *                 - if the user named username is not a courseAdminUsername or is not assigned to a course
+     *                 - if the user named username is not a lecturerUsername or is not assigned to a course
      *                 - if the course subject spread is not specified
      */
     viewStatistics(username){
@@ -209,12 +245,21 @@ class ApplicationFacade{
     }
 
     /**
+     * get all usernames in the system
+     * @param pid - who is requestion the usernames - can be lecturer or system admin
+     * @return {List<User>} list of usernames
+     */
+    viewAllUsers(pid){
+        return this.userController.getAllUsers(pid)
+    }
+
+    /**
      * view course statistics (per question)
-     * @param username - the user who tries to view the course statistics - needs to be a courseAdmin
+     * @param username - the user who tries to view the course statistics - needs to be a lecturer
      * @param subject
      * @return {Map<Question,number>} per question the precent of correct answers
      * @throws {Error} - if there is no user with name @username
-     *                 - if the user named username is not a courseAdminUsername or is not assigned to a course
+     *                 - if the user named username is not a lecturerUsername or is not assigned to a course
      */
     viewStatisticsPerSubject(username, subject){
         //todo
@@ -225,7 +270,7 @@ class ApplicationFacade{
      * @param username - the user who tries to view the course tasks - needs to be a systemAdmin
      * @return {[Task]}
      * @throws {Error} - if there is no user with name @username
-     *                 - if the user named username is not a courseAdminUsername or is not assigned to a course
+     *                 - if the user named username is not a lecturerUsername or is not assigned to a course
      */
     viewTasksForCourse(username){
         //todo
@@ -294,31 +339,48 @@ class ApplicationFacade{
     }
 
     /**
-     * Add a simple meta-question
-     * @param pid - The process ID of the user performing the action
-     * @param stem - The stem of the meta-question
-     * @param correctAnswers - Array of correct answers for the meta-question
-     * @param distractors - Array of distractors for the meta-question
-     * @throws {Error} - If the user is not signed in or does not have the necessary permissions
+     * add meta-question, look for values in MetaQuestion.js
+     *7
      */
-    addSimpleMetaQuestion(pid, stem, correctAnswers, distractors) {
-        const user = this.userController.getLoggedInName(pid);
-        const courseID = user.getCourseID()
-        this.courseController.getCourse(courseID).addSimpleMetaQuestion(stem, correctAnswers, distractors)
+    addMetaQuestion(pid, createMetaQuestionProperties) {
+        return this.metaQuestionController.createMetaQuestion(pid, createMetaQuestionProperties)
     }
 
     /**
-     * Add a simple meta-question
+     * Delete a user from the system
      * @param pid - The process ID of the user performing the action
-     * @param stem - The stem of the meta-question
-     * @param correctAnswers - Array of correct answers for the meta-question
-     * @param distractors - Array of distractors for the meta-question
+     * @param username - The user we want to delete
      * @throws {Error} - If the user is not signed in or does not have the necessary permissions
      */
-    getAllUsers(pid) {
-        return this.userController.getAllUsers(pid)
+    deleteUser(pid, username) {
+        this.userController.deleteUser(pid, username)
     }
 
+    /**
+     * return a list of meta question of the user's course
+     * @param pid - The process ID of the user performing the action
+     * @throws {Error} - If the user is not signed in or does not have the necessary permissions
+     * @return {MetaQuestion[]} all the meta question of the user's course
+     */
+    getAllMetaQuestions(pid) {
+        return this.metaQuestionController.getAllMetaQuestions()
+    }
+
+    /**
+     * return a list of appendixes of the user's course
+     * @param pid - The process ID of the user performing the action
+     * @throws {Error} - If the user is not signed in or does not have the necessary permissions
+     * @return {Appendix[]} all the meta question of the user's course
+     */
+    getAllAppendixes(pid) {
+        //TODO - implement
+        return [
+            { title: 'Appendix A', tag: 'General', content: 'Content of Appendix A' },
+            { title: 'Appendix B', tag: 'Specific', content: 'Content of Appendix B' },
+            // Add more appendices as needed
+        ];
+    }
+    
 
 }
 

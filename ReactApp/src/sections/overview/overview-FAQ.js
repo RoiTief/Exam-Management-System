@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
 import { Card, CardContent, Stack, Typography } from '@mui/material';
+import { FAQ } from '../../constants';
 
 export const OverviewFAQ = (props) => {
   return (
@@ -27,7 +28,7 @@ export const OverviewFAQ = (props) => {
           fontSize={20}
           alignContent="center"
         >
-          FAQ
+          {FAQ.FAQ}
         </Typography>    
         </Stack>
       </CardContent>

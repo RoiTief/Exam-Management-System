@@ -1,64 +1,47 @@
 import PropTypes from 'prop-types';
-import { format } from 'date-fns';
-import {
-  Avatar,
-  Box,
-  Card,
-  Checkbox,
-  Stack,
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TablePagination,
-  TableRow,
-  Typography
-} from '@mui/material';
+import { Box, Button, Card, Stack, Table, TableBody, TableCell, TableHead, TablePagination, TableRow } from '@mui/material';
 import { Scrollbar } from 'src/components/scrollbar';
-import { getInitials } from 'src/utils/get-initials';
-import React, { useEffect, useState } from 'react';
-import { httpsMethod, requestServer, serverPath } from '../../utils/rest-api-call';
+import React, { useState } from 'react';
 import { Question } from '../popUps/QuestionPopup';
+import { PdfLatexPopup, QuestionPdfView } from '../popUps/QuestionPdfView';
+import { latexServerPath } from '../../utils/rest-api-call';
+import { QUESTIONS_CATALOG } from '../../constants';
 
-export const MetaQuestionTable = (props) => {
-  const {
-    count = 0,
-    items = [],
-    onPageChange = () => {},
-    onRowsPerPageChange,
-    page = 0,
-    rowsPerPage = 5,
-  } = props;
-
-  const [questions, setList] = useState([])
-  const [questionToView, setQuestion] = useState(null);
+export const MetaQuestionTable = ({ data }) => {
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [selectedQuestion, setSelectedQuestion] = useState(null);
+  const [showQuestionView, setShowQuestionView] = useState(false);
+  const [showPdfView, setShowPdfView] = useState(false);
 
   const handleRowClick = (question) => {
-    setQuestion(question)
+    setSelectedQuestion(question);
+    setShowQuestionView(true); // Show Question view when row is clicked
   };
 
   const closePopup = () => {
-    setQuestion(null)
+    setSelectedQuestion(null);
+    setShowQuestionView(false);
+    setShowPdfView(false)
   };
 
-  useEffect( (question) => {handleRowClick(question)}, [])
-  useEffect( () => {closePopup()}, [])
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
 
-  useEffect(() => {
-    const fetchList = async () => {
-      try {
-        const {questions} = await requestServer(serverPath.VIEW_QUESTIONS, httpsMethod.GET);
-        setList(questions);
-      }
-      catch(err){
-        console.error('Error fetching question list:', err)
-      }
-    }
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
 
-    fetchList();
-  }, [])
+  const emptyRows = rowsPerPage - Math.min(rowsPerPage, data.length - page * rowsPerPage);
+  const paginatedData = data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
 
-  const handleClick = () => {}
+  const handlePdfButtonClick = (event, metaquestion) => {
+    event.stopPropagation();
+    setSelectedQuestion(metaquestion);
+    setShowPdfView(true); // Show PDF view when button is clicked
+  };
 
   return (
     <Stack>
@@ -68,58 +51,59 @@ export const MetaQuestionTable = (props) => {
             <Table>
               <TableHead>
                 <TableRow>
-                  <TableCell>
-                    Stem
-                  </TableCell>
-                  <TableCell>
-                    Keywords
-                  </TableCell>
+                  <TableCell>{QUESTIONS_CATALOG.STEM_HEADING}</TableCell>
+                  <TableCell>{QUESTIONS_CATALOG.KEYWORDS_HEADING}</TableCell>
+                  <TableCell>{QUESTIONS_CATALOG.ACTION}</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
-                {items.map((metaquestion) => (
+                {paginatedData.map((metaquestion) => (
                   <TableRow
                     key={metaquestion.stem}
                     onClick={() => handleRowClick(metaquestion)}
                     style={{ cursor: 'pointer' }}
                   >
-                    <TableCell style={{ overflowWrap: 'break-word' }}>
-                      {metaquestion.stem}
-                    </TableCell>
+                    <TableCell style={{ overflowWrap: 'break-word' }}>{metaquestion.stem}</TableCell>
+                    <TableCell>{metaquestion.keywords.join(', ')}</TableCell>
                     <TableCell>
-                      {metaquestion.keywords.join(', ')}
+                      <Button variant="outlined" onClick={(event) => handlePdfButtonClick(event, metaquestion)}>{QUESTIONS_CATALOG.VIEW_PDF_BUTTON}</Button>
                     </TableCell>
                   </TableRow>
                 ))}
+                {emptyRows > 0 && (
+                  <TableRow style={{ height: 53 * emptyRows }}>
+                    <TableCell colSpan={3} />
+                  </TableRow>
+                )}
               </TableBody>
             </Table>
           </Box>
         </Scrollbar>
         <TablePagination
           component="div"
-          count={count}
-          onPageChange={onPageChange}
-          onRowsPerPageChange={onRowsPerPageChange}
+          count={data.length}
+          onPageChange={handleChangePage}
+          onRowsPerPageChange={handleChangeRowsPerPage}
           page={page}
           rowsPerPage={rowsPerPage}
           rowsPerPageOptions={[5, 10, 25]}
         />
       </Card>
-      <div>
-        <Question
-          isOpen={questionToView != null}
-          closePopup={() => closePopup()}
-          question={questionToView}/>
-      </div>
+      {showQuestionView && (
+        <Question isOpen={showQuestionView}
+                  closePopup={closePopup}
+                  question={selectedQuestion}/>
+      )}
+      {showPdfView && (
+        <PdfLatexPopup isOpen={showPdfView}
+                       closePopup={closePopup}
+                       content={selectedQuestion}
+                       type={latexServerPath.COMPILE_MQ}/>
+      )}
     </Stack>
   );
 };
 
 MetaQuestionTable.propTypes = {
-  count: PropTypes.number,
-  items: PropTypes.array,
-  onPageChange: PropTypes.func,
-  onRowsPerPageChange: PropTypes.func,
-  page: PropTypes.number,
-  rowsPerPage: PropTypes.number,
+  data: PropTypes.array.isRequired,
 };

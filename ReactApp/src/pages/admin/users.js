@@ -4,19 +4,21 @@ import { Box, Button, Container, IconButton, Table, TableBody, TableCell, TableC
 import { AddCircle, Edit, Delete } from '@mui/icons-material';
 import { Formik, Form } from 'formik';
 import * as Yup from 'yup';
-import { useUserContext } from '../../contexts/user-context';
+import { useUser } from 'src/hooks/use-user';
+import { UserProvider } from '../../contexts/user-context';
+import { SIDE_BAR, USERS } from '../../constants';
 
 const validationSchema = Yup.object().shape({
-  username: Yup.string().required('Username is required'),
-  courseName: Yup.string().required('Course name is required'),
-  type: Yup.string().required('Type is required')
+  type: Yup.string().required('Type is required').oneOf(['Lecturer', 'TA'], 'Invalid type'),
 });
 
 const ManageUsers = () => {
-  const { state, addUser, editUser, deleteUser } = useUserContext();
+  const { state, addUser, editUser, deleteUser } = useUser();
   const [open, setOpen] = useState(false);
   const [editMode, setEditMode] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
+  const [deleteUserPrompt, setDeleteUserPrompt] = useState(false);
+  const [userToDelete, setUserToDelete] = useState(null);
 
   const handleOpen = (user) => {
     setEditMode(!!user);
@@ -28,13 +30,25 @@ const ManageUsers = () => {
     setEditMode(false);
     setCurrentUser(null);
     setOpen(false);
+    setDeleteUserPrompt(false);
+    setUserToDelete(null);
+  };
+
+  const handleDeleteUser = (user) => {
+    setUserToDelete(user);
+    setDeleteUserPrompt(true);
+  };
+
+  const confirmDeleteUser = () => {
+    deleteUser(userToDelete.username);
+    setDeleteUserPrompt(false);
   };
 
   const handleSubmit = (values, { setSubmitting }) => {
     if (editMode) {
       editUser({ ...currentUser, ...values });
     } else {
-      addUser({ id: Date.now(), ...values });
+      addUser({ ...values });
     }
     setSubmitting(false);
     handleClose();
@@ -44,32 +58,30 @@ const ManageUsers = () => {
     <Box sx={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: '#f0f0f0', padding: 2 }}>
       <Container maxWidth="md" sx={{ backgroundColor: '#ffffff', borderRadius: 2, boxShadow: 3, p: 4 }}>
         <Typography variant="h4" component="h1" gutterBottom>
-          Manage Users
+          {SIDE_BAR.MANAGE_USERS}
         </Typography>
         <Button startIcon={<AddCircle />} variant="contained" onClick={() => handleOpen(null)} sx={{ mb: 2 }}>
-          Add User
+          {USERS.ADD_USER}
         </Button>
         <TableContainer>
           <Table>
             <TableHead>
               <TableRow>
-                <TableCell>Username</TableCell>
-                <TableCell>Course Name</TableCell>
-                <TableCell>Type</TableCell>
-                <TableCell>Actions</TableCell>
+                <TableCell>{USERS.USERNAME}</TableCell>
+                <TableCell>{USERS.TYPE}</TableCell>
+                <TableCell>{USERS.ACTIONS}</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
               {Array.isArray(state.users) && state.users.map((user) => (
-                <TableRow key={user.id}>
+                <TableRow key={user.username}>
                   <TableCell>{user.username}</TableCell>
-                  <TableCell>{user.courseName}</TableCell>
                   <TableCell>{user.type}</TableCell>
                   <TableCell>
                     <IconButton onClick={() => handleOpen(user)}>
                       <Edit />
                     </IconButton>
-                    <IconButton onClick={() => deleteUser(user.id)}>
+                    <IconButton onClick={() => handleDeleteUser(user)}>
                       <Delete />
                     </IconButton>
                   </TableCell>
@@ -80,11 +92,10 @@ const ManageUsers = () => {
         </TableContainer>
 
         <Dialog open={open} onClose={handleClose}>
-          <DialogTitle>{editMode ? 'Edit User' : 'Add User'}</DialogTitle>
+          <DialogTitle>{editMode ? USERS.EDIT_USER : USERS.ADD_USER}</DialogTitle>
           <Formik
             initialValues={{
               username: currentUser?.username || '',
-              courseName: currentUser?.courseName || '',
               type: currentUser?.type || ''
             }}
             validationSchema={validationSchema}
@@ -98,51 +109,56 @@ const ManageUsers = () => {
                     margin="dense"
                     id="username"
                     name="username"
-                    label="Username"
+                    label= {USERS.USERNAME}
                     value={values.username}
                     onChange={handleChange}
                     onBlur={handleBlur}
                     error={touched.username && Boolean(errors.username)}
                     helperText={touched.username && errors.username}
                   />
-                  <TextField
-                    fullWidth
-                    margin="dense"
-                    id="courseName"
-                    name="courseName"
-                    label="Course Name"
-                    value={values.courseName}
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                    error={touched.courseName && Boolean(errors.courseName)}
-                    helperText={touched.courseName && errors.courseName}
-                  />
                   <Select
                     fullWidth
                     margin="dense"
                     id="type"
                     name="type"
+                    label= {USERS.TYPE}
                     value={values.type}
                     onChange={handleChange}
                     onBlur={handleBlur}
                     error={touched.type && Boolean(errors.type)}
                   >
-                    <MenuItem value="Course admin">Course admin</MenuItem>
-                    <MenuItem value="Grader">Grader</MenuItem>
-                    <MenuItem value="TA">TA</MenuItem>
+                    <MenuItem value="Lecturer">{USERS.LECTURER}</MenuItem>
+                    <MenuItem value="TA">{USERS.TA}</MenuItem>
                   </Select>
                 </DialogContent>
                 <DialogActions>
                   <Button onClick={handleClose} color="primary">
-                    Cancel
+                    {USERS.CANCEL_ACTION}
                   </Button>
                   <Button type="submit" color="primary" disabled={isSubmitting}>
-                    {editMode ? 'Save Changes' : 'Add User'}
+                    {editMode ? USERS.SAVE_ACTION : USERS.ADD_USER}
                   </Button>
                 </DialogActions>
               </Form>
             )}
           </Formik>
+        </Dialog>
+
+        <Dialog open={deleteUserPrompt} onClose={() => setDeleteUserPrompt(false)}>
+          <DialogTitle> { USERS.CONFIRM_DELETION } </DialogTitle>
+          <DialogContent>
+            <Typography variant="body1">
+              {USERS.CONFIRM_DELETION_MSG(userToDelete?.username)}
+            </Typography>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={confirmDeleteUser} color="primary">
+              Yes
+            </Button>
+            <Button onClick={() => setDeleteUserPrompt(false)} color="primary">
+              No
+            </Button>
+          </DialogActions>
         </Dialog>
       </Container>
     </Box>
@@ -151,7 +167,9 @@ const ManageUsers = () => {
 
 ManageUsers.getLayout = (page) => (
   <DashboardLayout>
-    {page}
+    <UserProvider>
+      {page}
+    </UserProvider>
   </DashboardLayout>
 );
 

@@ -13,29 +13,31 @@ import * as Yup from 'yup';
 
 import KeywordsSection from 'src/sections/Meta Question/keywords-edit';
 import StemSection from 'src/sections/Meta Question/stem-edit';
-import CorrectAnswersSection from 'src/sections/Meta Question/correct-answer-edit';
+import KeysSection from 'src/sections/Meta Question/correct-key-edit';
 import DistractorsSection from 'src/sections/Meta Question/distractors-edit';
 import AppendixSection from 'src/sections/Meta Question/apendix-edit';
+import { httpsMethod, requestServer, serverPath } from '../../utils/rest-api-call';
+import { CREATE_QUESTION } from '../../constants';
 
 const validationSchema = Yup.object().shape({
   keywords: Yup.array().of(Yup.string()),
-  stem: Yup.string().required('Stem is required'),
-  correctAnswers: Yup.array().of(
+  stem: Yup.string().required(CREATE_QUESTION.STEM_REQUIRED),
+  keys: Yup.array().of(
     Yup.object().shape({
-      text: Yup.string().required('Correct answer text is required'),
-      explanation: Yup.string().required('Explanation is required'),
+      text: Yup.string().required(CREATE_QUESTION.CORRECT_ANSWER_REQUIRED),
+      explanation: Yup.string().required(CREATE_QUESTION.EXPLANATION_REQUIRED),
     })
   ),
   distractors: Yup.array().of(
     Yup.object().shape({
-      text: Yup.string().required('Distractor text is required'),
-      explanation: Yup.string().required('Explanation is required'),
+      text: Yup.string().required(CREATE_QUESTION.DISTRACTOR_REQUIRED),
+      explanation: Yup.string().required(CREATE_QUESTION.EXPLANATION_REQUIRED),
     })
   ),
   appendix: Yup.object().shape({
-    title: Yup.string().required('Title is required'),
-    tag: Yup.string().required('Tag is required'),
-    content: Yup.string().required('Content is required'),
+    title: Yup.string().required(CREATE_QUESTION.APPENDIX_TITLE_REQUIRED),
+    tag: Yup.string().required(CREATE_QUESTION.APPENDIX_TAG_REQUIRED),
+    content: Yup.string().required(CREATE_QUESTION.APPENDIX_CONTENT_REQUIRED),
   }),
 });
 
@@ -45,23 +47,32 @@ const Page = () => {
     keywords: [],
     stem: '',
     isStemRTL: true,
-    correctAnswers: [{ text: '', explanation: '', isTextRTL: true, isExplanationRTL: true }],
+    keys: [{ text: '', explanation: '', isTextRTL: true, isExplanationRTL: true }],
     distractors: [{ text: '', explanation: '', isTextRTL: true, isExplanationRTL: true }],
     appendix: { title: '', tag: '', content: '', isTitleRTL: true, isTagRTL: true, isContentRTL: true },
   };
 
-  const handleSubmit = (values, { setSubmitting }) => {
+  const handleSubmit = async (values, { setSubmitting }) => {
     const metaQuestion = {
       keywords: values.keywords,
       stem: values.stem,
-      correctAnswers: values.correctAnswers.map((item) => ({ answer: item.text, explanation: item.explanation })),
-      distractors: values.distractors.map((item) => ({ distractor: item.text, explanation: item.explanation })),
-      appendix: { title: values.appendix.title, tag: values.appendix.tag, content: values.appendix.content },
+      keys: values.keys.map((item) => ({
+        text: item.text,
+        explanation: item.explanation
+      })),
+      distractors: values.distractors.map((item) => ({
+        text: item.text,
+        explanation: item.explanation
+      })),
+      appendix: {
+        title: values.appendix.title,
+        tag: values.appendix.tag,
+        content: values.appendix.content
+      },
     };
     console.log(metaQuestion);
-    router.push('/');
-    setSubmitting(false);
-    // Submit the metaQuestion object to your backend or API
+    await requestServer(serverPath.ADD_META_QUESTION, httpsMethod.POST, metaQuestion);
+    await router.push('/');
   };
 
   return (
@@ -84,7 +95,7 @@ const Page = () => {
           >
             <Container maxWidth="sm" sx={{ backgroundColor: '#ffffff', borderRadius: 2, boxShadow: 3, p: 4 }}>
               <Typography variant="h4" component="h1" gutterBottom>
-                Create Simple Meta-Question
+                {CREATE_QUESTION.CREATE_APPENDIX_PLUS_TITLE}
               </Typography>
               <AppendixSection
                 values={values}
@@ -111,7 +122,7 @@ const Page = () => {
                   handleBlur={handleBlur}
                   setFieldValue={setFieldValue}
                 />
-                <CorrectAnswersSection
+                <KeysSection
                   values={values}
                   handleChange={handleChange}
                   handleBlur={handleBlur}
@@ -125,7 +136,7 @@ const Page = () => {
                 />
               </Box>
               <Button variant="contained" type="submit" disabled={isSubmitting}>
-                Submit
+                {CREATE_QUESTION.SUBMIT_BUTTON}
               </Button>
             </Container>
           </Box>

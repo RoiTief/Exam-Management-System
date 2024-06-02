@@ -3,10 +3,9 @@
 import { expect } from 'chai';
 import UserController from '../main/business/UserManager/UserController.js';
 import User from '../main/business/UserManager/User.js';
-import SystemAdmin from '../main/business/UserManager/SystemAdmin.js';
-import CourseAdmin from '../main/business/UserManager/CourseAdmin.js';
+import SystemAdmin from '../main/business/UserManager/Admin.js';
+import Lecturer from '../main/business/UserManager/Lecturer.js';
 import TA from '../main/business/UserManager/TA.js';
-import Grader from '../main/business/UserManager/Grader.js';
 
 describe('UserController', function () {
     let userController;
@@ -61,14 +60,14 @@ describe('UserController', function () {
         expect(() => userController.verifySystemAdmin(adminPid)).to.not.throw();
     });
 
-    it('should set user as CourseAdmin', function () {
-        const username = 'courseAdmin';
+    it('should set user as Lecturer', function () {
+        const username = 'lecturer';
         const password = 'password';
-        const course = { setUserAsCourseAdmin: () => {} };
+        const course = { setUserAsLecturer: () => {} };
         userController.register(pid, username, password);
-        userController.setUserAsCourseAdmin(username, course);
+        userController.setUserAsLecturer(username, course);
         const user = userController.getUser(username);
-        expect(user).to.be.instanceOf(CourseAdmin);
+        expect(user).to.be.instanceOf(Lecturer);
     });
 
     it('should set user as TA', function () {

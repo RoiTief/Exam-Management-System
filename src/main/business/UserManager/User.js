@@ -4,19 +4,20 @@ class User {
     constructor(username, password) {
         this.username = username;
         this.password = password;
-        this.course = null
+        this.firstSignIn = true;
     }
     
     getUserType(){
-        return "User"
+        return null
     }
 
-    setCourseID(courseID){
-        this.course = courseID
+    verifyType(type){
+        return null
     }
 
-    getCourseID(){
-        return this.course
+    changePasswordAfterFirstSignIn(password){
+        this.password = password
+        this.firstSignIn = false
     }
 }
 

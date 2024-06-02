@@ -1,28 +1,31 @@
-import { useCallback, useState } from 'react';
+import { useState } from 'react';
 import Head from 'next/head';
-import NextLink from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import {
-  Alert,
   Box,
   Button,
-  FormHelperText,
-  Link,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
   Stack,
-  Tab,
-  Tabs,
   TextField,
   Typography
 } from '@mui/material';
 import { useAuth } from 'src/hooks/use-auth';
 import { Layout as AuthLayout } from 'src/layouts/auth/layout';
+import { LOGIN } from '../../constants';
 
 const Page = () => {
   const router = useRouter();
   const auth = useAuth();
-  const [method, setMethod] = useState('username');
+  const [method] = useState('username');
+  const [changePasswordOpen, setChangePasswordOpen] = useState(false);
+  const [changePasswordValues, setChangePasswordValues] = useState({ newPassword: '', confirmNewPassword: '' });
+  const [user, setUser] = useState(null)
+
   const formik = useFormik({
     initialValues: {
       username: '',
@@ -41,8 +44,13 @@ const Page = () => {
     }),
     onSubmit: async (values, helpers) => {
       try {
-        await auth.signIn(values.username, values.password);
-        router.push('/');
+        const user = await auth.signIn(values.username, values.password);
+        setUser(user);
+        if (user.firstSignIn) {
+          setChangePasswordOpen(true);
+        } else {
+          router.push('/');
+        }
       } catch (err) {
         helpers.setStatus({ success: false });
         helpers.setErrors({ submit: err.message });
@@ -51,11 +59,25 @@ const Page = () => {
     }
   });
 
+  const handleChangePassword = async () => {
+    if (changePasswordValues.newPassword !== changePasswordValues.confirmNewPassword) {
+      alert(LOGIN.PASSWORDS_DO_NOT_MATCH);
+      return;
+    }
+    try {
+      await auth.changePassword(user.username, changePasswordValues.newPassword);
+      setChangePasswordOpen(false);
+      router.push('/');
+    } catch (err) {
+      console.error(LOGIN.FAILED_TO_CHANGE_PASSWORD, err);
+    }
+  };
+
   return (
     <>
       <Head>
         <title>
-          Login 
+          {LOGIN.PAGE_TITLE}
         </title>
       </Head>
       <Box
@@ -81,22 +103,7 @@ const Page = () => {
               sx={{ mb: 3 }}
             >
               <Typography variant="h4">
-                Login
-              </Typography>
-              <Typography
-                color="text.secondary"
-                variant="body2"
-              >
-                Don&apos;t have an account?
-                &nbsp;
-                <Link
-                  component={NextLink}
-                  href="/auth/register"
-                  underline="hover"
-                  variant="subtitle2"
-                >
-                  Register
-                </Link>
+                {LOGIN.HEADING}
               </Typography>
             </Stack>
             {method === 'username' && (
@@ -109,7 +116,7 @@ const Page = () => {
                     error={!!(formik.touched.username && formik.errors.username)}
                     fullWidth
                     helperText={formik.touched.username && formik.errors.username}
-                    label="Username"
+                    label={LOGIN.USERNAME_LABEL}
                     name="username"
                     onBlur={formik.handleBlur}
                     onChange={formik.handleChange}
@@ -120,7 +127,7 @@ const Page = () => {
                     error={!!(formik.touched.password && formik.errors.password)}
                     fullWidth
                     helperText={formik.touched.password && formik.errors.password}
-                    label="Password"
+                    label={LOGIN.PASSWORD_LABEL}
                     name="password"
                     onBlur={formik.handleBlur}
                     onChange={formik.handleChange}
@@ -144,13 +151,41 @@ const Page = () => {
                   type="submit"
                   variant="contained"
                 >
-                  Continue
+                  {LOGIN.CONTINUE_BUTTON}
                 </Button>
               </form>
             )}
           </div>
         </Box>
       </Box>
+
+      <Dialog open={changePasswordOpen} onClose={() => setChangePasswordOpen(false)}>
+        <DialogTitle>{LOGIN.CHANGE_PASSWORD_TITLE}</DialogTitle>
+        <DialogContent>
+          <TextField
+            margin="dense"
+            id="newPassword"
+            label={LOGIN.NEW_PASSWORD_LABEL}
+            type="password"
+            fullWidth
+            value={changePasswordValues.newPassword}
+            onChange={(e) => setChangePasswordValues({ ...changePasswordValues, newPassword: e.target.value })}
+          />
+          <TextField
+            margin="dense"
+            id="confirmNewPassword"
+            label={LOGIN.CONFIRM_NEW_PASSWORD_LABEL}
+            type="password"
+            fullWidth
+            value={changePasswordValues.confirmNewPassword}
+            onChange={(e) => setChangePasswordValues({ ...changePasswordValues, confirmNewPassword: e.target.value })}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setChangePasswordOpen(false)}>{LOGIN.CANCEL_BUTTON}</Button>
+          <Button onClick={handleChangePassword}>{LOGIN.CHANGE_PASSWORD_BUTTON}</Button>
+        </DialogActions>
+      </Dialog>
     </>
   );
 };

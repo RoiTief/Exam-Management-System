@@ -1,4 +1,5 @@
 import { Avatar, Card, CardContent, Stack, SvgIcon, Typography } from '@mui/material';
+import { QUESTIONS_TIPS } from '../../constants';
 
 export const OverviewQuestionTips = (props) => {
   const { difference, positive = false, sx, value } = props;
@@ -29,7 +30,7 @@ export const OverviewQuestionTips = (props) => {
           fontWeight= "bold"
           align= "center"
         >
-          Question Tips
+          {QUESTIONS_TIPS.QUESTIONS_TIPS}
         </Typography>
         </Stack>
       </CardContent>

@@ -1,7 +1,3 @@
-import ChartBarIcon from '@heroicons/react/24/solid/ChartBarIcon';
-import CogIcon from '@heroicons/react/24/solid/CogIcon';
-import ShoppingBagIcon from '@heroicons/react/24/solid/ShoppingBagIcon';
-import UserIcon from '@heroicons/react/24/solid/UserIcon';
 import UsersIcon from '@heroicons/react/24/solid/UsersIcon';
 import { SvgIcon } from '@mui/material';
 import { HomeIcon } from '@heroicons/react/24/solid';
@@ -11,99 +7,96 @@ import {
   QuestionMark,
   SchoolOutlined,
 } from '@mui/icons-material';
+import { ACCOUNT, SIDE_BAR } from '../../constants';
+
+const types = require("../../../../src/main/Enums").USER_TYPES;
+
 
 export const items = [
   {
-    title: 'Home Page',
+    title: SIDE_BAR.HOME_PAGE,
     path: '/',
     icon: (
       <SvgIcon fontSize="small">
         <HomeIcon />
       </SvgIcon>
-    )
+    ),
+    permissions: [types.LECTURER, types.ADMIN, types.TA]
   },
   {
-    title: 'Manage Users',
+    title: SIDE_BAR.MANAGE_USERS,
     path: '/admin/users',
     icon: (
       <SvgIcon fontSize="small">
         <AdminPanelSettingsRounded />
       </SvgIcon>
-    )
+    ),
+    permissions: [types.ADMIN]
   },
   {
-    title: 'Create New Meta-Question',
+    title: SIDE_BAR.CREATE_META_QUESTION,
     icon: (
         <SvgIcon fontSize="small">
           <QuestionMark />
         </SvgIcon>
     ),
+    permissions: [types.LECTURER, types.ADMIN, types.TA],
     children: [
       {
-        title: 'Simple Meta-Question',
+        title: SIDE_BAR.SIMPLE_META_QUESTION,
         path: '/create/simple',
       },
       {
-        title: 'Appendix Meta-Question',
+        title: SIDE_BAR.APPENDIX_META_QUESTION,
         path: '/create/choose-appendix',
       },
       {
-        title: 'Appendix plus Meta-Question',
+        title: SIDE_BAR.APPENDIX_PLUS_META_QUESTION,
         path: '/create/appendix-plus-question',
       }
     ]
   },
   {
-    title: 'All Questions',
+    title: SIDE_BAR.META_QUESTIONS,
     icon: (
       <SvgIcon fontSize="small">
         <SchoolOutlined />
       </SvgIcon>
     ),
+    permissions: [types.LECTURER, types.ADMIN, types.TA],
     children: [
+      // {
+      //   title: 'Test View',
+      //   path: '/',
+      // },
       {
-        title: 'Test View',
-        path: '/',
-      },
-      {
-        title: 'Catalogue View',
+        title: SIDE_BAR.CATALOG_VIEW,
         path: '/questions/catalog',
       },
-      {
-        title: 'Answer Sheet View',
-        path: '/',
-      }
+      // {
+      //   title: 'Answer Sheet View',
+      //   path: '/',
+      // }
     ]
   },
   {
-    title: 'Course staff',
+    title: SIDE_BAR.MANAGE_COURSE_STAFF,
     icon: (
       <SvgIcon fontSize="small">
         <UsersIcon />
       </SvgIcon>
     ),
-    children: [
-      {
-        title: 'view Existing staff',
-        path: '/',
-      },
-      {
-        title: 'add TA',
-        path: '/',
-      },
-      {
-        title: 'Add tester',
-        path: '/',
-      }
-    ]
+    permissions: [types.LECTURER, types.ADMIN],
+    path: '/course-staff'
   },
   {
-    title: 'previews exams',
-    path: '/customers',
+    title: SIDE_BAR.GENERATE_EXAM,
+    path: '/generate-exam',
     icon: (
       <SvgIcon fontSize="small">
         <Newspaper />
       </SvgIcon>
-    )
+    ),
+    permissions: [types.LECTURER, types.ADMIN]
   }
 ];

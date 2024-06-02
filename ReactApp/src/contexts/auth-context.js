@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import { httpsMethod, serverPath, requestServer, TOKEN_FIELD_NAME } from 'src/utils/rest-api-call';
 import Cookies from 'js-cookie';
 
-
 const HANDLERS = {
   INITIALIZE: 'INITIALIZE',
   SIGN_IN: 'SIGN_IN',
@@ -23,16 +22,16 @@ const handlers = {
     return {
       ...state,
       ...(
-        // if payload (user) is provided, then is authenticated
         user
-          ? ({
+          ? {
             isAuthenticated: true,
             isLoading: false,
             user
-          })
-          : ({
+          }
+          : {
+            isAuthenticated: false,
             isLoading: false
-          })
+          }
       )
     };
   },
@@ -58,9 +57,7 @@ const reducer = (state, action) => (
   handlers[action.type] ? handlers[action.type](state, action) : state
 );
 
-// The role of this context is to propagate authentication state through the App tree.
-
-export const AuthContext = createContext({ undefined });
+export const AuthContext = createContext({});
 
 export const AuthProvider = (props) => {
   const { children } = props;
@@ -68,93 +65,76 @@ export const AuthProvider = (props) => {
   const initialized = useRef(false);
 
   const initialize = async () => {
-    // Prevent from calling twice in development mode with React.StrictMode enabled
     if (initialized.current) {
       return;
     }
 
     initialized.current = true;
 
-    let isAuthenticated = false;
-
     try {
-      if (Cookies.get(TOKEN_FIELD_NAME)) {
-        isAuthenticated = true
+      const token = Cookies.get(TOKEN_FIELD_NAME);
+      if (token) {
+        const user = JSON.parse(localStorage.getItem('user')); // Get user details from localStorage
+        dispatch({
+          type: HANDLERS.INITIALIZE,
+          payload: user
+        });
+      } else {
+        dispatch({
+          type: HANDLERS.INITIALIZE
+        });
       }
-      else {
-        isAuthenticated = false
-      }
-
     } catch (err) {
       console.error(err);
-    }
-
-    if (isAuthenticated) {
-
-      dispatch({
-        type: HANDLERS.INITIALIZE,
-      });
-    } else {
       dispatch({
         type: HANDLERS.INITIALIZE
       });
     }
   };
 
-  useEffect(
-    () => {
-      initialize();
-    },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    []
-  );
-
-  const skip = () => {
-    try {
-      window.sessionStorage.setItem('authenticated', 'true');
-    } catch (err) {
-      console.error(err);
-    }
-
-    const user = {
-      id: '5e86809283e28b96d2d38537',
-      avatar: '/assets/avatars/avatar-anika-visser.png',
-      name: 'Anika Visser',
-      email: 'anika.visser@devias.io'
-    };
-
-    dispatch({
-      type: HANDLERS.SIGN_IN,
-      payload: user
-    });
-  };
+  useEffect(() => {
+    initialize();
+  }, []);
 
   const signIn = async (username, password) => {
-  var { user, token } = await requestServer(serverPath.SIGN_IN, httpsMethod.POST, { username, password })
-  Cookies.set(TOKEN_FIELD_NAME, token)
-
-    //Original definition of user
-    // const user = {
-    //   id: '5e86809283e28b96d2d38537',
-    //   avatar: '/assets/avatars/avatar-anika-visser.png',
-    //   name: 'Anika Visser',
-    //   email: 'anika.visser@devias.io'
-    // };
-
-    dispatch({
-      type: HANDLERS.SIGN_IN,
-      payload: user
-    });
+      const { user, token } = await requestServer(serverPath.SIGN_IN, httpsMethod.POST, { username, password });
+      Cookies.set(TOKEN_FIELD_NAME, token, {expires: 1 / 96});
+      localStorage.setItem('user', JSON.stringify(user)); // Store user details in localStorage
+      dispatch({
+        type: HANDLERS.SIGN_IN,
+        payload: user
+      });
+      return user;
   };
 
   const signUp = async (username, password) => {
-    var response = await requestServer(serverPath.SIGN_UP, httpsMethod.POST, { username, password })
+    try {
+      await requestServer(serverPath.SIGN_UP, httpsMethod.POST, { username, password });
+    } catch (error) {
+      console.error('Failed to sign up:', error);
+    }
   };
 
   const signOut = async () => {
-    var response = await requestServer(serverPath.SIGN_OUT, httpsMethod.POST, {})
+    try {
+      await requestServer(serverPath.SIGN_OUT, httpsMethod.POST, {});
+      Cookies.remove(TOKEN_FIELD_NAME);
+      localStorage.removeItem('user'); // Remove user details from localStorage
+      dispatch({
+        type: HANDLERS.SIGN_OUT
+      });
+    } catch (error) {
+      console.error('Failed to sign out:', error);
+    }
+  };
+
+  const changePassword = async (username, newPassword) => {
+    const { user, token } = await requestServer(serverPath.CHANGE_PASSWORD, httpsMethod.POST, { username, newPassword });
+    Cookies.set(TOKEN_FIELD_NAME, token, {expires: 1 / 96});
+    localStorage.setItem('user', JSON.stringify(user)); // Store user details in localStorage
     dispatch({
-      type: HANDLERS.SIGN_OUT
+      type: HANDLERS.SIGN_IN,
+      payload: user
     });
   };
 
@@ -162,10 +142,10 @@ export const AuthProvider = (props) => {
     <AuthContext.Provider
       value={{
         ...state,
-        skip,
         signIn,
         signUp,
-        signOut
+        signOut,
+        changePassword
       }}
     >
       {children}

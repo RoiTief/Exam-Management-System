@@ -1,13 +1,14 @@
 import React from 'react';
 import { Box, TextField, IconButton, Typography } from '@mui/material';
 import { FormatTextdirectionLToR, FormatTextdirectionRToL } from '@mui/icons-material';
+import { CREATE_QUESTION } from '../../constants';
 
 const AppendixSection = ({ values, handleChange, handleBlur, setFieldValue }) => (
   <Box sx={{ mb: 2 }}>
-    <Typography variant="h6" component="h3">Appendix:</Typography>
+    <Typography variant="h6" component="h3">{CREATE_QUESTION.APPENDIX_TITLE}</Typography>
     <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
       <TextField
-        label="Title"
+        label={CREATE_QUESTION.APPENDIX_TITLE}
         name="appendix.title"
         value={values.appendix.title}
         onChange={handleChange}
@@ -37,7 +38,7 @@ const AppendixSection = ({ values, handleChange, handleBlur, setFieldValue }) =>
     </Box>
     <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
       <TextField
-        label="Content"
+        label={CREATE_QUESTION.APPENDIX_CONTENT}
         name="appendix.content"
         value={values.appendix.content}
         onChange={handleChange}

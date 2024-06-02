@@ -2,10 +2,11 @@ import React from 'react';
 import { Box, TextField, IconButton, Typography } from '@mui/material';
 import { FieldArray } from 'formik';
 import { AddCircleOutline, RemoveCircleOutline, FormatTextdirectionLToR, FormatTextdirectionRToL } from '@mui/icons-material';
+import { CREATE_QUESTION } from '../../constants';
 
 const DistractorsSection = ({ values, handleChange, handleBlur, setFieldValue }) => (
   <Box sx={{ mb: 2 }}>
-    <Typography variant="h6" component="h3">Distractors:</Typography>
+    <Typography variant="h6" component="h3">{CREATE_QUESTION.DISTRACTOR_TITLE}</Typography>
     <FieldArray name="distractors">
       {({ remove, push }) => (
         <>
