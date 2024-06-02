@@ -12,26 +12,26 @@ const DEFAULT_LATEX_CONFIG = {
     OPENING: "\\begin{document}\n",
     CLOSING: "\\end{document}\n",
     QUESTION_COMMANDS:
-        "\\renewcommand{\\labelenumi}{\\arabic{enumi}.}\n" +
-        "\\renewcommand{\\labelenumii}{(\\arabic{enumii})}\n",
+        "\\def\\labelenumi{\\arabic{enumi}.}\n" +
+        "\\def\\labelenumii{(\\arabic{enumii})}\n",
     ANSWER_SHEET_COMMANDS:
-        "\\renewcommand{\\labelenumi}{{\\large \\arabic{enumi}.}}\n" +
-        "\\newcommand{\\circled}[1]{%\n" +
+        "\\def\\labelenumi{{\\large \\arabic{enumi}.}}\n" +
+        "\\def\\circled#1{%\n" +
         "    \\tikz[baseline=(char.base)]{\n" +
         "      \\node[shape=circle,draw,fill=white,text=black,inner sep=1pt] (char) {\\sffamily #1};\n" +
         "    }\n" +
         "}\n" +
-        "\\newcommand{\\blackcircled}[1]{%\n" +
+        "\\def\\blackcircled#1{%\n" +
         "    \\tikz[baseline=(char.base)]{\n" +
         "      \\node[shape=circle,draw,fill=black,text=white,inner sep=1pt] (char) {\\sffamily #1};\n" +
         "    }\n" +
         "}\n" +
-        "\\newcommand{\\unsolved}[1]{%\n" +
+        "\\def\\unsolved#1{%\n" +
         "    \\foreach \\x in {1,...,#1} {%\n" +
         "        \\circled{\\x}%\n" +
         "    }\n" +
         "}\n" +
-        "\\newcommand{\\solved}[2]{%\n" +
+        "\\def\\solved#1#2{%\n" +
         "  \\foreach \\x in {1,...,#1} {%\n" +
         "    \\ifnum \\x=#2% \n" +
         "        \\blackcircled{\\x}%\n" +

@@ -2,6 +2,7 @@ const path = require("path");
 const fs = require("fs");
 const {exec} = require("child_process");
 const { DEFAULT_LATEX_CONFIG  }= require('./config')
+const ExamCompiler = require("./ExamCompiler");
 
 const PDF_DIR = 'pdfs';
 
@@ -10,23 +11,6 @@ const EXTENSIONS = {
     LOG: '.log',
     AUX: '.aux',
     PDF: '.pdf',
-}
-
-Array.prototype.scramble = function() {
-    let currentIndex = this.length;
-
-    // While there remain elements to shuffle...
-    while (currentIndex !== 0) {
-
-        // Pick a remaining element...
-        let randomIndex = Math.floor(Math.random() * currentIndex);
-        currentIndex--;
-
-        // And swap it with the current element.
-        [this[currentIndex], this[randomIndex]] = [
-            this[randomIndex], this[currentIndex]];
-    }
-    return this;
 }
 
 class LatexCompiler {
@@ -87,19 +71,19 @@ class LatexCompiler {
             + "\\pagenumbering{gobble}\n");
 
         // write the stem
-        if (metaQuestion.hasOwnProperty('stem')) {
+        if (metaQuestion.stem) {
             fs.writeFileSync(texPath, "\\section*{Stem:}\n", {flag : 'a'});
             fs.writeFileSync(texPath, metaQuestion.stem, {flag : 'a'});
             fs.writeFileSync(texPath, "\n\\\\\n", {flag : 'a'});
         }
 
         // write the keys
-        if (metaQuestion.hasOwnProperty('keys')) {
+        if (metaQuestion.keys) {
             fs.writeFileSync(texPath, "\\section*{Keys:}\n", {flag : 'a'});
             fs.writeFileSync(texPath, "\\begin{itemize}\n", {flag : 'a'});
             metaQuestion.keys.forEach((key) => {
                 fs.writeFileSync(texPath,
-                    `\t\\item ${key.text} \\\\ \\textbf{Explanation:} ${key.hasOwnProperty('explanation') ? key.explanation : 'none'}\n`,
+                    `\t\\item ${key.text} \\\\ \\textbf{Explanation:} ${key.explanation ? key.explanation : 'none'}\n`,
                     {flag: 'a'});
 
             })
@@ -107,19 +91,19 @@ class LatexCompiler {
         }
 
         // write the distractors
-        if (metaQuestion.hasOwnProperty('distractors')) {
+        if (metaQuestion.distractors) {
             fs.writeFileSync(texPath, "\\section*{Distractors:}\n", {flag : 'a'});
             fs.writeFileSync(texPath, "\\begin{itemize}\n", {flag : 'a'});
             metaQuestion.distractors.forEach((distractor) => {
                 fs.writeFileSync(texPath,
-                    `\t\\item ${distractor.text} \\\\ \\textbf{Explanation:} ${distractor.hasOwnProperty('explanation') ? distractor.explanation : 'none'}\n`,
+                    `\t\\item ${distractor.text} \\\\ \\textbf{Explanation:} ${distractor.explanation ? distractor.explanation : 'none'}\n`,
                     {flag: 'a'});
             })
             fs.writeFileSync(texPath, "\\end{itemize}\n", {flag : 'a'});
         }
 
         // write the appendix
-        if (metaQuestion.hasOwnProperty('appendix')) {
+        if (metaQuestion.appendix) {
             fs.writeFileSync(texPath, "\\section*{Appendix:}\n", {flag : 'a'});
             if (metaQuestion.appendix.title !== '') {
                 fs.writeFileSync(texPath, `\\subsection*{Title: ${metaQuestion.appendix.title}}\n`, {flag : 'a'});
@@ -153,126 +137,24 @@ class LatexCompiler {
      * @param callback Callback that handles failure/success of the compilation
      */
     compileExam(exam, callback) {
-	    console.log(exam);
-        if (!Array.isArray(exam)) {
-            return callback(new Error("Not an array"), null);
-        }
         const timestamp = Date.now();
         const filename = timestamp;
         const texPath = path.join(this.#pdfDirPath, filename + EXTENSIONS.TEX);
 
-        const appendicesMap = {};
-        let appendixNumbering = 1;
-
-        // write the preamble + open document
-        fs.writeFileSync(texPath,
-            `${this.#preamble}\n`
-            + `${DEFAULT_LATEX_CONFIG.EXAM_PREAMBLE}\n`
-            + `${this.#opening}\n`);
-
-        // Print questions
-        fs.writeFileSync(texPath, '\\section{Questions} \n', {flag: 'a'});
-        fs.writeFileSync(texPath, DEFAULT_LATEX_CONFIG.QUESTION_COMMANDS, {flag: 'a'});
-
-        fs.writeFileSync(texPath, '\\begin{enumerate}\n', {flag: 'a'}); // questions
-        exam.forEach((question)  => {
-            fs.writeFileSync(texPath, '\\item ', {flag: 'a'});
-            // Relate to appendix
-            if (question.hasOwnProperty('appendix')) {
-                if (!appendicesMap.hasOwnProperty(question.appendix.tag)) {
-                    appendicesMap[question.appendix.tag] = question.appendix;
-                    appendicesMap[question.appendix.tag]['number'] = appendixNumbering++;
-                }
-                const appendixNumber = appendicesMap[question.appendix.tag].number;
-                fs.writeFileSync(texPath,
-                    `\\textbf{This question relates to appendix 2.${appendixNumber} in page {\\pageref{app:${question.appendix.tag}}}} \\\\\n`,
-                    {flag: 'a'});
+        const examCompiler = new ExamCompiler(texPath,
+            {
+                PREAMBLE: `${this.#preamble}\n${DEFAULT_LATEX_CONFIG.EXAM_PREAMBLE}`,
+                OPENING: this.#opening,
+                QUESTION_COMMANDS: DEFAULT_LATEX_CONFIG.QUESTION_COMMANDS,
+                ANSWER_SHEET_COMMANDS: DEFAULT_LATEX_CONFIG.ANSWER_SHEET_COMMANDS,
+                SOLVED_QUESTIONS_COMMANDS: DEFAULT_LATEX_CONFIG.SOLVED_QUESTIONS_COMMANDS,
+                CLOSING: this.#closing,
             }
-            // stem
-            fs.writeFileSync(texPath, `${question.stem}\n`, {flag: 'a'});
-            // scrambled answers
-            question['scrambled'] = question.distractors
-                .map(d => d.text)
-                .concat(question.key.text)
-                .scramble();
-            fs.writeFileSync(texPath, '\\begin{enumerate}\n', {flag: 'a'}); // answers
-            question.scrambled.forEach(answer => {
-                fs.writeFileSync(texPath, `\\item ${answer}\n`, {flag: 'a'});
-            });
-            fs.writeFileSync(texPath, '\\end{enumerate}\n\n', {flag: 'a'}); // answers
+        );
+
+        examCompiler.compile(exam, () => {
+            this.#compile(filename, callback)
         });
-        fs.writeFileSync(texPath, '\\end{enumerate}\n\n', {flag: 'a'}); // questions
-
-        fs.writeFileSync(texPath, '\\newpage\n\n', {flag: 'a'});
-
-        // Print appendices
-        fs.writeFileSync(texPath, '\\section{Appendices} \n\n', {flag: 'a'});
-
-        Object.values(appendicesMap)
-            .sort((a, b) => a.number - b.number)
-            .forEach(appendix => {
-                fs.writeFileSync(texPath,
-                    `\\subsection{${appendix.title}}\n` +
-                    `\\label{app:${appendix.tag}}\n` +
-                    `${appendix.content} \n\n`,
-                    {flag: 'a'});
-            });
-
-        fs.writeFileSync(texPath, '\\newpage\n\n', {flag: 'a'});
-
-        // Print answer sheet
-        fs.writeFileSync(texPath, '\\section*{Answer Sheet} \n', {flag: 'a'});
-        fs.writeFileSync(texPath, `${DEFAULT_LATEX_CONFIG.ANSWER_SHEET_COMMANDS}\n`, {flag: 'a'});
-
-        fs.writeFileSync(texPath, '\\begin{multicols}{3} \\begin{enumerate}\n', {flag: 'a'}); // answer sheet
-        exam.forEach((question) => {
-            fs.writeFileSync(texPath, `\\item \\unsolved{${question.scrambled.length}}\n`, {flag: 'a'});
-        })
-        fs.writeFileSync(texPath, '\\end{enumerate} \\end{multicols}\n\n', {flag: 'a'}); // answer sheet
-
-        fs.writeFileSync(texPath, '\\newpage\n\n', {flag: 'a'});
-
-        // Print solved answer sheet
-        fs.writeFileSync(texPath, '\\section*{Solved Answer Sheet} \n', {flag: 'a'});
-
-        fs.writeFileSync(texPath, '\\begin{multicols}{3} \\begin{enumerate}\n', {flag: 'a'}); // solved answer sheet
-        exam.forEach((question) => {
-            fs.writeFileSync(texPath, `\\item \\solved{${question.scrambled.length}}{${question.scrambled.indexOf(question.key.text) + 1}}\n`, {flag: 'a'});
-        })
-        fs.writeFileSync(texPath, '\\end{enumerate} \\end{multicols}\n\n', {flag: 'a'}); // solved answer sheet
-
-        fs.writeFileSync(texPath, '\\newpage\n\n', {flag: 'a'});
-
-        // Print solved questions
-        fs.writeFileSync(texPath, '\\section*{Solved Questions} \n', {flag: 'a'});
-        fs.writeFileSync(texPath, `${DEFAULT_LATEX_CONFIG.SOLVED_QUESTIONS_COMMANDS}\n`, {flag: 'a'});
-
-        fs.writeFileSync(texPath, '\\begin{enumerate}\n', {flag: 'a'}); // questions
-        exam.forEach((question)  => {
-            fs.writeFileSync(texPath, '\\item ', {flag: 'a'});
-            // Relate to appendix
-            if (question.hasOwnProperty('appendix')) {
-                const appendixNumber = appendicesMap[question.appendix.tag].number;
-                fs.writeFileSync(texPath,
-                    `\\textbf{This question relates to appendix 2.${appendixNumber} in page {\\pageref{app:${question.appendix.tag}}}} \\\\\n`,
-                    {flag: 'a'});
-            }
-            // stem
-            fs.writeFileSync(texPath, `${question.stem}\n`, {flag: 'a'});
-            fs.writeFileSync(texPath, '\\begin{enumerate}\n', {flag: 'a'}); // answers
-            // key
-            fs.writeFileSync(texPath, `\\item \\begin{boxedtext}${question.key.text}\\end{boxedtext}\n`, {flag: 'a'});
-            question.distractors.forEach(d => {
-                fs.writeFileSync(texPath, `\\item ${d.text}\n`, {flag: 'a'});
-            });
-            fs.writeFileSync(texPath, '\\end{enumerate}\n\n', {flag: 'a'}); // answers
-        });
-        fs.writeFileSync(texPath, '\\end{enumerate}\n\n', {flag: 'a'}); // questions
-
-        // close document
-        fs.writeFileSync(texPath, this.#closing, {flag : 'a'});
-
-        this.#compile(filename, callback)
     }
 
     /**
