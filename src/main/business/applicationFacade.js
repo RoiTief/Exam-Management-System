@@ -92,7 +92,6 @@ class ApplicationFacade{
                     keywords: ['key1', 'key2', 'key3']
                 }
         )
-
         this.logout(24632)
     }
 
@@ -373,12 +372,13 @@ class ApplicationFacade{
      * @return {Appendix[]} all the meta question of the user's course
      */
     getAllAppendixes(pid) {
-        //TODO - implement
-        return [
-            { title: 'Appendix A', tag: 'General', content: 'Content of Appendix A' },
-            { title: 'Appendix B', tag: 'Specific', content: 'Content of Appendix B' },
-            // Add more appendices as needed
-        ];
+        // return [
+        //     { title: 'Appendix A', tag: 'General', content: 'Content of Appendix A' },
+        //     { title: 'Appendix B', tag: 'Specific', content: 'Content of Appendix B' },
+        //     // Add more appendices as needed
+        // ];
+
+        return this.metaQuestionController.getAllAppendixes(pid)
     }
     
 

@@ -38,9 +38,16 @@ class MetaQuestionController{
     getAllMetaQuestions(){
         const a =  Array.from(this.#metaQuestions.values())
         
-        console.log({a})
         return a
     }
+
+    getAllAppendixes(pid){
+        return this.getAllMetaQuestions()
+        .map(metaQuestion => metaQuestion.getAppendix(pid))
+        .filter(appendix => appendix); // remove null and undefined
+         
+    }
+    
 }
 
 module.exports = MetaQuestionController;
