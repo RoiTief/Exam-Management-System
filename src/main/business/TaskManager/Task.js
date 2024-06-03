@@ -19,12 +19,15 @@ class Task {
         this.type = addTaskProperty.type ?? null
         this.properties = addTaskProperty.properties ?? {}
         this.description = addTaskProperty.description ?? null
-        this.assignedUsers = addTaskProperty.assignedUsers ?? null
+        this.assignedUsers = addTaskProperty.assignedUsers ?? []
         this.action = addTaskProperty.action ?? null
         this.finished = addTaskProperty.false ?? null
         this.options = addTaskProperty.options ?? null
         this.response = addTaskProperty.response ?? null,
         this.metaQuestion = addTaskProperty.metaQuestion
+
+        const a = []
+        a.map(x => x)
     }
 }
 module.exports = {Task, TaskTypes, TaskPriority};
