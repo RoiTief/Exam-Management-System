@@ -26,18 +26,5 @@ class Task {
         this.response = addTaskProperty.response ?? null,
         this.metaQuestion = addTaskProperty.metaQuestion
     }
-
-    constructor(taskId, forWhom, taskPriority, type, properties, description, options, assignedUsers, action){
-        this.taskId = taskId 
-        this.forWhom = forWhom 
-        this.taskPriority = taskPriority 
-        this.type = type 
-        this.properties = properties 
-        this.description = description 
-        this.assignedUsers = assignedUsers 
-        this.action = action 
-        this.options = options 
-        this.finished = false 
-    }
 }
 module.exports = {Task, TaskTypes, TaskPriority};

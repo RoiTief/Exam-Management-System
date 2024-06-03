@@ -18,7 +18,8 @@ class TaskController {
     }
 
     addTaskToSpecificUser(forWhom, priority, type, properties, description, options, assignedUsers, action){
-        this._tasks.set(this._id, new Task(this._id, forWhom, priority, type, properties, description, options, assignedUsers, action));
+        const taskProperties = {taskId : this._id,forWhom, priority, type, properties, description, options, assignedUsers, action}
+        this._tasks.set(this._id, new Task(taskProperties));
         this._id += 1
         return true;
     }
@@ -28,8 +29,8 @@ class TaskController {
     }
 
     getTasksOf(username){
-        return Array.from(this._tasks.values()).filter(
-            task=>task.assignedUsers) // remove task without assigned users
+        return Array.from(this._tasks.values())
+            .filter(task=>task.assignedUsers) // remove task without assigned users
             .filter(task => task.assignedUsers.map(user=>user.username).includes(username)) // check if username is in the assignedUsers
     }
 
@@ -65,7 +66,6 @@ class TaskController {
 
     finishTask(username, taskId, response, applicationFacade) {
         let task = this.getTask(taskId)
-        console.log("dddddddddddd")
         if(task === undefined)
             throw new Error("there is no task with this id");
         if(task.assignedUsers.includes(username))
@@ -74,7 +74,6 @@ class TaskController {
         if(task.action) 
             task.action(applicationFacade, response);
         task.finished = true;
-        console.log("cccccccccc")
     }
 
 

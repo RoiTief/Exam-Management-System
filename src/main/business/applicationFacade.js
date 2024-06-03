@@ -366,19 +366,19 @@ class ApplicationFacade{
     }
 
     /**
-     * return a list of appendixes of the user's course
+     * return a list of appendices of the user's course
      * @param pid - The process ID of the user performing the action
      * @throws {Error} - If the user is not signed in or does not have the necessary permissions
      * @return {Appendix[]} all the meta question of the user's course
      */
-    getAllAppendixes(pid) {
+    getAllAppendices(pid) {
         // return [
         //     { title: 'Appendix A', tag: 'General', content: 'Content of Appendix A' },
         //     { title: 'Appendix B', tag: 'Specific', content: 'Content of Appendix B' },
         //     // Add more appendices as needed
         // ];
 
-        return this.metaQuestionController.getAllAppendixes(pid)
+        return this.metaQuestionController.getAllAppendices(pid)
     }
     
 

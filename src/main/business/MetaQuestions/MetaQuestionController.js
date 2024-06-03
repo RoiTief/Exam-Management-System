@@ -42,11 +42,10 @@ class MetaQuestionController{
         return a
     }
 
-    getAllAppendixes(pid){
-        const metaQuestions = this.getAllMetaQuestions()
-        return metaQuestions
-        .map(metaQuestion => metaQuestion.getAppendix(pid))
-        .filter(appendix => appendix) // remove null and undefined
+    getAllAppendices(pid){
+        return this.getAllMetaQuestions()
+            .map(metaQuestion => metaQuestion.getAppendix(pid))
+            .filter(appendix => appendix) // remove null and undefined
          
     }
     
