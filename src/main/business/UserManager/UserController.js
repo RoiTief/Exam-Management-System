@@ -1,99 +1,146 @@
-﻿const User = require('./User');
+﻿const { User, DEFAULT_PASSWORD} = require('./User');
 const Admin = require('./Admin');
 const Lecturer = require('./Lecturer');
 const TA = require('./TA');
 const types = require('../../Enums').USER_TYPES
-const DEFAULT_PASSWORD = "123"
-const userRepo = require("../../DAL/Dal");
+const {USER_TYPES: userTypes, USER_TYPES} = require("../../Enums");
+const {EMSError, PK_NOT_EXISTS, USER_PROCESS: ERROR_CODES} = require("../../EMSError");
+const { USER_PROCESS: ERROR_MSGS } = require("../../ErrorMessages");
 
 class UserController {
     #userRepo;
+    // TODO: session manager should be a different entity outside UserController and work with the cookies given by the browser
+    #sessionManager // session -> user
+    #loggedUsers // username -> session
 
-    constructor(){
-        this._registered_users = new Map();
-        this._registered_users.set("Admin", new Admin("Admin", "Aa123456"));
-        this._logged_in_users = new Map();
+    constructor(userRepo){
+        this.#sessionManager = new Map();
+        this.#loggedUsers = new Map();
         this.#userRepo = userRepo;
     }
-    
-    _isRegistered(username){
-        return this._registered_users.has(username);
-    }
-    
-    _isLoggedIn(pid){
-        return this._logged_in_users.has(pid);
-    }
 
-    _varifyNotLoggedIn(pid){
-        if (this._isLoggedIn(pid))
-            throw new Error("you are already logged in");
-    }
-
-    _varifyLogged(pid){
-        if(!this._isLoggedIn(pid))
-            throw new Error("the user is not logged in");
-    }
-
-    getType(pid){
-        this._varifyLogged(pid)
-        let username = this._logged_in_users.get(pid)
-        let user = this.getUser(username)
-        return user.getUserType()
-    }
-    
-    register(pid, username, type){
-        this.verifySystemAdmin(pid);
-        if (this._isRegistered(username)){
-            throw new Error("this username is taken");
+    /**
+     * Checks whether given user is registered
+     * @param username username to check
+     * @returns true iff the user is registered
+     */
+    async #isRegistered(username){
+        try {
+            await this.#userRepo.getUser(username);
+            return true;
+        } catch (error) {
+            if (error instanceof EMSError && error.errorCode === PK_NOT_EXISTS)
+                return false;
+            throw error;
         }
-        let user
-        switch (type) {
+    }
+
+    /**
+     * Throws an error if given user is not registered
+     * @param username username to verify
+     * @throws EMSError iff user is not registered
+     */
+    async verifyUserRegistered(username) {
+        if (! await this.#isRegistered(username)){
+            throw new EMSError(ERROR_MSGS.USERNAME_DOESNT_EXIST(username), ERROR_CODES.USERNAME_DOESNT_EXIST);
+        }
+    }
+
+    /**
+     * Checks whether given user is logged in or not.
+     * @param username user to test.
+     * @returns true iff user is logged in
+     */
+    #isLoggedIn(username){
+        if (!this.#loggedUsers.has(username)) return false;
+
+        if (this.#isSessionStale(this.#loggedUsers.get(username))) {
+            return !this.#loggedUsers.delete(username); // delete returns true iff deletion was successful
+        }
+        return true;
+    }
+
+    /**
+     * Throws an error if given user is not logged in already.
+     * @param username username to verify
+     * @throws EMSError iff user is not logged in
+     */
+    verifyLoggedIn(username){
+        if(! this.#isLoggedIn(username))
+            throw new EMSError(ERROR_MSGS.USERNAME_NOT_LOGGED_IN(username), ERROR_CODES.USERNAME_NOT_LOGGED_IN);
+    }
+
+    /**
+     * Returns whether the session is logged into a certain user or not.
+     * @param session session to check.
+     * @return true iff session is logged into a user.
+     */
+    #isSessionInUse(session) {
+        return this.#sessionManager.has(session);
+    }
+
+    verifySessionNotInUse(session) {
+        if(this.#isSessionInUse(session))
+            throw new EMSError("session in use", -1);
+    }
+
+    async register(admin, userDetails){
+        await this.#verifySystemAdmin(admin);
+        this.#verifyUserDetails(userDetails);
+        userDetails.password = DEFAULT_PASSWORD;
+        const dalUser = await this.#userRepo.addUser(userDetails);
+        switch (dalUser.userType) {
             case types.TA:
-                user = new TA(username, DEFAULT_PASSWORD)
-                break
+                return new TA(dalUser);
             case types.LECTURER:
-                user = new Lecturer(username, DEFAULT_PASSWORD)
-                break
+                return new Lecturer(dalUser);
             default:
-                user = new Admin()
+                return new Admin(dalUser);
         }
-        this._registered_users.set(username, user);
+    }
+
+    async signIn(session, username, password) {
+        await this.verifySessionNotInUse(session);
+        let user;
+        try {
+            user = await this.getUser(username);
+            user.verifyPassword(password);
+        } catch (error) {
+            if (error instanceof EMSError && (error.errorCode === ERROR_CODES.USERNAME_DOESNT_EXIST || error.errorCode === ERROR_CODES.INCORRECT_PASSWORD)) {
+                throw new EMSError(ERROR_MSGS.FAILED_LOGIN, ERROR_CODES.FAILED_LOGIN);
+            }
+            throw error;
+        }
+        this.#sessionManager.set(session, user)
+        this.#loggedUsers.set(user.getUsername(), session)
         return user;
     }
 
-    signIn(pid, username, password) {
-        this.verifyUserRegistered(username)
-        let user = this.getUser(username)
-        if(user.password !== password){
-            throw new Error("incorrect password")
-        }
-        this._logged_in_users.set(pid, username)
-        return user;
+    logout(username) {
+        this.verifyLoggedIn(username);
+        this.#sessionManager.delete(this.#loggedUsers.get(username));
+        this.#loggedUsers.delete(username);
     }
 
-    logout(pid) {
-        this._varifyLogged(pid)
-        this._logged_in_users.delete(pid);
-    }
-    
-    getUser(username){
-        return this._registered_users.get(username);
-    }
-
-    verifySystemAdmin(pid) {
-        this._varifyLogged(pid)
-        let username = this._logged_in_users.get(pid)
-        this.getUser(username).verifyType(types.ADMIN);
-    }
-
-    verifyUserRegistered(username) {
-        if (!this._isRegistered(username)){
-            throw new Error("there is no user with this username " + username);
+    async getUser(username) {
+        const dalUser = await this.#userRepo.getUser(username);
+        switch (dalUser.userType) {
+            case USER_TYPES.LECTURER:
+                return new Lecturer(dalUser);
+            case USER_TYPES.TA:
+                return new TA(dalUser);
+            default:
+                return new Admin(dalUser);
         }
     }
 
-    verifyLecturer(pid) {
-        this._varifyLogged(pid)
+    async #verifySystemAdmin(admin) {
+        this.verifyLoggedIn(admin.getUsername());
+        (await this.getUser(admin.getUsername())).verifyType(types.ADMIN);
+    }
+
+    verifyLecturer(lecturer) {
+        this.verifyLoggedIn(lecturer.getUsername());
         let username = this._logged_in_users.get(pid)
         let user = this.getUser(username)
         user.verifyType(types.LECTURER);
@@ -144,6 +191,38 @@ class UserController {
         let user = this.getUser(username)
         this._registered_users.get(username).changePasswordAfterFirstSignIn(password)
         return user
+    }
+
+    /**
+     * Input verification on userDetails
+     * @param userDetails details to verify
+     * @throws Error
+     */
+    #verifyUserDetails(userDetails) {
+        if (!userDetails) throw new EMSError(ERROR_MSGS.USER_DETAILS_NULL, ERROR_CODES.USER_DETAILS_NULL)
+        if (!userDetails.username) throw new EMSError(ERROR_MSGS.USER_DETAILS_MISSING_USERNAME, ERROR_CODES.USER_DETAILS_MISSING_USERNAME)
+        if (!userDetails.firstName) throw new EMSError(ERROR_MSGS.USER_DETAILS_MISSING_FNAME, ERROR_CODES.USER_DETAILS_MISSING_FNAME)
+        if (!userDetails.lastName) throw new EMSError(ERROR_MSGS.USER_DETAILS_MISSING_LNAME, ERROR_CODES.USER_DETAILS_MISSING_LNAME)
+        if (!userDetails.email) throw new EMSError(ERROR_MSGS.USER_DETAILS_MISSING_EMAIL, ERROR_CODES.USER_DETAILS_MISSING_EMAIL)
+        if (!userDetails.userType) throw new EMSError(ERROR_MSGS.USER_DETAILS_MISSING_TYPE, ERROR_CODES.USER_DETAILS_MISSING_TYPE)
+    }
+
+    #registerPresentationUsers() {
+        this._registered_users.set("Admin", new Admin("Admin", "Aa123456"));
+        this._registered_users.set('lecturer', new Lecturer("lecturer", DEFAULT_PASSWORD));
+        this._registered_users.set('TA',  new TA("TA", DEFAULT_PASSWORD));
+        this._registered_users.set('TA1', new TA("TA1", DEFAULT_PASSWORD));
+        this._registered_users.set('TA2', new TA("TA2", DEFAULT_PASSWORD));
+        this._registered_users.set('TA3', new TA("TA3", DEFAULT_PASSWORD));
+    }
+
+    /**
+     * Predicate on given session's relevancy.
+     * @param session session to check
+     * @note If a session is irrelevant the user pointing to it in loggedUsers should be removed.
+     */
+    #isSessionStale(session) {
+        return !this.#sessionManager.has(session);
     }
 }
 
