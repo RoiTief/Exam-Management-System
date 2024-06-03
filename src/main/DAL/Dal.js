@@ -1,8 +1,8 @@
-import dbConfig from "./Configurations";
-import initSequelize from "./Sequelize";
-import UserRepository from "./User/UserRepository";
+const { dbConfig, presentationDbConfig} = require("./Configurations");
+const initSequelize = require("./Sequelize");
+const UserRepository = require("./User/UserRepository");
 
-const sequelize = initSequelize(dbConfig);
+const sequelize = initSequelize(presentationDbConfig);
 
 const userRepo = new UserRepository(sequelize);
 

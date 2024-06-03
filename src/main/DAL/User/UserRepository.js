@@ -1,7 +1,7 @@
 const defineUserModel = require('./User')
-const { USERNAME_EXISTS, USERNAME_NOT_EXISTS, EMAIL_IN_USE } = require('../ErrorMsgs')
-const { EMSError, PK_NOT_EXISTS, PK_ALREADY_EXISTS, EMAIL_ALREADY_EXISTS } = require('../../EMSError')
+const { EMSError, USER_PROCESS: ERROR_CODES } = require('../../EMSError')
 const util = require('util')
+const {USER_PROCESS: ERROR_MSGS} = require("../../ErrorMessages");
 
 class UserRepository {
     #User
@@ -26,9 +26,9 @@ class UserRepository {
                 // Check if the error is related to username or email uniqueness
                 err.errors.forEach(err => {
                     if (err.path === 'username') {
-                        throw new EMSError(util.format(USERNAME_EXISTS, userData.username), PK_ALREADY_EXISTS);
+                        throw new EMSError(ERROR_MSGS.USERNAME_ALREADY_EXIST(userData.username), ERROR_CODES.USERNAME_ALREADY_EXIST);
                     } else if (err.path === 'email') {
-                        throw new EMSError(util.format(EMAIL_IN_USE, userData.email), EMAIL_ALREADY_EXISTS);
+                        throw new EMSError(ERROR_MSGS.EMAIL_ALREADY_EXIST(userData.email), ERROR_CODES.EMAIL_ALREADY_EXIST);
                     }
                 });
             } else {
@@ -41,7 +41,7 @@ class UserRepository {
     async getUser(username) {
         const foundUser = await this.#User.findByPk(username);
         if (foundUser === null) {
-            throw new EMSError(util.format(USERNAME_NOT_EXISTS, username), PK_NOT_EXISTS);
+            throw new EMSError(ERROR_MSGS.USERNAME_DOESNT_EXIST(username), ERROR_CODES.USERNAME_DOESNT_EXIST);
         }
         return foundUser;
     }
