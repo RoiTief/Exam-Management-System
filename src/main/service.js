@@ -156,7 +156,7 @@ function getAllStaff(req, res, next){
 function viewMyTasks(req, res, next){
     try{
         let tasks = application.viewMyTasks(process.pid);
-        req.log.info("user viewd his tasks");
+        req.log.info("user viewed his tasks");
         res.send(200, {code:200,tasks})
         next()
     }

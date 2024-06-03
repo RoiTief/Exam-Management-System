@@ -10,6 +10,7 @@ class TaskController {
     }
 
     addTask(addTaskProperties){
+        addTaskProperties = {...addTaskProperties, taskId: this._id}
         const task = new Task(addTaskProperties)
         this._tasks.set(this._id, task);
         this._id += 1
@@ -28,8 +29,8 @@ class TaskController {
 
     getTasksOf(username){
         return Array.from(this._tasks.values()).filter(
-            task => task.assignedUsers.includes(username) 
-        );
+            task=>task.assignedUsers) // remove task without assigned users
+            .filter(task => task.assignedUsers.map(user=>user.username).includes(username)) // check if username is in the assignedUsers
     }
 
     lecturerRequestTask(lecturerUsername) {
@@ -64,13 +65,16 @@ class TaskController {
 
     finishTask(username, taskId, response, applicationFacade) {
         let task = this.getTask(taskId)
+        console.log("dddddddddddd")
         if(task === undefined)
             throw new Error("there is no task with this id");
         if(task.assignedUsers.includes(username))
             throw new Error("the task is not assigned to you!")
         task.response = response;
-        task.action(applicationFacade, response);
+        if(task.action) 
+            task.action(applicationFacade, response);
         task.finished = true;
+        console.log("cccccccccc")
     }
 
 

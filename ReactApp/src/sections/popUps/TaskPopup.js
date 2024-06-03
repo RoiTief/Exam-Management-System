@@ -45,7 +45,7 @@ export const Task = (props) => {
           <h1>{task.type}</h1>
           <div style={{ position: 'absolute', top: '10px', right: '50px', fontSize: 'smaller' }}>
             <h4>{`${TASK.TASK_ID_LABEL}${task.taskId}`}</h4>
-            <h4>{`${TASK.PRIORITY_LABEL}${task.priority}`}</h4>
+            <h4>{`${TASK.PRIORITY_LABEL}${task.taskPriority}`}</h4>
           </div>
           <p>{task.description}</p>
           {!task.finished ? (
