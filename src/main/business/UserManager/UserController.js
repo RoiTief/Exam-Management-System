@@ -154,8 +154,6 @@ class UserController {
             case types.LECTURER:
                 this.setUserAsLecturer(username)
                 break
-            default:
-                break
         }
         return this._registered_users.get(username)
     }
