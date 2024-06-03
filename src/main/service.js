@@ -379,6 +379,19 @@ function getAllExams(req, res, next){
     }
 }
 
+function editUser(req, res, next) {
+    try{
+        user = application.editUser(process.pid, req.body[0], req.body[1]);
+        req.log.info(req.body.username, 'edit user request');
+        res.send(200, {code:200,user})
+        next()
+    }
+    catch(err){
+        req.log.warn(err.message, 'unable to edit user');
+        next(err);
+    }
+}
+
 module.exports = {
     viewUsername: viewUsername,
     viewUserType: viewUserType,
@@ -398,4 +411,5 @@ module.exports = {
     addMetaQuestion: addMetaQuestion,
     createExam,
     getAllExams,
+    editUser: editUser
 };

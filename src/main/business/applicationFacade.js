@@ -380,7 +380,10 @@ class ApplicationFacade{
 
         return this.metaQuestionController.getAllAppendixes(pid)
     }
-    
+
+    editUser(pid, username, type){
+        return this.userController.editUser(pid, username, type);
+    }
 
 }
 
