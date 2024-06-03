@@ -37,15 +37,14 @@ class MetaQuestionController{
     }
 
     getAllMetaQuestions(){
-        const a =  Array.from(this.#metaQuestions.values())
-        
-        return a
+        return Array.from(this.#metaQuestions.values())
     }
 
     getAllAppendices(pid){
         return this.getAllMetaQuestions()
             .map(metaQuestion => metaQuestion.getAppendix(pid))
             .filter(appendix => appendix) // remove null and undefined
+
          
     }
     

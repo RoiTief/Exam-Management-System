@@ -29,11 +29,6 @@ class TaskController {
     }
 
     getTasksOf(username){
-        const a = Array.from(this._tasks.values()).filter(task=>task.assignedUsers)
-        for (let x of a) {
-            console.log(x.assignedUsers)
-        }
-        // console.log({bbbb:Array.from(this._tasks.values()).filter(task=>task.assignedUsers)})
         return Array.from(this._tasks.values())
             .filter(task=>task.assignedUsers) // remove task without assigned users
             .filter(task => task.assignedUsers.map(user=>user.username).includes(username)) // check if username is in the assignedUsers

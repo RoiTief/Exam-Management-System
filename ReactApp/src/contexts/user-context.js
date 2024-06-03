@@ -30,7 +30,7 @@ const handlers = {
   [HANDLERS.EDIT_USER]: (state, action) => {
     return {
       ...state,
-      users: state.users.map(user => user.id === action.payload.id ? action.payload : user)
+      users: state.users.map(user => user.username === action.payload.username ? action.payload : user)
     };
   },
   [HANDLERS.DELETE_USER]: (state, action) => {

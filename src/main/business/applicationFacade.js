@@ -371,6 +371,7 @@ class ApplicationFacade{
      * @throws {Error} - If the user is not signed in or does not have the necessary permissions
      * @return {Appendix[]} all the meta question of the user's course
      */
+
     getAllAppendices(pid) {
         // return [
         //     { title: 'Appendix A', tag: 'General', content: 'Content of Appendix A' },
@@ -380,7 +381,11 @@ class ApplicationFacade{
 
         return this.metaQuestionController.getAllAppendices(pid)
     }
-    
+
+
+    editUser(pid, username, type){
+        return this.userController.editUser(pid, username, type);
+    }
 
 }
 

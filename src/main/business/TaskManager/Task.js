@@ -25,9 +25,6 @@ class Task {
         this.options = addTaskProperty.options ?? null
         this.response = addTaskProperty.response ?? null,
         this.metaQuestion = addTaskProperty.metaQuestion
-
-        const a = []
-        a.map(x => x)
     }
 }
 module.exports = {Task, TaskTypes, TaskPriority};

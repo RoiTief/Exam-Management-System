@@ -242,6 +242,9 @@ function createServer(options) {
     // request: username
     server.del('/deleteUser', service.deleteUser)
 
+    // request: username, type
+    server.put('/editUser', service.editUser)
+
 
 
     server.get('/', function root(req, res, next) {
