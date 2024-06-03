@@ -147,17 +147,16 @@ class UserController {
         return true;
     }
 
-    setUserAsLecturer(lecturerUsername, course) {
+    setUserAsLecturer(lecturerUsername) {
         this.verifyUserRegistered(lecturerUsername)
         let user = this._registered_users.get(lecturerUsername);
-        this._registered_users.set(lecturerUsername, new Lecturer(user, course));
-        course.setUserAsLecturer(lecturerUsername);
+        this._registered_users.set(lecturerUsername, new Lecturer(user.username, user.password));
     }
 
     setUserAsTA(TAUsername) {
         this.verifyUserRegistered(TAUsername)
         let user = this._registered_users.get(TAUsername);
-        this._registered_users.set(TAUsername, new TA(user));
+        this._registered_users.set(TAUsername, new TA(user.username, user.password));
     }
 
     getLoggedInName(pid){
@@ -191,6 +190,22 @@ class UserController {
         let user = this.getUser(username)
         this._registered_users.get(username).changePasswordAfterFirstSignIn(password)
         return user
+    }
+
+    editUser(pid, username, type){
+        this.verifySystemAdmin(pid);
+        if (!this._isRegistered(username)){
+            throw new Error("user not found");
+        }
+        switch (type) {
+            case types.TA:
+                this.setUserAsTA(username)
+                break
+            case types.LECTURER:
+                this.setUserAsLecturer(username)
+                break
+        }
+        return this._registered_users.get(username)
     }
 
     /**

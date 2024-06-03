@@ -33,7 +33,8 @@ export const serverPath = {
     DELETE_USER: 'deleteUser',
     CREATE_EXAM: 'createExam',
     GET_ALL_EXAMS: 'getAllExams',
-    CHANGE_PASSWORD: 'changePassword'
+    CHANGE_PASSWORD: 'changePassword',
+    EDIT_USER: 'editUser'
 }
 
 export const latexServerPath = {

@@ -1,8 +1,8 @@
 
 const USER_TYPES = {
-    ADMIN: 'admin',
-    LECTURER: 'lecturer',
-    TA: 'ta',
+    ADMIN: 'Admin',
+    LECTURER: 'Lecturer',
+    TA: 'TA',
 }
 
 const ANSWER_TYPES = {
