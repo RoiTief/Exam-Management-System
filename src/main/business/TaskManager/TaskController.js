@@ -10,6 +10,7 @@ class TaskController {
     }
 
     addTask(addTaskProperties){
+        addTaskProperties = {...addTaskProperties, taskId: this._id}
         const task = new Task(addTaskProperties)
         this._tasks.set(this._id, task);
         this._id += 1
@@ -17,7 +18,8 @@ class TaskController {
     }
 
     addTaskToSpecificUser(forWhom, priority, type, properties, description, options, assignedUsers, action){
-        this._tasks.set(this._id, new Task(this._id, forWhom, priority, type, properties, description, options, assignedUsers, action));
+        const taskProperties = {taskId : this._id,forWhom, priority, type, properties, description, options, assignedUsers, action}
+        this._tasks.set(this._id, new Task(taskProperties));
         this._id += 1
         return true;
     }
@@ -27,36 +29,36 @@ class TaskController {
     }
 
     getTasksOf(username){
-        return Array.from(this._tasks.values()).filter(
-            task => task.assignedUsers.includes(username) 
-        );
+        return Array.from(this._tasks.values())
+            .filter(task=>task.assignedUsers) // remove task without assigned users
+            .filter(task => task.assignedUsers.map(user=>user.username).includes(username)) // check if username is in the assignedUsers
     }
 
     lecturerRequestTask(lecturerUsername) {
-        this.addTaskToSpecificUser(null, 0, TaskTypes.LECTURER_REQUEST,
+        this.addTaskToSpecificUser(null, 0, TaskTypes.LECTURER_REQUEST, {},
             "if you accept this request you will be the lecturer, do notice that this will overrun you current course assignment",
             ["yes", "no"],
-            lecturerUsername, (applicationFacade, response) => {
+            [lecturerUsername], (applicationFacade, response) => {
                                             if(response === "yes")
                                                 applicationFacade.setUserAsLecturer(lecturerUsername)
                                                 });
     }
 
     newTARequestTask(TAUsername) {
-        this.addTaskToSpecificUser(null, 0, TaskTypes.NEW_TA_REQUEST,
+        this.addTaskToSpecificUser(null, 0, TaskTypes.NEW_TA_REQUEST,{},
             "if you accept this request you will be a TA",
             ["yes", "no"],
-            TAUsername, (applicationFacade, approved) => {
+            [TAUsername], (applicationFacade, approved) => {
                 if(approved === "yes")
                     applicationFacade.setUserAsTA(TAUsername)
             });
     }
 
     newGraderRequestTask(graderUsername) {
-        this.addTaskToSpecificUser(null, 0, TaskTypes.newGraderRequestTask,
+        this.addTaskToSpecificUser(null, 0, TaskTypes.newGraderRequestTask,{},
             "if you accept this request you will be a grader",
             ["yes", "no"],
-            graderUsername, (applicationFacade, approved) => {
+            [graderUsername], (applicationFacade, approved) => {
                 if(approved === "yes")
                     applicationFacade.setUserAsGrader(graderUsername)
             });
@@ -69,7 +71,8 @@ class TaskController {
         if(task.assignedUsers.includes(username))
             throw new Error("the task is not assigned to you!")
         task.response = response;
-        task.action(applicationFacade, response);
+        if(task.action) 
+            task.action(applicationFacade, response);
         task.finished = true;
     }
 

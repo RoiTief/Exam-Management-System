@@ -29,7 +29,7 @@ export const serverPath = {
     ADD_META_QUESTION: 'addMetaQuestion',
     GET_ALL_USERS: 'getAllUsers',
     GET_ALL_META_QUESTIONS: 'getAllMetaQuestions',
-    GET_ALL_APPENDIXES: 'getAllAppendixes',
+    GET_ALL_APPENDICES: 'getAllAppendices',
     DELETE_USER: 'deleteUser',
     CREATE_EXAM: 'createExam',
     GET_ALL_EXAMS: 'getAllExams',

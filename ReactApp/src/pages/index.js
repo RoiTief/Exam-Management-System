@@ -20,7 +20,7 @@ const Page = () => (
           {/*left section*/}
             <Stack container item spacing={4}>
               <Typography variant="h4">
-                {HELLO_USER(JSON.parse(localStorage.getItem("user"))["username"])}
+                {JSON.parse(localStorage.getItem("user")) ? HELLO_USER(JSON.parse(localStorage.getItem("user"))["username"]) :''}
               </Typography>
               <OverviewAssignedTasks/>
             </Stack>
