@@ -33,7 +33,9 @@ class User {
         return null
     }
 
-    changePassword(password){
+    async changePassword(password){
+        this.#dalUser.password = password;
+        await this.#dalUser.save();
     }
 
     isFirstSignIn() {
