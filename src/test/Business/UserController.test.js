@@ -7,6 +7,7 @@ const Admin = require("../../main/business/UserManager/Admin");
 const {EMSError, USER_PROCESS: USER_PROCESS_ERROR_CODES} = require("../../main/EMSError");
 const Lecturer = require("../../main/business/UserManager/Lecturer");
 const {DEFAULT_PASSWORD} = require("../../main/business/UserManager/User");
+const {SessionManager} = require("../../main/business/SessionManager/SessionManager");
 
 const dbConfig = {
     database: 'user_controller_test',
@@ -36,6 +37,7 @@ const registerDetails = {
 };
 
 describe('Tests UserController component', () => {
+    let sessionManager;
     let userController;
     let pid;
     let sequelize;
@@ -47,13 +49,13 @@ describe('Tests UserController component', () => {
         await sequelize.authenticate();
         userRepository = new UserRepository(sequelize);
         UserModel = defineUserModel(sequelize);
-        userController = await new UserController(userRepository);
         await UserModel.sync({force: true}); // cleans the 'Users' table
         pid = 'pid1'
     });
 
     beforeEach(async () => {
-        userController = await new UserController(userRepository);
+        sessionManager = await new SessionManager();
+        userController = await new UserController(userRepository, sessionManager);
         await UserModel.sync({force: true}); // cleans the 'Users' table
         await userRepository.addUser(adminDetails);
     })
@@ -97,12 +99,12 @@ describe('Tests UserController component', () => {
 
     test('Verify registered', async () => {
         try {
-            await userController.verifyUserRegistered(adminDetails.username);
+            await userController.getUser(adminDetails.username);
         } catch (e) {
             expect(false).toBeTruthy();
         }
         try {
-            await userController.verifyUserRegistered("something");
+            await userController.getUser("something");
             expect(false).toBeTruthy(); // fail the test as we expect an error throw
         } catch (e) {
             expect(e instanceof EMSError).toBeTruthy();
@@ -113,7 +115,7 @@ describe('Tests UserController component', () => {
     test('Verify logged in', async () => {
         // assert error is thrown when admin is not logged in
         try {
-            await userController.verifyLoggedIn(adminDetails.username);
+            await sessionManager.verifyLoggedIn(adminDetails.username);
             expect(false).toBeTruthy(); // fail the test as we expect an error throw
         } catch (e) {
             expect(e instanceof EMSError).toBeTruthy();
@@ -125,17 +127,17 @@ describe('Tests UserController component', () => {
 
         // assert error is not thrown after logging in
         try {
-            await userController.verifyLoggedIn(adminDetails.username);
+            await sessionManager.verifyLoggedIn(adminDetails.username);
         } catch (e) {
             expect(false).toBeTruthy();
         }
 
         // log out
-        userController.logout(adminDetails.username);
+        sessionManager.logout(pid);
 
         // assert error is thrown when admin is not logged in
         try {
-            await userController.verifyLoggedIn(adminDetails.username);
+            await sessionManager.verifyLoggedIn(adminDetails.username);
             expect(false).toBeTruthy(); // fail the test as we expect an error throw
         } catch (e) {
             expect(e instanceof EMSError).toBeTruthy();
@@ -144,7 +146,7 @@ describe('Tests UserController component', () => {
     })
 
     test('Registering user - SUCCESS', async () => {
-        const admin = await userController.signIn(pid, adminDetails.username, adminDetails.password);
+        await userController.signIn(pid, adminDetails.username, adminDetails.password);
 
         // assert user is not already registered
         try {
@@ -155,7 +157,7 @@ describe('Tests UserController component', () => {
         }
 
         // register
-        await userController.register(admin, structuredClone(registerDetails));
+        await userController.register(pid, structuredClone(registerDetails));
 
         // assert user is registered
         try {
@@ -173,7 +175,7 @@ describe('Tests UserController component', () => {
     })
 
     test('Registering user with faulty details - FAILURE', async () => {
-        const admin = await userController.signIn(pid, adminDetails.username, adminDetails.password);
+        await userController.signIn(pid, adminDetails.username, adminDetails.password);
 
         // assert user is not already registered
         try {
@@ -186,7 +188,7 @@ describe('Tests UserController component', () => {
         // register
         let userDetails = null;
         try {
-            await userController.register(admin, userDetails);
+            await userController.register(pid, userDetails);
             expect(false).toBeTruthy();
         } catch (e) {
             expect(e instanceof EMSError).toBeTruthy();
@@ -195,7 +197,7 @@ describe('Tests UserController component', () => {
 
         userDetails = {};
         try {
-            await userController.register(admin, userDetails);
+            await userController.register(pid, userDetails);
             expect(false).toBeTruthy();
         } catch (e) {
             expect(e instanceof EMSError).toBeTruthy();
@@ -211,7 +213,7 @@ describe('Tests UserController component', () => {
 
         userDetails.username = registerDetails.username;
         try {
-            await userController.register(admin, userDetails);
+            await userController.register(pid, userDetails);
             expect(false).toBeTruthy();
         } catch (e) {
             expect(e instanceof EMSError).toBeTruthy();
@@ -226,7 +228,7 @@ describe('Tests UserController component', () => {
 
         userDetails.firstName = registerDetails.firstName;
         try {
-            await userController.register(admin, userDetails);
+            await userController.register(pid, userDetails);
             expect(false).toBeTruthy();
         } catch (e) {
             expect(e instanceof EMSError).toBeTruthy();
@@ -240,7 +242,7 @@ describe('Tests UserController component', () => {
 
         userDetails.lastName = registerDetails.lastName;
         try {
-            await userController.register(admin, userDetails);
+            await userController.register(pid, userDetails);
             expect(false).toBeTruthy();
         } catch (e) {
             expect(e instanceof EMSError).toBeTruthy();
@@ -253,7 +255,7 @@ describe('Tests UserController component', () => {
 
         userDetails.email = registerDetails.email;
         try {
-            await userController.register(admin, userDetails);
+            await userController.register(pid, userDetails);
             expect(false).toBeTruthy();
         } catch (e) {
             expect(e instanceof EMSError).toBeTruthy();
@@ -278,15 +280,15 @@ describe('Tests UserController component', () => {
     })
 
     test('Register with already used username/email - FAILURE', async () => {
-        const admin = await userController.signIn(pid, adminDetails.username, adminDetails.password);
-        await userController.register(admin, structuredClone(registerDetails));
+        await userController.signIn(pid, adminDetails.username, adminDetails.password);
+        await userController.register(pid, structuredClone(registerDetails));
 
         const userDetails = structuredClone(registerDetails);
 
         // registering with used username
         userDetails.email = "unused@example.com";
         try {
-            await userController.register(admin, userDetails);
+            await userController.register(pid, userDetails);
             expect(false).toBeThruthy();
         } catch (e) {
             expect(e instanceof EMSError).toBeTruthy();
@@ -297,7 +299,7 @@ describe('Tests UserController component', () => {
         userDetails.email = registerDetails.email;
         userDetails.username = 'unused'
         try {
-            await userController.register(admin, userDetails);
+            await userController.register(pid, userDetails);
             expect(false).toBeThruthy();
         } catch (e) {
             expect(e instanceof EMSError).toBeTruthy();
