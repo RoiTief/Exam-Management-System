@@ -224,11 +224,6 @@ function createServer(options) {
   
     // response: {TAs: [], Lecturers: []}
     server.get('/getAllStaff', service.getAllStaff);
-  
-    server.get('/viewUsername', service.viewUsername);
-
-    // response: userType (str)
-    server.get('/viewUserType', service.viewUserType);
 
     // response: User[]
     server.get('/getAllUsers', service.viewAllUsers);

@@ -46,6 +46,7 @@ const Page = () => {
       try {
         const user = await auth.signIn(values.username, values.password);
         setUser(user);
+        console.log(user);
         if (user.firstSignIn) {
           setChangePasswordOpen(true);
         } else {
