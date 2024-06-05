@@ -19,7 +19,7 @@ class UserRepository {
      */
     async addUser(userData) {
         try {
-            return await this.#User.create(userData);
+            return (await this.#User.create(userData));
         } catch (err) {
             // Check if the error is a SequelizeUniqueConstraintError
             if (err.name === 'SequelizeUniqueConstraintError') {
@@ -44,6 +44,18 @@ class UserRepository {
             throw new EMSError(ERROR_MSGS.USERNAME_DOESNT_EXIST(username), ERROR_CODES.USERNAME_DOESNT_EXIST);
         }
         return foundUser;
+    }
+
+    async getAllUsers() {
+        return (await this.#User.findAll());
+    }
+
+    async deleteUser(username) {
+        await this.#User.destroy({
+            where: {
+                username: username,
+            }
+        })
     }
 }
 
