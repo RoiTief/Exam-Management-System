@@ -23,7 +23,8 @@ class MetaQuestionController{
 
         const addTaskProperties = {...metaQuestionProperties,
              assignedUsers: ta_s, taskType: TaskTypes.ADD_KEY,
-              taskPriority: TaskPriority.high, description: "Please add a key"}
+              taskPriority: TaskPriority.HIGH, description: `Please add a key For the following Question: ${metaQuestion.stem}`,
+            metaQuestion: metaQuestion}
         this.#taskController.addTask(addTaskProperties)
         this.#metaQuestionId = this.#metaQuestionId + 1
         return metaQuestion
@@ -36,15 +37,14 @@ class MetaQuestionController{
     }
 
     getAllMetaQuestions(){
-        const a =  Array.from(this.#metaQuestions.values())
-        
-        return a
+        return Array.from(this.#metaQuestions.values())
     }
 
-    getAllAppendixes(pid){
+    getAllAppendices(pid){
         return this.getAllMetaQuestions()
-        .map(metaQuestion => metaQuestion.getAppendix(pid))
-        .filter(appendix => appendix); // remove null and undefined
+            .map(metaQuestion => metaQuestion.getAppendix(pid))
+            .filter(appendix => appendix) // remove null and undefined
+
          
     }
     

@@ -52,7 +52,7 @@ export const OverviewAssignedTasks = () => {
       <Card>
         <CardHeader title={TASK.MY_TASKS_TITLE} />
         <List>
-          {tasks.map((task) => {
+          {tasks.filter(task => !task.finished).map((task) => {
             return (
               <ListItem key={task.taskId}>
                 <button

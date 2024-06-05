@@ -128,7 +128,7 @@ function getAllStaff(req, res, next) {
 function viewMyTasks(req, res, next){
     try{
         let tasks = application.viewMyTasks(process.pid);
-        req.log.info("user viewd his tasks");
+        req.log.info("user viewed his tasks");
         res.send(200, {code:200,tasks})
         next()
     }
@@ -258,11 +258,11 @@ function getAllMetaQuestions(req, res, next){
  * return a list of meta question of the user's course
  * @throws {Error} - if fail to fetch
  */
-function getAllAppendixes(req, res, next){
+function getAllAppendices(req, res, next){
     try{
-        let appendixes = application.getAllAppendixes(process.pid);
+        let appendices = application.getAllAppendices(process.pid);
         req.log.info("a request was sent fetch all the appendices");
-        res.send(200, {code:200, appendixes})
+        res.send(200, {code:200, appendices})
         next()
     }
     catch(err){
@@ -380,7 +380,7 @@ module.exports = {
     viewAllUsers: viewAllUsers,
     deleteUser: deleteUser,
     getAllMetaQuestions: getAllMetaQuestions,
-    getAllAppendixes: getAllAppendixes,
+    getAllAppendices: getAllAppendices,
     addMetaQuestion: addMetaQuestion,
     createExam,
     getAllExams,

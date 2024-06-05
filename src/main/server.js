@@ -232,7 +232,7 @@ function createServer(options) {
     server.get('/getAllMetaQuestions', service.getAllMetaQuestions)
 
     // response: Appendix[]
-    server.get('/getAllAppendixes', service.getAllAppendixes)
+    server.get('/getAllAppendices', service.getAllAppendices)
 
     // request: username
     server.del('/deleteUser', service.deleteUser)

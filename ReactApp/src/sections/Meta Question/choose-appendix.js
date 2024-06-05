@@ -13,10 +13,10 @@ const AppendixList = ({ onSelectAppendix }) => {
   useEffect(() => {
     async function fetchAppendices() {
       try {
-        const { appendixes } = await requestServer(serverPath.GET_ALL_APPENDIXES, httpsMethod.GET);
-        setAppendices(appendixes);
+        const { appendices } = await requestServer(serverPath.GET_ALL_APPENDICES, httpsMethod.GET);
+        setAppendices(appendices);
       } catch (error) {
-        console.error('Error fetching appendixes:', error);
+        console.error('Error fetching appendices:', error);
       }
     }
 
