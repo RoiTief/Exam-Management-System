@@ -59,7 +59,7 @@ const usersToAdd = [
     },
 ];
 
-describe('Resets "Users" table with "usersToAdd"', () => {
+describe('Resets PresentationDb "Users" table', () => {
     let sequelize;
     let User;
     let userRepository;

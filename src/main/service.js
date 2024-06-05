@@ -71,7 +71,7 @@ function logout(req, res, next) {
 }
 
 /**
- * change user password after first sign in
+ * change user pas/sword after first sign in
  * @param req.username - the user's username
  * @param req.newPassword - the user new password
  * @returns {User} - returned the signed-in user
@@ -366,8 +366,6 @@ function editUser(req, res, next) {
 }
 
 module.exports = {
-    viewUsername: viewUsername,
-    viewUserType: viewUserType,
     signUp: signUp,
     signIn: signIn, 
     logout: logout,

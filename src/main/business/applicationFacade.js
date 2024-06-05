@@ -277,8 +277,8 @@ class ApplicationFacade{
      * @throws {Error} - if there is no user logged in pid
      */
     viewMyTasks(pid){
-        let username = this.userController.getLoggedInName(pid);
-        return this.taskController.getTasksOf(username);
+        const user = this.sessionManager.getUser(pid);
+        return this.taskController.getTasksOf(user.getUsername());
     }
 
     /**
