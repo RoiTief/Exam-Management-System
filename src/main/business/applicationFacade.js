@@ -3,22 +3,19 @@ const TaskController = require('./TaskManager/TaskController.js');
 const MetaQuestionController = require('./MetaQuestions/MetaQuestionController.js');
 const ExamController = require('./ExamManager/ExamController.js');
 const userTypes = require('../Enums').USER_TYPES
+const { userRepo } = require("../DAL/Dal");
+const {SessionManager} = require("./SessionManager/SessionManager");
 
 class ApplicationFacade{
     constructor() {
-        this.userController = new UserController();
+        this.sessionManager = new SessionManager();
+        this.userController = new UserController(userRepo, this.sessionManager);
         this.taskController = new TaskController(this.userController);
         this.metaQuestionController = new MetaQuestionController(this.taskController, this.userController);
         this.examController = new ExamController(this.taskController, this.userController)
 
         //todo - remove for testing:
-        this.signIn(24632, "Admin", "Aa123456")
-        this.register(24632, "lecturer", userTypes.LECTURER)
-        this.register(24632, "TA", userTypes.TA)
-        this.register(24632, "TA1",  userTypes.TA)
-        this.register(24632, "TA2",  userTypes.TA)
-        this.register(24632, "TA3",  userTypes.TA)
-        this.logout(24632)
+            /*
         this.signIn(24632, "lecturer", "123")
         this.addTA(24632, "TA")
         this.addTA(24632, "TA1")
@@ -93,27 +90,27 @@ class ApplicationFacade{
                 }
         )
         this.logout(24632)
+
+             */
     }
 
-    getUsername(pid){
-        return this.userController.getLoggedInName(pid)
-    }
-
-    getUserType(pid){
-        return this.userController.getType(pid)
-    }
+    // TODO: remove
+    #emailCounter = 1;
 
     /**
      * register a user
      * @param pid - the process trying to sign up from
-     * @param username - the new user username - needs to be unique
-     * @param type - the new user type
-     * @returns {User} - returns the created user
+     * @param userdetails - details needed to register the user with
+     * @returns {Promise<User>} - returns the created user
      * @throws Error - if the process is already logged in
-     *               - if the username is taken
+     *               - if the username/email is taken
      */
-    register(pid, username, type){
-        return this.userController.register(pid, username, type);
+    async register(pid, userdetails){
+        // TODO: remove lines that add missing details
+        if (!userdetails.firstName) userdetails.firstName = "Dummyfname";
+        if (!userdetails.lastName) userdetails.lastName = "Dummylname";
+        if (!userdetails.email) userdetails.email = `Dummyemail${this.#emailCounter++}@google.com`;
+        return (await this.userController.register(pid, userdetails));
     }
 
     /**
@@ -121,13 +118,13 @@ class ApplicationFacade{
      * @param pid - the process trying to sign in
      * @param username - the user username - need to be registered
      * @param password - the user password
-     * @returns {User} - returned the signed-in user
+     * @returns {Promise<User>} - returned the signed-in user
      * @throws {Error} - if the user is already signed in
      *                 - if there is no registered user with this username
      *                 - if the password is incorrect
      */
-    signIn(pid, username, password) {
-        return this.userController.signIn(pid, username, password)
+    async signIn(pid, username, password) {
+        return (await this.userController.signIn(pid, username, password));
     }
 
     /**
@@ -136,31 +133,29 @@ class ApplicationFacade{
      * @throws {Error} - if the user is not signed in
      */
     logout(pid) {
-        return this.userController.logout(pid)
+        return this.sessionManager.logout(pid)
     }
 
     /**
      * change password
-     * @param pid - the process trying to sign in
-     * @param username - the user username - need to be registered
-     * @param newPassword - the user new password
-     * @returns {User} - returned the signed-in user
-     * @throws {Error} - if the user is already signed in
-     *                 - if there is no registered user with this username
+     * @param pid - a logged-in session
+     * @param newPassword - updated password for the logged user
      */
-    changePassword(pid, username, newPassword) {
-        return this.userController.changePasswordAfterFirstSignIn(pid, username, newPassword)
+    async changePassword(pid, newPassword) {
+        const user = await this.sessionManager.getUser(pid);
+        await user.changePassword(newPassword);
+        return user;
     }
 
     /**
      * get all staff
      * @param pid - the process who tries to view the staff - needs to be a logged in as lecturer
-     * @return {{TAs: any[], Lecturers: any[]}} the staff, ordered by lecturers and TAs
+     * @return {Promise<{TAs: any[], Lecturers: any[]}>} the staff, ordered by lecturers and TAs
      * @throws {Error} - if there is no logged in user in @pid
      *                 - if the user logged in user in @pid is not a lecturer
      */
-    getAllStaff(pid){
-        return this.userController.getAllStaff(pid)
+    async getAllStaff(pid){
+        return (await this.userController.getAllStaff(pid));
     }
 
     /**
@@ -246,10 +241,10 @@ class ApplicationFacade{
     /**
      * get all usernames in the system
      * @param pid - who is requestion the usernames - can be lecturer or system admin
-     * @return {List<User>} list of usernames
+     * @return list of usernames
      */
-    viewAllUsers(pid){
-        return this.userController.getAllUsers(pid)
+    async viewAllUsers(pid){
+        return await this.userController.getAllUsers(pid)
     }
 
     /**

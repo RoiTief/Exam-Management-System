@@ -23,7 +23,7 @@ class UserController {
      * @note The newly registered user is created with a default password.
      */
     async register(session, userDetails) {
-        await this.#verifyType(session, USER_TYPES.ADMIN);
+        await this.verifyType(session, USER_TYPES.ADMIN);
         this.#verifyUserDetails(userDetails);
         userDetails.password = DEFAULT_PASSWORD;
         const dalUser = await this.#userRepo.addUser(userDetails);
@@ -96,7 +96,7 @@ class UserController {
      * @param session session requesting, must be an Admin.
      */
     async getAllUsers(session){
-        await this.#verifyType(session, USER_TYPES.ADMIN);
+        await this.verifyType(session, USER_TYPES.ADMIN);
         const dalUsers =  await this.#userRepo.getAllUsers();
         return dalUsers
             .map(dalUser => {
@@ -117,7 +117,7 @@ class UserController {
      * @return {Promise<{TAs: *, Lecturers: *}>}
      */
     async getAllStaff(session){
-        await this.#verifyType(session, USER_TYPES.LECTURER);
+        await this.verifyType(session, USER_TYPES.LECTURER);
         const dalUsers =  await this.#userRepo.getAllUsers();
         let businessUsers = dalUsers
             .map(dalUser => {
@@ -136,7 +136,7 @@ class UserController {
     }
 
     async deleteUser(session, username){
-        await this.#verifyType(session, USER_TYPES.ADMIN);
+        await this.verifyType(session, USER_TYPES.ADMIN);
         if (this.#userRepo.getUser(username).getUserType() === USER_TYPES.ADMIN){
             throw new EMSError("can't delete system admin");
         }
@@ -163,7 +163,7 @@ class UserController {
      * @param type value of USER_TYPE to verify the session as an instance of
      * @throws EMSError if session is not logged into an Admin account.
      */
-    async #verifyType(session, type) {
+    async verifyType(session, type) {
         const admin = this.#sessionManager.getUser(session);
         (await this.getUser(admin.getUsername())).verifyType(type);
     }
