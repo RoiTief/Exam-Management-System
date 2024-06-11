@@ -38,7 +38,8 @@ function signIn(req, res, next) {
             // send needed information derived from business
             const user = {
                 username: businessUser.getUsername(),
-                firstSignIn: businessUser.isFirstSignIn()
+                firstSignIn: businessUser.isFirstSignIn(),
+                type: businessUser.getUserType()
             };
             const token = jwt.sign({username: req.body.username}, process.env.SECRET_KEY, {
                 expiresIn: "1h" // token expires in 15 minutes
@@ -88,7 +89,8 @@ function changePassword(req, res, next) {
             res.send(200, {
                 code: 200, user: {
                     username: businessUser.getUsername(),
-                    firstSignIn: businessUser.isFirstSignIn()
+                    firstSignIn: businessUser.isFirstSignIn(),
+                    type: businessUser.getUserType()
                 },
                 token
             })
