@@ -1,5 +1,5 @@
-﻿const {EMSError, USER_PROCESS} = require("../../EMSError");
-const {USER_PROCESS: ERROR_MSGS} = require("../../ErrorMessages");
+﻿const {EMSError, USER_PROCESS_ERROR_CODES: ERROR_CODES} = require("../../EMSError");
+const {USER_PROCESS_ERROR_MSGS: ERROR_MSGS} = require("../../ErrorMessages");
 const DEFAULT_PASSWORD = "123"
 
 class User {
@@ -43,7 +43,7 @@ class User {
     }
 
     verifyPassword(password) {
-        if (this.#dalUser.password !== password) throw new EMSError(ERROR_MSGS.INCORRECT_PASSWORD, USER_PROCESS.INCORRECT_PASSWORD);
+        if (this.#dalUser.password !== password) throw new EMSError(ERROR_MSGS.INCORRECT_PASSWORD, ERROR_CODES.INCORRECT_PASSWORD);
     }
 }
 

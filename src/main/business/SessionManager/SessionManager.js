@@ -1,5 +1,5 @@
-const {EMSError, SESSION_PROCESS: ERROR_CODES} = require("../../EMSError");
-const {SESSION_PROCESS: ERROR_MSGS} = require("../../ErrorMessages");
+const {EMSError, SESSION_PROCESS_ERROR_CODES: ERROR_CODES} = require("../../EMSError");
+const {SESSION_PROCESS_ERROR_MSGS: ERROR_MSGS} = require("../../ErrorMessages");
 
 class SessionManager {
     #sessionToUser

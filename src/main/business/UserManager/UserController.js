@@ -3,8 +3,8 @@ const Admin = require('./Admin');
 const Lecturer = require('./Lecturer');
 const TA = require('./TA');
 const { USER_TYPES} = require("../../Enums");
-const {EMSError, USER_PROCESS: ERROR_CODES} = require("../../EMSError");
-const { USER_PROCESS: ERROR_MSGS } = require("../../ErrorMessages");
+const {EMSError, USER_PROCESS_ERROR_CODES: ERROR_CODES} = require("../../EMSError");
+const { USER_PROCESS_ERROR_MSGS: ERROR_MSGS } = require("../../ErrorMessages");
 
 class UserController {
     #userRepo;
@@ -164,8 +164,8 @@ class UserController {
      * @throws EMSError if session is not logged into an Admin account.
      */
     async verifyType(session, type) {
-        const admin = this.#sessionManager.getUser(session);
-        (await this.getUser(admin.getUsername())).verifyType(type);
+        const user = this.#sessionManager.getUser(session);
+        (await this.getUser(user.getUsername())).verifyType(type);
     }
 }
 

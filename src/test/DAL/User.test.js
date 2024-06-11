@@ -2,7 +2,7 @@
 const initSequelize = require("../../main/DAL/Sequelize");
 const defineUserModel = require("../../main/DAL/User/User");
 const UserRepository = require("../../main/DAL/User/UserRepository");
-const { USER_PROCESS: USER_PROC_ERROR_CODES, EMSError} = require("../../main/EMSError");
+const { USER_PROC_ERROR_CODES, EMSError} = require("../../main/EMSError");
 const testDbConfig = require("./TestConfig");
 const {USER_TYPES} = require("../../main/Enums");
 const {DEFAULT_PASSWORD} = require("../../main/business/UserManager/User");

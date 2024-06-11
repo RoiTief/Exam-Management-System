@@ -1,7 +1,7 @@
 const defineUserModel = require('./User')
-const { EMSError, USER_PROCESS: ERROR_CODES } = require('../../EMSError')
+const { EMSError, ERROR_CODES } = require('../../EMSError')
 const util = require('util')
-const {USER_PROCESS: ERROR_MSGS} = require("../../ErrorMessages");
+const {USER_PROCESS_ERROR_MSGS: ERROR_MSGS} = require("../../ErrorMessages");
 
 class UserRepository {
     #User

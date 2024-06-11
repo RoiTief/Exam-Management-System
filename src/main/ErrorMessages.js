@@ -3,7 +3,7 @@
 /**
  * Holds all error messages that might occur in user processes such as register/login
  */
-const USER_PROCESS = {
+const USER_PROCESS_ERROR_MSGS = {
     // register
     USERNAME_DOESNT_EXIST: uname => `Username '${uname}' doesn't exist`,
     USERNAME_ALREADY_EXIST: uname => `Username '${uname}' already in use`,
@@ -23,12 +23,12 @@ const USER_PROCESS = {
     FAILED_LOGIN: 'Incorrect username or password'
 }
 
-const SESSION_PROCESS = {
-    USERNAME_LOGGED_IN: USER_PROCESS.USERNAME_LOGGED_IN,
-    USERNAME_NOT_LOGGED_IN: USER_PROCESS.USERNAME_NOT_LOGGED_IN,
+const SESSION_PROCESS_ERROR_MSGS = {
+    USERNAME_LOGGED_IN: USER_PROCESS_ERROR_MSGS.USERNAME_LOGGED_IN,
+    USERNAME_NOT_LOGGED_IN: USER_PROCESS_ERROR_MSGS.USERNAME_NOT_LOGGED_IN,
     SESSION_IN_USE: 'Session is already in use',
     SESSION_NOT_IN_USE: 'Session is not in use',
 }
 
 
-module.exports = {USER_PROCESS, SESSION_PROCESS}
+module.exports = {USER_PROCESS_ERROR_MSGS, SESSION_PROCESS_ERROR_MSGS}
