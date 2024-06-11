@@ -99,18 +99,17 @@ class ApplicationFacade{
 
     /**
      * register a user
-     * @param pid - the process trying to sign up from
      * @param userdetails - details needed to register the user with
      * @returns {Promise<User>} - returns the created user
      * @throws Error - if the process is already logged in
      *               - if the username/email is taken
      */
-    async register(pid, userdetails){
+    async register(userdetails){
         // TODO: remove lines that add missing details
         if (!userdetails.firstName) userdetails.firstName = "Dummyfname";
         if (!userdetails.lastName) userdetails.lastName = "Dummylname";
         if (!userdetails.email) userdetails.email = `Dummyemail${this.#emailCounter++}@google.com`;
-        return (await this.userController.register(pid, userdetails));
+        return (await this.userController.register(userdetails));
     }
 
     /**
@@ -123,8 +122,8 @@ class ApplicationFacade{
      *                 - if there is no registered user with this username
      *                 - if the password is incorrect
      */
-    async signIn(pid, username, password) {
-        return (await this.userController.signIn(pid, username, password));
+    async signIn(username, password) {
+        return (await this.userController.signIn(username, password));
     }
 
     /**
