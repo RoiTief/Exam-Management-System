@@ -51,10 +51,7 @@ class SessionManager {
             throw new EMSError(ERROR_MSGS.SESSION_NOT_IN_USE, ERROR_CODES.SESSION_NOT_IN_USE);
     }
 
-    verifySessionNotInUse(session) {
-        if(this.#isSessionInUse(session))
-            throw new EMSError(ERROR_MSGS.SESSION_IN_USE, ERROR_CODES.SESSION_IN_USE);
-    }
+    
 
     /**
      * Attaches a user to a session.

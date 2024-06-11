@@ -11,7 +11,7 @@ require('dotenv').config();
  * @returns Error - if the username is taken
  */
 function signUp(req, res, next) {
-    application.register(process.pid, req.body.userDetails).then(
+    application.register(req.body).then(
         businessUser => {
             req.log.info(req.body.username, 'new user registered');
             res.send(200, {code: 200, user: businessUser}); // probably return a JS object and not the user
@@ -33,7 +33,7 @@ function signUp(req, res, next) {
  *                 - if the password is incorrect
  */
 function signIn(req, res, next) {
-    application.signIn(process.pid, req.body.username, req.body.password).then(
+    application.signIn(req.body.username, req.body.password).then(
         businessUser => {
             // send needed information derived from business
             const user = {
@@ -41,7 +41,7 @@ function signIn(req, res, next) {
                 firstSignIn: businessUser.isFirstSignIn(),
                 type: businessUser.getUserType()
             };
-            const token = jwt.sign({username: req.body.username}, process.env.SECRET_KEY, {
+            const token = jwt.sign({username: req.body.username, type:user.type}, process.env.SECRET_KEY, {
                 expiresIn: "1h" // token expires in 15 minutes
             });
             req.log.info(req.body.username, 'user signed in');
@@ -82,7 +82,7 @@ function logout(req, res, next) {
 function changePassword(req, res, next) {
     application.changePassword(process.pid, req.body.newPassword).then(
         businessUser => {
-            let token = jwt.sign({username: req.body.username}, process.env.SECRET_KEY, {
+            let token = jwt.sign({username: req.body.username, type: businessUser.getUserType()}, process.env.SECRET_KEY, {
                 expiresIn: "1h" // token expires in 15 minutes
             });
             req.log.info(req.body.username, 'user signed in');
