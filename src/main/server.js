@@ -68,10 +68,12 @@ function extractAndVerifyJwt(req, res, next){
 function authenticate(req, res, next) {
     let token = extractAndVerifyJwt(req, res, next);
     if(token){
-        // Assigning all token fields to the request
-        req.username = token.username;
+        // Calling user is the user who made the request, he is both register and logged in.
+        req.body.callingUser = {username: token.username, type: token.type}
+        req.userType = token.userType;
         return true;
     }
+    return false;
 }
 
 ///--API
@@ -131,9 +133,7 @@ function createServer(options) {
     server.use(restify.plugins.gzipResponse());
     server.use(restify.plugins.bodyParser());
 
-    // Now our own handlers for authentication/authorization
-    // Here we only use basic auth, but really you should look
-    // at https://github.com/joyent/node-http-signature
+    
     server.use(function setup(req, res, next) {
         if ( req.url.startsWith('/signUp') || req.url.startsWith('/signIn') ||
             req.url.startsWith('/logout')) {
