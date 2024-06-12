@@ -138,7 +138,7 @@ class UserController {
         if (this.#userRepo.getUser(data.username).getUserType() === USER_TYPES.ADMIN){
             throw new EMSError("can't delete system admin");
         }
-        this.#userRepo.deleteUser(data);
+        this.#userRepo.deleteUser(data.username);
     }
 
     /**
