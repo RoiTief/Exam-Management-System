@@ -14,14 +14,14 @@ class MetaQuestionController{
         this.#metaQuestionId = 1
     }
 
-    createMetaQuestion(pid, metaQuestionProperties) {
+    createMetaQuestion(data) {
         // create a new metaQuestion
-        metaQuestionProperties = {...metaQuestionProperties, id: this.#metaQuestionId}
-        let metaQuestion = new MetaQuestion(metaQuestionProperties);
+        data = {...data, id: this.#metaQuestionId}
+        let metaQuestion = new MetaQuestion(data);
         this.#metaQuestions.set(this.#metaQuestionId, metaQuestion);
-        const ta_s = this.#userController.getAllStaff(pid)["TAs"]
+        const ta_s = this.#userController.getAllStaff(data)["TAs"]
 
-        const addTaskProperties = {...metaQuestionProperties,
+        const addTaskProperties = {...data,
              assignedUsers: ta_s, taskType: TaskTypes.ADD_KEY,
               taskPriority: TaskPriority.HIGH, description: `Please add a key For the following Question: ${metaQuestion.stem}`,
             metaQuestion: metaQuestion}
@@ -40,9 +40,9 @@ class MetaQuestionController{
         return Array.from(this.#metaQuestions.values())
     }
 
-    getAllAppendices(pid){
+    getAllAppendices(data){
         return this.getAllMetaQuestions()
-            .map(metaQuestion => metaQuestion.getAppendix(pid))
+            .map(metaQuestion => metaQuestion.getAppendix())
             .filter(appendix => appendix) // remove null and undefined
 
          
