@@ -48,7 +48,7 @@ class MetaQuestion {
     }
     
     getDiversions() {
-        return this.diversions
+        return this.distractors
     }
     
     getAppendix() {

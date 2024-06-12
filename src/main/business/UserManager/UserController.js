@@ -8,16 +8,14 @@ const { USER_PROCESS_ERROR_MSGS: ERROR_MSGS } = require("../../ErrorMessages");
 
 class UserController {
     #userRepo;
-    #sessionManager
 
-    constructor(userRepo, sessionManager){
-        this.#sessionManager = sessionManager;
+    constructor(userRepo){
         this.#userRepo = userRepo;
     }
 
 
     #verifyType(type, desiredType){
-        if(type !== desiredType) throw new EMSError(ERROR_MSGS.INCORRECT_TYPE, ERROR_CODES.INCORRECT_TYPE);
+        if(type !== desiredType) throw new EMSError(ERROR_MSGS.INCORRECT_TYPE(type,desiredType), ERROR_CODES.INCORRECT_TYPE);
     }
 
     /**
@@ -43,7 +41,6 @@ class UserController {
 
     /**
      * Logs in to a registered user
-     * @param session Session that wants to log in to the given user.
      * @param username Username of the user.
      * @param password Password of the user.
      * @return business instance of the user logged into upon successful login.
@@ -59,12 +56,12 @@ class UserController {
             }
             throw error;
         }
-        this.#sessionManager.login(session, user)
         return user;
     }
 
     async getUser(username) {
         const dalUser = await this.#userRepo.getUser(username);
+
         switch (dalUser.userType) {
             case USER_TYPES.LECTURER:
                 return new Lecturer(dalUser);
@@ -96,7 +93,6 @@ class UserController {
 
     /**
      * Returns all users in the system.
-     * @param session session requesting, must be an Admin.
      */
     async getAllUsers(getAllUsersData){
         this.#verifyType(getAllUsersData.callingUser.type, USER_TYPES.ADMIN);
@@ -116,11 +112,10 @@ class UserController {
 
     /**
      * Returns the staff of the course (all users but Admins)
-     * @param session Lecturer requesting the information
      * @return {Promise<{TAs: *, Lecturers: *}>}
      */
-    async getAllStaff(getAllStaffData){
-        this.#verifyType(getAllStaffData.callingUser.type, USER_TYPES.LECTURER);
+    async getAllStaff(data){
+        this.#verifyType(data.callingUser.type, USER_TYPES.LECTURER);
         const dalUsers =  await this.#userRepo.getAllUsers();
         let businessUsers = dalUsers
             .map(dalUser => {
@@ -138,12 +133,12 @@ class UserController {
         return {"TAs": businessTAs, "Lecturers": businessLecturers};
     }
 
-    async deleteUser(session, username){
-        this.#verifyType(session, USER_TYPES.ADMIN);
-        if (this.#userRepo.getUser(username).getUserType() === USER_TYPES.ADMIN){
+    async deleteUser(data){
+        this.#verifyType(data.callingUser.type, USER_TYPES.ADMIN);
+        if (this.#userRepo.getUser(data.username).getUserType() === USER_TYPES.ADMIN){
             throw new EMSError("can't delete system admin");
         }
-        this.#userRepo.deleteUser(username);
+        this.#userRepo.deleteUser(data);
     }
 
     /**

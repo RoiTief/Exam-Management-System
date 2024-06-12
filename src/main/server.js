@@ -67,7 +67,9 @@ function extractAndVerifyJwt(req, res, next){
 //todo 
 function authenticate(req, res, next) {
     let token = extractAndVerifyJwt(req, res, next);
-    if(token){
+    if(token){        
+        if(!req.body) req.body = {} // when there is no body, create one so we can assign callingUser.
+
         // Calling user is the user who made the request, he is both register and logged in.
         req.body.callingUser = {username: token.username, type: token.type}
         req.userType = token.userType;
