@@ -66,11 +66,11 @@ function extractAndVerifyJwt(req, res, next){
 ///--- Handlers
 //todo 
 function authenticate(req, res, next) {
-    let token = extractAndVerifyJwt(req, res, next)
+    let token = extractAndVerifyJwt(req, res, next);
     if(token){
         // Assigning all token fields to the request
-        req.username = token.username
-        next()
+        req.username = token.username;
+        return true;
     }
 }
 
@@ -135,7 +135,8 @@ function createServer(options) {
     // Here we only use basic auth, but really you should look
     // at https://github.com/joyent/node-http-signature
     server.use(function setup(req, res, next) {
-        if ( req.url.startsWith('/signUp') || req.url.startsWith('/signIn')|| req.url.startsWith('/logout')) {
+        if ( req.url.startsWith('/signUp') || req.url.startsWith('/signIn') ||
+            req.url.startsWith('/logout')) {
             next();
             return;
         }
@@ -224,11 +225,6 @@ function createServer(options) {
   
     // response: {TAs: [], Lecturers: []}
     server.get('/getAllStaff', service.getAllStaff);
-  
-    server.get('/viewUsername', service.viewUsername);
-
-    // response: userType (str)
-    server.get('/viewUserType', service.viewUserType);
 
     // response: User[]
     server.get('/getAllUsers', service.viewAllUsers);

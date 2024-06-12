@@ -1,102 +1,78 @@
-﻿const User = require('./User');
+﻿const { User, DEFAULT_PASSWORD} = require('./User');
 const Admin = require('./Admin');
 const Lecturer = require('./Lecturer');
 const TA = require('./TA');
-const types = require('../../Enums').USER_TYPES
-const DEFAULT_PASSWORD = "123"
+const { USER_TYPES} = require("../../Enums");
+const {EMSError, USER_PROCESS_ERROR_CODES: ERROR_CODES} = require("../../EMSError");
+const { USER_PROCESS_ERROR_MSGS: ERROR_MSGS } = require("../../ErrorMessages");
 
 class UserController {
+    #userRepo;
+    #sessionManager
 
-    constructor(){
-        this._registered_users = new Map();
-        this._registered_users.set("Admin", new Admin("Admin", "Aa123456"));
-        this._logged_in_users = new Map();
-    }
-    
-    _isRegistered(username){
-        return this._registered_users.has(username);
-    }
-    
-    _isLoggedIn(pid){
-        return this._logged_in_users.has(pid);
+    constructor(userRepo, sessionManager){
+        this.#sessionManager = sessionManager;
+        this.#userRepo = userRepo;
     }
 
-    _varifyNotLoggedIn(pid){
-        if (this._isLoggedIn(pid))
-            throw new Error("you are already logged in");
-    }
-
-    _varifyLogged(pid){
-        if(!this._isLoggedIn(pid))
-            throw new Error("the user is not logged in");
-    }
-
-    getType(pid){
-        this._varifyLogged(pid)
-        let username = this._logged_in_users.get(pid)
-        let user = this.getUser(username)
-        return user.getUserType()
-    }
-    
-    register(pid, username, type){
-        this.verifySystemAdmin(pid);
-        if (this._isRegistered(username)){
-            throw new Error("this username is taken");
-        }
-        let user
-        switch (type) {
-            case types.TA:
-                user = new TA(username, DEFAULT_PASSWORD)
-                break
-            case types.LECTURER:
-                user = new Lecturer(username, DEFAULT_PASSWORD)
-                break
+    /**
+     * Registers a new user to the system
+     * @param session Admin Session
+     * @param userDetails All details needed to register the new User.
+     * @return Business instance of the newly registered user
+     * @note The newly registered user is created with a default password.
+     */
+    async register(session, userDetails) {
+        await this.verifyType(session, USER_TYPES.ADMIN);
+        this.#verifyUserDetails(userDetails);
+        userDetails.password = DEFAULT_PASSWORD;
+        const dalUser = await this.#userRepo.addUser(userDetails);
+        switch (dalUser.userType) {
+            case USER_TYPES.TA:
+                return new TA(dalUser);
+            case USER_TYPES.LECTURER:
+                return new Lecturer(dalUser);
             default:
-                user = new Admin()
+                return new Admin(dalUser);
         }
-        this._registered_users.set(username, user);
+    }
+
+    /**
+     * Logs in to a registered user
+     * @param session Session that wants to log in to the given user.
+     * @param username Username of the user.
+     * @param password Password of the user.
+     * @return business instance of the user logged into upon successful login.
+     */
+    async signIn(session, username, password) {
+        this.#sessionManager.verifySessionNotInUse(session);
+        let user;
+        try {
+            user = await this.getUser(username);
+            user.verifyPassword(password);
+        } catch (error) {
+            if (error instanceof EMSError && (error.errorCode === ERROR_CODES.USERNAME_DOESNT_EXIST || error.errorCode === ERROR_CODES.INCORRECT_PASSWORD)) {
+                throw new EMSError(ERROR_MSGS.FAILED_LOGIN, ERROR_CODES.FAILED_LOGIN);
+            }
+            throw error;
+        }
+        this.#sessionManager.login(session, user)
         return user;
     }
 
-    signIn(pid, username, password) {
-        this.verifyUserRegistered(username)
-        let user = this.getUser(username)
-        if(user.password !== password){
-            throw new Error("incorrect password")
-        }
-        this._logged_in_users.set(pid, username)
-        return user;
-    }
-
-    logout(pid) {
-        this._varifyLogged(pid)
-        this._logged_in_users.delete(pid);
-    }
-    
-    getUser(username){
-        return this._registered_users.get(username);
-    }
-
-    verifySystemAdmin(pid) {
-        this._varifyLogged(pid)
-        let username = this._logged_in_users.get(pid)
-        this.getUser(username).verifyType(types.ADMIN);
-    }
-
-    verifyUserRegistered(username) {
-        if (!this._isRegistered(username)){
-            throw new Error("there is no user with this username " + username);
+    async getUser(username) {
+        const dalUser = await this.#userRepo.getUser(username);
+        switch (dalUser.userType) {
+            case USER_TYPES.LECTURER:
+                return new Lecturer(dalUser);
+            case USER_TYPES.TA:
+                return new TA(dalUser);
+            default:
+                return new Admin(dalUser);
         }
     }
 
-    verifyLecturer(pid) {
-        this._varifyLogged(pid)
-        let username = this._logged_in_users.get(pid)
-        let user = this.getUser(username)
-        user.verifyType(types.LECTURER);
-        return true;
-    }
-
+    /* TODO: talk about how to fix this
     setUserAsLecturer(lecturerUsername) {
         this.verifyUserRegistered(lecturerUsername)
         let user = this._registered_users.get(lecturerUsername);
@@ -113,49 +89,83 @@ class UserController {
         this._varifyLogged(pid);
         return this._logged_in_users.get(pid);
     }
+     */
 
-    getAllUsers(pid){
-        this.verifySystemAdmin(pid)
-        return [...this._registered_users.values()].filter(user => user.type !== types.ADMIN)
+    /**
+     * Returns all users in the system.
+     * @param session session requesting, must be an Admin.
+     */
+    async getAllUsers(session){
+        await this.verifyType(session, USER_TYPES.ADMIN);
+        const dalUsers =  await this.#userRepo.getAllUsers();
+        return dalUsers
+            .map(dalUser => {
+            switch (dalUser.userType) {
+                case USER_TYPES.LECTURER:
+                    return new Lecturer(dalUser);
+                case USER_TYPES.TA:
+                    return new TA(dalUser);
+                default:
+                    return new Admin(dalUser);
+            }
+        });
     }
 
-    getAllStaff(pid){
-        this.verifyLecturer(pid)
-        let allUsers = [...this._registered_users.values()].filter(user => user.type !== types.ADMIN)
-        let allTAs = allUsers.filter(user => user.type === types.TA)
-        let allLecturers = allUsers.filter(user => user.type === types.LECTURER)
-        return {"TAs": allTAs, "Lecturers": allLecturers}
+    /**
+     * Returns the staff of the course (all users but Admins)
+     * @param session Lecturer requesting the information
+     * @return {Promise<{TAs: *, Lecturers: *}>}
+     */
+    async getAllStaff(session){
+        await this.verifyType(session, USER_TYPES.LECTURER);
+        const dalUsers =  await this.#userRepo.getAllUsers();
+        let businessUsers = dalUsers
+            .map(dalUser => {
+                switch (dalUser.userType) {
+                    case USER_TYPES.LECTURER:
+                        return new Lecturer(dalUser);
+                    case USER_TYPES.TA:
+                        return new TA(dalUser);
+                    default:
+                        return new Admin(dalUser);
+                }
+            });
+        let businessTAs = businessUsers.filter(user => user.getUserType() === USER_TYPES.TA)
+        let businessLecturers = businessUsers.filter(user => user.getUserType() === USER_TYPES.LECTURER)
+        return {"TAs": businessTAs, "Lecturers": businessLecturers};
     }
 
-    deleteUser(pid, username){
-        this.verifySystemAdmin(pid)
-        if (this._registered_users.get(username).getUserType() === types.ADMIN){
-            throw new Error("can't delete system admin")
+    async deleteUser(session, username){
+        await this.verifyType(session, USER_TYPES.ADMIN);
+        if (this.#userRepo.getUser(username).getUserType() === USER_TYPES.ADMIN){
+            throw new EMSError("can't delete system admin");
         }
-        this._registered_users.delete(username)
+        this.#userRepo.deleteUser(username);
     }
 
-    changePasswordAfterFirstSignIn(pid, username, password){
-        this._varifyLogged(pid)
-        let user = this.getUser(username)
-        this._registered_users.get(username).changePasswordAfterFirstSignIn(password)
-        return user
+    /**
+     * Input verification on userDetails
+     * @param userDetails details to verify
+     * @throws Error
+     */
+    #verifyUserDetails(userDetails) {
+        if (!userDetails) throw new EMSError(ERROR_MSGS.USER_DETAILS_NULL, ERROR_CODES.USER_DETAILS_NULL)
+        if (!userDetails.username) throw new EMSError(ERROR_MSGS.USER_DETAILS_MISSING_USERNAME, ERROR_CODES.USER_DETAILS_MISSING_USERNAME)
+        if (!userDetails.firstName) throw new EMSError(ERROR_MSGS.USER_DETAILS_MISSING_FNAME, ERROR_CODES.USER_DETAILS_MISSING_FNAME)
+        if (!userDetails.lastName) throw new EMSError(ERROR_MSGS.USER_DETAILS_MISSING_LNAME, ERROR_CODES.USER_DETAILS_MISSING_LNAME)
+        if (!userDetails.email) throw new EMSError(ERROR_MSGS.USER_DETAILS_MISSING_EMAIL, ERROR_CODES.USER_DETAILS_MISSING_EMAIL)
+        if (!userDetails.userType) throw new EMSError(ERROR_MSGS.USER_DETAILS_MISSING_TYPE, ERROR_CODES.USER_DETAILS_MISSING_TYPE)
     }
 
-    editUser(pid, username, type){
-        this.verifySystemAdmin(pid);
-        if (!this._isRegistered(username)){
-            throw new Error("user not found");
-        }
-        switch (type) {
-            case types.TA:
-                this.setUserAsTA(username)
-                break
-            case types.LECTURER:
-                this.setUserAsLecturer(username)
-                break
-        }
-        return this._registered_users.get(username)
+    /**
+     * Verifies the session is logged into a given type of user.
+     * @param session session to check.
+     * @param type value of USER_TYPE to verify the session as an instance of
+     * @throws EMSError if session is not logged into an Admin account.
+     */
+    async verifyType(session, type) {
+        const user = this.#sessionManager.getUser(session);
+        (await this.getUser(user.getUsername())).verifyType(type);
     }
 }
 

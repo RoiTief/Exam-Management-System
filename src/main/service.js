@@ -1,48 +1,7 @@
 const ApplicationFacade = require("./business/applicationFacade");
 const application = new ApplicationFacade();
-const error = require('./error')
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
-
-
-/**
- * get the username of the logged in user
- * @returns {string} - returns the username
- * @returns Error - if the prosses is not logged in to a user
- */
-function viewUsername(req, res, next) {
-    try{
-        let username = application.getUsername(process.pid);
-        req.log.info("username request");
-        res.send(200, {code:200,username})
-        next()
-    }
-    catch(err){
-        req.log.warn(err.message, 'unable to retrieve username');
-        next(err);
-    }
-}
-
-/**
- * get the username type- "User", "TA", "Lecturer", "Grader", "System Admin"
- * @returns {string} - returns the type
- * @returns Error - if the prosses is not logged in to a user
- */
-function viewUserType(req, res, next) {
-    try{
-        let userType = application.getUserType(process.pid);
-        req.log.info("user type request");
-        res.send(200, {code:200,userType})
-        next()
-    }
-    catch(err){
-        req.log.warn(err.message, 'unable to retrieve user type');
-        next(err);
-    }
-}
-
-
-
 
 /**
  * register a user
@@ -52,16 +11,17 @@ function viewUserType(req, res, next) {
  * @returns Error - if the username is taken
  */
 function signUp(req, res, next) {
-    try{
-        user = application.register(process.pid, req.body[0], req.body[1]);
-        req.log.info(req.body.username, 'new user registered');
-        res.send(200, {code:200,user})
-        next()
-    }
-    catch(err){
-        req.log.warn(err.message, 'unable to register user');
-        next(err);
-    }
+    application.register(process.pid, req.body.userDetails).then(
+        businessUser => {
+            req.log.info(req.body.username, 'new user registered');
+            res.send(200, {code: 200, user: businessUser}); // probably return a JS object and not the user
+            next();
+        },
+        err => {
+            req.log.warn(err.message, 'unable to register user');
+            next(err);
+        }
+    )
 }
 
 /**
@@ -73,19 +33,25 @@ function signUp(req, res, next) {
  *                 - if the password is incorrect
  */
 function signIn(req, res, next) {
-    try{
-        user = application.signIn(process.pid, req.body.username, req.body.password);
-        let token = jwt.sign({username: req.body.username}, process.env.SECRET_KEY, {
-            expiresIn: "1h" // token expires in 15 minutes
+    application.signIn(process.pid, req.body.username, req.body.password).then(
+        businessUser => {
+            // send needed information derived from business
+            const user = {
+                username: businessUser.getUsername(),
+                firstSignIn: businessUser.isFirstSignIn(),
+                type: businessUser.getUserType()
+            };
+            const token = jwt.sign({username: req.body.username}, process.env.SECRET_KEY, {
+                expiresIn: "1h" // token expires in 15 minutes
+            });
+            req.log.info(req.body.username, 'user signed in');
+            res.send(200, {code: 200, user, token})
+            next()
+        },
+        err => {
+            req.log.warn(err.message, 'user unable to signIn');
+            next(err);
         });
-        req.log.info(req.body.username, 'user signed in');
-        res.send(200, {code:200,user,token})
-        next()
-    }
-    catch(err){
-        req.log.warn(err.message, 'user unable to signIn');
-        next(err);
-    }
 }
 
 /**
@@ -106,7 +72,7 @@ function logout(req, res, next) {
 }
 
 /**
- * change user password after first sign in
+ * change user pas/sword after first sign in
  * @param req.username - the user's username
  * @param req.newPassword - the user new password
  * @returns {User} - returned the signed-in user
@@ -114,19 +80,26 @@ function logout(req, res, next) {
  *                 - if the password is incorrect
  */
 function changePassword(req, res, next) {
-    try{
-        user = application.changePassword(process.pid, req.body.username, req.body.newPassword);
-        let token = jwt.sign({username: req.body.username}, process.env.SECRET_KEY, {
-            expiresIn: "1h" // token expires in 15 minutes
+    application.changePassword(process.pid, req.body.newPassword).then(
+        businessUser => {
+            let token = jwt.sign({username: req.body.username}, process.env.SECRET_KEY, {
+                expiresIn: "1h" // token expires in 15 minutes
+            });
+            req.log.info(req.body.username, 'user signed in');
+            res.send(200, {
+                code: 200, user: {
+                    username: businessUser.getUsername(),
+                    firstSignIn: businessUser.isFirstSignIn(),
+                    type: businessUser.getUserType()
+                },
+                token
+            })
+            next();
+        },
+        err => {
+            req.log.warn(err.message, 'user unable to signIn');
+            next(err);
         });
-        req.log.info(req.body.username, 'user signed in');
-        res.send(200, {code:200,user,token})
-        next()
-    }
-    catch(err){
-        req.log.warn(err.message, 'user unable to signIn');
-        next(err);
-    }
 }
 
 /**
@@ -135,17 +108,18 @@ function changePassword(req, res, next) {
  * @throws {Error} - if there is no logged in user in @pid
  *                 - if the user logged in user in @pid is not a lecturer
  */
-function getAllStaff(req, res, next){
-    try{
-        let staff = application.getAllStaff(process.pid);
-        req.log.info("course lecturer viewed his staff");
-        res.send(200, {code:200, staff})
-        next()
-    }
-    catch(err){
-        req.log.warn(err.message, 'unable to view staff');
-        next(err);
-    }
+function getAllStaff(req, res, next) {
+    application.getAllStaff(process.pid).then(
+        staff => {
+            req.log.info("course lecturer viewed his staff")
+            res.send(200, {code: 200, staff});
+            next();
+        },
+        err => {
+            req.log.warn(err.message, 'unable to view staff');
+            next(err);
+        }
+    );
 }
 
 /**
@@ -234,16 +208,17 @@ function addGrader(req, res, next){
  * @throws {Error} - if fail to get all users
  */
 function viewAllUsers(req, res, next){
-    try{
-        const users = application.viewAllUsers(process.pid);
-        req.log.info("a request was sent to get all users");
-        res.send(200, {code:200, users})
-        next()
-    }
-    catch(err){
-        req.log.warn(err.message, 'unable to request to get all users');
-        next(err);
-    }
+    application.viewAllUsers(process.pid).then(
+        users => {
+            req.log.info("a request was sent to get all users");
+            res.send(200, {code:200, users})
+            next()
+        },
+        err => {
+            req.log.warn(err.message, 'unable to request to get all users');
+            next(err);
+        }
+    );
 }
 
 /**
@@ -393,8 +368,6 @@ function editUser(req, res, next) {
 }
 
 module.exports = {
-    viewUsername: viewUsername,
-    viewUserType: viewUserType,
     signUp: signUp,
     signIn: signIn, 
     logout: logout,
