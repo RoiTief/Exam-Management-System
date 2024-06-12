@@ -47,7 +47,7 @@ class MetaQuestion {
         return this.keys
     }
     
-    getDiversions() {
+    getDistractors() {
         return this.distractors
     }
     
