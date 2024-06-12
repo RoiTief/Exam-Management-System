@@ -72,7 +72,6 @@ function authenticate(req, res, next) {
 
         // Calling user is the user who made the request, he is both register and logged in.
         req.body.callingUser = {username: token.username, type: token.type}
-        req.userType = token.userType;
         return true;
     }
     return false;
