@@ -127,6 +127,7 @@ class ApplicationFacade{
      * user wants to log out
      * @throws {Error} - if the user is not signed in
      */
+    //TODO:REMOVE
     logout(logoutData) {
         //Log out should be done in client side, by removing the cookies.
     }
