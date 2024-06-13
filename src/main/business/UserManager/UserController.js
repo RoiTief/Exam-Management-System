@@ -25,8 +25,8 @@ class UserController {
      * @note The newly registered user is created with a default password.
      */
     async register(userDetails) {
-        this.#verifyType(userDetails.callingUser.type, USER_TYPES.ADMIN)
         this.#verifyUserDetails(userDetails);
+        this.#verifyType(userDetails.callingUser.type, USER_TYPES.ADMIN)
         userDetails.password = DEFAULT_PASSWORD;
         const dalUser = await this.#userRepo.addUser(userDetails);
         switch (dalUser.userType) {
