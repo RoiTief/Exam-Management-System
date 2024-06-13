@@ -1,5 +1,5 @@
 const defineUserModel = require('./User')
-const { EMSError, ERROR_CODES } = require('../../EMSError')
+const { EMSError, USER_PROCESS_ERROR_CODES: ERROR_CODES } = require('../../EMSError')
 const util = require('util')
 const {USER_PROCESS_ERROR_MSGS: ERROR_MSGS} = require("../../ErrorMessages");
 
