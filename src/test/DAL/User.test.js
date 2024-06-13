@@ -14,6 +14,7 @@ lastName: 'testLastName',
 email: 'testEmail',
 password: 'testPassword',
 userType: USER_TYPES.ADMIN,
+callingUser: {username:"Admin", type: USER_TYPES.ADMIN}
 };
 
 
