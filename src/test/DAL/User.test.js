@@ -2,7 +2,7 @@
 const initSequelize = require("../../main/DAL/Sequelize");
 const defineUserModel = require("../../main/DAL/User/User");
 const UserRepository = require("../../main/DAL/User/UserRepository");
-const { USER_PROC_ERROR_CODES, EMSError} = require("../../main/EMSError");
+const { USER_PROCESS_ERROR_CODES, EMSError} = require("../../main/EMSError");
 const testDbConfig = require("./TestConfig");
 const {USER_TYPES} = require("../../main/Enums");
 const {DEFAULT_PASSWORD} = require("../../main/business/UserManager/User");
@@ -81,7 +81,7 @@ describe('UserRepository happy path tests', () => {
             await userRepository.getUser(nonExistantUsername);
             throw new Error('Should not succeed');
         } catch (err) {
-            expect(err.errorCode).toBe(USER_PROC_ERROR_CODES.USERNAME_DOESNT_EXIST);
+            expect(err.errorCode).toBe(USER_PROCESS_ERROR_CODES.USERNAME_DOESNT_EXIST);
         }
     })
 
@@ -148,7 +148,7 @@ describe('UserRepository happy path tests', () => {
             expect(false).toBeTruthy();
         } catch (e) {
             expect(e instanceof EMSError).toBeTruthy();
-            expect(e.errorCode).toBe(USER_PROC_ERROR_CODES.USERNAME_DOESNT_EXIST);
+            expect(e.errorCode).toBe(USER_PROCESS_ERROR_CODES.USERNAME_DOESNT_EXIST);
         }
 
         // add user
@@ -172,7 +172,7 @@ describe('UserRepository happy path tests', () => {
             expect(false).toBeTruthy();
         } catch (e) {
             expect(e instanceof EMSError).toBeTruthy();
-            expect(e.errorCode).toBe(USER_PROC_ERROR_CODES.USERNAME_DOESNT_EXIST);
+            expect(e.errorCode).toBe(USER_PROCESS_ERROR_CODES.USERNAME_DOESNT_EXIST);
         }
     })
 });
@@ -200,7 +200,7 @@ describe('UserRepository duplication data tests', () => {
             await userRepository.addUser(testUserData);
             throw new Error('Should not succeed');
         } catch (err) {
-            expect(err.errorCode).toBe(PK_ALREADY_EXISTS);
+            expect(err.errorCode).toBe(USER_PROCESS_ERROR_CODES.USERNAME_ALREADY_EXIST);
         }
     })
 
@@ -212,7 +212,7 @@ describe('UserRepository duplication data tests', () => {
             await userRepository.addUser(userData);
             throw new Error('Should not succeed');
         } catch (err) {
-            expect(err.errorCode).toBe(EMAIL_ALREADY_EXISTS);
+            expect(err.errorCode).toBe(USER_PROCESS_ERROR_CODES.EMAIL_ALREADY_EXIST);
         }
     })
 });
