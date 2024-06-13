@@ -199,7 +199,7 @@ describe('Tests UserController component', () => {
 
         userDetails.firstName = registerDetails.firstName;
         try {
-            await userController.register(etails);
+            await userController.register(userDetails);
             expect(false).toBeTruthy();
         } catch (e) {
             expect(e instanceof EMSError).toBeTruthy();
