@@ -31,5 +31,10 @@ const SESSION_PROCESS_ERROR_MSGS = {
     SESSION_NOT_IN_USE: 'Session is not in use',
 }
 
+const FUNCTION_PARAMETERS_ERROR_MSGS = {
+    MISSING_KEY: key => `Missing key: ${key}`,
+    TYPE_MISMATCH: (key, expectedType, realType) => `Type mismatch for key: ${key}. Expected: ${expectedType}, Found: ${realType}`,
+    UNSUPPORTED_TYPE: key => `Unsupported type specification for key: ${key}`
+}
 
-module.exports = {USER_PROCESS_ERROR_MSGS, SESSION_PROCESS_ERROR_MSGS}
+module.exports = {USER_PROCESS_ERROR_MSGS, SESSION_PROCESS_ERROR_MSGS, FUNCTION_PARAMETERS_ERROR_MSGS}
