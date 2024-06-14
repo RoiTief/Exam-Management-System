@@ -209,7 +209,15 @@ function addGrader(req, res, next){
  */
 function viewAllUsers(req, res, next){
     application.viewAllUsers(req.body).then(
-        users => {
+        businessUsers => {
+            const users = businessUsers
+                .map(u => ({
+                    username: u.getUsername(),
+                    firstName: u.getFirstName(),
+                    lastName: u.getLastName(),
+                    email: u.getEmail(),
+                    type: u.getUserType(),
+                }));
             req.log.info("a request was sent to get all users");
             res.send(200, {code:200, users})
             next()
