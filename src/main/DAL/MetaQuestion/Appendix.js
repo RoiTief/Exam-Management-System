@@ -7,15 +7,16 @@ function defineAppendixModel(sequelize) {
     return sequelize.modelManager.models.some(model => model.name === 'Appendix') ?
         sequelize.models.Appendix :
         sequelize.define('Appendix', {
+                tag: {
+                    type: DataTypes.STRING,
+                    allowNull: false,
+                    primaryKey: true
+                },
                 title: {
                     type: DataTypes.STRING,
                     allowNull: false
                 },
                 content: {
-                    type: DataTypes.STRING,
-                    allowNull: false
-                },
-                tag: {
                     type: DataTypes.STRING,
                     allowNull: false
                 },

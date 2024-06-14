@@ -17,7 +17,7 @@ Array.prototype.unique = function() {
 };
 
 const testMQData ={
-    metaQuestion: { stem: 'Test stem', questionType: META_QUESTION_TYPES.SIMPLE },
+    metaQuestion: { stem: 'Test stem' },
     answers: [
         {
             content: 'answer1 content',
@@ -32,13 +32,35 @@ const testMQData ={
     keywords: [ 'keyword1', 'keyword2'],
 }
 
+const testAppendixData = {
+    appendix: {
+        tag: 'tag1',
+        title: 'title1',
+        content: 'content1'
+    },
+    keywords: [ 'keyword1', 'keyword2'],
+    metaQuestions: [
+        { stem: 'stem1' },
+        { stem: 'stem2' },
+    ]
+}
+
 const moreKeywords = [ 'keyword2', 'keyword3', 'keyword4', 'keyword5' ];
+
+const moreAnswers = [
+    {
+        content: 'answer3 content',
+        tag: ANSWER_TYPES.DISTRACTOR,
+        explanation: 'answer3 explanation',
+    },
+    {
+        content: 'answer4 content',
+        tag: ANSWER_TYPES.KEY,
+    }
+];
 
 describe('MetaQuestionRepository happy path tests', () => {
     let sequelize;
-    let MetaQuestion;
-    let Answer;
-    let Keyword;
     let metaQuestionRepository;
 
     beforeAll(async () => {
@@ -48,17 +70,22 @@ describe('MetaQuestionRepository happy path tests', () => {
         await sequelize.sync({force: true});
     });
 
+    beforeEach(async () => {
+       await sequelize.sync({force: true});
+    });
+
     afterAll(async () => {
         await sequelize.close();
     });
 
     test('add a meta-question to the database', async () => {
-        const addedQuestion = await metaQuestionRepository.addMetaQuestion(testMQData.metaQuestion, testMQData.answers, testMQData.keywords);
+        const addedQuestion = await metaQuestionRepository.addMetaQuestion(testMQData.metaQuestion, structuredClone(testMQData.answers), testMQData.keywords);
 
         // assert correctness of question
         expect(addedQuestion).not.toBeNull();
         expect(addedQuestion.id).toBe(1);
         expect(addedQuestion.stem).toBe(testMQData.metaQuestion.stem);
+        expect(addedQuestion.appendixTag).toBeNull();
 
         // assert correctness of answers
         expect(addedQuestion.answers).not.toBeNull();
@@ -83,11 +110,90 @@ describe('MetaQuestionRepository happy path tests', () => {
     });
 
     test('add more keywords to the meta-question', async () => {
-        const question = await metaQuestionRepository.addKeywordsToQuestion(1, moreKeywords);
+        let addedQuestion = await metaQuestionRepository.addMetaQuestion(testMQData.metaQuestion, structuredClone(testMQData.answers), testMQData.keywords);
+        addedQuestion = await metaQuestionRepository.addKeywordsToQuestion(addedQuestion.id, moreKeywords);
 
         // assert
-        expect(question).not.toBeNull();
-        expect(question.keywords.map(k => k.word).sort()).toStrictEqual(testMQData.keywords.concat(moreKeywords).unique().sort());
+        expect(addedQuestion).not.toBeNull();
+        expect(addedQuestion.keywords.map(k => k.word).sort()).toStrictEqual(testMQData.keywords.concat(moreKeywords).unique().sort());
 
     });
+
+    test('add more answers to the meta-question', async () => {
+        let addedQuestion = await metaQuestionRepository.addMetaQuestion(testMQData.metaQuestion, structuredClone(testMQData.answers), testMQData.keywords);
+        addedQuestion = await metaQuestionRepository.addAnswersToQuestion(addedQuestion.id, structuredClone(moreAnswers));
+
+        // assert
+        expect(addedQuestion).not.toBeNull();
+        expect(addedQuestion.answers.map(a => ({
+            content: a.content,
+            tag: a.tag,
+            ...(a.explanation && {explanation: a.explanation})
+        })).sort((a, b) => a.content.localeCompare(b.content)))
+            .toStrictEqual(testMQData.answers.concat(moreAnswers)
+                .sort((a, b) =>
+                    a.content.localeCompare(b.content)
+                ));
+
+    });
+
+    test('add an appendix to the database', async () => {
+        const addedAppendix = await metaQuestionRepository.addAppendix(structuredClone(testAppendixData.appendix), structuredClone(testAppendixData.keywords));
+
+        // assert correctness of question
+        expect(addedAppendix).not.toBeNull();
+        expect(addedAppendix.tag).toBe(testAppendixData.appendix.tag);
+        expect(addedAppendix.title).toBe(testAppendixData.appendix.title);
+        expect(addedAppendix.content).toBe(testAppendixData.appendix.content);
+
+        // assert correctness of keywords
+        expect(addedAppendix.keywords).not.toBeNull();
+        expect(addedAppendix.keywords.every(k => k.AppendixKeyword.AppendixTag === addedAppendix.tag)).toBeTruthy();
+        expect(addedAppendix.keywords.map(k => k.word).sort()).toStrictEqual(testAppendixData.keywords.sort());
+    });
+
+    test('add more keywords to the appendix', async () => {
+        let addedAppendix = await metaQuestionRepository.addAppendix(structuredClone(testAppendixData.appendix), structuredClone(testAppendixData.keywords));
+        addedAppendix = await metaQuestionRepository.addKeywordsToAppendix(addedAppendix.tag, structuredClone(moreKeywords));
+
+        // assert
+        expect(addedAppendix).not.toBeNull();
+        expect(addedAppendix.keywords.map(k => k.word).sort()).toStrictEqual(testMQData.keywords.concat(moreKeywords).unique().sort());
+    });
+
+    test('add more meta-questions to the appendix', async () => {
+        const addedAppendix = await metaQuestionRepository.addAppendix(structuredClone(testAppendixData.appendix), []);
+
+        expect(addedAppendix.metaQuestions).toStrictEqual([]);
+
+        const metaQuestionsToAdd = structuredClone(testAppendixData.metaQuestions);
+        metaQuestionsToAdd.forEach(q => q.appendixTag = addedAppendix.tag);
+        await Promise.all(metaQuestionsToAdd.map(q => metaQuestionRepository.addMetaQuestion(q, [], [])));
+
+        // update the appendix after
+        await addedAppendix.reload();
+
+        // assert
+        expect(addedAppendix.metaQuestions
+            .map(q => ({stem: q.stem, appendixTag: q.appendixTag}))
+            .sort((a, b) => a.stem.localeCompare(b.stem))
+        )
+            .toStrictEqual(testAppendixData.metaQuestions
+                .map(q => ({...q, appendixTag: addedAppendix.tag}))
+                .sort((a, b) => a.stem.localeCompare(b.stem))
+            );
+    });
+
+    test('connect between an already added MQ to Appendix', async () => {
+        const addedQuestion = await metaQuestionRepository.addMetaQuestion(testMQData.metaQuestion, structuredClone(testMQData.answers), testMQData.keywords);
+        const addedAppendix = await metaQuestionRepository.addAppendix(structuredClone(testAppendixData.appendix), []);
+
+        addedQuestion.appendixTag = addedAppendix.tag;
+        await addedQuestion.save();
+        await addedAppendix.reload();
+
+        expect(addedAppendix.metaQuestions.length).toBe(1);
+        expect(addedAppendix.metaQuestions[0].stem).toBe(addedQuestion.stem);
+    });
+
 });

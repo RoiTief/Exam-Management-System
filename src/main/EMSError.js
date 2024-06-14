@@ -39,8 +39,14 @@ const SESSION_PROCESS_ERROR_CODES = {
     SESSION_NOT_IN_USE: 101,
 }
 
+// for MetaQuestion process
+const MQ_PROCESS_ERROR_CODES = {
+    APPENDIX_TAG_ALREADY_EXIST: 150,
+}
+
 module.exports = {
     EMSError,
     USER_PROCESS_ERROR_CODES,
     SESSION_PROCESS_ERROR_CODES,
+    MQ_PROCESS_ERROR_CODES,
 }
