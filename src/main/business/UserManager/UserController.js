@@ -137,7 +137,8 @@ class UserController {
 
     async deleteUser(session, username){
         await this.verifyType(session, USER_TYPES.ADMIN);
-        if (this.#userRepo.getUser(username).getUserType() === USER_TYPES.ADMIN){
+        const daluser =  await this.#userRepo.getUser(username);
+        if (daluser.userType === USER_TYPES.ADMIN){
             throw new EMSError("can't delete system admin");
         }
         this.#userRepo.deleteUser(username);
