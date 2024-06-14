@@ -110,7 +110,22 @@ function changePassword(req, res, next) {
  */
 function getAllStaff(req, res, next) {
     application.getAllStaff(process.pid).then(
-        staff => {
+        businessStaff => {
+            const TAs = businessStaff["TAs"].map(u => ({
+                username: u.getUsername(),
+                firstName: u.getFirstName(),
+                lastName: u.getLastName(),
+                email: u.getEmail(),
+                type: u.getUserType(),
+            }));
+            const lecturers = businessStaff["Lecturers"].map(u => ({
+                username: u.getUsername(),
+                firstName: u.getFirstName(),
+                lastName: u.getLastName(),
+                email: u.getEmail(),
+                type: u.getUserType(),
+            }));
+            staff = {"TAs": TAs, "Lecturers": lecturers};
             req.log.info("course lecturer viewed his staff")
             res.send(200, {code: 200, staff});
             next();
