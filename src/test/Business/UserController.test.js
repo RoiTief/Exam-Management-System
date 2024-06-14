@@ -117,7 +117,6 @@ describe('Tests UserController component', () => {
 
     
     test('Registering user - SUCCESS', async () => {
-        await userController.signIn(adminDetails.username, adminDetails.password);
 
         // assert user is not already registered
         try {
@@ -146,7 +145,6 @@ describe('Tests UserController component', () => {
     })
 
     test('Registering user with faulty details - FAILURE', async () => {
-        await userController.signIn(adminDetails.username, adminDetails.password);
 
         // assert user is not already registered
         try {
@@ -251,7 +249,6 @@ describe('Tests UserController component', () => {
     })
 
     test('Register with already used username/email - FAILURE', async () => {
-        await userController.signIn(adminDetails.username, adminDetails.password);
         await userController.register(structuredClone(registerDetails));
 
         const userDetails = structuredClone(registerDetails);
