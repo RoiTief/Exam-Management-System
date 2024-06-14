@@ -15,6 +15,7 @@ const USER_PROCESS_ERROR_MSGS = {
     USER_DETAILS_MISSING_LNAME: 'Last name field is required',
     USER_DETAILS_MISSING_EMAIL: 'Email field is required',
     USER_DETAILS_MISSING_TYPE: 'UserType field is required',
+    INCORRECT_TYPE : (realType, expectedType) => `expected user type '${expectedType}', but got '${realType}'`,
 
     //Login
     USERNAME_LOGGED_IN: uname => `Username '${uname}' is already logged in`,

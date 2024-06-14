@@ -69,7 +69,7 @@
   },
   "scripts": {
     "start": "node main.js 2>&1 | pino-pretty",
-    "test": "mocha ../test",
+    "test": "jest",
     "dev": "node main.js 2>&1 | pino-pretty"
   },
   "author": "Mark Cavage",
