@@ -57,6 +57,13 @@ class UserRepository {
             }
         })
     }
+
+    async changeType(username, type) {
+        await this.#User.update(
+            { userType: type },
+            { where: { username } }
+        )
+    }
 }
 
 module.exports = UserRepository;

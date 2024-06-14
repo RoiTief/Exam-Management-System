@@ -20,7 +20,6 @@ export const serverPath = {
     SIGN_OUT: 'logout',
     VIEW_TASKS: 'viewMyTasks',
     ADD_TA: 'addTA',
-    ADD_GRADER: 'addGrader',
     ADD_LECTURER: 'addLecturer',
     FINISH_TASK: 'finishATask',
     VIEW_QUESTIONS: 'viewCourseMetaQuestions',

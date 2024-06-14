@@ -129,7 +129,7 @@ export const QUESTIONS_CATALOG = {
 
 export const COURSE_STAFF = {
   PAGE_TITLE: "Course Staff",
-  HEADING: "Beta Course",
+  HEADING: "Course Management",
   LECTURERS_HEADING: "Lecturers",
   TAS_HEADING: "TAs",
   SHOW_MORE_ADMINS: "Show more admins",

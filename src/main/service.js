@@ -178,7 +178,7 @@ function finishATask(req, res, next) {
 }
 
 /**
- * create a task for the new TA to accept being a TA of this course
+ * create a new TA from a lecturer
  * @param username - the new TA username
  * @throws {Error} - if there is no user with name @username
  *                 - if the user named username is not a lecturerUsername (is not assigned to a course)
@@ -197,16 +197,17 @@ function addTA(req, res, next){
     }
 }
 
+
 /**
- * create a task for the new grader to accept being a grader of this course
+ * create a new lecturer from a ta
  * @param username
  * @throws {Error} - if there is no user with name @username
  *                 - if the user named username is not a lecturerUsername or is not assigned to a course
  *                 - if there is no user named graderUsername
  */
-function addGrader(req, res, next){
+function addLecturer(req, res, next){
     try{
-        application.addGrader(process.pid, req.body.username);
+        application.addLecturer(process.pid, req.body.username);
         req.log.info(req.body.username, "a request was sent to user to become a TA");
         res.send(200, {code:200})
         next()
@@ -399,7 +400,7 @@ module.exports = {
     viewMyTasks: viewMyTasks,
     finishATask: finishATask,
     addTA: addTA,
-    addGrader: addGrader,
+    addLecturer: addLecturer,
     viewAllUsers: viewAllUsers,
     deleteUser: deleteUser,
     getAllMetaQuestions: getAllMetaQuestions,

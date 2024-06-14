@@ -144,6 +144,33 @@ class UserController {
         this.#userRepo.deleteUser(username);
     }
 
+    async editUser(session, username, type){
+        await this.verifyType(session, USER_TYPES.ADMIN);
+        const daluser =  await this.#userRepo.getUser(username);
+        if (daluser.userType === USER_TYPES.ADMIN){
+            throw new EMSError("can't remove user from being an admin");
+        }
+        this.#userRepo.changeType(username, type);
+    }
+
+    async setUserAsTA(session, username){
+        await this.verifyType(session, USER_TYPES.LECTURER);
+        const daluser =  await this.#userRepo.getUser(username);
+        if (daluser.userType === USER_TYPES.ADMIN){
+            throw new EMSError("can't remove user from being an admin");
+        }
+        this.#userRepo.changeType(username, USER_TYPES.TA);
+    }
+
+    async setUserAsLecturer(session, username){
+        await this.verifyType(session, USER_TYPES.LECTURER);
+        const daluser =  await this.#userRepo.getUser(username);
+        if (daluser.userType === USER_TYPES.ADMIN){
+            throw new EMSError("can't remove user from being an admin");
+        }
+        this.#userRepo.changeType(username, USER_TYPES.LECTURER);
+    }
+
     /**
      * Input verification on userDetails
      * @param userDetails details to verify

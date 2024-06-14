@@ -181,7 +181,7 @@ function createServer(options) {
     server.post('/addTA', service.addTA)
 
      // request: {username}
-    server.post('/addGrader', service.addGrader)
+    server.post('/addLecturer', service.addLecturer)
 
     //request: {
     //       keywords: str[],

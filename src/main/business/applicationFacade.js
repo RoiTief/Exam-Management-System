@@ -5,6 +5,7 @@ const ExamController = require('./ExamManager/ExamController.js');
 const userTypes = require('../Enums').USER_TYPES
 const { userRepo } = require("../DAL/Dal");
 const {SessionManager} = require("./SessionManager/SessionManager");
+const {USER_TYPES} = require("../Enums");
 
 class ApplicationFacade{
     constructor() {
@@ -176,9 +177,11 @@ class ApplicationFacade{
      *                 - if there is no user named TAUsername
      */
     addTA(pid, TAUsername){
-        this.userController.verifyLecturer(pid);
-        this.userController.verifyUserRegistered(TAUsername)
-        this.taskController.newTARequestTask(TAUsername);
+        this.userController.setUserAsTA(pid, TAUsername)
+    }
+
+    addLecturer(pid, TAUsername){
+        this.userController.setUserAsLecturer(pid, TAUsername)
     }
 
     /**
