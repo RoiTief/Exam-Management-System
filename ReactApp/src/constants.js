@@ -57,6 +57,7 @@ export const USERS = {
   ACTIONS: "Actions",
   LECTURER: "Lecturer",
   TA: "TA",
+  ADMIN: "Admin",
   CANCEL_ACTION: "Cancel",
   SAVE_ACTION: "Save Changes",
   CONFIRM_DELETION: "Confirm Deletion",
