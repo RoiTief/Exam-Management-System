@@ -81,7 +81,7 @@ export const UserProvider = ({ children }) => {
 
   const deleteUser = async username => {
     try {
-      await requestServer(serverPath.DELETE_USER, httpsMethod.DELETE, username);
+      await requestServer(serverPath.DELETE_USER, httpsMethod.DELETE, {username});
       dispatch({ type: HANDLERS.DELETE_USER, payload: username });
     } catch (error){
       console.error("failed to delete user:", error)
