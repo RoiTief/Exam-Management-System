@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Box, Button, Container, Typography } from '@mui/material';
 import { Layout as DashboardLayout } from 'src/layouts/dashboard/layout';
 import { useRouter } from 'next/router';
@@ -10,7 +10,7 @@ import StemSection from 'src/sections/Meta Question/stem-edit';
 import KeysSection from 'src/sections/Meta Question/correct-key-edit';
 import DistractorsSection from 'src/sections/Meta Question/distractors-edit';
 import { httpsMethod, requestServer, serverPath } from '../../utils/rest-api-call';
-import { CREATE_QUESTION } from '../../constants';
+import { CREATE_QUESTION, EDIT_QUESTION } from '../../constants';
 
 const validationSchema = Yup.object().shape({
   stem: Yup.string().required(CREATE_QUESTION.STEM_REQUIRED),
@@ -31,8 +31,33 @@ const validationSchema = Yup.object().shape({
 
 const Page = () => {
   const router = useRouter();
+  const [question, setQuestion] = useState(null);
 
-  const handleSubmit = async (values, { setSubmitting }) => {
+  useEffect(() => {
+    if (router.query.question) {
+      setQuestion(JSON.parse(router.query.question));
+    }
+  }, [router.query.question]);
+
+  const initialValues = {
+    keywords: question?.keywords || [],
+    stem: question?.stem || '',
+    isStemRTL: true,
+    keys: question?.keys.map((item) => ({
+      text: item.text,
+      explanation: item.explanation,
+      isTextRTL: true,
+      isExplanationRTL: true,
+    })) || [{ text: '', explanation: '', isTextRTL: true, isExplanationRTL: true }],
+    distractors: question?.distractors.map((item) => ({
+      text: item.text,
+      explanation: item.explanation,
+      isTextRTL: true,
+      isExplanationRTL: true,
+    })) || [{ text: '', explanation: '', isTextRTL: true, isExplanationRTL: true }],
+  };
+
+  const handleSubmit = async (values) => {
     const metaQuestion = {
       keywords: values.keywords,
       stem: values.stem,
@@ -45,22 +70,19 @@ const Page = () => {
         explanation: item.explanation
       })),
     };
-    console.log(metaQuestion);
-    await requestServer(serverPath.ADD_META_QUESTION, httpsMethod.POST, metaQuestion);
+
+    let request =  question? serverPath.EDIT_META_QUESTION : serverPath.ADD_META_QUESTION
+    console.log(`${request} ${metaQuestion}`);
+    await requestServer(request, httpsMethod.POST, metaQuestion);
     await router.push('/');
   };
 
   return (
     <Formik
-      initialValues={{
-        keywords: [],
-        stem: '',
-        isStemRTL: true,
-        keys: [{ text: '', explanation: '', isTextRTL: true, isExplanationRTL: true }],
-        distractors: [{ text: '', explanation: '', isTextRTL: true, isExplanationRTL: true }],
-      }}
+      initialValues={initialValues}
       validationSchema={validationSchema}
       onSubmit={handleSubmit}
+      enableReinitialize
     >
       {({ values, handleChange, handleBlur, isSubmitting, setFieldValue }) => (
         <Form>
@@ -76,7 +98,7 @@ const Page = () => {
           >
             <Container maxWidth="sm" sx={{ backgroundColor: '#ffffff', borderRadius: 2, boxShadow: 3, p: 4 }}>
               <Typography variant="h4" component="h1" gutterBottom>
-                {CREATE_QUESTION.CREATE_SIMPLE_TITLE}
+                {question? EDIT_QUESTION : CREATE_QUESTION.CREATE_SIMPLE_TITLE}
               </Typography>
               <Box
                 sx={{
