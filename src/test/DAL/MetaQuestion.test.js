@@ -1,8 +1,9 @@
 const initSequelize = require("../../main/DAL/Sequelize");
-const { PK_NOT_EXISTS, PK_ALREADY_EXISTS, EMAIL_ALREADY_EXISTS } = require("../../main/EMSError");
+const { EMSError, MQ_PROCESS_ERROR_CODES} = require("../../main/EMSError");
 const testDbConfig = require("./TestConfig");
 const MetaQuestionRepository = require("../../main/DAL/MetaQuestion/MetaQuestionRepository");
 const {ANSWER_TYPES, META_QUESTION_TYPES} = require("../../main/Enums");
+const defineAnswerModel = require("../../main/DAL/MetaQuestion/Answer");
 
 Array.prototype.unique = function() {
     var a = this.concat();
@@ -62,12 +63,14 @@ const moreAnswers = [
 describe('MetaQuestionRepository happy path tests', () => {
     let sequelize;
     let metaQuestionRepository;
+    let Answer;
 
     beforeAll(async () => {
         sequelize = initSequelize(testDbConfig);
         await sequelize.authenticate();
         metaQuestionRepository = await new MetaQuestionRepository(sequelize);
         await sequelize.sync({force: true});
+        Answer = await defineAnswerModel(sequelize);
     });
 
     beforeEach(async () => {
@@ -196,4 +199,93 @@ describe('MetaQuestionRepository happy path tests', () => {
         expect(addedAppendix.metaQuestions[0].stem).toBe(addedQuestion.stem);
     });
 
+    test('delete appendix', async () => {
+        const addedAppendix = await metaQuestionRepository.addAppendix(structuredClone(testAppendixData.appendix), []);
+
+        // assert appendix exists
+        try {
+            await metaQuestionRepository.getAppendix(addedAppendix.tag);
+        } catch (e) {
+            expect(false).toBeTruthy();
+        }
+
+        await metaQuestionRepository.deleteAppendix(addedAppendix.tag);
+
+        // assert appendix deleted
+        try {
+            await metaQuestionRepository.getAppendix(addedAppendix.tag);
+            expect(false).toBeTruthy();
+        } catch (e) {
+            expect(e instanceof EMSError).toBeTruthy();
+            expect(e.errorCode).toBe(MQ_PROCESS_ERROR_CODES.APPENDIX_TAG_DOESNT_EXIST);
+        }
+    });
+
+    test('delete meta-question', async () => {
+        const addedQuestion = await metaQuestionRepository.addMetaQuestion(structuredClone(testMQData.metaQuestion), [], []);
+
+        // assert appendix exists
+        try {
+            await metaQuestionRepository.getMetaQuestion(addedQuestion.id);
+        } catch (e) {
+            expect(false).toBeTruthy();
+        }
+
+        await metaQuestionRepository.deleteMetaQuestion(addedQuestion.id);
+
+        // assert appendix deleted
+        try {
+            await metaQuestionRepository.getMetaQuestion(addedQuestion.id);
+            expect(false).toBeTruthy();
+        } catch (e) {
+            expect(e instanceof EMSError).toBeTruthy();
+            expect(e.errorCode).toBe(MQ_PROCESS_ERROR_CODES.MQ_ID_DOESNT_EXIST);
+        }
+    });
+
+    test('Make sure answers are deleted with MetaQuestions', async () => {
+        const addedQuestion = await metaQuestionRepository.addMetaQuestion(structuredClone(testMQData.metaQuestion), structuredClone(testMQData.answers), []);
+        let addedAnswers = await Answer.findAll();
+
+        expect(addedAnswers.length).not.toBe(0);
+
+        await metaQuestionRepository.deleteMetaQuestion(addedQuestion.id);
+        addedAnswers = await Answer.findAll();
+
+        expect(addedAnswers.length).toBe(0);
+    });
 });
+
+describe('MetaQuestionRepository fail tests', () => {
+    let sequelize;
+    let metaQuestionRepository;
+
+    beforeAll(async () => {
+        sequelize = initSequelize(testDbConfig);
+        await sequelize.authenticate();
+        metaQuestionRepository = await new MetaQuestionRepository(sequelize);
+        await sequelize.sync({force: true});
+    });
+
+    beforeEach(async () => {
+        await sequelize.sync({force: true});
+    });
+
+    afterAll(async () => {
+        await sequelize.close();
+    });
+
+    test('Add MetaQuestion with invalid appendixTag', async () => {
+       const mqToAdd = structuredClone(testMQData.metaQuestion);
+       mqToAdd.appendixTag = 'someTag';
+
+       try {
+           await metaQuestionRepository.addMetaQuestion(mqToAdd, [], []);
+           expect(false).toBeTruthy();
+       } catch (e) {
+           expect(e instanceof EMSError).toBeTruthy();
+           expect(e.errorCode).toBe(MQ_PROCESS_ERROR_CODES.APPENDIX_TAG_DOESNT_EXIST);
+       }
+    });
+});
+

@@ -33,6 +33,8 @@ const SESSION_PROCESS_ERROR_MSGS = {
 // for MetaQuestions processes
 const MQ_PROCESS_ERROR_MSGS = {
     APPENDIX_TAG_ALREADY_EXIST: tag => `Tag '${tag}' is already in use by another appendix`,
+    APPENDIX_TAG_DOESNT_EXIST: tag => `Tag '${tag}' doesn't exist`,
+    MQ_ID_DOESNT_EXIST: id => `A Meta-Question with ID '${id}' doesn't exist`,
 }
 
 

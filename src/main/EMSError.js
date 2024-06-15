@@ -42,6 +42,8 @@ const SESSION_PROCESS_ERROR_CODES = {
 // for MetaQuestion process
 const MQ_PROCESS_ERROR_CODES = {
     APPENDIX_TAG_ALREADY_EXIST: 150,
+    APPENDIX_TAG_DOESNT_EXIST: 151,
+    MQ_ID_DOESNT_EXIST: 152,
 }
 
 module.exports = {

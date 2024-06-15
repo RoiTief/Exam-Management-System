@@ -68,6 +68,9 @@ class MetaQuestionRepository {
      * @returns The added question.
      */
     async addMetaQuestion(questionData, answers, keywords) {
+        if (questionData.appendixTag) {
+            await this.getAppendix(questionData.appendixTag); // makes sure the appendix we connect to exists
+        }
         const question = await this.#MetaQuestion.create(questionData);
         await this.addAnswersToQuestion(question.id, answers);
         return await this.addKeywordsToQuestion(question.id, keywords);
@@ -121,7 +124,7 @@ class MetaQuestionRepository {
      * @return The requested Appendix.
      */
     async getAppendix(tag) {
-        return await this.#Appendix.findByPk(tag, {
+        const appendix = await this.#Appendix.findByPk(tag, {
             include: [
                 {
                     model: this.#MetaQuestion,
@@ -133,6 +136,10 @@ class MetaQuestionRepository {
                 },
             ]
         });
+        if (appendix === null) {
+            throw new EMSError(ERROR_MSGS.APPENDIX_TAG_DOESNT_EXIST(tag), ERROR_CODES.APPENDIX_TAG_DOESNT_EXIST);
+        }
+        return appendix;
     }
 
     async getAllAppendices() {
@@ -151,7 +158,7 @@ class MetaQuestionRepository {
     }
 
     async getMetaQuestion(metaQuestionId) {
-        return await this.#MetaQuestion.findByPk(metaQuestionId, {
+        const metaQuestion = await this.#MetaQuestion.findByPk(metaQuestionId, {
             include: [
                 {
                     model: this.#Answer,
@@ -168,6 +175,10 @@ class MetaQuestionRepository {
                 }
             ]
         });
+        if (metaQuestion === null) {
+            throw new EMSError(ERROR_MSGS.MQ_ID_DOESNT_EXIST(metaQuestionId), ERROR_CODES.MQ_ID_DOESNT_EXIST);
+        }
+        return metaQuestion;
     }
 
     async getAllMetaQuestions() {
@@ -186,6 +197,30 @@ class MetaQuestionRepository {
                     as: 'appendix',
                 }
             ]
+        });
+    }
+
+    /**
+     * Removed given Appendix from the DB.
+     * @param appendixTag Tag of the Appendix to remove.
+     */
+    async deleteAppendix(appendixTag) {
+        await this.#Appendix.destroy({
+            where: {
+                tag: appendixTag,
+            }
+        });
+    }
+
+    /**
+     * Removed given Meta-Question from the DB.
+     * @param qId ID of the Meta-Question to remove.
+     */
+    async deleteMetaQuestion(qId) {
+        await this.#MetaQuestion.destroy({
+           where: {
+               id: qId,
+           }
         });
     }
 
