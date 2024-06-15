@@ -39,6 +39,8 @@ const Page = () => {
     }
   }, [router.query.question]);
 
+  console.log(question)
+
   const initialValues = {
     keywords: question?.keywords || [],
     stem: question?.stem || '',
@@ -59,6 +61,7 @@ const Page = () => {
 
   const handleSubmit = async (values) => {
     const metaQuestion = {
+      id: question?.id || null,
       keywords: values.keywords,
       stem: values.stem,
       keys: values.keys.map((item) => ({

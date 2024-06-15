@@ -66,6 +66,7 @@ const Page = () => {
 
   const handleSubmit = async (values, { setSubmitting }) => {
     const metaQuestion = {
+      id: question?.id || null,
       keywords: values.keywords,
       stem: values.stem,
       keys: values.keys.map((item) => ({

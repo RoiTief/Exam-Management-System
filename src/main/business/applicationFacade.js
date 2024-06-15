@@ -343,6 +343,10 @@ class ApplicationFacade{
         return this.metaQuestionController.createMetaQuestion(pid, createMetaQuestionProperties)
     }
 
+    editMetaQuestion(pid, editedMetaQuestionProperties) {
+        this.metaQuestionController.editMetaQuestion(pid, editedMetaQuestionProperties)
+    }
+
     /**
      * Delete a user from the system
      * @param pid - The process ID of the user performing the action
@@ -384,6 +388,7 @@ class ApplicationFacade{
     editUser(pid, username, type){
         return this.userController.editUser(pid, username, type);
     }
+
 
 }
 

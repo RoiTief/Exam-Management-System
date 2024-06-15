@@ -30,6 +30,17 @@ class MetaQuestionController{
         return metaQuestion
     }
 
+    editMetaQuestion(pid, editedMetaQuestionProperties) {
+        let metaQuestion = new MetaQuestion(editedMetaQuestionProperties);
+        this.#metaQuestions.set(editedMetaQuestionProperties.id, metaQuestion);
+        const ta_s = this.#userController.getAllStaff(pid)["TAs"]
+        const addTaskProperties = {...editedMetaQuestionProperties,
+            assignedUsers: ta_s, taskType: TaskTypes.ADD_KEY,
+            taskPriority: TaskPriority.HIGH, description: `Please please review the changes to the following Question: ${metaQuestion.stem}`,
+            metaQuestion: metaQuestion}
+        this.#taskController.addTask(addTaskProperties)
+    }
+
     #saveMetaQuestions(){
         //save to session storage
         let metaQuestionsArray = Array.from(this.#metaQuestions.values())
@@ -47,7 +58,7 @@ class MetaQuestionController{
 
          
     }
-    
+
 }
 
 module.exports = MetaQuestionController;
