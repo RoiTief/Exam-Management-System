@@ -71,7 +71,7 @@ export const items = [
       // },
       {
         title: SIDE_BAR.CATALOG_VIEW,
-        path: '/questions/catalog',
+        path: '/catalog/questions',
       },
       // {
       //   title: 'Answer Sheet View',
