@@ -136,8 +136,7 @@ function createServer(options) {
 
     
     server.use(function setup(req, res, next) {
-        if ( req.url.startsWith('/signUp') || req.url.startsWith('/signIn') ||
-            req.url.startsWith('/logout')) {
+        if (req.url.startsWith('/signIn') || req.url.startsWith('/logout')) {
             next();
             return;
         }

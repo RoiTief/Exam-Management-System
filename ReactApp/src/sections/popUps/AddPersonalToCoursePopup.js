@@ -21,10 +21,14 @@ export const AddPersonalToCourse = (props) => {
     const fetchUsers = async () => {
       try {
         const { staff } = await requestServer(serverPath.GET_ALL_STAFF, httpsMethod.GET);
-        if (state === "TA")
-          setUsers(staff.Lecturers.map(user => user.username));
-        else
-          setUsers(staff.TAs.map(user => user.username));
+        switch (state) {
+          case 'TA':
+            setUsers(staff.Lecturers.map(user => user.username));
+            break;
+          case 'Lecturer':
+            setUsers(staff.TAs.map(user => user.username));
+            break;
+        }
       } catch (error) {
         console.error('Error fetching users:', error);
       }

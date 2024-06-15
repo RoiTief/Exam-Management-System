@@ -4,6 +4,8 @@ const MetaQuestionController = require('./MetaQuestions/MetaQuestionController.j
 const ExamController = require('./ExamManager/ExamController.js');
 const userTypes = require('../Enums').USER_TYPES
 const { userRepo } = require("../DAL/Dal");
+const {USER_TYPES} = require("../Enums");
+
 
 class ApplicationFacade{
     constructor() {
@@ -151,6 +153,7 @@ class ApplicationFacade{
         return (await this.userController.getAllStaff(data));
     }
 
+    // TODO: remove
     /**
      * set @lecturerUsername to be the course
      * @param lecturerUsername - the new lecturer
@@ -167,12 +170,20 @@ class ApplicationFacade{
      *                 - if the user named username is not a lecturerUsername (is not assigned to a course)
      *                 - if there is no user named TAUsername
      */
- addTA(data){
-        this.userController.setUserAsTA(data.username)
+    async addTA(data){
+        await this.userController.updateStaff({
+            callingUser: data.callingUser,
+            username: data.username,
+            userType: USER_TYPES.TA,
+        })
     }
 
-    addLecturer(data){
-        this.userController.setUserAsLecturer(data.username)
+    async addLecturer(data){
+        await this.userController.updateStaff({
+            callingUser: data.callingUser,
+            username: data.username,
+            userType: USER_TYPES.LECTURER,
+        })
     }
 
     /**
@@ -370,8 +381,8 @@ class ApplicationFacade{
     }
 
 
-    editUser(data, username, type){
-        return this.userController.editUser(data, username, type);
+    async editUser(data){
+        return this.userController.updateUser(data);
     }
 
 }
