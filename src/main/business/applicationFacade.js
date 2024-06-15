@@ -342,6 +342,10 @@ class ApplicationFacade{
         return this.metaQuestionController.createMetaQuestion(createMetaQuestionProperties)
     }
 
+    editMetaQuestion(editedMetaQuestionProperties) {
+        this.metaQuestionController.editMetaQuestion(editedMetaQuestionProperties)
+    }
+
     /**
      * Delete a user from the system
      * @param data.username - The user we want to delete

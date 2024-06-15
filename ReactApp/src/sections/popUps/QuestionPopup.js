@@ -6,11 +6,13 @@ import ChevronDoubleDownIcon from '@heroicons/react/20/solid/ChevronDoubleDownIc
 import ChevronDoubleUpIcon from '@heroicons/react/20/solid/ChevronDoubleUpIcon';
 import EditIcon from '@mui/icons-material/Edit';
 import { QUESTIONS_CATALOG } from '../../constants';
+import { useRouter } from 'next/router';
 
 export const Question = (props) => {
-  const { isOpen, closePopup, question, onEdit } = props;
+  const { isOpen, closePopup, question } = props;
   const [showAllAnswers, setShowAllAnswers] = useState(false);
   const [showAllDistractors, setShowAllDistractors] = useState(false);
+  const router = useRouter();
 
   const toggleAnswers = () => {
     setShowAllAnswers(!showAllAnswers);
@@ -50,6 +52,14 @@ export const Question = (props) => {
     display: 'inline-block'
   };
 
+  const handleEdit = () => {
+    const pathname = question.appendix ? '/create/choose-appendix' : '/create/simple';
+    const query = {
+      question: JSON.stringify(question)
+    };
+    router.push({ pathname, query });
+  }
+
   if (!isOpen || !question) {
     return null;
   }
@@ -63,7 +73,7 @@ export const Question = (props) => {
              style={popupStyle}>
           <div style={{ position: 'relative' }}>
             <h1 style={{ textAlign: 'center' }}>{QUESTIONS_CATALOG.META_QUESTION_TITLE}</h1>
-            <IconButton onClick={onEdit}
+            <IconButton onClick={handleEdit}
                         style={editButtonStyle}>
               <EditIcon />
             </IconButton>

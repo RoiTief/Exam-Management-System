@@ -202,6 +202,25 @@ function createServer(options) {
     //     }
     server.post('/addMetaQuestion', service.addMetaQuestion);
 
+    //request: {
+    //       keywords: str[],
+    //       stem: str,
+    //       keys: [{
+    //         answer: str,
+    //         explanation: str
+    //         }],
+    //       distractors: [{
+    //         distractor: str,
+    //         explanation: str
+    //       }],
+    //      appendix: {
+    //          title: str,
+    //          tag: str,
+    //          content: str
+    //       }
+    //     }
+    server.post('/editMetaQuestion', service.editMetaQuestion);
+
     // request:
     //  {    questions:[
     //   {

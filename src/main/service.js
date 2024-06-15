@@ -333,6 +333,43 @@ function addMetaQuestion(req, res, next){
     }
 }
 
+/**
+ * edit a meta question
+ * @param - req.body = {
+ *      //      id: num
+ *     //       keywords: str[],
+ *     //       stem: str,
+ *     //       keys: [{
+ *     //         answer: str,
+ *     //         explanation: str
+ *     //         }],
+ *     //       distractors: [{
+ *     //         distractor: str,
+ *     //         explanation: str
+ *     //       }],
+ *     //      appendix: {
+ *     //          title: str,
+ *     //          tag: str,
+ *     //          content: str
+ *     //       }
+ *     //     }
+ *     //
+ *     appendix could be null
+ * @throws {Error} - if fail to edit
+ */
+function editMetaQuestion(req, res, next){
+    try{
+        application.editMetaQuestion(req.body)
+        req.log.info("request to edit metaQuestion");
+        res.send(200, {code:200})
+        next()
+    }
+    catch(err){
+        req.log.warn(err.message, 'failed to create meta questions');
+        next(err);
+    }
+}
+
 
 /**
  * creates an Exam
@@ -405,6 +442,7 @@ module.exports = {
     getAllMetaQuestions: getAllMetaQuestions,
     getAllAppendices: getAllAppendices,
     addMetaQuestion: addMetaQuestion,
+    editMetaQuestion: editMetaQuestion,
     createExam,
     getAllExams,
     editUser: editUser

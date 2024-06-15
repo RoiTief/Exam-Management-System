@@ -79,6 +79,8 @@ export const LOGIN = {
   FAILED_TO_CHANGE_PASSWORD: "Failed to change password:"
 };
 
+export const EDIT_QUESTION = "Edit Question"
+
 export const CREATE_QUESTION = {
   CREATE_SIMPLE_TITLE: "Create Simple Meta-Question",
   CREATE_APPENDIX_PLUS_TITLE: "Create Simple Meta-Question",
