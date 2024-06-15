@@ -7,7 +7,6 @@ const Admin = require("../../main/business/UserManager/Admin");
 const {EMSError, USER_PROCESS_ERROR_CODES} = require("../../main/EMSError");
 const Lecturer = require("../../main/business/UserManager/Lecturer");
 const {DEFAULT_PASSWORD} = require("../../main/business/UserManager/User");
-const {SessionManager} = require("../../main/business/SessionManager/SessionManager");
 
 const dbConfig = {
     database: 'user_controller_test',
@@ -28,16 +27,21 @@ const adminDetails = {
     userType: USER_TYPES.ADMIN,
 }
 
+const adminCallingDetails ={
+    username : adminDetails.username,
+    type : adminDetails.userType
+}
+
 const registerDetails = {
     username: 'User123',
     firstName: 'Fname123',
     lastName: 'Lname123',
     email: 'user123@bgu.ac.il',
     userType: USER_TYPES.LECTURER,
+    callingUser: adminCallingDetails,
 };
 
 describe('Tests UserController component', () => {
-    let sessionManager;
     let userController;
     let pid;
     let sequelize;
@@ -54,8 +58,7 @@ describe('Tests UserController component', () => {
     });
 
     beforeEach(async () => {
-        sessionManager = await new SessionManager();
-        userController = await new UserController(userRepository, sessionManager);
+        userController = await new UserController(userRepository);
         await UserModel.sync({force: true}); // cleans the 'Users' table
         await userRepository.addUser(adminDetails);
     })
@@ -66,7 +69,7 @@ describe('Tests UserController component', () => {
     });
 
     test('Log in - SUCCESS', async () => {
-        const admin = await userController.signIn(pid, adminDetails.username, adminDetails.password);
+        const admin = await userController.signIn(adminDetails.username, adminDetails.password);
 
         expect(admin instanceof Admin).toBeTruthy();
         expect(admin.getUserType()).toBe(USER_TYPES.ADMIN);
@@ -80,7 +83,7 @@ describe('Tests UserController component', () => {
     test('Log in - FAILURE', async () => {
         // log in with wrong password
         try {
-            await userController.signIn(pid, adminDetails.username, "faultyPass");
+            await userController.signIn(adminDetails.username, "faultyPass");
             expect(false).toBeTruthy();
         } catch (e) {
             expect(e instanceof EMSError).toBeTruthy();
@@ -89,7 +92,7 @@ describe('Tests UserController component', () => {
 
         // log in with wrong username
         try {
-            await userController.signIn(pid, "faultyUsername", adminDetails.password);
+            await userController.signIn("faultyUsername", adminDetails.password);
             expect(false).toBeTruthy();
         } catch (e) {
             expect(e instanceof EMSError).toBeTruthy();
@@ -112,41 +115,8 @@ describe('Tests UserController component', () => {
         }
     })
 
-    test('Verify logged in', async () => {
-        // assert error is thrown when admin is not logged in
-        try {
-            await sessionManager.verifyLoggedIn(adminDetails.username);
-            expect(false).toBeTruthy(); // fail the test as we expect an error throw
-        } catch (e) {
-            expect(e instanceof EMSError).toBeTruthy();
-            expect(e.errorCode).toBe(USER_PROCESS_ERROR_CODES.USERNAME_NOT_LOGGED_IN);
-        }
-
-        // log in to admin
-        await userController.signIn(pid, adminDetails.username, adminDetails.password);
-
-        // assert error is not thrown after logging in
-        try {
-            await sessionManager.verifyLoggedIn(adminDetails.username);
-        } catch (e) {
-            expect(false).toBeTruthy();
-        }
-
-        // log out
-        sessionManager.logout(pid);
-
-        // assert error is thrown when admin is not logged in
-        try {
-            await sessionManager.verifyLoggedIn(adminDetails.username);
-            expect(false).toBeTruthy(); // fail the test as we expect an error throw
-        } catch (e) {
-            expect(e instanceof EMSError).toBeTruthy();
-            expect(e.errorCode).toBe(USER_PROCESS_ERROR_CODES.USERNAME_NOT_LOGGED_IN);
-        }
-    })
-
+    
     test('Registering user - SUCCESS', async () => {
-        await userController.signIn(pid, adminDetails.username, adminDetails.password);
 
         // assert user is not already registered
         try {
@@ -157,7 +127,7 @@ describe('Tests UserController component', () => {
         }
 
         // register
-        await userController.register(pid, structuredClone(registerDetails));
+        await userController.register(structuredClone(registerDetails));
 
         // assert user is registered
         try {
@@ -175,7 +145,6 @@ describe('Tests UserController component', () => {
     })
 
     test('Registering user with faulty details - FAILURE', async () => {
-        await userController.signIn(pid, adminDetails.username, adminDetails.password);
 
         // assert user is not already registered
         try {
@@ -188,16 +157,16 @@ describe('Tests UserController component', () => {
         // register
         let userDetails = null;
         try {
-            await userController.register(pid, userDetails);
+            await userController.register(userDetails);
             expect(false).toBeTruthy();
         } catch (e) {
             expect(e instanceof EMSError).toBeTruthy();
             expect(e.errorCode).toBe(USER_PROCESS_ERROR_CODES.USER_DETAILS_NULL);
         }
 
-        userDetails = {};
+        userDetails = {callingUser: adminCallingDetails};
         try {
-            await userController.register(pid, userDetails);
+            await userController.register(userDetails);
             expect(false).toBeTruthy();
         } catch (e) {
             expect(e instanceof EMSError).toBeTruthy();
@@ -213,7 +182,7 @@ describe('Tests UserController component', () => {
 
         userDetails.username = registerDetails.username;
         try {
-            await userController.register(pid, userDetails);
+            await userController.register(userDetails);
             expect(false).toBeTruthy();
         } catch (e) {
             expect(e instanceof EMSError).toBeTruthy();
@@ -228,7 +197,7 @@ describe('Tests UserController component', () => {
 
         userDetails.firstName = registerDetails.firstName;
         try {
-            await userController.register(pid, userDetails);
+            await userController.register(userDetails);
             expect(false).toBeTruthy();
         } catch (e) {
             expect(e instanceof EMSError).toBeTruthy();
@@ -242,7 +211,7 @@ describe('Tests UserController component', () => {
 
         userDetails.lastName = registerDetails.lastName;
         try {
-            await userController.register(pid, userDetails);
+            await userController.register(userDetails);
             expect(false).toBeTruthy();
         } catch (e) {
             expect(e instanceof EMSError).toBeTruthy();
@@ -255,7 +224,7 @@ describe('Tests UserController component', () => {
 
         userDetails.email = registerDetails.email;
         try {
-            await userController.register(pid, userDetails);
+            await userController.register(userDetails);
             expect(false).toBeTruthy();
         } catch (e) {
             expect(e instanceof EMSError).toBeTruthy();
@@ -280,15 +249,14 @@ describe('Tests UserController component', () => {
     })
 
     test('Register with already used username/email - FAILURE', async () => {
-        await userController.signIn(pid, adminDetails.username, adminDetails.password);
-        await userController.register(pid, structuredClone(registerDetails));
+        await userController.register(structuredClone(registerDetails));
 
         const userDetails = structuredClone(registerDetails);
 
         // registering with used username
         userDetails.email = "unused@example.com";
         try {
-            await userController.register(pid, userDetails);
+            await userController.register(userDetails);
             expect(false).toBeThruthy();
         } catch (e) {
             expect(e instanceof EMSError).toBeTruthy();
@@ -299,11 +267,63 @@ describe('Tests UserController component', () => {
         userDetails.email = registerDetails.email;
         userDetails.username = 'unused'
         try {
-            await userController.register(pid, userDetails);
+            await userController.register(userDetails);
             expect(false).toBeThruthy();
         } catch (e) {
             expect(e instanceof EMSError).toBeTruthy();
             expect(e.errorCode).toBe(USER_PROCESS_ERROR_CODES.EMAIL_ALREADY_EXIST);
         }
+    })
+
+    test('edit user', async () => {
+        await userController.register(structuredClone(registerDetails));
+
+        let updatedFields = {
+            callingUser: structuredClone(registerDetails.callingUser),
+            username: registerDetails.username,
+            firstName: registerDetails.firstName + 'asdf',
+            lastName: registerDetails.lastName + 'asdf',
+        }
+
+        await userController.updateUser(structuredClone(updatedFields));
+        let updatedUser = await userController.getUser(registerDetails.username);
+
+        // assert only requested fields were updated
+        /// stayed
+        expect(updatedUser.getUsername()).toBe(registerDetails.username);
+        expect(updatedUser.getEmail()).toBe(registerDetails.email);
+        expect(updatedUser.getUserType()).toBe(registerDetails.userType);
+        /// updated
+        expect(updatedUser.getFirstName()).toBe(updatedFields.firstName);
+        expect(updatedUser.getLastName()).toBe(updatedFields.lastName);
+
+        // update rest
+        updatedFields = {
+            callingUser: structuredClone(registerDetails.callingUser),
+            username: registerDetails.username,
+            email: registerDetails.email + 'asdf',
+            userType: USER_TYPES.TA,
+        }
+
+        await userController.updateUser(structuredClone(updatedFields));
+        updatedUser = await userController.getUser(registerDetails.username);
+
+        // assert fields were updated
+        expect(updatedUser.getEmail()).toBe(updatedFields.email);
+        expect(updatedUser.getUserType()).toBe(updatedFields.userType);
+
+        // assert error thrown when updated with invalid type
+        updatedFields = {
+            callingUser: structuredClone(registerDetails.callingUser),
+            username: registerDetails.username,
+            userType: "asdfasdfasdf",
+        }
+        try {
+            await userController.updateUser(structuredClone(updatedFields));
+        } catch (e) {
+            expect(e instanceof EMSError).toBeTruthy();
+            expect(e.errorCode).toBe(USER_PROCESS_ERROR_CODES.INVALID_TYPE)
+        }
+
     })
 });

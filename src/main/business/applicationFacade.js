@@ -4,13 +4,10 @@ const MetaQuestionController = require('./MetaQuestions/MetaQuestionController.j
 const ExamController = require('./ExamManager/ExamController.js');
 const userTypes = require('../Enums').USER_TYPES
 const { userRepo } = require("../DAL/Dal");
-const {SessionManager} = require("./SessionManager/SessionManager");
-const {USER_TYPES} = require("../Enums");
 
 class ApplicationFacade{
     constructor() {
-        this.sessionManager = new SessionManager();
-        this.userController = new UserController(userRepo, this.sessionManager);
+        this.userController = new UserController(userRepo);
         this.taskController = new TaskController(this.userController);
         this.metaQuestionController = new MetaQuestionController(this.taskController, this.userController);
         this.examController = new ExamController(this.taskController, this.userController)
@@ -100,23 +97,21 @@ class ApplicationFacade{
 
     /**
      * register a user
-     * @param pid - the process trying to sign up from
      * @param userdetails - details needed to register the user with
      * @returns {Promise<User>} - returns the created user
      * @throws Error - if the process is already logged in
      *               - if the username/email is taken
      */
-    async register(pid, userdetails){
+    async register(userdetails){
         // TODO: remove lines that add missing details
         if (!userdetails.firstName) userdetails.firstName = "Dummyfname";
         if (!userdetails.lastName) userdetails.lastName = "Dummylname";
         if (!userdetails.email) userdetails.email = `Dummyemail${this.#emailCounter++}@google.com`;
-        return (await this.userController.register(pid, userdetails));
+        return (await this.userController.register(userdetails));
     }
 
     /**
      * signs in user
-     * @param pid - the process trying to sign in
      * @param username - the user username - need to be registered
      * @param password - the user password
      * @returns {Promise<User>} - returned the signed-in user
@@ -124,39 +119,36 @@ class ApplicationFacade{
      *                 - if there is no registered user with this username
      *                 - if the password is incorrect
      */
-    async signIn(pid, username, password) {
-        return (await this.userController.signIn(pid, username, password));
+    async signIn(username, password) {
+        return (await this.userController.signIn(username, password));
     }
 
     /**
      * user wants to log out
-     * @param pid - the process log out
      * @throws {Error} - if the user is not signed in
      */
-    logout(pid) {
-        return this.sessionManager.logout(pid)
+    //TODO:REMOVE
+    logout(logoutData) {
+        //Log out should be done in client side, by removing the cookies.
     }
 
     /**
      * change password
-     * @param pid - a logged-in session
      * @param newPassword - updated password for the logged user
      */
-    async changePassword(pid, newPassword) {
-        const user = await this.sessionManager.getUser(pid);
-        await user.changePassword(newPassword);
+    async changePassword(changePasswordData) {
+        const user = await this.userController.getUser(changePasswordData.callingUser.username);
+        await user.changePassword(changePasswordData.newPassword);
         return user;
     }
 
     /**
      * get all staff
-     * @param pid - the process who tries to view the staff - needs to be a logged in as lecturer
      * @return {Promise<{TAs: any[], Lecturers: any[]}>} the staff, ordered by lecturers and TAs
-     * @throws {Error} - if there is no logged in user in @pid
-     *                 - if the user logged in user in @pid is not a lecturer
+     * @throws {Error} - if the user logged in user is not a lecturer
      */
-    async getAllStaff(pid){
-        return (await this.userController.getAllStaff(pid));
+    async getAllStaff(data){
+        return (await this.userController.getAllStaff(data));
     }
 
     /**
@@ -170,18 +162,17 @@ class ApplicationFacade{
 
     /**
      * create a task for the new TA to accept being a TA of this course
-     * @param pid - the process who tries to add the new TA - needs to be a lecturer
-     * @param TAUsername - the new TA username
+     * @param data.username - the new TA username
      * @throws {Error} - if there is no user with name @username
      *                 - if the user named username is not a lecturerUsername (is not assigned to a course)
      *                 - if there is no user named TAUsername
      */
-    addTA(pid, TAUsername){
-        this.userController.setUserAsTA(pid, TAUsername)
+ addTA(data){
+        this.userController.setUserAsTA(data.username)
     }
 
-    addLecturer(pid, TAUsername){
-        this.userController.setUserAsLecturer(pid, TAUsername)
+    addLecturer(data){
+        this.userController.setUserAsLecturer(data.username)
     }
 
     /**
@@ -243,11 +234,10 @@ class ApplicationFacade{
 
     /**
      * get all usernames in the system
-     * @param pid - who is requestion the usernames - can be lecturer or system admin
      * @return list of usernames
      */
-    async viewAllUsers(pid){
-        return await this.userController.getAllUsers(pid)
+    async viewAllUsers(data){
+        return await this.userController.getAllUsers(data)
     }
 
     /**
@@ -275,12 +265,12 @@ class ApplicationFacade{
 
     /**
      * view my tasks
-     * @param pid - the user who tries to view his tasks
+     * @param data - the user who tries to view his tasks
      * @return {[Task]}
-     * @throws {Error} - if there is no user logged in pid
+     * @throws {Error} - if there is no user logged in data
      */
-    viewMyTasks(pid){
-        const user = this.sessionManager.getUser(pid);
+    async viewMyTasks(data){
+        const user = await this.userController.getUser(data.callingUser.username);
         return this.taskController.getTasksOf(user.getUsername());
     }
 
@@ -308,16 +298,14 @@ class ApplicationFacade{
 
     /**
      * tag task as finished
-     * @param pid - the user who tries to progress a task
      * @param taskId - the taskID
      * @param response - the user answer to the task
      * @throws {Error} - if there is no task with this id
      *                 - if task with this ID is not assigned to the username
      *                 - if this task is already finished
      */
-    finishATask(pid, taskId, response){
-        let username = this.userController.getLoggedInName(pid)
-        this.taskController.finishTask(username, taskId, response, this);
+    async finishATask(data){
+        await this.taskController.finishTask(data.callingUser.username, data.taskId, data.response, this);
     }
 
     /**
@@ -339,56 +327,52 @@ class ApplicationFacade{
      * add meta-question, look for values in MetaQuestion.js
      *7
      */
-    addMetaQuestion(pid, createMetaQuestionProperties) {
-        return this.metaQuestionController.createMetaQuestion(pid, createMetaQuestionProperties)
+    addMetaQuestion(createMetaQuestionProperties) {
+        return this.metaQuestionController.createMetaQuestion(createMetaQuestionProperties)
     }
 
-    editMetaQuestion(pid, editedMetaQuestionProperties) {
-        this.metaQuestionController.editMetaQuestion(pid, editedMetaQuestionProperties)
+    editMetaQuestion(editedMetaQuestionProperties) {
+        this.metaQuestionController.editMetaQuestion(editedMetaQuestionProperties)
     }
 
     /**
      * Delete a user from the system
-     * @param pid - The process ID of the user performing the action
-     * @param username - The user we want to delete
+     * @param data.username - The user we want to delete
      * @throws {Error} - If the user is not signed in or does not have the necessary permissions
      */
-    deleteUser(pid, username) {
-        this.userController.deleteUser(pid, username)
+    deleteUser(data) {
+        this.userController.deleteUser(data)
     }
 
     /**
      * return a list of meta question of the user's course
-     * @param pid - The process ID of the user performing the action
      * @throws {Error} - If the user is not signed in or does not have the necessary permissions
      * @return {MetaQuestion[]} all the meta question of the user's course
      */
-    getAllMetaQuestions(pid) {
+    getAllMetaQuestions(data) {
         return this.metaQuestionController.getAllMetaQuestions()
     }
 
     /**
      * return a list of appendices of the user's course
-     * @param pid - The process ID of the user performing the action
      * @throws {Error} - If the user is not signed in or does not have the necessary permissions
      * @return {Appendix[]} all the meta question of the user's course
      */
 
-    getAllAppendices(pid) {
+    getAllAppendices(data) {
         // return [
         //     { title: 'Appendix A', tag: 'General', content: 'Content of Appendix A' },
         //     { title: 'Appendix B', tag: 'Specific', content: 'Content of Appendix B' },
         //     // Add more appendices as needed
         // ];
 
-        return this.metaQuestionController.getAllAppendices(pid)
+        return this.metaQuestionController.getAllAppendices(data)
     }
 
 
-    editUser(pid, username, type){
-        return this.userController.editUser(pid, username, type);
+    editUser(data, username, type){
+        return this.userController.editUser(data, username, type);
     }
-
 
 }
 

@@ -47,8 +47,8 @@ class MetaQuestion {
         return this.keys
     }
     
-    getDiversions() {
-        return this.diversions
+    getDistractors() {
+        return this.distractors
     }
     
     getAppendix() {
