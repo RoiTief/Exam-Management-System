@@ -184,19 +184,19 @@ function finishATask(req, res, next) {
  *                 - if the user named username is not a lecturerUsername (is not assigned to a course)
  *                 - if there is no user named TAUsername
  */
-function addTA(req, res, next){
-    try{
-        application.addTA(req.body);
-        req.log.info(req.body.username, "a request was sent to user to become a TA");
-        res.send(200, {code:200})
-        next()
-    }
-    catch(err){
-        req.log.warn(err.message, 'unable to request a user to become a TA');
-        next(err);
-    }
+function addTA(req, res, next) {
+    application.addTA(req.body).then(
+        result => {
+            req.log.info(req.body.username, "a request was sent to user to become a TA");
+            res.send(200, {code: 200});
+            next();
+        },
+        err => {
+            req.log.warn(err.message, 'unable to request a user to become a TA');
+            next(err);
+        }
+    );
 }
-
 
 /**
  * create a new lecturer from a ta
@@ -205,20 +205,19 @@ function addTA(req, res, next){
  *                 - if the user named username is not a lecturerUsername or is not assigned to a course
  *                 - if there is no user named graderUsername
  */
-function addLecturer(req, res, next){
-    try{
-        application.addLecturer(req.body);
-
-        req.log.info(req.body.username, "a request was sent to user to become a TA");
-        res.send(200, {code:200})
-        next()
-    }
-    catch(err){
-        req.log.warn(err.message, 'unable to request a user to become a grader');
-        next(err);
-    }
+function addLecturer(req, res, next) {
+    application.addLecturer(req.body).then(
+        result => {
+            req.log.info(req.body.username, "a request was sent to user to become a TA");
+            res.send(200, {code: 200});
+            next();
+        },
+        err => {
+            req.log.warn(err.message, 'unable to request a user to become a grader');
+            next(err);
+        }
+    );
 }
-
 
 /**
  * get all users for admin
@@ -378,16 +377,17 @@ function getAllExams(req, res, next){
 }
 
 function editUser(req, res, next) {
-    try{
-        user = application.editUser(req.body, req.body[0], req.body[1]);
-        req.log.info(req.body.username, 'edit user request');
-        res.send(200, {code:200,user})
-        next()
-    }
-    catch(err){
-        req.log.warn(err.message, 'unable to edit user');
-        next(err);
-    }
+    application.editUser(req.body).then(
+        result => {
+            req.log.info(req.body.username, 'edit user request');
+            res.send(200, {code:200});
+            next();
+        },
+        err => {
+            req.log.warn(err.message, 'unable to edit user');
+            next(err);
+        }
+    );
 }
 
 module.exports = {
