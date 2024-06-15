@@ -45,21 +45,17 @@ function extractAndVerifyJwt(req, res, next){
                     return token
                 } catch (err) {
                     console.log({ err })
-                    next(new errors.InvalidCredentialsError('Invalid token'))
                     return null;
                 }
             }
             else {
-                next(new errors.InvalidCredentialsError('Format is Authorization: Bearer [token] or Jwt [token]'))
                 return null
             }
         } else {
-            next(new errors.InvalidCredentialsError('Format is Authorization: Bearer [token] or Jwt [token]'))
             return null
         }
     }
     else {
-        next(new errors.InvalidCredentialsError('Format is Authorization: Bearer [token] or Jwt [token]'))
         return null
     }
 }
@@ -136,13 +132,14 @@ function createServer(options) {
 
     
     server.use(function setup(req, res, next) {
-        if ( req.url.startsWith('/signUp') || req.url.startsWith('/signIn') ||
+        if(authenticate(req, res, next)){
+            next();
+        }
+        else if ( req.url.startsWith('/signUp') || req.url.startsWith('/signIn') ||
             req.url.startsWith('/logout')) {
             next();
             return;
-        }
-        if(authenticate(req, res, next))
-            next();
+        }  
         else
             next(new errors.UnauthorizedError('invalid credentials'));
     });
