@@ -9,8 +9,8 @@ function defineKeywordModel(sequelize) {
         sequelize.define('Keyword', {
                 word: {
                     type: DataTypes.STRING,
+                    primaryKey: true,
                     allowNull: false,
-                    unique: true,
                 },
             }
         );
