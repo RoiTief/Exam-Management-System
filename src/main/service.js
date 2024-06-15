@@ -358,7 +358,6 @@ function addMetaQuestion(req, res, next){
  */
 function editMetaQuestion(req, res, next){
     try{
-        console.log(req.body)
         application.editMetaQuestion(req.body)
         req.log.info("request to edit metaQuestion");
         res.send(200, {code:200})
