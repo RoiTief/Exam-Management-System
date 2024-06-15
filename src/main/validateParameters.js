@@ -1,6 +1,14 @@
 const {EMSError, FUNCTION_PARAMETERS_ERROR_CODES: ERROR_CODES} = require("./EMSError");
 const {FUNCTION_PARAMETERS_ERROR_MSGS: ERROR_MSGS} = require("./ErrorMessages");
 
+
+const PRIMITIVE_TYPES = {
+  STRING:"string",
+  BOOLEAN:"boolean", 
+  NUMBER:"number",
+}
+
+
 /**
  * Validates that the keys and types of the properties in `realObj` match the specifications in `expectedObj`.
  *
@@ -33,7 +41,18 @@ const {FUNCTION_PARAMETERS_ERROR_MSGS: ERROR_MSGS} = require("./ErrorMessages");
  * const expectedObj = { profile: Person };
  * validateParameters(realObj, expectedObj); // returns true
  */
-function validateParameters(realObj, expectedObj) {
+function validateParameters(realObj, expectedObj, prohibitNull=true, checkCallingUserData=true) {
+    if (!realObj) throw new EMSError(ERROR_MSGS.NULL_OBJECT, ERROR_CODES.NULL_OBJECT)
+
+    // add callingUserData to expectedObj if needs:
+    if(checkCallingUserData){
+      expectedObj = {
+        ...expectedObj,
+        username: PRIMITIVE_TYPES.STRING,
+        type: PRIMITIVE_TYPES.STRING
+      }
+    }
+
     for (const key in expectedObj) {
         // Check if the key exists in realObj
         if (!realObj.hasOwnProperty(key)) {
@@ -43,22 +62,21 @@ function validateParameters(realObj, expectedObj) {
         // Get the expected type
         const expectedType = expectedObj[key];
         const realValue = realObj[key];
-  
+
+        if(prohibitNull && realValue === null) throw new EMSError(ERROR_MSGS.NULL_VALUE(key), ERROR_CODES.NULL_VALUE);
         // Check the type
-        if (typeof expectedType === 'string') {
+        if (typeof expectedType !== 'function') {
           // Primitive type check
           if (typeof realValue !== expectedType) {
             throw new EMSError(ERROR_MSGS.TYPE_MISMATCH(key, expectedType, typeof realValue),ERROR_CODES.TYPE_MISMATCH);
           }
-        } else if (typeof expectedType === 'function') { // Class type is 'function'
+        } else  { // Class type is 'function'
           if (!(realValue instanceof expectedType)) {
             throw new EMSError(ERROR_MSGS.TYPE_MISMATCH(key, expectedType.name, realValue.constructor.name),ERROR_CODES.TYPE_MISMATCH);
           }
-        } else {
-          throw new EMSError(ERROR_MSGS.UNSUPPORTED_TYPE(key),ERROR_CODES.UNSUPPORTED_TYPE);
-        }
+        } 
     }
     return true; // If all validations pass
 }
 
-module.exports = {validateParameters}
+module.exports = {validateParameters, PRIMITIVE_TYPES}

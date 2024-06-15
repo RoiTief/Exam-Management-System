@@ -33,7 +33,7 @@ function signUp(req, res, next) {
  *                 - if the password is incorrect
  */
 function signIn(req, res, next) {
-    application.signIn(req.body.username, req.body.password).then(
+    application.signIn(req.body).then(
         businessUser => {
             // send needed information derived from business
             const user = {
@@ -209,7 +209,15 @@ function addGrader(req, res, next){
  */
 function viewAllUsers(req, res, next){
     application.viewAllUsers(req.body).then(
-        users => {
+        businessUsers => {
+            const users = businessUsers
+                .map(u => ({
+                    username: u.getUsername(),
+                    firstName: u.getFirstName(),
+                    lastName: u.getLastName(),
+                    email: u.getEmail(),
+                    type: u.getUserType(),
+                }));
             req.log.info("a request was sent to get all users");
             res.send(200, {code:200, users})
             next()

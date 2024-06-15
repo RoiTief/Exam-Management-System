@@ -5,6 +5,7 @@ const TA = require('./TA');
 const { USER_TYPES} = require("../../Enums");
 const {EMSError, USER_PROCESS_ERROR_CODES: ERROR_CODES} = require("../../EMSError");
 const { USER_PROCESS_ERROR_MSGS: ERROR_MSGS } = require("../../ErrorMessages");
+const { validateParameters, PRIMITIVE_TYPES } = require('../../validateParameters');
 
 class UserController {
     #userRepo;
@@ -25,7 +26,15 @@ class UserController {
      * @note The newly registered user is created with a default password.
      */
     async register(userDetails) {
-        this.#verifyUserDetails(userDetails);
+        validateParameters(userDetails,
+            {
+                username: PRIMITIVE_TYPES.STRING,
+                firstName: PRIMITIVE_TYPES.STRING,
+                lastName: PRIMITIVE_TYPES.STRING,
+                email: PRIMITIVE_TYPES.STRING,
+                userType: PRIMITIVE_TYPES.STRING,
+                password: PRIMITIVE_TYPES.STRING
+            });
         this.#verifyType(userDetails.callingUser.type, USER_TYPES.ADMIN)
         userDetails.password = DEFAULT_PASSWORD;
         const dalUser = await this.#userRepo.addUser(userDetails);
@@ -41,15 +50,20 @@ class UserController {
 
     /**
      * Logs in to a registered user
-     * @param username Username of the user.
-     * @param password Password of the user.
+     * @param data.username Username of the user.
+     * @param data.password Password of the user.
      * @return business instance of the user logged into upon successful login.
      */
-    async signIn(username, password) {
+    async signIn(data) {
         let user;
+        validateParameters(data, {
+            username: PRIMITIVE_TYPES.STRING,
+            password: PRIMITIVE_TYPES.STRING,
+        })
+
         try {
-            user = await this.getUser(username);
-            user.verifyPassword(password);
+            user = await this.getUser(data.username);
+            user.verifyPassword(data.password);
         } catch (error) {
             if (error instanceof EMSError && (error.errorCode === ERROR_CODES.USERNAME_DOESNT_EXIST || error.errorCode === ERROR_CODES.INCORRECT_PASSWORD)) {
                 throw new EMSError(ERROR_MSGS.FAILED_LOGIN, ERROR_CODES.FAILED_LOGIN);
@@ -139,20 +153,6 @@ class UserController {
             throw new EMSError("can't delete system admin");
         }
         this.#userRepo.deleteUser(data.username);
-    }
-
-    /**
-     * Input verification on userDetails
-     * @param userDetails details to verify
-     * @throws Error
-     */
-    #verifyUserDetails(userDetails) {
-        if (!userDetails) throw new EMSError(ERROR_MSGS.USER_DETAILS_NULL, ERROR_CODES.USER_DETAILS_NULL)
-        if (!userDetails.username) throw new EMSError(ERROR_MSGS.USER_DETAILS_MISSING_USERNAME, ERROR_CODES.USER_DETAILS_MISSING_USERNAME)
-        if (!userDetails.firstName) throw new EMSError(ERROR_MSGS.USER_DETAILS_MISSING_FNAME, ERROR_CODES.USER_DETAILS_MISSING_FNAME)
-        if (!userDetails.lastName) throw new EMSError(ERROR_MSGS.USER_DETAILS_MISSING_LNAME, ERROR_CODES.USER_DETAILS_MISSING_LNAME)
-        if (!userDetails.email) throw new EMSError(ERROR_MSGS.USER_DETAILS_MISSING_EMAIL, ERROR_CODES.USER_DETAILS_MISSING_EMAIL)
-        if (!userDetails.userType) throw new EMSError(ERROR_MSGS.USER_DETAILS_MISSING_TYPE, ERROR_CODES.USER_DETAILS_MISSING_TYPE)
     }
 }
 

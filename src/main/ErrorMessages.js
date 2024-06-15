@@ -34,7 +34,9 @@ const SESSION_PROCESS_ERROR_MSGS = {
 const FUNCTION_PARAMETERS_ERROR_MSGS = {
     MISSING_KEY: key => `Missing key: ${key}`,
     TYPE_MISMATCH: (key, expectedType, realType) => `Type mismatch for key: ${key}. Expected: ${expectedType}, Found: ${realType}`,
-    UNSUPPORTED_TYPE: key => `Unsupported type specification for key: ${key}`
+    UNSUPPORTED_TYPE: key => `Unsupported type specification for key: ${key}`,
+    NULL_OBJECT: "Cannot receive null object",
+    NULL_VALUE: key => `Key: ${key} has value of null`,
 }
 
 module.exports = {USER_PROCESS_ERROR_MSGS, SESSION_PROCESS_ERROR_MSGS, FUNCTION_PARAMETERS_ERROR_MSGS}
