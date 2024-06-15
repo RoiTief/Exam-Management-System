@@ -75,7 +75,7 @@ const Page = () => {
     };
 
     let request =  question? serverPath.EDIT_META_QUESTION : serverPath.ADD_META_QUESTION
-    console.log(`${request} ${metaQuestion}`);
+    console.log(`${request} ${JSON.stringify(metaQuestion)}`);
     await requestServer(request, httpsMethod.POST, metaQuestion);
     await router.push('/');
   };

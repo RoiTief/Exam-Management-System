@@ -1,5 +1,6 @@
 // Error messages
 
+const {USER_TYPES} = require("./Enums");
 /**
  * Holds all error messages that might occur in user processes such as register/login
  */
@@ -15,6 +16,8 @@ const USER_PROCESS_ERROR_MSGS = {
     USER_DETAILS_MISSING_LNAME: 'Last name field is required',
     USER_DETAILS_MISSING_EMAIL: 'Email field is required',
     USER_DETAILS_MISSING_TYPE: 'UserType field is required',
+    INVALID_TYPE: type => `User type '${type}' is invalid, use one of '${Object.values(USER_TYPES).join(', ')}'`,
+    INCORRECT_TYPE : (realType, expectedType) => `expected user type '${expectedType}', but got '${realType}'`,
 
     //Login
     USERNAME_LOGGED_IN: uname => `Username '${uname}' is already logged in`,
@@ -30,5 +33,16 @@ const SESSION_PROCESS_ERROR_MSGS = {
     SESSION_NOT_IN_USE: 'Session is not in use',
 }
 
+// for MetaQuestions processes
+const MQ_PROCESS_ERROR_MSGS = {
+    APPENDIX_TAG_ALREADY_EXIST: tag => `Tag '${tag}' is already in use by another appendix`,
+    APPENDIX_TAG_DOESNT_EXIST: tag => `Tag '${tag}' doesn't exist`,
+    MQ_ID_DOESNT_EXIST: id => `A Meta-Question with ID '${id}' doesn't exist`,
+}
 
-module.exports = {USER_PROCESS_ERROR_MSGS, SESSION_PROCESS_ERROR_MSGS}
+
+module.exports = {
+    USER_PROCESS_ERROR_MSGS,
+    SESSION_PROCESS_ERROR_MSGS,
+    MQ_PROCESS_ERROR_MSGS,
+}

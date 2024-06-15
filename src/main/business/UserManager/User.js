@@ -17,16 +17,36 @@ class User {
         return this.#dalUser.firstName;
     }
 
+    async setFirstName(firstName) {
+        this.#dalUser.firstName = firstName;
+        await this.#dalUser.save();
+    }
+
     getLastName() {
         return this.#dalUser.lastName;
+    }
+
+    async setLastName(lastName) {
+        this.#dalUser.lastName = lastName;
+        await this.#dalUser.save();
     }
 
     getEmail() {
         return this.#dalUser.email;
     }
 
+    async setEmail(email){
+        this.#dalUser.email = email;
+        await this.#dalUser.save();
+    }
+
     getUserType(){
         return this.#dalUser.userType;
+    }
+
+    async setUserType(userType){
+        this.#dalUser.userType = userType;
+        this.#dalUser.save();
     }
 
     verifyType(type){

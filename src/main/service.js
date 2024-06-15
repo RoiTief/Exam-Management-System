@@ -11,7 +11,7 @@ require('dotenv').config();
  * @returns Error - if the username is taken
  */
 function signUp(req, res, next) {
-    application.register(process.pid, req.body.userDetails).then(
+    application.register(req.body).then(
         businessUser => {
             req.log.info(req.body.username, 'new user registered');
             res.send(200, {code: 200, user: businessUser}); // probably return a JS object and not the user
@@ -33,7 +33,7 @@ function signUp(req, res, next) {
  *                 - if the password is incorrect
  */
 function signIn(req, res, next) {
-    application.signIn(process.pid, req.body.username, req.body.password).then(
+    application.signIn(req.body.username, req.body.password).then(
         businessUser => {
             // send needed information derived from business
             const user = {
@@ -41,7 +41,7 @@ function signIn(req, res, next) {
                 firstSignIn: businessUser.isFirstSignIn(),
                 type: businessUser.getUserType()
             };
-            const token = jwt.sign({username: req.body.username}, process.env.SECRET_KEY, {
+            const token = jwt.sign({username: req.body.username, type:user.type}, process.env.SECRET_KEY, {
                 expiresIn: "1h" // token expires in 15 minutes
             });
             req.log.info(req.body.username, 'user signed in');
@@ -60,7 +60,7 @@ function signIn(req, res, next) {
  */
 function logout(req, res, next) {
     try{
-        application.logout(process.pid);
+        application.logout(req.body);
         req.log.info("user logged out");
         res.send(200, {code:200});
         next()
@@ -80,9 +80,9 @@ function logout(req, res, next) {
  *                 - if the password is incorrect
  */
 function changePassword(req, res, next) {
-    application.changePassword(process.pid, req.body.newPassword).then(
+    application.changePassword(req.body).then(
         businessUser => {
-            let token = jwt.sign({username: req.body.username}, process.env.SECRET_KEY, {
+            let token = jwt.sign({username: req.body.username, type: businessUser.getUserType()}, process.env.SECRET_KEY, {
                 expiresIn: "1h" // token expires in 15 minutes
             });
             req.log.info(req.body.username, 'user signed in');
@@ -105,11 +105,10 @@ function changePassword(req, res, next) {
 /**
  * view a course
  * @return {{TAs: any[], Lecturers: any[]}} the course staff
- * @throws {Error} - if there is no logged in user in @pid
- *                 - if the user logged in user in @pid is not a lecturer
+ * @throws {Error} - if there is no user is not a lecturer
  */
 function getAllStaff(req, res, next) {
-    application.getAllStaff(process.pid).then(
+    application.getAllStaff(req.body).then(
         businessStaff => {
             const TAs = businessStaff["TAs"].map(u => ({
                 username: u.getUsername(),
@@ -140,14 +139,14 @@ function getAllStaff(req, res, next) {
 /**
  * view my tasks
  * @return {[Task]}
- * @throws {Error} - if there is no user logged in pid
  */
 function viewMyTasks(req, res, next){
     try{
-        let tasks = application.viewMyTasks(process.pid);
-        req.log.info("user viewed his tasks");
-        res.send(200, {code:200,tasks})
-        next()
+        application.viewMyTasks(req.body).then((tasks) => {
+            req.log.info("user viewed his tasks");
+            res.send(200, {code:200,tasks})
+            next()
+        });
     }
     catch(err){
         req.log.warn(err.message, 'unable to view user tasks');
@@ -166,10 +165,11 @@ function viewMyTasks(req, res, next){
  */
 function finishATask(req, res, next) {
     try{
-        application.finishATask(process.pid, req.body.taskId, req.body.response);
-        req.log.info(req.body.taskId, "task is marked as finished");
-        res.send(200, {code:200})
-        next()
+        application.finishATask(data).then(()=>{
+            req.log.info(req.body.taskId, "task is marked as finished")
+            res.send(200, {code:200})
+            next()
+    })
     }
     catch(err){
         req.log.warn(err.message, 'unable to marked a task as finished');
@@ -186,7 +186,7 @@ function finishATask(req, res, next) {
  */
 function addTA(req, res, next){
     try{
-        application.addTA(process.pid, req.body.username);
+        application.addTA(req.body);
         req.log.info(req.body.username, "a request was sent to user to become a TA");
         res.send(200, {code:200})
         next()
@@ -197,7 +197,6 @@ function addTA(req, res, next){
     }
 }
 
-
 /**
  * create a new lecturer from a ta
  * @param username
@@ -207,7 +206,7 @@ function addTA(req, res, next){
  */
 function addLecturer(req, res, next){
     try{
-        application.addLecturer(process.pid, req.body.username);
+        application.addLecturer(req.body);
         req.log.info(req.body.username, "a request was sent to user to become a TA");
         res.send(200, {code:200})
         next()
@@ -224,7 +223,7 @@ function addLecturer(req, res, next){
  * @throws {Error} - if fail to get all users
  */
 function viewAllUsers(req, res, next){
-    application.viewAllUsers(process.pid).then(
+    application.viewAllUsers(req.body).then(
         businessUsers => {
             const users = businessUsers
                 .map(u => ({
@@ -252,7 +251,7 @@ function viewAllUsers(req, res, next){
  */
 function deleteUser(req, res, next){
     try{
-        application.deleteUser(process.pid, req.body);
+        application.deleteUser(req.body);
         req.log.info("a request was sent to delete a user");
         res.send(200, {code:200})
         next()
@@ -269,7 +268,7 @@ function deleteUser(req, res, next){
  */
 function getAllMetaQuestions(req, res, next){
     try{
-        let metaQuestions = application.getAllMetaQuestions(process.pid);
+        let metaQuestions = application.getAllMetaQuestions(req.body);
         req.log.info("a request was sent fetch all the meta questions");
         res.send(200, {code:200, metaQuestions})
         next()
@@ -286,7 +285,7 @@ function getAllMetaQuestions(req, res, next){
  */
 function getAllAppendices(req, res, next){
     try{
-        let appendices = application.getAllAppendices(process.pid);
+        let appendices = application.getAllAppendices(req.body);
         req.log.info("a request was sent fetch all the appendices");
         res.send(200, {code:200, appendices})
         next()
@@ -322,7 +321,7 @@ function getAllAppendices(req, res, next){
  */
 function addMetaQuestion(req, res, next){
     try{
-        let metaQuestion = application.addMetaQuestion(process.pid, req.body)
+        let metaQuestion = application.addMetaQuestion(req.body)
         req.log.info("request to create metaQuestion");
         res.send(200, {code:200, metaQuestion})
         next()
@@ -359,7 +358,8 @@ function addMetaQuestion(req, res, next){
  */
 function editMetaQuestion(req, res, next){
     try{
-        application.editMetaQuestion(process.pid, req.body)
+        console.log(req.body)
+        application.editMetaQuestion(req.body)
         req.log.info("request to edit metaQuestion");
         res.send(200, {code:200})
         next()
@@ -390,7 +390,6 @@ function editMetaQuestion(req, res, next){
 function createExam(req, res, next){
     try{
         req.log.info("request to create Exam");
-        req.body = {...req.body, pid:process.pid}
         const exam = application.createExam(req.body)
         res.send(200, {code:200,exam})
         next()
@@ -404,7 +403,6 @@ function createExam(req, res, next){
 function getAllExams(req, res, next){
     try{
         req.log.info("request to get all exams");
-        req.body = {...req.body, pid:process.pid}
         const exams = application.getAllExams(req.body)
         res.send(200, {code:200,exams})
         next()
@@ -417,7 +415,7 @@ function getAllExams(req, res, next){
 
 function editUser(req, res, next) {
     try{
-        user = application.editUser(process.pid, req.body[0], req.body[1]);
+        user = application.editUser(req.body, req.body[0], req.body[1]);
         req.log.info(req.body.username, 'edit user request');
         res.send(200, {code:200,user})
         next()
