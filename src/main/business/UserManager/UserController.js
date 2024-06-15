@@ -133,6 +133,31 @@ class UserController {
         return {"TAs": businessTAs, "Lecturers": businessLecturers};
     }
 
+    async updateUser(data){
+        this.#verifyType(data.callingUser.type, USER_TYPES.ADMIN);
+        if (!data.username) {
+            throw new EMSError(ERROR_MSGS.USER_DETAILS_MISSING_USERNAME, ERROR_CODES.USER_DETAILS_MISSING_USERNAME);
+        }
+        const user = await this.getUser(data.username);
+        const updateOperations = [];
+        if (data.userType) {
+            if (!Object.values(USER_TYPES).some(v => v === data.userType)){
+                throw new EMSError(ERROR_MSGS.INVALID_TYPE(data.userType), ERROR_CODES.INVALID_TYPE);
+            }
+            updateOperations.push(user.setUserType(data.userType));
+        }
+        if (data.firstName) {
+            updateOperations.push(user.setFirstName(data.firstName));
+        }
+        if (data.lastName) {
+            updateOperations.push(user.setLastName(data.lastName));
+        }
+        if (data.email) {
+            updateOperations.push(user.setEmail(data.email));
+        }
+        await Promise.all(updateOperations);
+    }
+
     async deleteUser(data){
         this.#verifyType(data.callingUser.type, USER_TYPES.ADMIN);
         if (this.#userRepo.getUser(data.username).getUserType() === USER_TYPES.ADMIN){
