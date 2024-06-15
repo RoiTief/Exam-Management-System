@@ -23,7 +23,12 @@ const USER_PROCESS_ERROR_MSGS = {
     USERNAME_LOGGED_IN: uname => `Username '${uname}' is already logged in`,
     USERNAME_NOT_LOGGED_IN: uname => `Username '${uname}' Not logged in`,
     INCORRECT_PASSWORD: 'Incorrect password',
-    FAILED_LOGIN: 'Incorrect username or password'
+    FAILED_LOGIN: 'Incorrect username or password',
+
+    // edit
+    CANNOT_CHANGE_ADMIN: `Cannot change type of Admin`,
+    CANNOT_DELETE_ADMIN: `Cannot delete users of type Admin`,
+    CANNOT_EDIT_OWN_TYPE: `A user cannot edit its own type`,
 }
 
 const SESSION_PROCESS_ERROR_MSGS = {
