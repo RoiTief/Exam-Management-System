@@ -1,5 +1,6 @@
 const { EMSError } = require('../main/EMSError');
-const {validateParameters, PRIMITIVE_TYPES } = require('../main/validateParameters');
+const { PRIMITIVE_TYPES } = require('../main/Enums');
+const {validateParameters } = require('../main/validateParameters');
 
 // Define a custom class for testing
 class Person {
