@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Box, Button, Container, Stack, Typography } from '@mui/material';
 import { Layout as DashboardLayout } from 'src/layouts/dashboard/layout';
 import { useRouter } from 'next/router';
@@ -11,7 +11,7 @@ import KeysSection from 'src/sections/Meta Question/correct-key-edit';
 import DistractorsSection from 'src/sections/Meta Question/distractors-edit';
 import AppendixList from 'src/sections/Meta Question/choose-appendix';
 import { httpsMethod, requestServer, serverPath } from '../../utils/rest-api-call';
-import { CREATE_QUESTION } from '../../constants';
+import { CREATE_QUESTION, EDIT_QUESTION } from '../../constants';
 
 const validationSchema = Yup.object().shape({
   keywords: Yup.array().of(Yup.string()),
@@ -37,9 +37,36 @@ const validationSchema = Yup.object().shape({
 
 const Page = () => {
   const router = useRouter();
+  const [question, setQuestion] = useState(null);
+
+  useEffect(() => {
+    if (router.query.question) {
+      setQuestion(JSON.parse(router.query.question));
+    }
+  }, [router.query.question]);
+
+  const initialValues= {
+    keywords: question?.keywords || [],
+    stem: question?.stem || '',
+    isStemRTL: true,
+    keys: question?.keys.map((item) => ({
+      text: item.text,
+      explanation: item.explanation,
+      isTextRTL: true,
+      isExplanationRTL: true,
+    })) || [{ text: '', explanation: '', isTextRTL: true, isExplanationRTL: true }],
+    distractors: question?.distractors.map((item) => ({
+      text: item.text,
+      explanation: item.explanation,
+      isTextRTL: true,
+      isExplanationRTL: true,
+    })) || [{ text: '', explanation: '', isTextRTL: true, isExplanationRTL: true }],
+    appendix: question?.appendix || { title: '', tag: '', content: '' },
+  }
 
   const handleSubmit = async (values, { setSubmitting }) => {
     const metaQuestion = {
+      id: question?.id || null,
       keywords: values.keywords,
       stem: values.stem,
       keys: values.keys.map((item) => ({
@@ -52,23 +79,19 @@ const Page = () => {
       })),
       appendix: values.appendix,
     };
-    console.log(metaQuestion);
-    await requestServer(serverPath.ADD_META_QUESTION, httpsMethod.POST, metaQuestion);
+
+    let request =  question? serverPath.EDIT_META_QUESTION : serverPath.ADD_META_QUESTION
+    console.log(`${request} ${metaQuestion}`);
+    await requestServer(request, httpsMethod.POST, metaQuestion);
     await router.push('/');
   };
 
   return (
     <Formik
-      initialValues={{
-        keywords: [],
-        stem: '',
-        isStemRTL: true,
-        keys: [{ text: '', explanation: '', isTextRTL: true, isExplanationRTL: true }],
-        distractors: [{ text: '', explanation: '', isTextRTL: true, isExplanationRTL: true }],
-        appendix: { title: '', tag: '', content: '' },
-      }}
+      initialValues={initialValues}
       validationSchema={validationSchema}
       onSubmit={handleSubmit}
+      enableReinitialize
     >
       {({ values, handleChange, handleBlur, isSubmitting, setFieldValue }) => (
         <Form>
@@ -86,12 +109,14 @@ const Page = () => {
           >
             <Container maxWidth="md" sx={{ backgroundColor: '#ffffff', borderRadius: 2, boxShadow: 3, p: 4, mb: 2, width: "100%" }}>
               <Typography variant="h4" component="h1" gutterBottom>
-                {CREATE_QUESTION.CREATE_APPENDIX_TITLE}
+                {question? EDIT_QUESTION : CREATE_QUESTION.CREATE_APPENDIX_TITLE}
               </Typography>
             </Container>
             <Stack display='flex' spacing={4} direction="row" width="80%">
               <Container maxWidth="md" sx={{ backgroundColor: '#ffffff', borderRadius: 2, boxShadow: 3, p: 4, width: "50%" }}>
-                <AppendixList onSelectAppendix={(appendix) => setFieldValue('appendix', appendix)} />
+                <AppendixList
+                  values={values}
+                  onSelectAppendix={(appendix) => setFieldValue('appendix', appendix)} />
               </Container>
               <Container maxWidth="md" sx={{ backgroundColor: '#ffffff', borderRadius: 2, boxShadow: 3, p: 4, width: "50%" }}>
                 <Box sx={{ flexGrow: 1, px: 2, py: 3 }}>

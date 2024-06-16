@@ -40,7 +40,7 @@ export const items = [
           <QuestionMark />
         </SvgIcon>
     ),
-    permissions: [types.LECTURER, types.ADMIN, types.TA],
+    permissions: [types.LECTURER, types.TA],
     children: [
       {
         title: SIDE_BAR.SIMPLE_META_QUESTION,
@@ -63,7 +63,7 @@ export const items = [
         <SchoolOutlined />
       </SvgIcon>
     ),
-    permissions: [types.LECTURER, types.ADMIN, types.TA],
+    permissions: [types.LECTURER, types.TA],
     children: [
       // {
       //   title: 'Test View',
@@ -86,7 +86,7 @@ export const items = [
         <UsersIcon />
       </SvgIcon>
     ),
-    permissions: [types.LECTURER, types.ADMIN],
+    permissions: [types.LECTURER],
     path: '/course-staff'
   },
   {
@@ -97,6 +97,6 @@ export const items = [
         <Newspaper />
       </SvgIcon>
     ),
-    permissions: [types.LECTURER, types.ADMIN]
+    permissions: [types.LECTURER]
   }
 ];

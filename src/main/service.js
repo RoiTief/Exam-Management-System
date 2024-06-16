@@ -109,7 +109,22 @@ function changePassword(req, res, next) {
  */
 function getAllStaff(req, res, next) {
     application.getAllStaff(req.body).then(
-        staff => {
+        businessStaff => {
+            const TAs = businessStaff["TAs"].map(u => ({
+                username: u.getUsername(),
+                firstName: u.getFirstName(),
+                lastName: u.getLastName(),
+                email: u.getEmail(),
+                type: u.getUserType(),
+            }));
+            const lecturers = businessStaff["Lecturers"].map(u => ({
+                username: u.getUsername(),
+                firstName: u.getFirstName(),
+                lastName: u.getLastName(),
+                email: u.getEmail(),
+                type: u.getUserType(),
+            }));
+            const staff = {"TAs": TAs, "Lecturers": lecturers};
             req.log.info("course lecturer viewed his staff")
             res.send(200, {code: 200, staff});
             next();
@@ -163,45 +178,46 @@ function finishATask(req, res, next) {
 }
 
 /**
- * create a task for the new TA to accept being a TA of this course
+ * create a new TA from a lecturer
  * @param username - the new TA username
  * @throws {Error} - if there is no user with name @username
  *                 - if the user named username is not a lecturerUsername (is not assigned to a course)
  *                 - if there is no user named TAUsername
  */
-function addTA(req, res, next){
-    try{
-        application.addTA(req.body);
-        req.log.info(req.body.username, "a request was sent to user to become a TA");
-        res.send(200, {code:200})
-        next()
-    }
-    catch(err){
-        req.log.warn(err.message, 'unable to request a user to become a TA');
-        next(err);
-    }
+function addTA(req, res, next) {
+    application.addTA(req.body).then(
+        result => {
+            req.log.info(req.body.username, "a request was sent to user to become a TA");
+            res.send(200, {code: 200});
+            next();
+        },
+        err => {
+            req.log.warn(err.message, 'unable to request a user to become a TA');
+            next(err);
+        }
+    );
 }
 
 /**
- * create a task for the new grader to accept being a grader of this course
+ * create a new lecturer from a ta
  * @param username
  * @throws {Error} - if there is no user with name @username
  *                 - if the user named username is not a lecturerUsername or is not assigned to a course
  *                 - if there is no user named graderUsername
  */
-function addGrader(req, res, next){
-    try{
-        application.addGrader(req.body);
-        req.log.info(req.body.username, "a request was sent to user to become a TA");
-        res.send(200, {code:200})
-        next()
-    }
-    catch(err){
-        req.log.warn(err.message, 'unable to request a user to become a grader');
-        next(err);
-    }
+function addLecturer(req, res, next) {
+    application.addLecturer(req.body).then(
+        result => {
+            req.log.info(req.body.username, "a request was sent to user to become a TA");
+            res.send(200, {code: 200});
+            next();
+        },
+        err => {
+            req.log.warn(err.message, 'unable to request a user to become a grader');
+            next(err);
+        }
+    );
 }
-
 
 /**
  * get all users for admin
@@ -317,6 +333,43 @@ function addMetaQuestion(req, res, next){
     }
 }
 
+/**
+ * edit a meta question
+ * @param - req.body = {
+ *      //      id: num
+ *     //       keywords: str[],
+ *     //       stem: str,
+ *     //       keys: [{
+ *     //         answer: str,
+ *     //         explanation: str
+ *     //         }],
+ *     //       distractors: [{
+ *     //         distractor: str,
+ *     //         explanation: str
+ *     //       }],
+ *     //      appendix: {
+ *     //          title: str,
+ *     //          tag: str,
+ *     //          content: str
+ *     //       }
+ *     //     }
+ *     //
+ *     appendix could be null
+ * @throws {Error} - if fail to edit
+ */
+function editMetaQuestion(req, res, next){
+    try{
+        application.editMetaQuestion(req.body)
+        req.log.info("request to edit metaQuestion");
+        res.send(200, {code:200})
+        next()
+    }
+    catch(err){
+        req.log.warn(err.message, 'failed to create meta questions');
+        next(err);
+    }
+}
+
 
 /**
  * creates an Exam
@@ -361,16 +414,17 @@ function getAllExams(req, res, next){
 }
 
 function editUser(req, res, next) {
-    try{
-        user = application.editUser(req.body, req.body[0], req.body[1]);
-        req.log.info(req.body.username, 'edit user request');
-        res.send(200, {code:200,user})
-        next()
-    }
-    catch(err){
-        req.log.warn(err.message, 'unable to edit user');
-        next(err);
-    }
+    application.editUser(req.body).then(
+        result => {
+            req.log.info(req.body.username, 'edit user request');
+            res.send(200, {code:200});
+            next();
+        },
+        err => {
+            req.log.warn(err.message, 'unable to edit user');
+            next(err);
+        }
+    );
 }
 
 module.exports = {
@@ -382,12 +436,13 @@ module.exports = {
     viewMyTasks: viewMyTasks,
     finishATask: finishATask,
     addTA: addTA,
-    addGrader: addGrader,
+    addLecturer: addLecturer,
     viewAllUsers: viewAllUsers,
     deleteUser: deleteUser,
     getAllMetaQuestions: getAllMetaQuestions,
     getAllAppendices: getAllAppendices,
     addMetaQuestion: addMetaQuestion,
+    editMetaQuestion: editMetaQuestion,
     createExam,
     getAllExams,
     editUser: editUser

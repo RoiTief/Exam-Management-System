@@ -135,8 +135,8 @@ function createServer(options) {
         if(authenticate(req)){
             next();
         }
-        else if ( req.url.startsWith('/signUp') || req.url.startsWith('/signIn') ||
-            req.url.startsWith('/logout')) {
+
+        else if (req.url.startsWith('/signIn') || req.url.startsWith('/logout')) {
             next();
             return;
         }  
@@ -179,7 +179,7 @@ function createServer(options) {
     server.post('/addTA', service.addTA)
 
      // request: {username}
-    server.post('/addGrader', service.addGrader)
+    server.post('/addLecturer', service.addLecturer)
 
     //request: {
     //       keywords: str[],
@@ -199,6 +199,25 @@ function createServer(options) {
     //       }
     //     }
     server.post('/addMetaQuestion', service.addMetaQuestion);
+
+    //request: {
+    //       keywords: str[],
+    //       stem: str,
+    //       keys: [{
+    //         answer: str,
+    //         explanation: str
+    //         }],
+    //       distractors: [{
+    //         distractor: str,
+    //         explanation: str
+    //       }],
+    //      appendix: {
+    //          title: str,
+    //          tag: str,
+    //          content: str
+    //       }
+    //     }
+    server.post('/editMetaQuestion', service.editMetaQuestion);
 
     // request:
     //  {    questions:[

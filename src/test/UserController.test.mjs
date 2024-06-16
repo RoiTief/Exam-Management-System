@@ -60,36 +60,6 @@ describe('UserController', function () {
         expect(() => userController.verifySystemAdmin(adminPid)).to.not.throw();
     });
 
-    it('should set user as Lecturer', function () {
-        const username = 'lecturer';
-        const password = 'password';
-        const course = { setUserAsLecturer: () => {} };
-        userController.register(pid, username, password);
-        userController.setUserAsLecturer(username, course);
-        const user = userController.getUser(username);
-        expect(user).to.be.instanceOf(Lecturer);
-    });
-
-    it('should set user as TA', function () {
-        const username = 'taUser';
-        const password = 'password';
-        const course = { setUserAsTA: () => {} };
-        userController.register(pid, username, password);
-        userController.setUserAsTA(username, course);
-        const user = userController.getUser(username);
-        expect(user).to.be.instanceOf(TA);
-    });
-
-    it('should set user as Grader', function () {
-        const username = 'graderUser';
-        const password = 'password';
-        const course = { setUserAsGrader: () => {} };
-        userController.register(pid, username, password);
-        userController.setUserAsGrader(username, course);
-        const user = userController.getUser(username);
-        expect(user).to.be.instanceOf(Grader);
-    });
-
     it('should get user type', function () {
         const username = 'testUser';
         const password = 'testPassword';

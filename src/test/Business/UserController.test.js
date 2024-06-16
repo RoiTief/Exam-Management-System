@@ -274,4 +274,56 @@ describe('Tests UserController component', () => {
             expect(e.errorCode).toBe(USER_PROCESS_ERROR_CODES.EMAIL_ALREADY_EXIST);
         }
     })
+
+    test('edit user', async () => {
+        await userController.register(structuredClone(registerDetails));
+
+        let updatedFields = {
+            callingUser: structuredClone(registerDetails.callingUser),
+            username: registerDetails.username,
+            firstName: registerDetails.firstName + 'asdf',
+            lastName: registerDetails.lastName + 'asdf',
+        }
+
+        await userController.updateUser(structuredClone(updatedFields));
+        let updatedUser = await userController.getUser(registerDetails.username);
+
+        // assert only requested fields were updated
+        /// stayed
+        expect(updatedUser.getUsername()).toBe(registerDetails.username);
+        expect(updatedUser.getEmail()).toBe(registerDetails.email);
+        expect(updatedUser.getUserType()).toBe(registerDetails.userType);
+        /// updated
+        expect(updatedUser.getFirstName()).toBe(updatedFields.firstName);
+        expect(updatedUser.getLastName()).toBe(updatedFields.lastName);
+
+        // update rest
+        updatedFields = {
+            callingUser: structuredClone(registerDetails.callingUser),
+            username: registerDetails.username,
+            email: registerDetails.email + 'asdf',
+            userType: USER_TYPES.TA,
+        }
+
+        await userController.updateUser(structuredClone(updatedFields));
+        updatedUser = await userController.getUser(registerDetails.username);
+
+        // assert fields were updated
+        expect(updatedUser.getEmail()).toBe(updatedFields.email);
+        expect(updatedUser.getUserType()).toBe(updatedFields.userType);
+
+        // assert error thrown when updated with invalid type
+        updatedFields = {
+            callingUser: structuredClone(registerDetails.callingUser),
+            username: registerDetails.username,
+            userType: "asdfasdfasdf",
+        }
+        try {
+            await userController.updateUser(structuredClone(updatedFields));
+        } catch (e) {
+            expect(e instanceof EMSError).toBeTruthy();
+            expect(e.errorCode).toBe(USER_PROCESS_ERROR_CODES.INVALID_TYPE)
+        }
+
+    })
 });
