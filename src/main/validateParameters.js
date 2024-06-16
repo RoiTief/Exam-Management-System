@@ -6,6 +6,34 @@ const PRIMITIVE_TYPES = {
   BOOLEAN: "boolean",
   NUMBER: "number",
 };
+/**
+ * 
+ * 
+ * @returns the name of the function that has called the caller 
+ * 
+ * 
+ * @example 
+ * function foo: calling goo()
+ * function goo: calling getCallingFunctionName()
+ * getCallingFunctionName return "foo":
+ */
+function getCallingFunctionName() {
+  // Create an error to get the stack trace
+  const err = new Error();
+  
+  // Parse the stack trace
+  const stackLines = err.stack.split('\n');
+  
+  // The third line in the stack trace should contain the caller function name
+  // The format is usually like "    at functionName (file:line:column)"
+  const callerLine = stackLines[3];
+  console.log(JSON.stringify(callerLine))
+  // Extract the function name from the stack trace line
+  const match = callerLine.trim().match(/^at (\w+)\.(\w+)/);
+  
+  // Return the function name if it exists
+  return match ? JSON.stringify(match[0]) : undefined;
+}
 
 /**
  * Validates that the keys and types of the properties in `realObj` match the specifications in `expectedObj`.
@@ -41,7 +69,9 @@ const PRIMITIVE_TYPES = {
  * validateParameters(realObj, expectedObj); // pass validation
  */
 function validateParameters(realObj, expectedObj, prohibitNull = true, checkCallingUserData = true) {
-  if (!realObj) throw new EMSError(ERROR_MSGS.NULL_OBJECT, ERROR_CODES.NULL_OBJECT);
+
+  const callingFunctionName = getCallingFunctionName()
+  if (!realObj) throw new EMSError(ERROR_MSGS.NULL_OBJECT(callingFunctionName), ERROR_CODES.NULL_OBJECT);
 
   // Add callingUserData to expectedObj if needed
   if (checkCallingUserData) {
@@ -58,7 +88,7 @@ function validateParameters(realObj, expectedObj, prohibitNull = true, checkCall
     if (expectedObj.hasOwnProperty(key)) {
       // Check if the key exists in realObj
       if (!realObj.hasOwnProperty(key)) {
-        throw new EMSError(ERROR_MSGS.MISSING_KEY(key), ERROR_CODES.MISSING_KEY);
+        throw new EMSError(ERROR_MSGS.MISSING_KEY(key,callingFunctionName), ERROR_CODES.MISSING_KEY);
       }
 
       // Get the expected type
@@ -66,7 +96,7 @@ function validateParameters(realObj, expectedObj, prohibitNull = true, checkCall
       const realValue = realObj[key];
 
       if (prohibitNull && realValue === null) {
-        throw new EMSError(ERROR_MSGS.NULL_VALUE(key), ERROR_CODES.NULL_VALUE);
+        throw new EMSError(ERROR_MSGS.NULL_VALUE(key,callingFunctionName), ERROR_CODES.NULL_VALUE);
       }
 
       // Check the type
@@ -74,13 +104,13 @@ function validateParameters(realObj, expectedObj, prohibitNull = true, checkCall
       // Primitive type check
       if (Object.values(PRIMITIVE_TYPES).includes(expectedType)) {
         if (typeof realValue !== expectedType) {
-          throw new EMSError(ERROR_MSGS.TYPE_MISMATCH(key, expectedType, typeof realValue), ERROR_CODES.TYPE_MISMATCH);
+          throw new EMSError(ERROR_MSGS.TYPE_MISMATCH(key, expectedType, typeof realValue,callingFunctionName), ERROR_CODES.TYPE_MISMATCH);
         }
       } 
         // Class type check
         else if (typeof expectedType === 'function') {
         if (!(realValue instanceof expectedType)) {
-          throw new EMSError(ERROR_MSGS.TYPE_MISMATCH(key, expectedType.name, realValue.constructor.name), ERROR_CODES.TYPE_MISMATCH);
+          throw new EMSError(ERROR_MSGS.TYPE_MISMATCH(key, expectedType.name, realValue.constructor.name,callingFunctionName), ERROR_CODES.TYPE_MISMATCH);
         }
       }
         // Nested object type check
@@ -88,7 +118,7 @@ function validateParameters(realObj, expectedObj, prohibitNull = true, checkCall
           validateParameters(realValue, expectedType, prohibitNull, false);
       } 
       else {
-          throw new EMSError(ERROR_MSGS.UNSUPPORTED_TYPE(key), ERROR_CODES.UNSUPPORTED_TYPE);
+          throw new EMSError(ERROR_MSGS.UNSUPPORTED_TYPE(key,callingFunctionName), ERROR_CODES.UNSUPPORTED_TYPE);
       }
     }
   }
