@@ -20,8 +20,15 @@ export const AddPersonalToCourse = (props) => {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const { users } = await requestServer(serverPath.GET_ALL_USERS, httpsMethod.GET);
-        setUsers(users);
+        const { staff } = await requestServer(serverPath.GET_ALL_STAFF, httpsMethod.GET);
+        switch (state) {
+          case 'TA':
+            setUsers(staff.Lecturers.map(user => user.username));
+            break;
+          case 'Lecturer':
+            setUsers(staff.TAs.map(user => user.username));
+            break;
+        }
       } catch (error) {
         console.error('Error fetching users:', error);
       }
@@ -71,7 +78,7 @@ export const AddPersonalToCourse = (props) => {
             <Stack spacing={3}>
               <Autocomplete
                 fullWidth
-                options={users.map(user => user.username)}
+                options= {users}
                 value={formik.values.username}
                 onChange={(event, newValue) => {
                   formik.setFieldValue('username', newValue || '');

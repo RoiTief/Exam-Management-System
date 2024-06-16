@@ -63,7 +63,7 @@ export const UserProvider = ({ children }) => {
 
   const addUser = async user => {
     try {
-      await requestServer(serverPath.SIGN_UP, httpsMethod.POST, {username: user.username, type: user.type});
+      await requestServer(serverPath.SIGN_UP, httpsMethod.POST, {username: user.username, userType: user.type});
       dispatch({ type: HANDLERS.ADD_USER, payload: user });
     } catch (error){
       console.error("failed to add user:", error)
@@ -72,7 +72,7 @@ export const UserProvider = ({ children }) => {
 
   const editUser = async user => {
     try {
-      await requestServer(serverPath.EDIT_USER, httpsMethod.PUT, [user.username, user.type]);
+      await requestServer(serverPath.EDIT_USER, httpsMethod.PUT, {username: user.username, userType: user.type});
       dispatch({ type: HANDLERS.EDIT_USER, payload: user });
     } catch (error){
       console.error("failed to edit user:", error)
@@ -81,7 +81,7 @@ export const UserProvider = ({ children }) => {
 
   const deleteUser = async username => {
     try {
-      await requestServer(serverPath.DELETE_USER, httpsMethod.DELETE, username);
+      await requestServer(serverPath.DELETE_USER, httpsMethod.DELETE, {username});
       dispatch({ type: HANDLERS.DELETE_USER, payload: username });
     } catch (error){
       console.error("failed to delete user:", error)

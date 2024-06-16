@@ -37,7 +37,7 @@ const Page = () => {
       }
     };
     getCourse();
-  }, []);
+  }, [isPopupOpen]);
 
   const toggleAdmins = () => {
     setShowAllAdmins(!showAllAdmins);

@@ -20,7 +20,6 @@ export const serverPath = {
     SIGN_OUT: 'logout',
     VIEW_TASKS: 'viewMyTasks',
     ADD_TA: 'addTA',
-    ADD_GRADER: 'addGrader',
     ADD_LECTURER: 'addLecturer',
     FINISH_TASK: 'finishATask',
     VIEW_QUESTIONS: 'viewCourseMetaQuestions',
@@ -32,7 +31,8 @@ export const serverPath = {
     CREATE_EXAM: 'createExam',
     GET_ALL_EXAMS: 'getAllExams',
     CHANGE_PASSWORD: 'changePassword',
-    EDIT_USER: 'editUser'
+    EDIT_USER: 'editUser',
+    EDIT_META_QUESTION: 'editMetaQuestion'
 }
 
 export const latexServerPath = {
