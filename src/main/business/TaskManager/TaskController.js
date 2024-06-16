@@ -68,7 +68,7 @@ class TaskController {
     finishTask(data, applicationFacade) {
         validateParameters(data,{
             taskId: "number",
-            response: "",
+            response: "string",
         })
         let task = this.getTask(data.taskId)
         if(task === undefined)

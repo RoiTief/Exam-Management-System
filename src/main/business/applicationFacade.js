@@ -4,7 +4,7 @@ const MetaQuestionController = require('./MetaQuestions/MetaQuestionController.j
 const ExamController = require('./ExamManager/ExamController.js');
 const userTypes = require('../Enums').USER_TYPES
 const { userRepo } = require("../DAL/Dal");
-const { validateParameters } = require('../validateParameters.js');
+const { validateParameters, PRIMITIVE_TYPES } = require('../validateParameters.js');
 
 class ApplicationFacade{
     constructor() {
@@ -140,8 +140,7 @@ class ApplicationFacade{
     async changePassword(changePasswordData) {
         validateParameters(changePasswordData,
             {
-                username: PRIMITIVE_TYPES.STRING,
-                password: PRIMITIVE_TYPES.STRING,
+                newPassword: PRIMITIVE_TYPES.STRING,
             })
         const user = await this.userController.getUser(changePasswordData.callingUser.username);
         await user.changePassword(changePasswordData.newPassword);

@@ -59,7 +59,7 @@ class UserController {
         validateParameters(data, {
             username: PRIMITIVE_TYPES.STRING,
             password: PRIMITIVE_TYPES.STRING,
-        })
+        }, true, false)
 
         try {
             user = await this.getUser(data.username);
