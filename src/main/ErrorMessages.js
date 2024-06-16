@@ -39,11 +39,11 @@ const SESSION_PROCESS_ERROR_MSGS = {
 }
 
 const FUNCTION_PARAMETERS_ERROR_MSGS = {
-    MISSING_KEY: (key,callingFunctionName) => `Missing key: ${key}. ${callingFunctionName}`,
-    TYPE_MISMATCH: (key, expectedType, realType,callingFunctionName) => `Type mismatch for key: ${key}. Expected: ${expectedType}, Found: ${realType}. ${callingFunctionName}`,
-    UNSUPPORTED_TYPE: (key,callingFunctionName) => `Unsupported type specification for key: ${key}. ${callingFunctionName}`,
+    MISSING_KEY: (key,callingFunctionName) => `Missing key: '${key}'. ${callingFunctionName}`,
+    TYPE_MISMATCH: (key, expectedType, realType,callingFunctionName) => `Type mismatch for key: '${key}'. Expected: ${expectedType}, Found: ${realType}. ${callingFunctionName}`,
+    UNSUPPORTED_TYPE: (key,callingFunctionName) => `Unsupported type specification for key: '${key}'. ${callingFunctionName}`,
     NULL_OBJECT: (callingFunctionName) => `Cannot receive null object. ${callingFunctionName}`,
-    NULL_VALUE: (key,callingFunctionName) => `Key: ${key} has value of null. ${callingFunctionName}`,
+    NULL_VALUE: (key,callingFunctionName) => `Key: '${key}' has value of null. ${callingFunctionName}`,
 }
 
 // for MetaQuestions processes

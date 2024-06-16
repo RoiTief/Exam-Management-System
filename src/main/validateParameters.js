@@ -81,7 +81,6 @@ function validateParameters(realObj, expectedObj, prohibitNull = true, checkCall
   }
 
   for (const key in expectedObj) {
-    if (expectedObj.hasOwnProperty(key)) {
       // Check if the key exists in realObj
       if (!realObj.hasOwnProperty(key)) {
         throw new EMSError(ERROR_MSGS.MISSING_KEY(key,callingFunctionName), ERROR_CODES.MISSING_KEY);
@@ -114,9 +113,8 @@ function validateParameters(realObj, expectedObj, prohibitNull = true, checkCall
           validateParameters(realValue, expectedType, prohibitNull, false);
       } 
       else {
-          throw new EMSError(ERROR_MSGS.UNSUPPORTED_TYPE(key,callingFunctionName), ERROR_CODES.UNSUPPORTED_TYPE);
+        throw new EMSError(ERROR_MSGS.UNSUPPORTED_TYPE(key,callingFunctionName), ERROR_CODES.UNSUPPORTED_TYPE);
       }
-    }
   }
 }
 
