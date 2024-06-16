@@ -1,14 +1,17 @@
 const MetaQuestion = require('./MetaQuestion')
 const {TaskTypes, TaskPriority} = require('../TaskManager/Task')
+const {getAllAppendices} = require("../../service");
 
 class MetaQuestionController{
     #metaQuestions;
+    #appendices;
     #taskController;
     #userController;
     #metaQuestionId;
 
     constructor(taskController,userController){
         this.#metaQuestions = new Map();
+        this.#appendices = new Map();
         this.#taskController = taskController;
         this.#userController = userController;
         this.#metaQuestionId = 1
@@ -16,7 +19,12 @@ class MetaQuestionController{
 
     createMetaQuestion(data) {
         // create a new metaQuestion
-        data = {...data, id: this.#metaQuestionId}
+        data.id = this.#metaQuestionId;
+        if (this.#appendices.has(data.appendix.tag)) {
+            data.appendix = this.#appendices.get(data.appendix.tag);
+        } else {
+            this.#appendices.set(data.appendix.tag, data.appendix);
+        }
         let metaQuestion = new MetaQuestion(data);
         this.#metaQuestions.set(this.#metaQuestionId, metaQuestion);
         const ta_s = this.#userController.getAllStaff(data)["TAs"]
@@ -52,11 +60,11 @@ class MetaQuestionController{
     }
 
     getAllAppendices(data){
-        return this.getAllMetaQuestions()
-            .map(metaQuestion => metaQuestion.getAppendix())
-            .filter(appendix => appendix) // remove null and undefined
+        return [...this.#appendices.values()];
+    }
 
-         
+    getAppendix(appendixTag) {
+        return this.#appendices.get(appendixTag);
     }
 
     getMetaQuestionForAppendix(appendix){
