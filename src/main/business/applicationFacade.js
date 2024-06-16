@@ -380,6 +380,9 @@ class ApplicationFacade{
         return this.metaQuestionController.getAllAppendices(data)
     }
 
+    getMetaQuestionForAppendix(appendix) {
+        return this.metaQuestionController.getMetaQuestionForAppendix(appendix)
+    }
 
     async editUser(data){
         return this.userController.updateUser(data);

@@ -34,7 +34,7 @@ export const AppendicesTable = ({ appendices }) => {
       return;
     }
     try {
-      const { metaQuestions } = await requestServer(serverPath.GET_ALL_META_QUESTIONS, httpsMethod.GET);
+      const { metaQuestions } = await requestServer(serverPath.GET_META_QUESTIONS_FOR_APPENDIX, httpsMethod.POST, appendix);
       setRelatedQuestions(metaQuestions);
       setExpandedAppendix(appendix);
     } catch (error) {

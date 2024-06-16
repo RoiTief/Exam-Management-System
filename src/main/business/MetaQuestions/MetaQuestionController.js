@@ -59,6 +59,15 @@ class MetaQuestionController{
          
     }
 
+    getMetaQuestionForAppendix(appendix){
+        return this.getAllMetaQuestions()
+            .filter(metaQuestion => metaQuestion.getAppendix() && this.#deepEqualAppendix(metaQuestion.getAppendix(), appendix))
+    }
+
+    #deepEqualAppendix = (a, b) => (
+        a.title === b.title && a.tag === b.tag && a.content === b.content
+    );
+
 }
 
 module.exports = MetaQuestionController;

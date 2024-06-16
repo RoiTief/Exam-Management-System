@@ -32,7 +32,8 @@ export const serverPath = {
     GET_ALL_EXAMS: 'getAllExams',
     CHANGE_PASSWORD: 'changePassword',
     EDIT_USER: 'editUser',
-    EDIT_META_QUESTION: 'editMetaQuestion'
+    EDIT_META_QUESTION: 'editMetaQuestion',
+    GET_META_QUESTIONS_FOR_APPENDIX: 'getMetaQuestionForAppendix'
 }
 
 export const latexServerPath = {

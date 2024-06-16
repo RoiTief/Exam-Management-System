@@ -275,7 +275,7 @@ function getAllMetaQuestions(req, res, next){
         next()
     }
     catch(err){
-        req.log.warn(err.message, 'unable to request to delete a user');
+        req.log.warn(err.message, 'unable to request fetch all the meta questions');
         next(err);
     }
 }
@@ -292,7 +292,20 @@ function getAllAppendices(req, res, next){
         next()
     }
     catch(err){
-        req.log.warn(err.message, 'unable to request to delete a user');
+        req.log.warn(err.message, 'unable to request fetch all the appendices');
+        next(err);
+    }
+}
+
+function getMetaQuestionForAppendix(req, res, next){
+    try{
+        let metaQuestions = application.getMetaQuestionForAppendix(req.body);
+        req.log.info("a request was sent fetch all the meta question for a specific appendix ");
+        res.send(200, {code:200, metaQuestions})
+        next()
+    }
+    catch(err){
+        req.log.warn(err.message, 'unable to request fetch all the meta question for a specific appendix');
         next(err);
     }
 }
@@ -441,6 +454,7 @@ module.exports = {
     deleteUser: deleteUser,
     getAllMetaQuestions: getAllMetaQuestions,
     getAllAppendices: getAllAppendices,
+    getMetaQuestionForAppendix: getMetaQuestionForAppendix,
     addMetaQuestion: addMetaQuestion,
     editMetaQuestion: editMetaQuestion,
     createExam,
