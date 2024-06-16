@@ -1,16 +1,21 @@
 const defineMetaQuestionModel = require("./MetaQuestion")
 const defineAnswerModel = require("./Answer")
 const defineKeywordModel= require("./Keyword")
+const defineAppendixModel = require("./Appendix");
+const {EMSError, MQ_PROCESS_ERROR_CODES: ERROR_CODES} = require("../../EMSError");
+const {MQ_PROCESS_ERROR_MSGS : ERROR_MSGS} = require("../../ErrorMessages");
 
 class MetaQuestionRepository {
     #MetaQuestion
     #Answer
     #Keyword
+    #Appendix
 
     constructor(sequelize) {
         this.#MetaQuestion = defineMetaQuestionModel(sequelize);
         this.#Answer = defineAnswerModel(sequelize);
         this.#Keyword = defineKeywordModel(sequelize);
+        this.#Appendix = defineAppendixModel(sequelize);
 
         // Define associations
         // MQ - Answer
@@ -21,7 +26,38 @@ class MetaQuestionRepository {
         this.#MetaQuestion.belongsToMany(this.#Keyword, {through: 'MetaQuestionKeyword', as: 'keywords'});
         this.#Keyword.belongsToMany(this.#MetaQuestion, {through: 'MetaQuestionKeyword', as: 'metaQuestions'});
 
-        sequelize.sync({alter: true}); // cleans the DB
+        // MQ - Appendix
+        this.#Appendix.hasMany(this.#MetaQuestion, {as: 'metaQuestions', foreignKey: 'appendixTag'});
+        this.#MetaQuestion.belongsTo(this.#Appendix, {as: 'appendix', foreignKey: { name: 'appendixTag', allowNull: true }});
+
+        // Appendix - Keyword
+        this.#Appendix.belongsToMany(this.#Keyword, {through: 'AppendixKeyword', as: 'keywords'});
+        this.#Keyword.belongsToMany(this.#Appendix, {through: 'AppendixKeyword', as: 'appendices'});
+    }
+
+    /**
+     * Adds a new Appendix to the DB.
+     * @param appendixData Data for the Appendix to be added: { tag: string, title: string, content: string, appendixTag: string | null }
+     * @param keywords Array of keywords for the added Appendix: string[]
+     * @returns The added Appendix.
+     */
+    async addAppendix(appendixData, keywords) {
+        try {
+             const appendix = await this.#Appendix.create(appendixData);
+             return await this.addKeywordsToAppendix(appendix.tag, keywords);
+        } catch (e) {
+            if (e.name === 'SequelizeUniqueConstraintError') {
+                // Check if the error is related to username or email uniqueness
+                e.errors.forEach(err => {
+                    if (err.path === 'tag') {
+                        throw new EMSError(ERROR_MSGS.APPENDIX_TAG_ALREADY_EXIST(appendixData.tag), ERROR_CODES.APPENDIX_TAG_ALREADY_EXIST);
+                    }
+                });
+            } else {
+                // Handle other errors
+                console.error('Error adding appendix:', e);
+            }
+        }
     }
 
     /**
@@ -32,6 +68,9 @@ class MetaQuestionRepository {
      * @returns The added question.
      */
     async addMetaQuestion(questionData, answers, keywords) {
+        if (questionData.appendixTag) {
+            await this.getAppendix(questionData.appendixTag); // makes sure the appendix we connect to exists
+        }
         const question = await this.#MetaQuestion.create(questionData);
         await this.addAnswersToQuestion(question.id, answers);
         return await this.addKeywordsToQuestion(question.id, keywords);
@@ -44,23 +83,12 @@ class MetaQuestionRepository {
      * @returns The updated question.
      */
     async addAnswersToQuestion(qId, answers) {
-        await answers.forEach(answer => {
+        answers.forEach(answer => {
             answer.metaQuestionId = qId;
         });
         await this.#Answer.bulkCreate(answers);
 
-        return await this.#MetaQuestion.findByPk(qId, {
-            include: [
-                {
-                    model: this.#Answer,
-                    as: 'answers',
-                },
-                {
-                    model: this.#Keyword,
-                    as: 'keywords',
-                },
-            ]
-        });
+        return await this.getMetaQuestion(qId);
     }
 
     /**
@@ -70,11 +98,67 @@ class MetaQuestionRepository {
      * @returns The updated question.
      */
     async addKeywordsToQuestion(qId, keywords) {
-        const question = await this.#MetaQuestion.findByPk(qId);
+        const metaQuestion = await this.getMetaQuestion(qId);
         const dbKeywords = await this.#getDbKeywords(keywords)
-        await question.addKeywords(dbKeywords);
+        await metaQuestion.addKeywords(dbKeywords);
+        await metaQuestion.reload();
+        return metaQuestion;
+    }
 
-        return await this.#MetaQuestion.findByPk(question.id, {
+    /**
+     * Adds given keywords to given appendix.
+     * @param tag tag of an existing appendix.
+     * @param keywords Array of keywords: string[]
+     * @returns The updated appendix.
+     */
+    async addKeywordsToAppendix(tag, keywords) {
+        const appendix = await this.getAppendix(tag);
+        const dbKeywords = await this.#getDbKeywords(keywords)
+        await appendix.addKeywords(dbKeywords);
+        await appendix.reload();
+        return appendix;
+    }
+
+    /**
+     * @param tag Tag of the requested Appendix.
+     * @return The requested Appendix.
+     */
+    async getAppendix(tag) {
+        const appendix = await this.#Appendix.findByPk(tag, {
+            include: [
+                {
+                    model: this.#MetaQuestion,
+                    as: 'metaQuestions',
+                },
+                {
+                    model: this.#Keyword,
+                    as: 'keywords',
+                },
+            ]
+        });
+        if (appendix === null) {
+            throw new EMSError(ERROR_MSGS.APPENDIX_TAG_DOESNT_EXIST(tag), ERROR_CODES.APPENDIX_TAG_DOESNT_EXIST);
+        }
+        return appendix;
+    }
+
+    async getAllAppendices() {
+        return await this.#Appendix.findAll({
+            include: [
+                {
+                    model: this.#MetaQuestion,
+                    as: 'metaQuestions',
+                },
+                {
+                    model: this.#Keyword,
+                    as: 'keywords',
+                },
+            ]
+        });
+    }
+
+    async getMetaQuestion(metaQuestionId) {
+        const metaQuestion = await this.#MetaQuestion.findByPk(metaQuestionId, {
             include: [
                 {
                     model: this.#Answer,
@@ -84,7 +168,59 @@ class MetaQuestionRepository {
                     model: this.#Keyword,
                     as: 'keywords',
                 },
+                {
+                    model: this.#Appendix,
+                    as: 'appendix',
+                    required: false,
+                }
             ]
+        });
+        if (metaQuestion === null) {
+            throw new EMSError(ERROR_MSGS.MQ_ID_DOESNT_EXIST(metaQuestionId), ERROR_CODES.MQ_ID_DOESNT_EXIST);
+        }
+        return metaQuestion;
+    }
+
+    async getAllMetaQuestions() {
+        return await this.#MetaQuestion.findAll({
+            include: [
+                {
+                    model: this.#Answer,
+                    as: 'answers',
+                },
+                {
+                    model: this.#Keyword,
+                    as: 'keywords',
+                },
+                {
+                    model: this.#Appendix,
+                    as: 'appendix',
+                }
+            ]
+        });
+    }
+
+    /**
+     * Removed given Appendix from the DB.
+     * @param appendixTag Tag of the Appendix to remove.
+     */
+    async deleteAppendix(appendixTag) {
+        await this.#Appendix.destroy({
+            where: {
+                tag: appendixTag,
+            }
+        });
+    }
+
+    /**
+     * Removed given Meta-Question from the DB.
+     * @param qId ID of the Meta-Question to remove.
+     */
+    async deleteMetaQuestion(qId) {
+        await this.#MetaQuestion.destroy({
+           where: {
+               id: qId,
+           }
         });
     }
 

@@ -6,7 +6,7 @@ const testDbConfig = {
     host: '164.90.223.94',
     port: '5432',
     dialect: 'postgres',
-    logging: true
+    logging: false
 }
 
 module.exports = testDbConfig;

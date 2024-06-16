@@ -57,6 +57,7 @@ export const USERS = {
   ACTIONS: "Actions",
   LECTURER: "Lecturer",
   TA: "TA",
+  ADMIN: "Admin",
   CANCEL_ACTION: "Cancel",
   SAVE_ACTION: "Save Changes",
   CONFIRM_DELETION: "Confirm Deletion",
@@ -77,6 +78,8 @@ export const LOGIN = {
   PASSWORDS_DO_NOT_MATCH: "Passwords do not match",
   FAILED_TO_CHANGE_PASSWORD: "Failed to change password:"
 };
+
+export const EDIT_QUESTION = "Edit Question"
 
 export const CREATE_QUESTION = {
   CREATE_SIMPLE_TITLE: "Create Simple Meta-Question",
@@ -128,7 +131,7 @@ export const QUESTIONS_CATALOG = {
 
 export const COURSE_STAFF = {
   PAGE_TITLE: "Course Staff",
-  HEADING: "Beta Course",
+  HEADING: "Course Management",
   LECTURERS_HEADING: "Lecturers",
   TAS_HEADING: "TAs",
   SHOW_MORE_ADMINS: "Show more admins",

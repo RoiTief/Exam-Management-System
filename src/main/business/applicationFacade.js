@@ -4,7 +4,8 @@ const MetaQuestionController = require('./MetaQuestions/MetaQuestionController.j
 const ExamController = require('./ExamManager/ExamController.js');
 const userTypes = require('../Enums').USER_TYPES
 const { userRepo } = require("../DAL/Dal");
-const { validateParameters, PRIMITIVE_TYPES } = require('../validateParameters.js');
+const { validateParameters } = require('../validateParameters.js');
+const {USER_TYPES, PRIMITIVE_TYPES} = require("../Enums");
 
 class ApplicationFacade{
     constructor() {
@@ -122,7 +123,7 @@ class ApplicationFacade{
      */
     async signIn(data) {
         return (await this.userController.signIn(data));
-    }
+   }
 
     /**
      * user wants to log out
@@ -156,6 +157,7 @@ class ApplicationFacade{
         return (await this.userController.getAllStaff(data));
     }
 
+    // TODO: remove
     /**
      * set @lecturerUsername to be the course
      * @param lecturerUsername - the new lecturer
@@ -172,10 +174,20 @@ class ApplicationFacade{
      *                 - if the user named username is not a lecturerUsername (is not assigned to a course)
      *                 - if there is no user named TAUsername
      */
-    addTA(data){
-        this.userController.verifyLecturer(data.callingUser.username);
-        this.userController.verifyUserRegistered(data.username)
-        this.taskController.newTARequestTask(data.username);
+    async addTA(data){
+        await this.userController.updateStaff({
+            callingUser: data.callingUser,
+            username: data.username,
+            userType: USER_TYPES.TA,
+        })
+    }
+
+    async addLecturer(data){
+        await this.userController.updateStaff({
+            callingUser: data.callingUser,
+            username: data.username,
+            userType: USER_TYPES.LECTURER,
+        })
     }
 
     /**
@@ -308,7 +320,7 @@ class ApplicationFacade{
      *                 - if this task is already finished
      */
     async finishATask(data){
-        await this.taskController.finishTask(this);
+        await this.taskController.finishTask(data, this);
     }
 
     /**
@@ -332,6 +344,10 @@ class ApplicationFacade{
      */
     addMetaQuestion(createMetaQuestionProperties) {
         return this.metaQuestionController.createMetaQuestion(createMetaQuestionProperties)
+    }
+
+    editMetaQuestion(editedMetaQuestionProperties) {
+        this.metaQuestionController.editMetaQuestion(editedMetaQuestionProperties)
     }
 
     /**
@@ -369,8 +385,8 @@ class ApplicationFacade{
     }
 
 
-    editUser(data, username, type){
-        return this.userController.editUser(data, username, type);
+    async editUser(data){
+        return this.userController.updateUser(data);
     }
 
 }

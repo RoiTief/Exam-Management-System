@@ -3,11 +3,16 @@ import { RadioGroup, Radio, Paper, OutlinedInput, InputAdornment, SvgIcon } from
 import MagnifyingGlassIcon from '@heroicons/react/24/solid/MagnifyingGlassIcon';
 import { httpsMethod, requestServer, serverPath } from '../../utils/rest-api-call';
 import { CREATE_QUESTION } from '../../constants';
+import { useFormikContext } from 'formik';
 
-const AppendixList = ({ onSelectAppendix }) => {
+const deepEqualAppendix = (a, b) => (
+  a.title === b.title && a.tag === b.tag && a.content === b.content
+);
+
+const AppendixList = ({ values, onSelectAppendix }) => {
+  const { setFieldValue } = useFormikContext();
   const [searchTerm, setSearchTerm] = useState('');
   const [searchBy, setSearchBy] = useState('title');
-  const [selectedAppendix, setSelectedAppendix] = useState(null);
   const [appendices, setAppendices] = useState([])
 
   useEffect(() => {
@@ -32,7 +37,7 @@ const AppendixList = ({ onSelectAppendix }) => {
   };
 
   const handleAppendixClick = (appendix) => {
-    setSelectedAppendix(appendix);
+    setFieldValue('appendix', appendix);
     onSelectAppendix(appendix);
   };
 
@@ -55,15 +60,6 @@ const AppendixList = ({ onSelectAppendix }) => {
               </SvgIcon>
             </InputAdornment>
           }
-          endAdornment={
-            selectedAppendix && (
-              <InputAdornment position="end">
-                <SvgIcon color="primary" fontSize="small">
-                  <MagnifyingGlassIcon />
-                </SvgIcon>
-              </InputAdornment>
-            )
-          }
         />
         <select value={searchBy} onChange={handleSearchByChange} style={{ marginLeft: '10px' }}>
           <option value="title">Title</option>
@@ -84,7 +80,7 @@ const AppendixList = ({ onSelectAppendix }) => {
             }}
             onClick={() => handleAppendixClick(appendix)}
           >
-            <Radio checked={selectedAppendix === appendix} />
+            <Radio checked={values.appendix && deepEqualAppendix(values.appendix, appendix)} />
             <div style={{ marginLeft: '10px' }}>
               <h3>{CREATE_QUESTION.APPENDIX_TITLE}{appendix.title}</h3>
               <p>Tag: {appendix.tag}</p>

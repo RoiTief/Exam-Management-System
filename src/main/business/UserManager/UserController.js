@@ -2,10 +2,10 @@
 const Admin = require('./Admin');
 const Lecturer = require('./Lecturer');
 const TA = require('./TA');
-const { USER_TYPES} = require("../../Enums");
+const { USER_TYPES, PRIMITIVE_TYPES} = require("../../Enums");
 const {EMSError, USER_PROCESS_ERROR_CODES: ERROR_CODES} = require("../../EMSError");
 const { USER_PROCESS_ERROR_MSGS: ERROR_MSGS } = require("../../ErrorMessages");
-const { validateParameters, PRIMITIVE_TYPES } = require('../../validateParameters');
+const { validateParameters } = require('../../validateParameters');
 
 class UserController {
     #userRepo;
@@ -35,6 +35,7 @@ class UserController {
                 userType: PRIMITIVE_TYPES.STRING,
                 password: PRIMITIVE_TYPES.STRING
             });
+
         this.#verifyType(userDetails.callingUser.type, USER_TYPES.ADMIN)
         userDetails.password = DEFAULT_PASSWORD;
         const dalUser = await this.#userRepo.addUser(userDetails);
@@ -86,25 +87,6 @@ class UserController {
         }
     }
 
-    /* TODO: talk about how to fix this
-    setUserAsLecturer(lecturerUsername) {
-        this.verifyUserRegistered(lecturerUsername)
-        let user = this._registered_users.get(lecturerUsername);
-        this._registered_users.set(lecturerUsername, new Lecturer(user.username, user.password));
-    }
-
-    setUserAsTA(TAUsername) {
-        this.verifyUserRegistered(TAUsername)
-        let user = this._registered_users.get(TAUsername);
-        this._registered_users.set(TAUsername, new TA(user.username, user.password));
-    }
-
-    getLoggedInName(pid){
-        this._varifyLogged(pid);
-        return this._logged_in_users.get(pid);
-    }
-     */
-
     /**
      * Returns all users in the system.
      */
@@ -147,12 +129,73 @@ class UserController {
         return {"TAs": businessTAs, "Lecturers": businessLecturers};
     }
 
+
+    async updateUser(data){
+        this.#verifyType(data.callingUser.type, USER_TYPES.ADMIN);
+        if (!data.username) {
+            throw new EMSError(ERROR_MSGS.USER_DETAILS_MISSING_USERNAME, ERROR_CODES.USER_DETAILS_MISSING_USERNAME);
+        }
+        const user = await this.getUser(data.username);
+        const updateOperations = [];
+        if (data.userType) {
+            if (!Object.values(USER_TYPES).some(v => v === data.userType)){
+                throw new EMSError(ERROR_MSGS.INVALID_TYPE(data.userType), ERROR_CODES.INVALID_TYPE);
+            }
+            if (user.getUserType() === USER_TYPES.ADMIN){
+                throw new EMSError(ERROR_MSGS.CANNOT_CHANGE_ADMIN, ERROR_CODES.CANNOT_CHANGE_ADMIN);
+            }
+            updateOperations.push(user.setUserType(data.userType));
+        }
+        if (data.firstName) {
+            updateOperations.push(user.setFirstName(data.firstName));
+        }
+        if (data.lastName) {
+            updateOperations.push(user.setLastName(data.lastName));
+        }
+        if (data.email) {
+            updateOperations.push(user.setEmail(data.email));
+        }
+        await Promise.all(updateOperations);
+    }
+
+    async updateStaff(data) {
+        this.#verifyType(data.callingUser.type, USER_TYPES.LECTURER);
+        if (!data.username) {
+            throw new EMSError(ERROR_MSGS.USER_DETAILS_MISSING_USERNAME, ERROR_CODES.USER_DETAILS_MISSING_USERNAME);
+        }
+        const user = await this.getUser(data.username);
+        if (user.getUserType() === USER_TYPES.ADMIN){
+            throw new EMSError(ERROR_MSGS.CANNOT_CHANGE_ADMIN, ERROR_CODES.CANNOT_CHANGE_ADMIN);
+        }
+        const updateOperations = [];
+        if (data.userType) {
+            if (data.username === data.callingUser.username) {
+                throw new EMSError(ERROR_MSGS.CANNOT_EDIT_OWN_TYPE, ERROR_CODES.CANNOT_EDIT_OWN_TYPE);
+            }
+            if (!Object.values(USER_TYPES).some(v => v === data.userType)){
+                throw new EMSError(ERROR_MSGS.INVALID_TYPE(data.userType), ERROR_CODES.INVALID_TYPE);
+            }
+            updateOperations.push(user.setUserType(data.userType));
+        }
+        if (data.firstName) {
+            updateOperations.push(user.setFirstName(data.firstName));
+        }
+        if (data.lastName) {
+            updateOperations.push(user.setLastName(data.lastName));
+        }
+        if (data.email) {
+            updateOperations.push(user.setEmail(data.email));
+        }
+        await Promise.all(updateOperations);
+    }
+
     async deleteUser(data){
         this.#verifyType(data.callingUser.type, USER_TYPES.ADMIN);
-        if (this.#userRepo.getUser(data.username).getUserType() === USER_TYPES.ADMIN){
-            throw new EMSError("can't delete system admin");
+        const user =  await this.getUser(data.username);
+        if (user.getUserType() === USER_TYPES.ADMIN){
+            throw new EMSError(ERROR_MSGS.CANNOT_DELETE_ADMIN, ERROR_CODES.CANNOT_DELETE_ADMIN);
         }
-        this.#userRepo.deleteUser(data.username);
+        await this.#userRepo.deleteUser(data.username);
     }
 }
 

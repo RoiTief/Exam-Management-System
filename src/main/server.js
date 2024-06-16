@@ -31,7 +31,7 @@ function formatReq(req, res, body, cb) {
     return cb(null, body);
 }
 
-function extractAndVerifyJwt(req, res, next){
+function extractAndVerifyJwt(req){
     if (req.headers && req.headers.authorization) {
         const parts = req.headers.authorization.split(' ');
         if (parts.length === 2) {
@@ -45,28 +45,24 @@ function extractAndVerifyJwt(req, res, next){
                     return token
                 } catch (err) {
                     console.log({ err })
-                    next(new errors.InvalidCredentialsError('Invalid token'))
                     return null;
                 }
             }
             else {
-                next(new errors.InvalidCredentialsError('Format is Authorization: Bearer [token] or Jwt [token]'))
                 return null
             }
         } else {
-            next(new errors.InvalidCredentialsError('Format is Authorization: Bearer [token] or Jwt [token]'))
             return null
         }
     }
     else {
-        next(new errors.InvalidCredentialsError('Format is Authorization: Bearer [token] or Jwt [token]'))
         return null
     }
 }
 ///--- Handlers
 //todo 
-function authenticate(req, res, next) {
-    let token = extractAndVerifyJwt(req, res, next);
+function authenticate(req) {
+    let token = extractAndVerifyJwt(req);
     if(token){        
         if(!req.body) req.body = {} // when there is no body, create one so we can assign callingUser.
 
@@ -136,13 +132,14 @@ function createServer(options) {
 
     
     server.use(function setup(req, res, next) {
-        if ( req.url.startsWith('/signUp') || req.url.startsWith('/signIn') ||
-            req.url.startsWith('/logout')) {
+        if(authenticate(req)){
+            next();
+        }
+
+        else if (req.url.startsWith('/signIn') || req.url.startsWith('/logout')) {
             next();
             return;
-        }
-        if(authenticate(req, res, next))
-            next();
+        }  
         else
             next(new errors.UnauthorizedError('invalid credentials'));
     });
@@ -182,7 +179,7 @@ function createServer(options) {
     server.post('/addTA', service.addTA)
 
      // request: {username}
-    server.post('/addGrader', service.addGrader)
+    server.post('/addLecturer', service.addLecturer)
 
     //request: {
     //       keywords: str[],
@@ -202,6 +199,25 @@ function createServer(options) {
     //       }
     //     }
     server.post('/addMetaQuestion', service.addMetaQuestion);
+
+    //request: {
+    //       keywords: str[],
+    //       stem: str,
+    //       keys: [{
+    //         answer: str,
+    //         explanation: str
+    //         }],
+    //       distractors: [{
+    //         distractor: str,
+    //         explanation: str
+    //       }],
+    //      appendix: {
+    //          title: str,
+    //          tag: str,
+    //          content: str
+    //       }
+    //     }
+    server.post('/editMetaQuestion', service.editMetaQuestion);
 
     // request:
     //  {    questions:[

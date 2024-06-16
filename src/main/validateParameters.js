@@ -1,11 +1,7 @@
 const { EMSError, FUNCTION_PARAMETERS_ERROR_CODES: ERROR_CODES } = require("./EMSError");
+const { PRIMITIVE_TYPES } = require("./Enums");
 const { FUNCTION_PARAMETERS_ERROR_MSGS: ERROR_MSGS } = require("./ErrorMessages");
 
-const PRIMITIVE_TYPES = {
-  STRING: "string",
-  BOOLEAN: "boolean",
-  NUMBER: "number",
-};
 /**
  * 
  * 
@@ -124,4 +120,4 @@ function validateParameters(realObj, expectedObj, prohibitNull = true, checkCall
   }
 }
 
-module.exports = { validateParameters, PRIMITIVE_TYPES };
+module.exports = { validateParameters };
