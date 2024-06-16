@@ -31,7 +31,7 @@ function formatReq(req, res, body, cb) {
     return cb(null, body);
 }
 
-function extractAndVerifyJwt(req, res, next){
+function extractAndVerifyJwt(req){
     if (req.headers && req.headers.authorization) {
         const parts = req.headers.authorization.split(' ');
         if (parts.length === 2) {
@@ -61,8 +61,8 @@ function extractAndVerifyJwt(req, res, next){
 }
 ///--- Handlers
 //todo 
-function authenticate(req, res, next) {
-    let token = extractAndVerifyJwt(req, res, next);
+function authenticate(req) {
+    let token = extractAndVerifyJwt(req);
     if(token){        
         if(!req.body) req.body = {} // when there is no body, create one so we can assign callingUser.
 
@@ -132,7 +132,7 @@ function createServer(options) {
 
     
     server.use(function setup(req, res, next) {
-        if(authenticate(req, res, next)){
+        if(authenticate(req)){
             next();
         }
         else if ( req.url.startsWith('/signUp') || req.url.startsWith('/signIn') ||
