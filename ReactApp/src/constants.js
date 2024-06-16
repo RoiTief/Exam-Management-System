@@ -16,8 +16,9 @@ export const SIDE_BAR = {
   SIMPLE_META_QUESTION: "Simple Meta-Question",
   APPENDIX_META_QUESTION: "Appendix Meta-Question",
   APPENDIX_PLUS_META_QUESTION: "Appendix plus Meta-Question",
+  META_QUESTIONS_CATALOG: "Questions Catalog",
   META_QUESTIONS: "Meta Questions",
-  CATALOG_VIEW: "Catalogue View",
+  APPENDICES: "Appendices",
   MANAGE_COURSE_STAFF: "Manage Course Staff",
   GENERATE_EXAM: "generate exams"
 }
@@ -128,6 +129,21 @@ export const QUESTIONS_CATALOG = {
   ACTION: "Action",
   VIEW_PDF_BUTTON: "View PDF",
 };
+
+export const APPENDICES_CATALOG = {
+  PAGE_TITLE: 'Appendices Catalog',
+  HEADING: 'Appendices',
+  CREATE_APPENDIX_BUTTON: 'Create Appendix',
+  TITLE_HEADING: 'Title',
+  TAG_HEADING: 'Tag',
+  CONTENT_HEADING: 'Content',
+  VIEW_PDF_BUTTON: 'View PDF',
+  SEARCH_PLACEHOLDER: 'Search appendices...',
+  RELATED_QUESION: 'The Appendix Is Attached To Those Questions:',
+  SEARCH_TYPE_LABEL: 'Search Type',
+  OPEN_TEXT: 'Open Text',
+  TAG: 'Tag',
+}
 
 export const COURSE_STAFF = {
   PAGE_TITLE: "Course Staff",

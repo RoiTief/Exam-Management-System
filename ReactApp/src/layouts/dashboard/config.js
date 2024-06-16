@@ -57,7 +57,7 @@ export const items = [
     ]
   },
   {
-    title: SIDE_BAR.META_QUESTIONS,
+    title: SIDE_BAR.META_QUESTIONS_CATALOG,
     icon: (
       <SvgIcon fontSize="small">
         <SchoolOutlined />
@@ -70,8 +70,12 @@ export const items = [
       //   path: '/',
       // },
       {
-        title: SIDE_BAR.CATALOG_VIEW,
+        title: SIDE_BAR.META_QUESTIONS,
         path: '/catalog/questions',
+      },
+      {
+        title: SIDE_BAR.APPENDICES,
+        path: '/catalog/appendices',
       },
       // {
       //   title: 'Answer Sheet View',
