@@ -1,6 +1,27 @@
 import React, { useState } from 'react';
 import { Layout as DashboardLayout } from 'src/layouts/dashboard/layout';
-import { Box, Button, Container, IconButton, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography, Dialog, DialogActions, DialogContent, DialogTitle, TextField, Select, MenuItem, Alert } from '@mui/material';
+import {
+  Box,
+  Button,
+  Container,
+  IconButton,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Typography,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  TextField,
+  Select,
+  MenuItem,
+  Alert,
+  FormHelperText, InputLabel, FormControl
+} from '@mui/material';
 import { AddCircle, Edit, Delete } from '@mui/icons-material';
 import { Formik, Form } from 'formik';
 import * as Yup from 'yup';
@@ -185,20 +206,27 @@ const ManageUsers = () => {
                     error={touched.email && Boolean(errors.email)}
                     helperText={touched.email && errors.email}
                   />
-                  <Select
+                  <FormControl
                     fullWidth
                     margin="dense"
-                    id="type"
-                    name="type"
-                    label={USERS.TYPE}
-                    value={values.type}
-                    onChange={handleChange}
-                    onBlur={handleBlur}
                     error={touched.type && Boolean(errors.type)}
                   >
-                    <MenuItem value="Lecturer">{USERS.LECTURER}</MenuItem>
-                    <MenuItem value="TA">{USERS.TA}</MenuItem>
-                  </Select>
+                    <InputLabel id="type-label">{USERS.TYPE}</InputLabel>
+                    <Select
+                      labelId="type-label"
+                      id="type"
+                      name="type"
+                      value={values.type}
+                      onChange={handleChange}
+                      onBlur={handleBlur}
+                    >
+                      <MenuItem value="Lecturer">{USERS.LECTURER}</MenuItem>
+                      <MenuItem value="TA">{USERS.TA}</MenuItem>
+                    </Select>
+                    {touched.type && errors.type && (
+                      <FormHelperText>{errors.type}</FormHelperText>
+                    )}
+                  </FormControl>
                 </DialogContent>
                 <DialogActions>
                   <Button onClick={handleClose} color="primary">

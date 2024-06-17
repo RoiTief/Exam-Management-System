@@ -32,8 +32,7 @@ class UserController {
                 firstName: PRIMITIVE_TYPES.STRING,
                 lastName: PRIMITIVE_TYPES.STRING,
                 email: PRIMITIVE_TYPES.STRING,
-                userType: PRIMITIVE_TYPES.STRING,
-                password: PRIMITIVE_TYPES.STRING
+                userType: PRIMITIVE_TYPES.STRING
             });
 
         this.#verifyType(userDetails.callingUser.type, USER_TYPES.ADMIN)
