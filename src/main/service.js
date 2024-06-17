@@ -109,7 +109,7 @@ function changePassword(req, res, next) {
  */
 function resetPassword(req, res, next) {
     application.resetPassword(req.body).then(
-        businessUser => {
+        result => {
             req.log.info(req.body.username, 'reset user password');
             res.send(200, {code: 200})
             next();
