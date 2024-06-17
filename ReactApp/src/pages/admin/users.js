@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Layout as DashboardLayout } from 'src/layouts/dashboard/layout';
-import { Box, Button, Container, IconButton, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography, Dialog, DialogActions, DialogContent, DialogTitle, TextField, Select, MenuItem } from '@mui/material';
+import { Box, Button, Container, IconButton, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography, Dialog, DialogActions, DialogContent, DialogTitle, TextField, Select, MenuItem, Alert } from '@mui/material';
 import { AddCircle, Edit, Delete } from '@mui/icons-material';
 import { Formik, Form } from 'formik';
 import * as Yup from 'yup';
@@ -24,6 +24,7 @@ const ManageUsers = () => {
   const [resetPasswordPrompt, setResetPasswordPrompt] = useState(false);
   const [userToDelete, setUserToDelete] = useState(null);
   const [userToReset, setUserToReset] = useState(null);
+  const [error, setError] = useState('');
 
   const handleOpen = (user) => {
     setEditMode(!!user);
@@ -39,6 +40,7 @@ const ManageUsers = () => {
     setUserToDelete(null);
     setResetPasswordPrompt(false);
     setUserToReset(null);
+    setError('');
   };
 
   const handleDeleteUser = (user) => {
@@ -61,14 +63,14 @@ const ManageUsers = () => {
     setResetPasswordPrompt(false);
   };
 
-  const handleSubmit = (values, { setSubmitting }) => {
-    if (editMode) {
-      editUser({ ...currentUser, ...values });
-    } else {
-      addUser({ ...values });
-    }
+  const handleSubmit = async (values, { setSubmitting }) => {
+    const result = editMode ? await editUser({ ...currentUser, ...values }) : await addUser({ ...values });
     setSubmitting(false);
-    handleClose();
+    if (result.success) {
+      handleClose();
+    } else {
+      setError(result.error.message);
+    }
   };
 
   return (
@@ -119,6 +121,7 @@ const ManageUsers = () => {
 
         <Dialog open={open} onClose={handleClose}>
           <DialogTitle>{editMode ? USERS.EDIT_USER : USERS.ADD_USER}</DialogTitle>
+          {error && <Alert severity="error">{error}</Alert>}
           <Formik
             initialValues={{
               username: currentUser?.username || '',

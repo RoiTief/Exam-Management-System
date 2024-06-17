@@ -57,8 +57,10 @@ export const UserProvider = ({ children }) => {
         const response = await requestServer(serverPath.GET_ALL_USERS, httpsMethod.GET, undefined, {users: [{username: PRIMITIVE_TYPES.STRING, email: PRIMITIVE_TYPES.STRING, firstName: PRIMITIVE_TYPES.STRING, lastName: PRIMITIVE_TYPES.STRING, type: PRIMITIVE_TYPES.STRING}]});
         response.users = response.users.filter(user => user.type !== USERS.ADMIN)
         dispatch({ type: HANDLERS.SET_USER, payload: response.users });
+        return { success: true };
       } catch (error) {
         console.error('Failed to fetch users:', error);
+        return { success: false, error: error };
       }
     };
 
@@ -70,8 +72,10 @@ export const UserProvider = ({ children }) => {
       await requestServer(serverPath.SIGN_UP, httpsMethod.POST,
         {username: user.username, firstName: user.firstName, lastName: user.lastName, email: user.email, userType: user.type});
       dispatch({ type: HANDLERS.ADD_USER, payload: user });
+      return { success: true };
     } catch (error){
       console.error("failed to add user:", error)
+      return { success: false, error: error };
     }
   };
 
@@ -80,8 +84,10 @@ export const UserProvider = ({ children }) => {
       await requestServer(serverPath.EDIT_USER, httpsMethod.PUT,
         {username: user.username, firstName: user.firstName, lastName: user.lastName, email: user.email, userType: user.type});
       dispatch({ type: HANDLERS.EDIT_USER, payload: user });
+      return { success: true };
     } catch (error){
       console.error("failed to edit user:", error)
+      return { success: false, error: error };
     }
   };
 
@@ -89,16 +95,20 @@ export const UserProvider = ({ children }) => {
     try {
       await requestServer(serverPath.DELETE_USER, httpsMethod.DELETE, {username});
       dispatch({ type: HANDLERS.DELETE_USER, payload: username });
+      return { success: true };
     } catch (error){
       console.error("failed to delete user:", error)
+      return { success: false, error: error };
     }
   };
 
   const resetPassword = async username => {
     try {
       await requestServer(serverPath.RESET_PASSWORD, httpsMethod.POST, {username});
+      return { success: true };
     } catch (error){
       console.error("failed to reset user password:", error)
+      return { success: false, error: error };
     }
   };
 
