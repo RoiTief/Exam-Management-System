@@ -87,6 +87,7 @@ export const CREATE_QUESTION = {
   CREATE_APPENDIX_PLUS_TITLE: "Create Simple Meta-Question",
   CREATE_APPENDIX_TITLE: "Create Meta-Question Based On Existing Appendix",
   SUBMIT_BUTTON: "Submit",
+  VIEW_PDF_BUTTON: "View Question As PDF",
   STEM_REQUIRED: "Stem is required",
   CORRECT_ANSWER_REQUIRED: "Correct answer text is required",
   EXPLANATION_REQUIRED: "Explanation is required",

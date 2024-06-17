@@ -1,10 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Box,
   Button,
   Container,
   Typography,
-  Divider
+  Divider, Stack
 } from '@mui/material';
 import { Layout as DashboardLayout } from 'src/layouts/dashboard/layout';
 import { useRouter } from 'next/router';
@@ -16,8 +16,9 @@ import StemSection from 'src/sections/create-edit-meta-question/stem-edit';
 import KeysSection from 'src/sections/create-edit-meta-question/correct-key-edit';
 import DistractorsSection from 'src/sections/create-edit-meta-question/distractors-edit';
 import AppendixSection from 'src/sections/create-edit-meta-question/apendix-edit';
-import { httpsMethod, requestServer, serverPath } from '../../utils/rest-api-call';
+import { httpsMethod, latexServerPath, requestServer, serverPath } from '../../utils/rest-api-call';
 import { CREATE_QUESTION } from '../../constants';
+import { PdfLatexPopup } from '../../sections/popUps/QuestionPdfView';
 
 const validationSchema = Yup.object().shape({
   keywords: Yup.array().of(Yup.string()),
@@ -25,13 +26,13 @@ const validationSchema = Yup.object().shape({
   keys: Yup.array().of(
     Yup.object().shape({
       text: Yup.string().required(CREATE_QUESTION.CORRECT_ANSWER_REQUIRED),
-      explanation: Yup.string().required(CREATE_QUESTION.EXPLANATION_REQUIRED),
+      explanation: Yup.string(),
     })
   ),
   distractors: Yup.array().of(
     Yup.object().shape({
       text: Yup.string().required(CREATE_QUESTION.DISTRACTOR_REQUIRED),
-      explanation: Yup.string().required(CREATE_QUESTION.EXPLANATION_REQUIRED),
+      explanation: Yup.string(),
     })
   ),
   appendix: Yup.object().shape({
@@ -43,6 +44,9 @@ const validationSchema = Yup.object().shape({
 
 const Page = () => {
   const router = useRouter();
+  const [showPdfView, setShowPdfView] = useState(false);
+  const [showQuestionView, setShowQuestionView] = useState(false);
+
   const initialValues = {
     keywords: [],
     stem: '',
@@ -52,8 +56,13 @@ const Page = () => {
     appendix: { title: '', tag: '', content: '', isTitleRTL: true, isTagRTL: true, isContentRTL: true },
   };
 
-  const handleSubmit = async (values, { setSubmitting }) => {
-    const metaQuestion = {
+  const closePopup = () => {
+    setShowPdfView(false)
+  };
+
+  const createMetaQuestion = (values) => {
+    return {
+      id: null,
       keywords: values.keywords,
       stem: values.stem,
       keys: values.keys.map((item) => ({
@@ -64,15 +73,22 @@ const Page = () => {
         text: item.text,
         explanation: item.explanation
       })),
-      appendix: {
-        title: values.appendix.title,
-        tag: values.appendix.tag,
-        content: values.appendix.content
-      },
+      appendix: values.appendix,
     };
+  }
+
+  const handleSubmit = async (values, { setSubmitting }) => {
+    const metaQuestion = createMetaQuestion(values)
     console.log(metaQuestion);
     await requestServer(serverPath.ADD_META_QUESTION, httpsMethod.POST, metaQuestion);
     await router.push('/');
+  };
+
+  const handlePdfButtonClick = (event, values) => {
+    event.stopPropagation();
+    const metaQuestion = createMetaQuestion(values)
+    setShowQuestionView(metaQuestion)
+    setShowPdfView(true); // Show PDF view when button is clicked
   };
 
   return (
@@ -135,11 +151,22 @@ const Page = () => {
                   setFieldValue={setFieldValue}
                 />
               </Box>
-              <Button variant="contained" type="submit" disabled={isSubmitting}>
-                {CREATE_QUESTION.SUBMIT_BUTTON}
-              </Button>
+              <Stack direction="row" justifyContent="center" spacing={5}>
+                <Button variant="contained" type="submit" disabled={isSubmitting}>
+                  {CREATE_QUESTION.SUBMIT_BUTTON}
+                </Button>
+                <Button variant="outlined" onClick={(event) => handlePdfButtonClick(event, values)}>
+                  {CREATE_QUESTION.VIEW_PDF_BUTTON}
+                </Button>
+              </Stack>
             </Container>
           </Box>
+          {showPdfView && (
+            <PdfLatexPopup isOpen={showPdfView}
+                           closePopup={closePopup}
+                           content={showQuestionView}
+                           type={latexServerPath.COMPILE_MQ}/>
+          )}
         </Form>
       )}
     </Formik>
