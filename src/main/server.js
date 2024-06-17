@@ -201,6 +201,7 @@ function createServer(options) {
     server.post('/addMetaQuestion', service.addMetaQuestion);
 
     //request: {
+    //        id:num
     //       keywords: str[],
     //       stem: str,
     //       keys: [{
@@ -251,6 +252,10 @@ function createServer(options) {
 
     // response: Appendix[]
     server.get('/getAllAppendices', service.getAllAppendices)
+
+    // request: Appendix
+    // response: MetaQuestion[]
+    server.post('/getMetaQuestionForAppendix', service.getMetaQuestionForAppendix)
 
     // request: username
     server.del('/deleteUser', service.deleteUser)

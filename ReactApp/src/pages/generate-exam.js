@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { httpsMethod, serverPath, requestServer, latexServerPath } from 'src/utils/rest-api-call';
 import { Box, Button, Container, Typography } from '@mui/material';
-import QuestionForm from '/src/sections/exam/question-form';
-import QuestionList from '/src/sections/exam/question-list';
+import QuestionForm from '/src/sections/create-exam/question-form';
+import QuestionList from '/src/sections/create-exam/question-list';
 import { Layout as DashboardLayout } from '../layouts/dashboard/layout';
 import { useRouter } from 'next/router';
 import { PdfLatexPopup } from '../sections/popUps/QuestionPdfView';

@@ -34,7 +34,6 @@ export const MetaQuestionTable = ({ data }) => {
     setPage(0);
   };
 
-  const emptyRows = rowsPerPage - Math.min(rowsPerPage, data.length - page * rowsPerPage);
   const paginatedData = data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
 
   const handlePdfButtonClick = (event, metaquestion) => {
@@ -70,11 +69,6 @@ export const MetaQuestionTable = ({ data }) => {
                     </TableCell>
                   </TableRow>
                 ))}
-                {emptyRows > 0 && (
-                  <TableRow style={{ height: 53 * emptyRows }}>
-                    <TableCell colSpan={3} />
-                  </TableRow>
-                )}
               </TableBody>
             </Table>
           </Box>

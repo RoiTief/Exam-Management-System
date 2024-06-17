@@ -22,7 +22,7 @@ class ApplicationFacade{
                 {text:'\\begin{turn}{180}This answer is upside-down\\end{turn}', explanation: 'Rotated answer'}, {text:'$\\mathbb{N}\\mathbb{I}\\mathbb{C}\\mathbb{E}$', explanation: 'This is nice, but not close to the answer.'}],
             appendix: {
                 title: "Euler's identity: ",
-                tag: "tag",
+                tag: "tag1",
                 content: "\\setlength{\\fboxsep}{10pt} % Set the padding (default is 3pt)\n"
                     + "\\fbox{\\huge $e^{i\\theta} = \\cos{\\theta} + i\\sin{\\theta}$}"
             },
@@ -49,7 +49,7 @@ class ApplicationFacade{
                     distractors: [{text:'abow', explanation: 'explanation1'},
                         {text:'abou', explanation: 'explanation2'}, {text:'aboo', explanation: 'explanation3'}],
                     keywords: ['key1', 'key2', 'key5'],
-                    appendix: {title: "Mor's ID", tag: "tag", content: "imagine there is my id here"},
+                    appendix: {title: "Mor's ID", tag: "tag2", content: "imagine there is my id here"},
                     callingUser: {user: 'Lecturer', type: USER_TYPES.LECTURER}
                 }
         )
@@ -61,7 +61,7 @@ class ApplicationFacade{
                     distractors: [{text:'that blonde guy', explanation: 'explanation1'},
                         {text:'that tall guy', explanation: 'explanation2'}, {text:'the one with the black nail polish', explanation: 'explanation3'}],
                     keywords: ['key1', 'key2', 'key5'],
-                    appendix: {title: "Roi picture", tag: "tag", content: "some amberesing picture of roi"},
+                    appendix: {title: "Roi picture", tag: "tag3", content: "some amberesing picture of roi"},
                     callingUser: {user: 'Lecturer', type: USER_TYPES.LECTURER}
                 }
         )
@@ -73,7 +73,7 @@ class ApplicationFacade{
                     distractors: [{text:'19 (but thank you)', explanation: 'explanation1'},
                         {text:'30', explanation: 'explanation2'}, {text:'35', explanation: 'explanation3'}],
                     keywords: ['key1', 'key2', 'key5'],
-                    appendix: {title: "Mor's ID", tag: "tag", content: "imagine there is my id here"},
+                    appendix: {title: "Mor's ID", tag: "tag2", content: "imagine there is my id here"},
                     callingUser: {user: 'Lecturer', type: USER_TYPES.LECTURER}
                 }
         )
@@ -381,6 +381,9 @@ class ApplicationFacade{
         return this.metaQuestionController.getAllAppendices(data)
     }
 
+    getMetaQuestionForAppendix(appendix) {
+        return this.metaQuestionController.getMetaQuestionForAppendix(appendix)
+    }
 
     async editUser(data){
         return this.userController.updateUser(data);

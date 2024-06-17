@@ -11,11 +11,11 @@ import { useRouter } from 'next/router';
 import { Formik, Form } from 'formik';
 import * as Yup from 'yup';
 
-import KeywordsSection from 'src/sections/Meta Question/keywords-edit';
-import StemSection from 'src/sections/Meta Question/stem-edit';
-import KeysSection from 'src/sections/Meta Question/correct-key-edit';
-import DistractorsSection from 'src/sections/Meta Question/distractors-edit';
-import AppendixSection from 'src/sections/Meta Question/apendix-edit';
+import KeywordsSection from 'src/sections/create-edit-meta-question/keywords-edit';
+import StemSection from 'src/sections/create-edit-meta-question/stem-edit';
+import KeysSection from 'src/sections/create-edit-meta-question/correct-key-edit';
+import DistractorsSection from 'src/sections/create-edit-meta-question/distractors-edit';
+import AppendixSection from 'src/sections/create-edit-meta-question/apendix-edit';
 import { httpsMethod, requestServer, serverPath } from '../../utils/rest-api-call';
 import { CREATE_QUESTION } from '../../constants';
 
