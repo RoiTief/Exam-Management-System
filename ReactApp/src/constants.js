@@ -84,9 +84,8 @@ export const EDIT_QUESTION = "Edit Question"
 
 export const CREATE_QUESTION = {
   CREATE_SIMPLE_TITLE: "Create Simple Meta-Question",
-  CREATE_APPENDIX_PLUS_TITLE: "Create Meta-Question",
+  CREATE_APPENDIX_PLUS_TITLE: "Create Simple Meta-Question",
   CREATE_APPENDIX_TITLE: "Create Meta-Question Based On Existing Appendix",
-  CREATE_ONLY_APPENDIX_TITLE: "Create Appendix",
   SUBMIT_BUTTON: "Submit",
   STEM_REQUIRED: "Stem is required",
   CORRECT_ANSWER_REQUIRED: "Correct answer text is required",
