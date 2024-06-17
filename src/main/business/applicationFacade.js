@@ -4,8 +4,8 @@ const MetaQuestionController = require('./MetaQuestions/MetaQuestionController.j
 const ExamController = require('./ExamManager/ExamController.js');
 const userTypes = require('../Enums').USER_TYPES
 const { userRepo } = require("../DAL/Dal");
-const {USER_TYPES} = require("../Enums");
-
+const { validateParameters } = require('../validateParameters.js');
+const {USER_TYPES, PRIMITIVE_TYPES} = require("../Enums");
 
 class ApplicationFacade{
     constructor() {
@@ -15,13 +15,7 @@ class ApplicationFacade{
         this.examController = new ExamController(this.taskController, this.userController)
 
         //todo - remove for testing:
-            /*
-        this.signIn(24632, "lecturer", "123")
-        this.addTA(24632, "TA")
-        this.addTA(24632, "TA1")
-        this.addTA(24632, "TA2")
-        this.addTA(24632, "TA3")
-        this.addMetaQuestion(24632, {
+        this.addMetaQuestion({
             stem: '$e^{i\\pi} + 1 = $',
             keys: [{text:'0', explanation: 'Using Euler\'s identity'}],
             distractors: [{text:'$\\frac{what}{\\frac{The}{FUCK}}$', explanation: 'This is a fraction?'},
@@ -32,20 +26,22 @@ class ApplicationFacade{
                 content: "\\setlength{\\fboxsep}{10pt} % Set the padding (default is 3pt)\n"
                     + "\\fbox{\\huge $e^{i\\theta} = \\cos{\\theta} + i\\sin{\\theta}$}"
             },
-            keywords: ['key1', 'key2', 'key3']
+            keywords: ['key1', 'key2', 'key3'],
+            callingUser: {user: 'Lecturer', type: USER_TYPES.LECTURER}
         })
 
-        this.addMetaQuestion(24632,
+        this.addMetaQuestion(
                 {
                     stem: 'what did Idan listen to when he was a kid',
                     keys: [{text:'baby motzart', explanation: 'explanation1'},
                         {text:'baby bethoven', explanation: 'explanation2'}],
                     distractors: [{text:'Machrozet Chaffla', explanation: 'explanation1'},
                         {text:'zohar Argov', explanation: 'explanation2'}, {text:'Begins "tzachtzachim" speach', explanation: 'explanation3'}],
-                    keywords: ['key1', 'key2', 'key3']
+                    keywords: ['key1', 'key2', 'key3'],
+                    callingUser: {user: 'Lecturer', type: USER_TYPES.LECTURER}
                 }
         )
-        this.addMetaQuestion(24632,
+        this.addMetaQuestion(
                 {
                     stem: "what is Mor's last name",
                     keys: [{text:'Abo', explanation: 'explanation1'},
@@ -53,10 +49,11 @@ class ApplicationFacade{
                     distractors: [{text:'abow', explanation: 'explanation1'},
                         {text:'abou', explanation: 'explanation2'}, {text:'aboo', explanation: 'explanation3'}],
                     keywords: ['key1', 'key2', 'key5'],
-                    appendix: {title: "Mor's ID", tag: "tag", content: "imagine there is my id here"}
+                    appendix: {title: "Mor's ID", tag: "tag", content: "imagine there is my id here"},
+                    callingUser: {user: 'Lecturer', type: USER_TYPES.LECTURER}
                 }
         )
-        this.addMetaQuestion(24632,
+        this.addMetaQuestion(
                 {
                     stem: "What is Roi's nickname",
                     keys: [{text:'The Tief', explanation: 'explanation1'},
@@ -64,10 +61,11 @@ class ApplicationFacade{
                     distractors: [{text:'that blonde guy', explanation: 'explanation1'},
                         {text:'that tall guy', explanation: 'explanation2'}, {text:'the one with the black nail polish', explanation: 'explanation3'}],
                     keywords: ['key1', 'key2', 'key5'],
-                    appendix: {title: "Roi picture", tag: "tag", content: "some amberesing picture of roi"}
+                    appendix: {title: "Roi picture", tag: "tag", content: "some amberesing picture of roi"},
+                    callingUser: {user: 'Lecturer', type: USER_TYPES.LECTURER}
                 }
         )
-        this.addMetaQuestion(24632,
+        this.addMetaQuestion(
                 {
                     stem: 'How old is Mor',
                     keys: [{text:'25', explanation: 'explanation1'},
@@ -75,10 +73,11 @@ class ApplicationFacade{
                     distractors: [{text:'19 (but thank you)', explanation: 'explanation1'},
                         {text:'30', explanation: 'explanation2'}, {text:'35', explanation: 'explanation3'}],
                     keywords: ['key1', 'key2', 'key5'],
-                    appendix: {title: "Mor's ID", tag: "tag", content: "imagine there is my id here"}
+                    appendix: {title: "Mor's ID", tag: "tag", content: "imagine there is my id here"},
+                    callingUser: {user: 'Lecturer', type: USER_TYPES.LECTURER}
                 }
         )
-        this.addMetaQuestion(24632,
+        this.addMetaQuestion(
                 {
                     stem: 'where does Ofek leave',
                     keys: [{text:'in Gan Yavne', explanation: 'explanation1'},
@@ -86,12 +85,10 @@ class ApplicationFacade{
                         {text:"next to mor's brother", explanation: 'explanation1'}],
                     distractors: [{text:'at the beach - surffing', explanation: 'explanation1'},
                         {text:'riding bike in the fields', explanation: 'explanation2'}, {text:"in may's house", explanation: 'explanation3'}],
-                    keywords: ['key1', 'key2', 'key3']
+                    keywords: ['key1', 'key2', 'key3'],
+                    callingUser: {user: 'Lecturer', type: USER_TYPES.LECTURER}
                 }
         )
-        this.logout(24632)
-
-             */
     }
 
     // TODO: remove
@@ -121,9 +118,9 @@ class ApplicationFacade{
      *                 - if there is no registered user with this username
      *                 - if the password is incorrect
      */
-    async signIn(username, password) {
-        return (await this.userController.signIn(username, password));
-    }
+    async signIn(data) {
+        return (await this.userController.signIn(data));
+   }
 
     /**
      * user wants to log out
@@ -139,6 +136,10 @@ class ApplicationFacade{
      * @param newPassword - updated password for the logged user
      */
     async changePassword(changePasswordData) {
+        validateParameters(changePasswordData,
+            {
+                newPassword: PRIMITIVE_TYPES.STRING,
+            })
         const user = await this.userController.getUser(changePasswordData.callingUser.username);
         await user.changePassword(changePasswordData.newPassword);
         return user;
@@ -316,7 +317,7 @@ class ApplicationFacade{
      *                 - if this task is already finished
      */
     async finishATask(data){
-        await this.taskController.finishTask(data.callingUser.username, data.taskId, data.response, this);
+        await this.taskController.finishTask(data, this);
     }
 
     /**

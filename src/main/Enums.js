@@ -16,4 +16,10 @@ const META_QUESTION_TYPES = {
     APPENDIX_PLUS: 'appendix+',
 }
 
-module.exports = {USER_TYPES, ANSWER_TYPES, META_QUESTION_TYPES};
+const PRIMITIVE_TYPES = {
+    STRING: "string",
+    BOOLEAN: "boolean",
+    NUMBER: "number",
+  };
+
+module.exports = {USER_TYPES, ANSWER_TYPES, META_QUESTION_TYPES, PRIMITIVE_TYPES};
