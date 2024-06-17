@@ -81,6 +81,7 @@ export const LOGIN = {
   CANCEL_BUTTON: "Cancel",
   CHANGE_PASSWORD_BUTTON: "Change Password",
   PASSWORDS_DO_NOT_MATCH: "Passwords do not match",
+  ILLEGAL_PASSWORD: "Password must be at least 5 letters",
   FAILED_TO_CHANGE_PASSWORD: "Failed to change password:"
 };
 
