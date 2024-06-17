@@ -1,4 +1,5 @@
 import Cookies from 'js-cookie';
+import {validateParameters} from '../../../src/main/validateParameters'
 export const TOKEN_FIELD_NAME = "jwt_exam_token"
 const SERVER_ROOT_URL = "http://localhost:8080/"
 const LATEX_SERVER_ROOT_URL = "http://164.90.223.94:3001/"
@@ -64,7 +65,7 @@ export async function requestLatexServer(path, body) {
       });
 }
 
-export async function requestServer(path, method, body) {
+export async function requestServer(path, method, body, expectedResponseType) {
     var response
     if (Cookies.get(TOKEN_FIELD_NAME)) {
         response = await fetch(SERVER_ROOT_URL + path,
@@ -100,5 +101,9 @@ export async function requestServer(path, method, body) {
         throw new Error(response.message)
     }
     var { code, ...retObject } = response
+
+    if(expectedResponseType){
+      validateParameters(retObject, expectedResponseType,false, false)
+    }
     return retObject;
 }
