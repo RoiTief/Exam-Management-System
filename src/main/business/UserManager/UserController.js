@@ -183,6 +183,20 @@ class UserController {
     }
 
     /**
+     * Resets a user password
+     * @param userDetails All details needed to reset password.
+     * @return Business instance of the edited user
+     */
+    async resetPassword(userDetails) {
+        this.#verifyType(userDetails.callingUser.type, USER_TYPES.ADMIN)
+        if (!userDetails.username) {
+            throw new EMSError(ERROR_MSGS.USER_DETAILS_MISSING_USERNAME, ERROR_CODES.USER_DETAILS_MISSING_USERNAME);
+        }
+        const user = await this.getUser(userDetails.username);
+        await user.changePassword(DEFAULT_PASSWORD)
+    }
+
+    /**
      * Input verification on userDetails
      * @param userDetails details to verify
      * @throws Error

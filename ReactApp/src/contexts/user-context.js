@@ -12,7 +12,8 @@ const HANDLERS = {
   SET_USER: 'SET_USER',
   ADD_USER: 'ADD_USER',
   EDIT_USER: 'EDIT_USER',
-  DELETE_USER: 'DELETE_USER'
+  DELETE_USER: 'DELETE_USER',
+  RESET_PASSWORD: "RESET_PASSWORD"
 };
 
 const handlers = {
@@ -92,8 +93,16 @@ export const UserProvider = ({ children }) => {
     }
   };
 
+  const resetPassword = async username => {
+    try {
+      await requestServer(serverPath.RESET_PASSWORD, httpsMethod.POST, {username});
+    } catch (error){
+      console.error("failed to reset user password:", error)
+    }
+  };
+
   return (
-    <UserContext.Provider value={{ state, addUser, editUser, deleteUser }}>
+    <UserContext.Provider value={{ state, addUser, editUser, deleteUser, resetPassword }}>
       {children}
     </UserContext.Provider>
   );

@@ -103,6 +103,24 @@ function changePassword(req, res, next) {
 }
 
 /**
+ * reset user password
+ * @param req.username - the user's username
+ * @returns {Error} - if there is no registered user with this username
+ */
+function resetPassword(req, res, next) {
+    application.resetPassword(req.body).then(
+        businessUser => {
+            req.log.info(req.body.username, 'reset user password');
+            res.send(200, {code: 200})
+            next();
+        },
+        err => {
+            req.log.warn(err.message, 'unable to reset password');
+            next(err);
+        });
+}
+
+/**
  * view a course
  * @return {{TAs: any[], Lecturers: any[]}} the course staff
  * @throws {Error} - if there is no user is not a lecturer
@@ -432,6 +450,7 @@ module.exports = {
     signIn: signIn, 
     logout: logout,
     changePassword: changePassword,
+    resetPassword: resetPassword,
     getAllStaff: getAllStaff,
     viewMyTasks: viewMyTasks,
     finishATask: finishATask,

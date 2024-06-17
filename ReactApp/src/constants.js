@@ -65,6 +65,8 @@ export const USERS = {
   SAVE_ACTION: "Save Changes",
   CONFIRM_DELETION: "Confirm Deletion",
   CONFIRM_DELETION_MSG: (username) => `Are you sure you want to delete the user ${username}?`,
+  CONFIRM_RESET_PASSWORD: "Confirm Reset Password",
+  CONFIRM_RESET_PASSWORD_MSG: (username) => `Are you sure you want to reset the password of user ${username}?`,
 }
 
 export const LOGIN = {

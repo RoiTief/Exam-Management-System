@@ -135,6 +135,14 @@ class ApplicationFacade{
     }
 
     /**
+     * reset a user password
+     * @param resetPasswordData - updated password for the logged user
+     */
+    async resetPassword(resetPasswordData) {
+        return (await this.userController.resetPassword(resetPasswordData));
+    }
+
+    /**
      * get all staff
      * @return {Promise<{TAs: any[], Lecturers: any[]}>} the staff, ordered by lecturers and TAs
      * @throws {Error} - if the user logged in user is not a lecturer

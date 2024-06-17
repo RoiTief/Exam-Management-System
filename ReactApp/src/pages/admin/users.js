@@ -16,12 +16,14 @@ const validationSchema = Yup.object().shape({
 });
 
 const ManageUsers = () => {
-  const { state, addUser, editUser, deleteUser } = useUser();
+  const { state, addUser, editUser, deleteUser, resetPassword } = useUser();
   const [open, setOpen] = useState(false);
   const [editMode, setEditMode] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
   const [deleteUserPrompt, setDeleteUserPrompt] = useState(false);
+  const [resetPasswordPrompt, setResetPasswordPrompt] = useState(false);
   const [userToDelete, setUserToDelete] = useState(null);
+  const [userToReset, setUserToReset] = useState(null);
 
   const handleOpen = (user) => {
     setEditMode(!!user);
@@ -35,6 +37,8 @@ const ManageUsers = () => {
     setOpen(false);
     setDeleteUserPrompt(false);
     setUserToDelete(null);
+    setResetPasswordPrompt(false);
+    setUserToReset(null);
   };
 
   const handleDeleteUser = (user) => {
@@ -45,6 +49,16 @@ const ManageUsers = () => {
   const confirmDeleteUser = () => {
     deleteUser(userToDelete.username);
     setDeleteUserPrompt(false);
+  };
+
+  const handleResetPassword = (user) => {
+    setUserToReset(user);
+    setResetPasswordPrompt(true);
+  };
+
+  const confirmResetPassword = () => {
+    resetPassword(userToReset.username);
+    setResetPasswordPrompt(false);
   };
 
   const handleSubmit = (values, { setSubmitting }) => {
@@ -93,6 +107,9 @@ const ManageUsers = () => {
                     <IconButton onClick={() => handleDeleteUser(user)}>
                       <Delete />
                     </IconButton>
+                    <Button onClick={() => handleResetPassword(user)}>
+                      Reset Password
+                    </Button>
                   </TableCell>
                 </TableRow>
               ))}
@@ -205,6 +222,23 @@ const ManageUsers = () => {
               Yes
             </Button>
             <Button onClick={() => setDeleteUserPrompt(false)} color="primary">
+              No
+            </Button>
+          </DialogActions>
+        </Dialog>
+
+        <Dialog open={resetPasswordPrompt} onClose={() => setResetPasswordPrompt(false)}>
+          <DialogTitle>{USERS.CONFIRM_RESET_PASSWORD}</DialogTitle>
+          <DialogContent>
+            <Typography variant="body1">
+              {USERS.CONFIRM_RESET_PASSWORD_MSG(userToReset?.username)}
+            </Typography>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={confirmResetPassword} color="primary">
+              Yes
+            </Button>
+            <Button onClick={() => setResetPasswordPrompt(false)} color="primary">
               No
             </Button>
           </DialogActions>
