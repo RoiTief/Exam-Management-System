@@ -204,6 +204,10 @@ class UserController {
      * @return Business instance of the edited user
      */
     async resetPassword(userDetails) {
+        validateParameters(userDetails,
+            {
+                username: PRIMITIVE_TYPES.STRING
+            });
         this.#verifyType(userDetails.callingUser.type, USER_TYPES.ADMIN)
         if (!userDetails.username) {
             throw new EMSError(ERROR_MSGS.USER_DETAILS_MISSING_USERNAME, ERROR_CODES.USER_DETAILS_MISSING_USERNAME);
