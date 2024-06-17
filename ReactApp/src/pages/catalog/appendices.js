@@ -6,8 +6,8 @@ import PlusIcon from '@heroicons/react/24/solid/PlusIcon';
 import { useRouter } from 'next/navigation';
 import { httpsMethod, requestServer, serverPath } from '../../utils/rest-api-call';
 import { APPENDICES_CATALOG } from '../../constants';
-import { AppendicesTable } from '../../sections/view appendices/appendices-table';
-import { AppendicesSearch } from '../../sections/view appendices/appendices-search';
+import { AppendicesTable } from '../../sections/view-appendices/appendices-table';
+import { AppendicesSearch } from '../../sections/view-appendices/appendices-search';
 
 const AppendicesPage = () => {
   const router = useRouter();

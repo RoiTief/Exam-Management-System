@@ -18,7 +18,7 @@ import { Scrollbar } from 'src/components/scrollbar';
 import { PdfLatexPopup } from '../popUps/QuestionPdfView';
 import { httpsMethod, latexServerPath, requestServer, serverPath } from '../../utils/rest-api-call';
 import { APPENDICES_CATALOG } from '../../constants';
-import { MetaQuestionTable } from '../view questions/question-table';
+import { MetaQuestionTable } from '../view-questions/question-table';
 
 export const AppendicesTable = ({ appendices }) => {
   const [page, setPage] = useState(0);

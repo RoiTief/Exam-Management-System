@@ -4,8 +4,8 @@ import { Layout as DashboardLayout } from '../../layouts/dashboard/layout';
 import Head from 'next/head';
 import PlusIcon from '@heroicons/react/24/solid/PlusIcon';
 import { useRouter } from 'next/navigation';
-import { MetaQuestionTable } from '../../sections/view questions/question-table';
-import { QuestionsSearch } from '../../sections/view questions/question-search';
+import { MetaQuestionTable } from '../../sections/view-questions/question-table';
+import { QuestionsSearch } from '../../sections/view-questions/question-search';
 import { httpsMethod, requestServer, serverPath } from '../../utils/rest-api-call';
 import { QUESTIONS_CATALOG } from '../../constants';
 
