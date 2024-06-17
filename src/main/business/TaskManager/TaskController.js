@@ -1,3 +1,4 @@
+const { validateParameters } = require('../../validateParameters');
 var {Task} = require('./Task')
 var {TaskTypes} = require('./Task')
 
@@ -64,15 +65,19 @@ class TaskController {
             });
     }
 
-    finishTask(username, taskId, response, applicationFacade) {
-        let task = this.getTask(taskId)
+    finishTask(data, applicationFacade) {
+        validateParameters(data,{
+            taskId: "number",
+            response: "string",
+        })
+        let task = this.getTask(data.taskId)
         if(task === undefined)
             throw new Error("there is no task with this id");
-        if(task.assignedUsers.includes(username))
+        if(task.assignedUsers.includes(data.callingUser.username))
             throw new Error("the task is not assigned to you!")
-        task.response = response;
+        task.response = data.response;
         if(task.action) 
-            task.action(applicationFacade, response);
+            task.action(applicationFacade, data.response);
         task.finished = true;
     }
 

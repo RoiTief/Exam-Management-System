@@ -33,7 +33,7 @@ function signUp(req, res, next) {
  *                 - if the password is incorrect
  */
 function signIn(req, res, next) {
-    application.signIn(req.body.username, req.body.password).then(
+    application.signIn(req.body).then(
         businessUser => {
             // send needed information derived from business
             const user = {

@@ -161,7 +161,7 @@ describe('Tests UserController component', () => {
             expect(false).toBeTruthy();
         } catch (e) {
             expect(e instanceof EMSError).toBeTruthy();
-            expect(e.errorCode).toBe(USER_PROCESS_ERROR_CODES.USER_DETAILS_NULL);
+            expect(e.errorCode).toBe(USER_PROCESS_ERROR_CODES.NULL_OBJECT);
         }
 
         userDetails = {callingUser: adminCallingDetails};
