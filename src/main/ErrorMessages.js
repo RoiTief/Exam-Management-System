@@ -7,9 +7,9 @@ const {USER_TYPES} = require("./Enums");
 const USER_PROCESS_ERROR_MSGS = {
     // register
     USERNAME_DOESNT_EXIST: uname => `Username '${uname}' doesn't exist`,
-    USERNAME_ALREADY_EXIST: uname => `Username '${uname}' already in use`,
+    USERNAME_ALREADY_EXIST: uname => `Username '${uname}' is already in use`,
     EMAIL_DOESNT_EXIST: email => `Email '${email}' doesn't exist`,
-    EMAIL_ALREADY_EXIST: email => `Email '${email}' already in use`,
+    EMAIL_ALREADY_EXIST: email => `Email '${email}' is already in use`,
     USER_DETAILS_NULL: 'User details given are null',
     USER_DETAILS_MISSING_USERNAME: 'Username field is required',
     USER_DETAILS_MISSING_FNAME: 'First name field is required',
