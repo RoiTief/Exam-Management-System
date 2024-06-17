@@ -1,5 +1,6 @@
-import React, { createContext, useReducer, useEffect } from 'react';
+import React, { createContext, useReducer, useEffect, useCallback } from 'react';
 import { requestServer, serverPath, httpsMethod } from 'src/utils/rest-api-call';
+import { USERS } from '../constants';
 
 export const UserContext = createContext(undefined);
 
@@ -52,6 +53,7 @@ export const UserProvider = ({ children }) => {
     const fetchUsers = async () => {
       try {
         const response = await requestServer(serverPath.GET_ALL_USERS, httpsMethod.GET);
+        response.users = response.users.filter(user => user.type !== USERS.ADMIN)
         dispatch({ type: HANDLERS.SET_USER, payload: response.users });
       } catch (error) {
         console.error('Failed to fetch users:', error);
@@ -63,7 +65,8 @@ export const UserProvider = ({ children }) => {
 
   const addUser = async user => {
     try {
-      await requestServer(serverPath.SIGN_UP, httpsMethod.POST, {username: user.username, userType: user.type});
+      await requestServer(serverPath.SIGN_UP, httpsMethod.POST,
+        {username: user.username, firstName: user.firstName, lastName: user.lastName, email: user.email, userType: user.type});
       dispatch({ type: HANDLERS.ADD_USER, payload: user });
     } catch (error){
       console.error("failed to add user:", error)
@@ -72,7 +75,8 @@ export const UserProvider = ({ children }) => {
 
   const editUser = async user => {
     try {
-      await requestServer(serverPath.EDIT_USER, httpsMethod.PUT, {username: user.username, userType: user.type});
+      await requestServer(serverPath.EDIT_USER, httpsMethod.PUT,
+        {username: user.username, firstName: user.firstName, lastName: user.lastName, email: user.email, userType: user.type});
       dispatch({ type: HANDLERS.EDIT_USER, payload: user });
     } catch (error){
       console.error("failed to edit user:", error)

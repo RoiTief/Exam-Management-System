@@ -9,6 +9,9 @@ import { UserProvider } from '../../contexts/user-context';
 import { SIDE_BAR, USERS } from '../../constants';
 
 const validationSchema = Yup.object().shape({
+  firstName: Yup.string().required('First name is required'),
+  lastName: Yup.string().required('Last name is required'),
+  email: Yup.string().email('Invalid email').required('Email is required'),
   type: Yup.string().required('Type is required').oneOf(['Lecturer', 'TA'], 'Invalid type'),
 });
 
@@ -68,6 +71,9 @@ const ManageUsers = () => {
             <TableHead>
               <TableRow>
                 <TableCell>{USERS.USERNAME}</TableCell>
+                <TableCell>{USERS.FIRST_NAME}</TableCell>
+                <TableCell>{USERS.LAST_NAME}</TableCell>
+                <TableCell>{USERS.EMAIL}</TableCell>
                 <TableCell>{USERS.TYPE}</TableCell>
                 <TableCell>{USERS.ACTIONS}</TableCell>
               </TableRow>
@@ -76,6 +82,9 @@ const ManageUsers = () => {
               {Array.isArray(state.users) && state.users.map((user) => (
                 <TableRow key={user.username}>
                   <TableCell>{user.username}</TableCell>
+                  <TableCell>{user.firstName}</TableCell>
+                  <TableCell>{user.lastName}</TableCell>
+                  <TableCell>{user.email}</TableCell>
                   <TableCell>{user.type}</TableCell>
                   <TableCell>
                     <IconButton onClick={() => handleOpen(user)}>
@@ -96,6 +105,9 @@ const ManageUsers = () => {
           <Formik
             initialValues={{
               username: currentUser?.username || '',
+              firstName: currentUser?.firstName || '',
+              lastName: currentUser?.lastName || '',
+              email: currentUser?.email || '',
               type: currentUser?.type || ''
             }}
             validationSchema={validationSchema}
@@ -109,19 +121,56 @@ const ManageUsers = () => {
                     margin="dense"
                     id="username"
                     name="username"
-                    label= {USERS.USERNAME}
+                    inputProps={{ readOnly: editMode }}
+                    label={USERS.USERNAME}
                     value={values.username}
                     onChange={handleChange}
                     onBlur={handleBlur}
                     error={touched.username && Boolean(errors.username)}
                     helperText={touched.username && errors.username}
                   />
+                  <TextField
+                    fullWidth
+                    margin="dense"
+                    id="firstName"
+                    name="firstName"
+                    label={USERS.FIRST_NAME}
+                    value={values.firstName}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    error={touched.firstName && Boolean(errors.firstName)}
+                    helperText={touched.firstName && errors.firstName}
+                  />
+                  <TextField
+                    fullWidth
+                    margin="dense"
+                    id="lastName"
+                    name="lastName"
+                    label={USERS.LAST_NAME}
+                    value={values.lastName}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    error={touched.lastName && Boolean(errors.lastName)}
+                    helperText={touched.lastName && errors.lastName}
+                  />
+                  <TextField
+                    fullWidth
+                    margin="dense"
+                    id="email"
+                    name="email"
+                    label={USERS.EMAIL}
+                    value={values.email}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    error={touched.email && Boolean(errors.email)}
+                    helperText={touched.email && errors.email}
+                  />
                   <Select
                     fullWidth
                     margin="dense"
                     id="type"
                     name="type"
-                    label= {USERS.TYPE}
+                    label={USERS.TYPE}
                     value={values.type}
                     onChange={handleChange}
                     onBlur={handleBlur}
@@ -145,7 +194,7 @@ const ManageUsers = () => {
         </Dialog>
 
         <Dialog open={deleteUserPrompt} onClose={() => setDeleteUserPrompt(false)}>
-          <DialogTitle> { USERS.CONFIRM_DELETION } </DialogTitle>
+          <DialogTitle>{USERS.CONFIRM_DELETION}</DialogTitle>
           <DialogContent>
             <Typography variant="body1">
               {USERS.CONFIRM_DELETION_MSG(userToDelete?.username)}
