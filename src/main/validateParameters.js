@@ -63,6 +63,12 @@ function getCallingFunctionName() {
  * const realObj = { profile: new Person("John", 30) };
  * const expectedObj = { profile: Person };
  * validateParameters(realObj, expectedObj); // pass validation
+ * 
+ *  * @example
+ * // Array validation
+ * const realObj = { numbers: [1, 2, 3], people: [new Person("John", 30), new Person("Jane", 25)] };
+ * const expectedObj = { numbers: ["number"], people: [Person] };
+ * validateParameters(realObj, expectedObj); // pass validation
  */
 function validateParameters(realObj, expectedObj, prohibitNull = true, checkCallingUserData = true) {
 
@@ -95,9 +101,25 @@ function validateParameters(realObj, expectedObj, prohibitNull = true, checkCall
       }
 
       // Check the type
-      
+
+      // Check for array type
+      if (Array.isArray(expectedType)) {
+        if (!Array.isArray(realValue)) {
+          throw new EMSError(ERROR_MSGS.TYPE_MISMATCH(key, 'array', typeof realValue, callingFunctionName), ERROR_CODES.TYPE_MISMATCH);
+        }
+        if (realValue.length > 0) {
+          const arrayExpectedType = expectedType[0];
+          for (const element of realValue) {
+            // make sure that every element in the array is from the expected Type.
+            // wrap the element in an object so it will be in validateParameters params format
+            validateParameters({ element }, { element: arrayExpectedType }, prohibitNull, false);
+          }
+        }
+        // empty array is from 'any' type, so it pass.
+        continue;
+      }
       // Primitive type check
-      if (Object.values(PRIMITIVE_TYPES).includes(expectedType)) {
+      else if (Object.values(PRIMITIVE_TYPES).includes(expectedType)) {
         if (typeof realValue !== expectedType) {
           throw new EMSError(ERROR_MSGS.TYPE_MISMATCH(key, expectedType, typeof realValue,callingFunctionName), ERROR_CODES.TYPE_MISMATCH);
         }
