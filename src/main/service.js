@@ -335,10 +335,13 @@ function getMetaQuestionForAppendix(req, res, next){
  */
 function addMetaQuestion(req, res, next){
     try{
-        let metaQuestion = application.addMetaQuestion(req.body)
-        req.log.info("request to create metaQuestion");
-        res.send(200, {code:200, metaQuestion})
-        next()
+        application.addMetaQuestion(req.body).then(
+            metaQuestion => {
+                req.log.info("request to create metaQuestion");
+                res.send(200, {code:200, metaQuestion})
+                next()
+            }
+        )
     }
     catch(err){
         req.log.warn(err.message, 'failed to create meta questions');
@@ -372,10 +375,13 @@ function addMetaQuestion(req, res, next){
  */
 function editMetaQuestion(req, res, next){
     try{
-        application.editMetaQuestion(req.body)
-        req.log.info("request to edit metaQuestion");
-        res.send(200, {code:200})
-        next()
+        application.editMetaQuestion(req.body).then(
+            ()=>{
+                req.log.info("request to edit metaQuestion");
+                res.send(200, {code:200})
+                next()
+            }
+        )
     }
     catch(err){
         req.log.warn(err.message, 'failed to create meta questions');

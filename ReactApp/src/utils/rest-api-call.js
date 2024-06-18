@@ -1,5 +1,6 @@
 import Cookies from 'js-cookie';
 import {validateParameters} from '../../../src/main/validateParameters'
+import { PRIMITIVE_TYPES } from '../../../src/main/Enums';
 export const TOKEN_FIELD_NAME = "jwt_exam_token"
 const SERVER_ROOT_URL = "http://localhost:8080/"
 const LATEX_SERVER_ROOT_URL = "http://164.90.223.94:3001/"
@@ -37,6 +38,11 @@ export const serverPath = {
     GET_META_QUESTIONS_FOR_APPENDIX: 'getMetaQuestionForAppendix'
 }
 
+
+export const pathToReturnTypeMap={
+  [serverPath.VIEW_TASKS]: {tasks:[{finished:PRIMITIVE_TYPES.BOOLEAN, }]},
+}
+
 export const latexServerPath = {
   COMPILE: 'compile',
   COMPILE_EXAM: 'exam',
@@ -66,7 +72,7 @@ export async function requestLatexServer(path, body) {
       });
 }
 
-export async function requestServer(path, method, body, expectedResponseType) {
+export async function requestServer(path, method, body) {
     var response
     if (Cookies.get(TOKEN_FIELD_NAME)) {
         response = await fetch(SERVER_ROOT_URL + path,
@@ -103,6 +109,7 @@ export async function requestServer(path, method, body, expectedResponseType) {
     }
     var { code, ...retObject } = response
 
+    const expectedResponseType = pathToReturnTypeMap[path]
     if(expectedResponseType){
       validateParameters(retObject, expectedResponseType,false, false)
     }

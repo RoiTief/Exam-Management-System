@@ -17,7 +17,7 @@ class MetaQuestionController{
         this.#metaQuestionId = 1
     }
 
-    createMetaQuestion(data) {
+    async createMetaQuestion(data) {
         // create a new metaQuestion
         data.id = this.#metaQuestionId;
         if (data.appendix) {
@@ -29,8 +29,8 @@ class MetaQuestionController{
         }
         let metaQuestion = new MetaQuestion(data);
         this.#metaQuestions.set(this.#metaQuestionId, metaQuestion);
-        const ta_s = this.#userController.getAllStaff(data)["TAs"]
-
+        let ta_s = await this.#userController.getAllStaff(data)
+        ta_s = ta_s["TAs"]
         const addTaskProperties = {...data,
              assignedUsers: ta_s, taskType: TaskTypes.ADD_KEY,
               taskPriority: TaskPriority.HIGH, description: `Please add a key For the following Question: ${metaQuestion.stem}`,
@@ -40,10 +40,11 @@ class MetaQuestionController{
         return metaQuestion
     }
 
-    editMetaQuestion(data) {
+    async editMetaQuestion(data) {
         let metaQuestion = new MetaQuestion(data);
         this.#metaQuestions.set(data.id, metaQuestion);
-        const ta_s = this.#userController.getAllStaff(data)["TAs"]
+        let ta_s = await this.#userController.getAllStaff(data)
+        ta_s =ta_s["TAs"]
         const addTaskProperties = {...data,
             assignedUsers: ta_s, taskType: TaskTypes.ADD_KEY,
             taskPriority: TaskPriority.HIGH, description: `Please please review the changes to the following Question: ${metaQuestion.stem}`,

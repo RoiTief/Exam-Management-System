@@ -282,6 +282,7 @@ class ApplicationFacade{
      * @throws {Error} - if there is no user logged in data
      */
     async viewMyTasks(data){
+        validateParameters(data,{})
         const user = await this.userController.getUser(data.callingUser.username);
         return this.taskController.getTasksOf(user.getUsername());
     }
