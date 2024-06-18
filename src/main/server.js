@@ -10,6 +10,19 @@ var errors = require('restify-errors');
 const corsMiddleware = require('restify-cors-middleware2')
 const jwt = require('jsonwebtoken');
 
+function refreshJwt(req, res, next){
+        try{
+            const token =  extractAndVerifyJwt(req)
+            const {iat, exp, ...tokenData} = token  // extracting extra data from the token
+            const newToken = service.generateJWT(tokenData)
+            res.send(200, {code:200,newToken})
+            next()
+        }
+        catch(err){
+            req.log.warn(err.message, 'failed to refresh jwt');
+            next(err);
+        }
+}
 
 var service = require('./service');
 
@@ -67,7 +80,7 @@ function authenticate(req) {
         if(!req.body) req.body = {} // when there is no body, create one so we can assign callingUser.
 
         // Calling user is the user who made the request, he is both register and logged in.
-        req.body.callingUser = {username: token.username, type: token.type}
+        req.body.callingUser = {...token}
         return true;
     }
     return false;
@@ -262,6 +275,8 @@ function createServer(options) {
 
     // request: username, type
     server.put('/editUser', service.editUser)
+    
+    server.get('/refreshJWT',refreshJwt)
 
 
 

@@ -3,6 +3,13 @@ const application = new ApplicationFacade();
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
 
+
+function generateJWT(data) {
+    return jwt.sign(data, process.env.SECRET_KEY, {
+        expiresIn: 60 * 15 // token expires in 15 minutes
+    });
+}
+
 /**
  * register a user
  * @param req.username - the new user username - needs to be unique
@@ -41,9 +48,7 @@ function signIn(req, res, next) {
                 firstSignIn: businessUser.isFirstSignIn(),
                 type: businessUser.getUserType()
             };
-            const token = jwt.sign({username: req.body.username, type:user.type}, process.env.SECRET_KEY, {
-                expiresIn: "1h" // token expires in 15 minutes
-            });
+            const token = generateJWT({username: req.body.username, type:user.type});
             req.log.info(req.body.username, 'user signed in');
             res.send(200, {code: 200, user, token})
             next()
@@ -82,9 +87,7 @@ function logout(req, res, next) {
 function changePassword(req, res, next) {
     application.changePassword(req.body).then(
         businessUser => {
-            let token = jwt.sign({username: req.body.username, type: businessUser.getUserType()}, process.env.SECRET_KEY, {
-                expiresIn: "1h" // token expires in 15 minutes
-            });
+            let token = generateJWT({username: req.body.username, type: businessUser.getUserType()});
             req.log.info(req.body.username, 'user signed in');
             res.send(200, {
                 code: 200, user: {
@@ -459,5 +462,6 @@ module.exports = {
     editMetaQuestion: editMetaQuestion,
     createExam,
     getAllExams,
-    editUser: editUser
+    editUser: editUser,
+    generateJWT,
 };
