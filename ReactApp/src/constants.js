@@ -109,6 +109,7 @@ export const CREATE_QUESTION = {
   APPENDIX_CONTENT: "Content: ",
   META_QUESTION_TITLE: "Meta-Question: ",
   KEYWORDS_TITLE: "Keywords",
+  KEYWORDS_INSTRUCTION: "Please press Enter after every keyword to add it.",
   KEY_TITLE: "Keys: ",
   DISTRACTOR_TITLE: "Distractors: ",
   NO_KEYS_MESSAGE_1: "There are no available keys for this question!",
