@@ -384,6 +384,10 @@ class ApplicationFacade{
 
 
     async editUser(data){
+        if (data.callingUser.username === data.userDetails.username) {
+            const userDetails = data.userDetails;
+            return this.userController.updateMyInfo(userDetails);
+        }
         return this.userController.updateUser(data);
     }
 

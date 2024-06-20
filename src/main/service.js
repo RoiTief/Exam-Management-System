@@ -38,6 +38,9 @@ function signIn(req, res, next) {
             // send needed information derived from business
             const user = {
                 username: businessUser.getUsername(),
+                firstName: businessUser.getFirstName(),
+                lastName: businessUser.getLastName(),
+                email: businessUser.getEmail(),
                 firstSignIn: businessUser.isFirstSignIn(),
                 type: businessUser.getUserType()
             };
@@ -89,6 +92,9 @@ function changePassword(req, res, next) {
             res.send(200, {
                 code: 200, user: {
                     username: businessUser.getUsername(),
+                    firstName: businessUser.getFirstName(),
+                    lastName: businessUser.getLastName(),
+                    email: businessUser.getEmail(),
                     firstSignIn: businessUser.isFirstSignIn(),
                     type: businessUser.getUserType()
                 },
@@ -433,9 +439,15 @@ function getAllExams(req, res, next){
 
 function editUser(req, res, next) {
     application.editUser(req.body).then(
-        result => {
-            req.log.info(req.body.username, 'edit user request');
-            res.send(200, {code:200});
+        businessUser => {
+            req.log.info(req.body.userDetails.username, 'edit user request');
+            res.send(200, {code:200, user: {
+                username: businessUser.getUsername(),
+                firstName: businessUser.getFirstName(),
+                lastName: businessUser.getLastName(),
+                email: businessUser.getEmail(),
+                firstSignIn: businessUser.isFirstSignIn(),
+                type: businessUser.getUserType()}});
             next();
         },
         err => {

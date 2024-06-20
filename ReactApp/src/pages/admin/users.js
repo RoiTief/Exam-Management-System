@@ -141,7 +141,7 @@ const ManageUsers = () => {
         </TableContainer>
 
         <Dialog open={open} onClose={handleClose}>
-          <DialogTitle>{editMode ? USERS.EDIT_USER : USERS.ADD_USER}</DialogTitle>
+          <DialogTitle>{editMode ? USERS.EDIT_USER : USERS.INSERT_USER_DETAILS}</DialogTitle>
           {error && <Alert severity="error">{error}</Alert>}
           <Formik
             initialValues={{
@@ -233,7 +233,7 @@ const ManageUsers = () => {
                     {USERS.CANCEL_ACTION}
                   </Button>
                   <Button type="submit" color="primary" disabled={isSubmitting}>
-                    {editMode ? USERS.SAVE_ACTION : USERS.ADD_USER}
+                    {editMode ? USERS.SAVE_ACTION : USERS.SUBMIT}
                   </Button>
                 </DialogActions>
               </Form>
