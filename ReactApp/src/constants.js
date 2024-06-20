@@ -148,6 +148,7 @@ export const APPENDICES_CATALOG = {
   VIEW_PDF_BUTTON: 'View PDF',
   SEARCH_PLACEHOLDER: 'Search appendices...',
   RELATED_QUESION: 'The Appendix Is Attached To Those Questions:',
+  NO_RELATED_QUESTIONS: 'The Appendix Has No Related Questions',
   SEARCH_TYPE_LABEL: 'Search Type',
   OPEN_TEXT: 'Open Text',
   TAG: 'Tag',

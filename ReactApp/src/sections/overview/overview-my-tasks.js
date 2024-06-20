@@ -12,13 +12,15 @@ import {
   ListItemText,
   SvgIcon
 } from '@mui/material';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Task } from '../popUps/TaskPopup';
 import { TASK } from '../../constants';
+import ErrorMessage from '../../components/errorMessage';
 
 export const OverviewAssignedTasks = () => {
   const [tasks, setList] = useState([]);
   const [taskToView, setTask] = useState(null);
+  const [errorMessage, setErrorMessage] = useState('');
 
   const handleButtonClick = (task) => {
     setTask(task);
@@ -39,6 +41,7 @@ export const OverviewAssignedTasks = () => {
       }
       catch(err){
         console.error('Error fetching task list:', err);
+        setErrorMessage(`Error fetching tasks: ${err}`)
       }
     };
 
@@ -80,6 +83,7 @@ export const OverviewAssignedTasks = () => {
             );
           })}
         </List>
+        <ErrorMessage message={errorMessage} />
         <CardActions sx={{ justifyContent: 'flex-end' }}>
         </CardActions>
       </Card>

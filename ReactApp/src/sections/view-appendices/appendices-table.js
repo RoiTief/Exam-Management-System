@@ -19,6 +19,7 @@ import { PdfLatexPopup } from '../popUps/QuestionPdfView';
 import { httpsMethod, latexServerPath, requestServer, serverPath } from '../../utils/rest-api-call';
 import { APPENDICES_CATALOG } from '../../constants';
 import { MetaQuestionTable } from '../view-questions/question-table';
+import ErrorMessage from '../../components/errorMessage';
 
 export const AppendicesTable = ({ appendices }) => {
   const [page, setPage] = useState(0);
@@ -27,6 +28,7 @@ export const AppendicesTable = ({ appendices }) => {
   const [relatedQuestions, setRelatedQuestions] = useState([]);
   const [selectedQuestion, setSelectedQuestion] = useState(null);
   const [showPdfView, setShowPdfView] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
 
   const handleExpandAppendix = async (appendix) => {
     if (expandedAppendix === appendix) {
@@ -36,9 +38,12 @@ export const AppendicesTable = ({ appendices }) => {
     try {
       const { metaQuestions } = await requestServer(serverPath.GET_META_QUESTIONS_FOR_APPENDIX, httpsMethod.POST, appendix);
       setRelatedQuestions(metaQuestions);
+      setErrorMessage(metaQuestions.length === 0 ? 'No related questions found.' : '');
       setExpandedAppendix(appendix);
     } catch (error) {
       console.error('Error fetching related questions:', error);
+      setErrorMessage(`Error fetching related questions: ${error.message}`);
+      setExpandedAppendix(appendix);
     }
   };
 
@@ -87,9 +92,20 @@ export const AppendicesTable = ({ appendices }) => {
                   <TableRow>
                     <TableCell colSpan={3} style={{ paddingBottom: 0, paddingTop: 0 }}>
                       <Collapse in={expandedAppendix === appendix}>
-                        <Box margin={1} bgcolor="rgba(0, 0, 0, 0.5)" borderRadius={4} p={2}>
-                          <Typography variant="h6" padding={2}>{APPENDICES_CATALOG.RELATED_QUESION}</Typography>
-                          <MetaQuestionTable data={relatedQuestions} />
+                        <Box margin={1} bgcolor="rgba(255, 165, 0, 0.5)" borderRadius={4} p={2}>
+                          {errorMessage==='' && relatedQuestions.length>0 && (
+                            <Stack>
+                              <Typography variant="h6" padding={2}>{APPENDICES_CATALOG.RELATED_QUESION}</Typography>
+                              <MetaQuestionTable data={relatedQuestions} />
+                            </Stack>
+                          )}
+                          {errorMessage==='' && relatedQuestions.length===0 &&(
+                            <Typography variant="b2" padding={2}>{APPENDICES_CATALOG.NO_RELATED_QUESTIONS}</Typography>
+                          )}
+                          {errorMessage!=='' && (
+                            <ErrorMessage message={errorMessage} />
+                            )}
+
                         </Box>
                       </Collapse>
                     </TableCell>
