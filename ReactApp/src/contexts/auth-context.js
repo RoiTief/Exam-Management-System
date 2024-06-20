@@ -138,6 +138,16 @@ export const AuthProvider = (props) => {
     });
   };
 
+  const editDetails = async (userDetails) => {
+    const { user } = await requestServer(serverPath.EDIT_USER, httpsMethod.PUT, { userDetails });
+    localStorage.setItem('user', JSON.stringify(user)); // Store user details in localStorage
+    dispatch({
+      type: HANDLERS.SIGN_IN,
+      payload: user
+    });
+    return user
+  };
+
   return (
     <AuthContext.Provider
       value={{
@@ -145,7 +155,8 @@ export const AuthProvider = (props) => {
         signIn,
         signUp,
         signOut,
-        changePassword
+        changePassword,
+        editDetails
       }}
     >
       {children}

@@ -6,7 +6,17 @@ export const HELLO_USER = (username) => `Hello, ${username}`
 export const ACCOUNT = {
   ACCOUNT: "Account",
   ACCOUNT_SETTINGS: "Account Settings",
-  SIGN_OUT: "Sign out"
+  SIGN_OUT: "Sign out",
+  PASSWORDS_DO_NOT_MATCH: "Passwords do not match",
+  ILLEGAL_PASSWORD: "Password must be at least 5 letters",
+  FIRST_NAME: "First name",
+  LAST_NAME: "Last Name",
+  EMAIL: "Email Address",
+  CHANGE_PASSWORD: "Change Password",
+  CURRENT_PASSWORD: "Current Password",
+  NEW_PASSWORD: "New Password",
+  CONFIRM_PASSWORD: "Confirm New Password",
+  FAILED: error => `${error}`
 };
 
 export const SIDE_BAR = {
@@ -52,6 +62,8 @@ export const TASK = {
 
 export const USERS = {
   ADD_USER: "Add User",
+  INSERT_USER_DETAILS: "Insert User Details",
+  SUBMIT: "Submit",
   EDIT_USER: "Edit User",
   USERNAME: "Username",
   FIRST_NAME: "First Name",
