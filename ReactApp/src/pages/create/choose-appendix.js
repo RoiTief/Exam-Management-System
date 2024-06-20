@@ -164,11 +164,19 @@ const Page = () => {
                 </Box>
               </Container>
             </Stack>
-            <Stack direction="row" justifyContent="center" spacing={5}>
+            <Stack direction="row" justifyContent="center" spacing={5} padding={2}>
               <Button variant="contained" type="submit" disabled={isSubmitting}>
                 {CREATE_QUESTION.SUBMIT_BUTTON}
               </Button>
-              <Button variant="outlined" onClick={(event) => handlePdfButtonClick(event, values)}>
+              <Button variant="outlined"
+                      sx={{
+                        backgroundColor: 'rgba(255, 165, 0, 0.3)', // Tinted background
+                        color: 'primary.main',
+                        '&:hover': {
+                          backgroundColor: 'rgba(255, 165, 0, 0.08)', // Darker tint on hover
+                        },
+                      }}
+                      onClick={(event) => handlePdfButtonClick(event, values)}>
                 {CREATE_QUESTION.VIEW_PDF_BUTTON}
               </Button>
             </Stack>
