@@ -4,8 +4,6 @@ import { FormatTextdirectionLToR, FormatTextdirectionRToL } from '@mui/icons-mat
 import { CREATE_QUESTION } from '../../constants';
 
 const AppendixSection = ({ values, handleChange, handleBlur, setFieldValue, touched, errors }) => {
-  console.log('touched:', touched);
-  console.log('errors:', errors);
   return (
     <Box sx={{ mb: 2 }}>
     <Typography variant="h6" component="h3">{CREATE_QUESTION.APPENDIX_TITLE}</Typography>
