@@ -17,6 +17,7 @@ import {
 import { useAuth } from 'src/hooks/use-auth';
 import { Layout as AuthLayout } from 'src/layouts/auth/layout';
 import { LOGIN } from '../../constants';
+import ErrorMessage from 'src/components/ErrorMessage';
 
 const Page = () => {
   const router = useRouter();
@@ -25,6 +26,7 @@ const Page = () => {
   const [changePasswordOpen, setChangePasswordOpen] = useState(false);
   const [changePasswordValues, setChangePasswordValues] = useState({ newPassword: '', confirmNewPassword: '' });
   const [user, setUser] = useState(null);
+  const [errorMessage, setErrorMessage] = useState('');
 
   function validateLegalPassword(password){
     return password.length >= 5;
@@ -33,8 +35,7 @@ const Page = () => {
   const formik = useFormik({
     initialValues: {
       username: '',
-      password: '',
-      submit: null
+      password: ''
     },
     validationSchema: Yup.object({
       username: Yup
@@ -46,7 +47,7 @@ const Page = () => {
         .max(255)
         .required('Password is required')
     }),
-    onSubmit: async (values, helpers) => {
+    onSubmit: async (values) => {
       try {
         const user = await auth.signIn(values.username, values.password);
         setUser(user);
@@ -56,9 +57,8 @@ const Page = () => {
           router.push('/');
         }
       } catch (err) {
-        helpers.setStatus({ success: false });
-        helpers.setErrors({ submit: err.message });
-        helpers.setSubmitting(false);
+        setErrorMessage(err.message);
+        formik.setSubmitting(false);
       }
     }
   });
@@ -68,7 +68,7 @@ const Page = () => {
       alert(LOGIN.PASSWORDS_DO_NOT_MATCH);
       return;
     }
-    if(!validateLegalPassword(changePasswordValues.newPassword)) {
+    if (!validateLegalPassword(changePasswordValues.newPassword)) {
       alert(LOGIN.ILLEGAL_PASSWORD);
       return;
     }
@@ -78,6 +78,7 @@ const Page = () => {
       router.push('/');
     } catch (err) {
       console.error(LOGIN.FAILED_TO_CHANGE_PASSWORD, err);
+      setErrorMessage(LOGIN.FAILED_TO_CHANGE_PASSWORD);
     }
   };
 
@@ -143,15 +144,6 @@ const Page = () => {
                     value={formik.values.password}
                   />
                 </Stack>
-                {formik.errors.submit && (
-                  <Typography
-                    color="error"
-                    sx={{ mt: 3 }}
-                    variant="body2"
-                  >
-                    {formik.errors.submit}
-                  </Typography>
-                )}
                 <Button
                   fullWidth
                   size="large"
@@ -161,6 +153,7 @@ const Page = () => {
                 >
                   {LOGIN.CONTINUE_BUTTON}
                 </Button>
+                <ErrorMessage message={errorMessage} />
               </form>
             )}
           </div>
