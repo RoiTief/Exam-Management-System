@@ -32,8 +32,7 @@ class UserController {
                 firstName: PRIMITIVE_TYPES.STRING,
                 lastName: PRIMITIVE_TYPES.STRING,
                 email: PRIMITIVE_TYPES.STRING,
-                userType: PRIMITIVE_TYPES.STRING,
-                password: PRIMITIVE_TYPES.STRING
+                userType: PRIMITIVE_TYPES.STRING
             });
 
         this.#verifyType(userDetails.callingUser.type, USER_TYPES.ADMIN)
@@ -196,6 +195,24 @@ class UserController {
             throw new EMSError(ERROR_MSGS.CANNOT_DELETE_ADMIN, ERROR_CODES.CANNOT_DELETE_ADMIN);
         }
         await this.#userRepo.deleteUser(data.username);
+    }
+
+    /**
+     * Resets a user password
+     * @param userDetails All details needed to reset password.
+     * @return Business instance of the edited user
+     */
+    async resetPassword(userDetails) {
+        validateParameters(userDetails,
+            {
+                username: PRIMITIVE_TYPES.STRING
+            });
+        this.#verifyType(userDetails.callingUser.type, USER_TYPES.ADMIN)
+        if (!userDetails.username) {
+            throw new EMSError(ERROR_MSGS.USER_DETAILS_MISSING_USERNAME, ERROR_CODES.USER_DETAILS_MISSING_USERNAME);
+        }
+        const user = await this.getUser(userDetails.username);
+        await user.changePassword(DEFAULT_PASSWORD)
     }
 }
 

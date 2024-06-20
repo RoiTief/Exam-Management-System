@@ -54,6 +54,9 @@ export const USERS = {
   ADD_USER: "Add User",
   EDIT_USER: "Edit User",
   USERNAME: "Username",
+  FIRST_NAME: "First Name",
+  LAST_NAME: "Last Name",
+  EMAIL: "Email",
   TYPE: "Type",
   ACTIONS: "Actions",
   LECTURER: "Lecturer",
@@ -63,6 +66,8 @@ export const USERS = {
   SAVE_ACTION: "Save Changes",
   CONFIRM_DELETION: "Confirm Deletion",
   CONFIRM_DELETION_MSG: (username) => `Are you sure you want to delete the user ${username}?`,
+  CONFIRM_RESET_PASSWORD: "Confirm Reset Password",
+  CONFIRM_RESET_PASSWORD_MSG: (username) => `Are you sure you want to reset the password of user ${username}?`,
 }
 
 export const LOGIN = {
@@ -77,6 +82,7 @@ export const LOGIN = {
   CANCEL_BUTTON: "Cancel",
   CHANGE_PASSWORD_BUTTON: "Change Password",
   PASSWORDS_DO_NOT_MATCH: "Passwords do not match",
+  ILLEGAL_PASSWORD: "Password must be at least 5 letters",
   FAILED_TO_CHANGE_PASSWORD: "Failed to change password:"
 };
 

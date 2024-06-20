@@ -1,6 +1,27 @@
 import React, { useState } from 'react';
 import { Layout as DashboardLayout } from 'src/layouts/dashboard/layout';
-import { Box, Button, Container, IconButton, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography, Dialog, DialogActions, DialogContent, DialogTitle, TextField, Select, MenuItem } from '@mui/material';
+import {
+  Box,
+  Button,
+  Container,
+  IconButton,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Typography,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  TextField,
+  Select,
+  MenuItem,
+  Alert,
+  FormHelperText, InputLabel, FormControl
+} from '@mui/material';
 import { AddCircle, Edit, Delete } from '@mui/icons-material';
 import { Formik, Form } from 'formik';
 import * as Yup from 'yup';
@@ -9,16 +30,22 @@ import { UserProvider } from '../../contexts/user-context';
 import { SIDE_BAR, USERS } from '../../constants';
 
 const validationSchema = Yup.object().shape({
+  firstName: Yup.string().required('First name is required'),
+  lastName: Yup.string().required('Last name is required'),
+  email: Yup.string().email('Invalid email').required('Email is required'),
   type: Yup.string().required('Type is required').oneOf(['Lecturer', 'TA'], 'Invalid type'),
 });
 
 const ManageUsers = () => {
-  const { state, addUser, editUser, deleteUser } = useUser();
+  const { state, addUser, editUser, deleteUser, resetPassword } = useUser();
   const [open, setOpen] = useState(false);
   const [editMode, setEditMode] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
   const [deleteUserPrompt, setDeleteUserPrompt] = useState(false);
+  const [resetPasswordPrompt, setResetPasswordPrompt] = useState(false);
   const [userToDelete, setUserToDelete] = useState(null);
+  const [userToReset, setUserToReset] = useState(null);
+  const [error, setError] = useState('');
 
   const handleOpen = (user) => {
     setEditMode(!!user);
@@ -32,6 +59,9 @@ const ManageUsers = () => {
     setOpen(false);
     setDeleteUserPrompt(false);
     setUserToDelete(null);
+    setResetPasswordPrompt(false);
+    setUserToReset(null);
+    setError('');
   };
 
   const handleDeleteUser = (user) => {
@@ -44,14 +74,24 @@ const ManageUsers = () => {
     setDeleteUserPrompt(false);
   };
 
-  const handleSubmit = (values, { setSubmitting }) => {
-    if (editMode) {
-      editUser({ ...currentUser, ...values });
-    } else {
-      addUser({ ...values });
-    }
+  const handleResetPassword = (user) => {
+    setUserToReset(user);
+    setResetPasswordPrompt(true);
+  };
+
+  const confirmResetPassword = () => {
+    resetPassword(userToReset.username);
+    setResetPasswordPrompt(false);
+  };
+
+  const handleSubmit = async (values, { setSubmitting }) => {
+    const result = editMode ? await editUser({ ...currentUser, ...values }) : await addUser({ ...values });
     setSubmitting(false);
-    handleClose();
+    if (result.success) {
+      handleClose();
+    } else {
+      setError(result.error.message);
+    }
   };
 
   return (
@@ -68,6 +108,9 @@ const ManageUsers = () => {
             <TableHead>
               <TableRow>
                 <TableCell>{USERS.USERNAME}</TableCell>
+                <TableCell>{USERS.FIRST_NAME}</TableCell>
+                <TableCell>{USERS.LAST_NAME}</TableCell>
+                <TableCell>{USERS.EMAIL}</TableCell>
                 <TableCell>{USERS.TYPE}</TableCell>
                 <TableCell>{USERS.ACTIONS}</TableCell>
               </TableRow>
@@ -76,6 +119,9 @@ const ManageUsers = () => {
               {Array.isArray(state.users) && state.users.map((user) => (
                 <TableRow key={user.username}>
                   <TableCell>{user.username}</TableCell>
+                  <TableCell>{user.firstName}</TableCell>
+                  <TableCell>{user.lastName}</TableCell>
+                  <TableCell>{user.email}</TableCell>
                   <TableCell>{user.type}</TableCell>
                   <TableCell>
                     <IconButton onClick={() => handleOpen(user)}>
@@ -84,6 +130,9 @@ const ManageUsers = () => {
                     <IconButton onClick={() => handleDeleteUser(user)}>
                       <Delete />
                     </IconButton>
+                    <Button onClick={() => handleResetPassword(user)}>
+                      Reset Password
+                    </Button>
                   </TableCell>
                 </TableRow>
               ))}
@@ -93,9 +142,13 @@ const ManageUsers = () => {
 
         <Dialog open={open} onClose={handleClose}>
           <DialogTitle>{editMode ? USERS.EDIT_USER : USERS.ADD_USER}</DialogTitle>
+          {error && <Alert severity="error">{error}</Alert>}
           <Formik
             initialValues={{
               username: currentUser?.username || '',
+              firstName: currentUser?.firstName || '',
+              lastName: currentUser?.lastName || '',
+              email: currentUser?.email || '',
               type: currentUser?.type || ''
             }}
             validationSchema={validationSchema}
@@ -109,27 +162,71 @@ const ManageUsers = () => {
                     margin="dense"
                     id="username"
                     name="username"
-                    label= {USERS.USERNAME}
+                    inputProps={{ readOnly: editMode }}
+                    label={USERS.USERNAME}
                     value={values.username}
                     onChange={handleChange}
                     onBlur={handleBlur}
                     error={touched.username && Boolean(errors.username)}
                     helperText={touched.username && errors.username}
                   />
-                  <Select
+                  <TextField
                     fullWidth
                     margin="dense"
-                    id="type"
-                    name="type"
-                    label= {USERS.TYPE}
-                    value={values.type}
+                    id="firstName"
+                    name="firstName"
+                    label={USERS.FIRST_NAME}
+                    value={values.firstName}
                     onChange={handleChange}
                     onBlur={handleBlur}
+                    error={touched.firstName && Boolean(errors.firstName)}
+                    helperText={touched.firstName && errors.firstName}
+                  />
+                  <TextField
+                    fullWidth
+                    margin="dense"
+                    id="lastName"
+                    name="lastName"
+                    label={USERS.LAST_NAME}
+                    value={values.lastName}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    error={touched.lastName && Boolean(errors.lastName)}
+                    helperText={touched.lastName && errors.lastName}
+                  />
+                  <TextField
+                    fullWidth
+                    margin="dense"
+                    id="email"
+                    name="email"
+                    label={USERS.EMAIL}
+                    value={values.email}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    error={touched.email && Boolean(errors.email)}
+                    helperText={touched.email && errors.email}
+                  />
+                  <FormControl
+                    fullWidth
+                    margin="dense"
                     error={touched.type && Boolean(errors.type)}
                   >
-                    <MenuItem value="Lecturer">{USERS.LECTURER}</MenuItem>
-                    <MenuItem value="TA">{USERS.TA}</MenuItem>
-                  </Select>
+                    <InputLabel id="type-label">{USERS.TYPE}</InputLabel>
+                    <Select
+                      labelId="type-label"
+                      id="type"
+                      name="type"
+                      value={values.type}
+                      onChange={handleChange}
+                      onBlur={handleBlur}
+                    >
+                      <MenuItem value="Lecturer">{USERS.LECTURER}</MenuItem>
+                      <MenuItem value="TA">{USERS.TA}</MenuItem>
+                    </Select>
+                    {touched.type && errors.type && (
+                      <FormHelperText>{errors.type}</FormHelperText>
+                    )}
+                  </FormControl>
                 </DialogContent>
                 <DialogActions>
                   <Button onClick={handleClose} color="primary">
@@ -145,7 +242,7 @@ const ManageUsers = () => {
         </Dialog>
 
         <Dialog open={deleteUserPrompt} onClose={() => setDeleteUserPrompt(false)}>
-          <DialogTitle> { USERS.CONFIRM_DELETION } </DialogTitle>
+          <DialogTitle>{USERS.CONFIRM_DELETION}</DialogTitle>
           <DialogContent>
             <Typography variant="body1">
               {USERS.CONFIRM_DELETION_MSG(userToDelete?.username)}
@@ -156,6 +253,23 @@ const ManageUsers = () => {
               Yes
             </Button>
             <Button onClick={() => setDeleteUserPrompt(false)} color="primary">
+              No
+            </Button>
+          </DialogActions>
+        </Dialog>
+
+        <Dialog open={resetPasswordPrompt} onClose={() => setResetPasswordPrompt(false)}>
+          <DialogTitle>{USERS.CONFIRM_RESET_PASSWORD}</DialogTitle>
+          <DialogContent>
+            <Typography variant="body1">
+              {USERS.CONFIRM_RESET_PASSWORD_MSG(userToReset?.username)}
+            </Typography>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={confirmResetPassword} color="primary">
+              Yes
+            </Button>
+            <Button onClick={() => setResetPasswordPrompt(false)} color="primary">
               No
             </Button>
           </DialogActions>

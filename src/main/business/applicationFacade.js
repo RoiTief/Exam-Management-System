@@ -91,9 +91,6 @@ class ApplicationFacade{
         )
     }
 
-    // TODO: remove
-    #emailCounter = 1;
-
     /**
      * register a user
      * @param userdetails - details needed to register the user with
@@ -102,10 +99,6 @@ class ApplicationFacade{
      *               - if the username/email is taken
      */
     async register(userdetails){
-        // TODO: remove lines that add missing details
-        if (!userdetails.firstName) userdetails.firstName = "Dummyfname";
-        if (!userdetails.lastName) userdetails.lastName = "Dummylname";
-        if (!userdetails.email) userdetails.email = `Dummyemail${this.#emailCounter++}@google.com`;
         return (await this.userController.register(userdetails));
     }
 
@@ -143,6 +136,14 @@ class ApplicationFacade{
         const user = await this.userController.getUser(changePasswordData.callingUser.username);
         await user.changePassword(changePasswordData.newPassword);
         return user;
+    }
+
+    /**
+     * reset a user password
+     * @param resetPasswordData - updated password for the logged user
+     */
+    async resetPassword(resetPasswordData) {
+        return (await this.userController.resetPassword(resetPasswordData));
     }
 
     /**

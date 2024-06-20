@@ -32,6 +32,7 @@ export const serverPath = {
     CREATE_EXAM: 'createExam',
     GET_ALL_EXAMS: 'getAllExams',
     CHANGE_PASSWORD: 'changePassword',
+    RESET_PASSWORD: 'resetPassword',
     EDIT_USER: 'editUser',
     EDIT_META_QUESTION: 'editMetaQuestion',
     GET_META_QUESTIONS_FOR_APPENDIX: 'getMetaQuestionForAppendix'

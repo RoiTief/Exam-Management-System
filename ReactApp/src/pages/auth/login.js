@@ -24,7 +24,11 @@ const Page = () => {
   const [method] = useState('username');
   const [changePasswordOpen, setChangePasswordOpen] = useState(false);
   const [changePasswordValues, setChangePasswordValues] = useState({ newPassword: '', confirmNewPassword: '' });
-  const [user, setUser] = useState(null)
+  const [user, setUser] = useState(null);
+
+  function validateLegalPassword(password){
+    return password.length >= 5;
+  }
 
   const formik = useFormik({
     initialValues: {
@@ -62,6 +66,10 @@ const Page = () => {
   const handleChangePassword = async () => {
     if (changePasswordValues.newPassword !== changePasswordValues.confirmNewPassword) {
       alert(LOGIN.PASSWORDS_DO_NOT_MATCH);
+      return;
+    }
+    if(!validateLegalPassword(changePasswordValues.newPassword)) {
+      alert(LOGIN.ILLEGAL_PASSWORD);
       return;
     }
     try {
