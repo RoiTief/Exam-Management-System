@@ -51,6 +51,13 @@ export const TASK = {
 };
 
 export const USERS = {
+  USERNAME_REQUIRED: "Username is required",
+  FIRST_NAME_REQUIRED: "First name is required",
+  LAST_NAME_REQUIRED: 'Last name is required',
+  EMAIL_REQUIRED: 'Email is required',
+  TYPE_REQUIRED: 'Type is required',
+  INVALID_EMAIL:'Invalid email',
+  INVALID_TYPE: 'Invalid type',
   ADD_USER: "Add User",
   EDIT_USER: "Edit User",
   USERNAME: "Username",
@@ -63,6 +70,7 @@ export const USERS = {
   TA: "TA",
   ADMIN: "Admin",
   CANCEL_ACTION: "Cancel",
+  RESET_PASSWORD: "Reset Password",
   SAVE_ACTION: "Save Changes",
   CONFIRM_DELETION: "Confirm Deletion",
   CONFIRM_DELETION_MSG: (username) => `Are you sure you want to delete the user ${username}?`,
