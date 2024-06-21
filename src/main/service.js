@@ -296,7 +296,6 @@ function deleteUser(req, res, next){
  */
 function getAllMetaQuestions(req, res, next) {
     application.getAllMetaQuestions(req.body).then(
-        // TODO: translate business MQs to FE objects
         metaQuestions => {
             req.log.info("a request was sent fetch all the meta questions");
             res.send(200, {code: 200, metaQuestions})
@@ -313,7 +312,6 @@ function getAllMetaQuestions(req, res, next) {
  */
 function getAllAppendices(req, res, next) {
     application.getAllAppendices(req.body).then(
-        // TODO: translate business Appendices to FE objects
         appendices => {
             req.log.info("a request was sent fetch all the appendices");
             res.send(200, {code: 200, appendices,})
@@ -326,7 +324,6 @@ function getAllAppendices(req, res, next) {
 
 function getMetaQuestionForAppendix(req, res, next) {
     application.getMetaQuestionForAppendix(req.body).then(
-        // TODO: translate business MQs to FE objects
         metaQuestions => {
             req.log.info("a request was sent fetch all the meta question for a specific appendix ");
             res.send(200, {code: 200, metaQuestions});
@@ -363,7 +360,6 @@ function getMetaQuestionForAppendix(req, res, next) {
  */
 function addMetaQuestion(req, res, next) {
     application.addMetaQuestion(req.body).then(
-        // TODO: translate business MQ to FE object
         metaQuestion => {
             req.log.info("request to create metaQuestion");
             res.send(200, {code: 200, metaQuestion});
