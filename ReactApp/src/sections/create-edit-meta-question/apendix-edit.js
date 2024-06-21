@@ -8,7 +8,7 @@ const AppendixSection = ({ values, handleChange, handleBlur, setFieldValue }) =>
     <Typography variant="h6" component="h3">{CREATE_QUESTION.APPENDIX_TITLE}</Typography>
     <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
       <TextField
-        label={CREATE_QUESTION.APPENDIX_TITLE}
+        label={CREATE_QUESTION.APPENDIX_TITLE_HINT}
         name="appendix.title"
         value={values.appendix.title}
         onChange={handleChange}
@@ -23,7 +23,7 @@ const AppendixSection = ({ values, handleChange, handleBlur, setFieldValue }) =>
     </Box>
     <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
       <TextField
-        label="Tag"
+        label={CREATE_QUESTION.APPENDIX_TAG_HINT}
         name="appendix.tag"
         value={values.appendix.tag}
         onChange={handleChange}
@@ -38,7 +38,7 @@ const AppendixSection = ({ values, handleChange, handleBlur, setFieldValue }) =>
     </Box>
     <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
       <TextField
-        label={CREATE_QUESTION.APPENDIX_CONTENT}
+        label={CREATE_QUESTION.APPENDIX_CONTENT_HINT}
         name="appendix.content"
         value={values.appendix.content}
         onChange={handleChange}
