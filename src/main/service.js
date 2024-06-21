@@ -294,47 +294,48 @@ function deleteUser(req, res, next){
  * return a list of meta question of the user's course
  * @throws {Error} - if fail to fetch
  */
-function getAllMetaQuestions(req, res, next){
-    try{
-        let metaQuestions = application.getAllMetaQuestions(req.body);
-        req.log.info("a request was sent fetch all the meta questions");
-        res.send(200, {code:200, metaQuestions})
-        next()
-    }
-    catch(err){
-        req.log.warn(err.message, 'unable to request fetch all the meta questions');
-        next(err);
-    }
+function getAllMetaQuestions(req, res, next) {
+    application.getAllMetaQuestions(req.body).then(
+        // TODO: translate business MQs to FE objects
+        metaQuestions => {
+            req.log.info("a request was sent fetch all the meta questions");
+            res.send(200, {code: 200, metaQuestions})
+            next()
+        }, err => {
+            req.log.warn(err.message, 'unable to request fetch all the meta questions');
+            next(err);
+        });
 }
 
 /**
  * return a list of meta question of the user's course
  * @throws {Error} - if fail to fetch
  */
-function getAllAppendices(req, res, next){
-    try{
-        let appendices = application.getAllAppendices(req.body);
-        req.log.info("a request was sent fetch all the appendices");
-        res.send(200, {code:200, appendices})
-        next()
-    }
-    catch(err){
-        req.log.warn(err.message, 'unable to request fetch all the appendices');
-        next(err);
-    }
+function getAllAppendices(req, res, next) {
+    application.getAllAppendices(req.body).then(
+        // TODO: translate business Appendices to FE objects
+        appendices => {
+            req.log.info("a request was sent fetch all the appendices");
+            res.send(200, {code: 200, appendices,})
+            next()
+        }, err => {
+            req.log.warn(err.message, 'unable to request fetch all the appendices');
+            next(err);
+        });
 }
 
-function getMetaQuestionForAppendix(req, res, next){
-    try{
-        let metaQuestions = application.getMetaQuestionForAppendix(req.body);
-        req.log.info("a request was sent fetch all the meta question for a specific appendix ");
-        res.send(200, {code:200, metaQuestions})
-        next()
-    }
-    catch(err){
-        req.log.warn(err.message, 'unable to request fetch all the meta question for a specific appendix');
-        next(err);
-    }
+function getMetaQuestionForAppendix(req, res, next) {
+    application.getMetaQuestionForAppendix(req.body).then(
+        // TODO: translate business MQs to FE objects
+        metaQuestions => {
+            req.log.info("a request was sent fetch all the meta question for a specific appendix ");
+            res.send(200, {code: 200, metaQuestions});
+            next();
+        },
+        err => {
+            req.log.warn(err.message, 'unable to request fetch all the meta question for a specific appendix');
+            next(err);
+        });
 }
 
 /**
@@ -360,17 +361,18 @@ function getMetaQuestionForAppendix(req, res, next){
  *     appendix could be null
  * @throws {Error} - if fail to create
  */
-function addMetaQuestion(req, res, next){
-    try{
-        let metaQuestion = application.addMetaQuestion(req.body)
-        req.log.info("request to create metaQuestion");
-        res.send(200, {code:200, metaQuestion})
-        next()
-    }
-    catch(err){
-        req.log.warn(err.message, 'failed to create meta questions');
-        next(err);
-    }
+function addMetaQuestion(req, res, next) {
+    application.addMetaQuestion(req.body).then(
+        // TODO: translate business MQ to FE object
+        metaQuestion => {
+            req.log.info("request to create metaQuestion");
+            res.send(200, {code: 200, metaQuestion});
+            next();
+        },
+        err => {
+            req.log.warn(err.message, 'failed to create meta questions');
+            next(err);
+        });
 }
 
 /**
@@ -397,17 +399,18 @@ function addMetaQuestion(req, res, next){
  *     appendix could be null
  * @throws {Error} - if fail to edit
  */
-function editMetaQuestion(req, res, next){
-    try{
-        application.editMetaQuestion(req.body)
-        req.log.info("request to edit metaQuestion");
-        res.send(200, {code:200})
-        next()
-    }
-    catch(err){
-        req.log.warn(err.message, 'failed to create meta questions');
-        next(err);
-    }
+function editMetaQuestion(req, res, next) {
+    application.editMetaQuestion(req.body).then(
+        metaQuestion => {
+            req.log.info("request to edit metaQuestion");
+            res.send(200, {code: 200, metaQuestion})
+            next()
+        },
+        err => {
+            req.log.warn(err.message, 'failed to create meta questions');
+            next(err);
+        }
+    );
 }
 
 
