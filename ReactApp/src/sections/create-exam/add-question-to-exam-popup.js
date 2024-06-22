@@ -54,9 +54,11 @@ export const AddQuestionToExamPopup = ({isOpen, closePopup, metaQuestions, addQu
               onSelect={setSelectedMetaQuestion}
               reselectStem={handleReSelectStem}
             />
+            <Divider/>
             {selectedMetaQuestion && (
               <>
                 <KeySelection keys={filteredKeys} onSelect={setSelectedKey} />
+                <Divider/>
                 {selectedKey && <DistractorSelection distractors={filteredDistractors} onSelect={setSelectedDistractors} />}
               </>
             )}

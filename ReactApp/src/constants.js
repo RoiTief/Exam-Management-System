@@ -205,6 +205,7 @@ export const EXAM = {
   ANSWER_HEADING: "Answer",
   DISTRACTORS_HEADING: "Distractors",
   SELECT_QUESTION_HEADING: "Select a Question:",
+  SELECT_STEM_HEADING: "Select a Stem:",
   SELECT_KEY_HEADING: "Select The Correct Key",
   SELECT_DISTRACTORS_HEADING: "Select Distractors",
   SAVE_QUESTION_BUTTON: "Save Question",

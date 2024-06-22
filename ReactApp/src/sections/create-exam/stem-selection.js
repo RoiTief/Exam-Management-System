@@ -1,47 +1,59 @@
 import React, { useState } from 'react';
-import { Box, Typography, Radio, RadioGroup, FormControlLabel, Button, Dialog, DialogTitle, DialogContent, DialogActions } from '@mui/material';
+import {
+  Box,
+  Typography,
+  Radio,
+  RadioGroup,
+  FormControlLabel,
+  Button,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Stack
+} from '@mui/material';
 import { EXAM } from '../../constants';
 
 function StemSelection({ metaQuestions, onSelect, reselectStem }) {
-  const [temporarySelectedStem, setTemporarySelectedStem] = useState(null);
-  const [showNextButton, setShowNextButton] = useState(true); // State to manage visibility of Next button
-  const [showDeselectButton, setShowDeselectButton] = useState(false); // State to manage visibility of Deselect button
   const [dialogContent, setDialogContent] = useState(null);
+  const [selectedMetaQuestion, setSelectedMetaQuestion] = useState(null)
 
   const handleCloseDialog = () => {
     setDialogContent(null);
   };
 
-  const handleNext = () => {
-    onSelect(temporarySelectedStem);
-    reselectStem(); // Reset selected distractors when a new stem is chosen
-    setShowNextButton(false); // Hide Next button after pressing it
-    setShowDeselectButton(true); // Show Deselect button after pressing Next
-  };
-
-  const handleDeselect = () => {
-    setTemporarySelectedStem(null);
-    onSelect(null);
-    setShowNextButton(true); // Show Next button again after deselecting
-    setShowDeselectButton(false); // Hide Deselect button after deselecting
-  };
+  const handleRadioClick = (question) => {
+    if (selectedMetaQuestion === question){
+      setSelectedMetaQuestion(null);
+      onSelect(null);
+    }
+    else {
+      setSelectedMetaQuestion(question);
+      onSelect(question)
+    }
+  }
 
   return (
-    <Box>
+    <Box sx={{ padding: 2 }}>
+      <Typography variant="h5" component="h2" mb={2}>
+        {EXAM.SELECT_STEM_HEADING}
+      </Typography>
       <RadioGroup
-        value={temporarySelectedStem ? temporarySelectedStem.stem : ''}
-        onChange={(event) => {
-          const selectedStem = metaQuestions.find(q => q.stem === event.target.value);
-          setTemporarySelectedStem(selectedStem);
-        }}
+        value={selectedMetaQuestion ? selectedMetaQuestion.stem : ''}
       >
         {metaQuestions.map((metaQuestion, index) => (
-          <Box key={index} sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+          <Box key={index}
+               sx={{
+                 display: selectedMetaQuestion === null || selectedMetaQuestion === metaQuestion ? 'flex' : 'none',
+                 alignItems: 'center',
+                 mb: 1
+          }}>
             <FormControlLabel
               value={metaQuestion.stem}
               control={<Radio />}
               label={metaQuestion.stem}
               sx={{ flexGrow: 1 }}
+              onClick={() => handleRadioClick(metaQuestion)}
             />
             {metaQuestion.appendix && (
               <Button variant="outlined" onClick={() => setDialogContent(metaQuestion.appendix)}>
@@ -51,18 +63,6 @@ function StemSelection({ metaQuestions, onSelect, reselectStem }) {
           </Box>
         ))}
       </RadioGroup>
-
-      {showNextButton && (
-        <Button variant="contained" onClick={handleNext} disabled={!temporarySelectedStem}>
-          {EXAM.NEXT}
-        </Button>
-      )}
-
-      {showDeselectButton && (
-        <Button variant="outlined" onClick={handleDeselect} sx={{ ml: 2 }}>
-          {EXAM.DESELECT_QUESTION}
-        </Button>
-      )}
 
       <Dialog open={dialogContent!==null} onClose={handleCloseDialog}>
         {dialogContent && (
