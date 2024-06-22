@@ -6,7 +6,17 @@ export const HELLO_USER = (username) => `Hello, ${username}`
 export const ACCOUNT = {
   ACCOUNT: "Account",
   ACCOUNT_SETTINGS: "Account Settings",
-  SIGN_OUT: "Sign out"
+  SIGN_OUT: "Sign out",
+  PASSWORDS_DO_NOT_MATCH: "Passwords do not match",
+  ILLEGAL_PASSWORD: "Password must be at least 5 letters",
+  FIRST_NAME: "First name",
+  LAST_NAME: "Last Name",
+  EMAIL: "Email Address",
+  CHANGE_PASSWORD: "Change Password",
+  CURRENT_PASSWORD: "Current Password",
+  NEW_PASSWORD: "New Password",
+  CONFIRM_PASSWORD: "Confirm New Password",
+  FAILED: error => `${error}`
 };
 
 export const SIDE_BAR = {
@@ -51,7 +61,16 @@ export const TASK = {
 };
 
 export const USERS = {
+  USERNAME_REQUIRED: "Username is required",
+  FIRST_NAME_REQUIRED: "First name is required",
+  LAST_NAME_REQUIRED: 'Last name is required',
+  EMAIL_REQUIRED: 'Email is required',
+  TYPE_REQUIRED: 'Type is required',
+  INVALID_EMAIL:'Invalid email',
+  INVALID_TYPE: 'Invalid type',
   ADD_USER: "Add User",
+  INSERT_USER_DETAILS: "Insert User Details",
+  SUBMIT: "Submit",
   EDIT_USER: "Edit User",
   USERNAME: "Username",
   FIRST_NAME: "First Name",
@@ -63,6 +82,7 @@ export const USERS = {
   TA: "TA",
   ADMIN: "Admin",
   CANCEL_ACTION: "Cancel",
+  RESET_PASSWORD: "Reset Password",
   SAVE_ACTION: "Save Changes",
   CONFIRM_DELETION: "Confirm Deletion",
   CONFIRM_DELETION_MSG: (username) => `Are you sure you want to delete the user ${username}?`,
@@ -95,9 +115,9 @@ export const CREATE_QUESTION = {
   SUBMIT_BUTTON: "Submit",
   VIEW_PDF_BUTTON: "View Question As PDF",
   STEM_REQUIRED: "Stem is required",
-  CORRECT_ANSWER_REQUIRED: "Correct answer text is required",
+  CORRECT_ANSWER_REQUIRED: "The key cannot be empty, please fill it or delete it",
   EXPLANATION_REQUIRED: "Explanation is required",
-  DISTRACTOR_REQUIRED: "Distractor text is required",
+  DISTRACTOR_REQUIRED: "The Distractor cannot be empty, please fill it or delete it",
   APPENDIX_TITLE_REQUIRED: "Title is required",
   APPENDIX_TAG_REQUIRED: "Tag is required",
   APPENDIX_CONTENT_REQUIRED: "Content is required",
@@ -105,7 +125,7 @@ export const CREATE_QUESTION = {
   SELECT_KEY_HEADING: "Select The Correct Key",
   SELECT_DISTRACTORS_HEADING: "Select Distractors",
   SAVE_QUESTION_BUTTON: "Save Question",
-  APPENDIX_TITLE: "Appendix: ",
+  APPENDIX_TITLE: "Title: ",
   APPENDIX_CONTENT: "Content: ",
   META_QUESTION_TITLE: "Meta-Question: ",
   KEYWORDS_TITLE: "Keywords",
@@ -149,6 +169,7 @@ export const APPENDICES_CATALOG = {
   VIEW_PDF_BUTTON: 'View PDF',
   SEARCH_PLACEHOLDER: 'Search appendices...',
   RELATED_QUESION: 'The Appendix Is Attached To Those Questions:',
+  NO_RELATED_QUESTIONS: 'The Appendix Has No Related Questions',
   SEARCH_TYPE_LABEL: 'Search Type',
   OPEN_TEXT: 'Open Text',
   TAG: 'Tag',
