@@ -1,83 +1,99 @@
-import { overlayStyle, popupStyle } from '../popUps/popup-style';
-import { Form, Formik, useFormik } from 'formik';
+import { overlayStyle, popupStyle } from './popup-style';
+import { Formik, Form } from 'formik';
 import * as Yup from 'yup';
 import {
   Button,
   Stack,
   TextField,
-  Typography, InputLabel, Select, MenuItem, FormHelperText, FormControl
+  Typography
 } from '@mui/material';
 import React, { useState } from 'react';
-import { LOGIN, USERS } from '../../constants';
-import { useUser } from 'src/hooks/use-user';
+import { LOGIN } from '../../constants';
 import ErrorMessage from '../../components/errorMessage';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '../../hooks/use-auth';
 
-const ChangePasswordPopup = ({user, isOpen, closePopup}) => {
+const ChangePasswordPopup = ({ user, isOpen, closePopup }) => {
   const router = useRouter();
   const auth = useAuth();
-  const [changePasswordValues, setChangePasswordValues] = useState({ newPassword: '', confirmNewPassword: '' });
   const [errorMessage, setErrorMessage] = useState('');
 
-  function validateLegalPassword(password){
-    return password.length >= 5;
-  }
+  const validationSchema = Yup.object().shape({
+    newPassword: Yup.string().min(5, LOGIN.ILLEGAL_PASSWORD).required(LOGIN.NEW_PASSWORD_REQUIRED),
+    confirmNewPassword: Yup.string()
+                           .oneOf([Yup.ref('newPassword'), null], LOGIN.PASSWORDS_DO_NOT_MATCH)
+                           .required(LOGIN.CONFIRM_NEW_PASSWORD_REQUIRED),
+  });
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (values, { setSubmitting }) => {
     try {
-      if (changePasswordValues.newPassword !== changePasswordValues.confirmNewPassword)
-        throw LOGIN.PASSWORDS_DO_NOT_MATCH
-      if (!validateLegalPassword(changePasswordValues.newPassword))
-        throw LOGIN.ILLEGAL_PASSWORD
-      await auth.changePassword(user.username, changePasswordValues.newPassword);
+      await auth.changePassword(user.username, values.newPassword);
       router.push('/');
     } catch (err) {
-      setErrorMessage(err)
+      setErrorMessage(err.message);
+      setSubmitting(false);
     }
   };
 
   return (
     isOpen ? (
-     <div className="popup">
-      <div onClick={closePopup} style={overlayStyle}></div>
-      <div className="popup-content" style={{ ...popupStyle, width: '30%' }}>
-        <Typography variant="h5" component="h2" gutterBottom padding={2}>
-          {LOGIN.CHANGE_PASSWORD_TITLE}
-        </Typography>
-        <Stack spacing={1}>
-          <TextField
-            margin="dense"
-            id="newPassword"
-            label={LOGIN.NEW_PASSWORD_LABEL}
-            type="password"
-            fullWidth
-            value={changePasswordValues.newPassword}
-            onChange={(e) => setChangePasswordValues({ ...changePasswordValues, newPassword: e.target.value })}
-          />
-          <TextField
-            margin="dense"
-            id="confirmNewPassword"
-            label={LOGIN.CONFIRM_NEW_PASSWORD_LABEL}
-            type="password"
-            fullWidth
-            value={changePasswordValues.confirmNewPassword}
-            onChange={(e) => setChangePasswordValues({ ...changePasswordValues, confirmNewPassword: e.target.value })}
-          />
-          <Stack direction="row" spacing={2} width="100%">
-            <Button onClick={closePopup}>
-              {LOGIN.CANCEL_BUTTON}
-            </Button>
-            <Button type="submit" onClick={handleSubmit}>
-              {LOGIN.CHANGE_PASSWORD_BUTTON}
-            </Button>
-          </Stack>
-          <ErrorMessage message={errorMessage}/>
-        </Stack>
+      <div className="popup">
+        <div onClick={closePopup} style={overlayStyle}></div>
+        <div className="popup-content" style={{ ...popupStyle, width: '30%' }}>
+          <Typography variant="h5" component="h2" gutterBottom padding={2}>
+            {LOGIN.CHANGE_PASSWORD_TITLE}
+          </Typography>
+          <Formik
+            initialValues={{ newPassword: '', confirmNewPassword: '' }}
+            validationSchema={validationSchema}
+            onSubmit={handleSubmit}
+          >
+            {({ isSubmitting, handleChange, handleBlur, values, touched, errors }) => (
+              <Form>
+                <Stack spacing={1}>
+                  <TextField
+                    margin="dense"
+                    id="newPassword"
+                    name="newPassword"
+                    label={LOGIN.NEW_PASSWORD_LABEL}
+                    type="password"
+                    fullWidth
+                    value={values.newPassword}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    error={touched.newPassword && !!errors.newPassword}
+                    helperText={touched.newPassword && errors.newPassword}
+                  />
+                  <TextField
+                    margin="dense"
+                    id="confirmNewPassword"
+                    name="confirmNewPassword"
+                    label={LOGIN.CONFIRM_NEW_PASSWORD_LABEL}
+                    type="password"
+                    fullWidth
+                    value={values.confirmNewPassword}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    error={touched.confirmNewPassword && !!errors.confirmNewPassword}
+                    helperText={touched.confirmNewPassword && errors.confirmNewPassword}
+                  />
+                  <Stack direction="row" spacing={2} width="100%">
+                    <Button onClick={closePopup}>
+                      {LOGIN.CANCEL_BUTTON}
+                    </Button>
+                    <Button type="submit" disabled={isSubmitting}>
+                      {LOGIN.CHANGE_PASSWORD_BUTTON}
+                    </Button>
+                  </Stack>
+                  <ErrorMessage message={errorMessage} />
+                </Stack>
+              </Form>
+            )}
+          </Formik>
+        </div>
       </div>
-    </div>
     ) : null
-  )
-}
+  );
+};
 
 export default ChangePasswordPopup;
