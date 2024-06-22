@@ -19,7 +19,15 @@ export const AddQuestionToExamPopup = ({isOpen, closePopup, metaQuestions, addQu
       key: selectedKey,
       distractors: selectedDistractors
     });
+    handleClosePopup()
   };
+
+  const handleClosePopup = () => {
+    setSelectedDistractors([])
+    setSelectedKey(null);
+    setSelectedMetaQuestion(null);
+    closePopup()
+  }
 
   const handleReSelectStem = () => {
     setSelectedKey(null);
@@ -42,7 +50,7 @@ export const AddQuestionToExamPopup = ({isOpen, closePopup, metaQuestions, addQu
   return (
     isOpen ? (
       <div className="popup">
-        <div onClick={closePopup} style={overlayStyle}></div>
+        <div onClick={handleClosePopup} style={overlayStyle}></div>
         <div className="popup-content" style={{ ...popupStyle, width: '30%' }}>
           <Typography variant="h4" component="h1" gutterBottom>
             {EXAM.SELECT_QUESTION_HEADING}
@@ -63,7 +71,8 @@ export const AddQuestionToExamPopup = ({isOpen, closePopup, metaQuestions, addQu
               </>
             )}
           </Box>
-          <Button variant="contained" onClick={handleSaveQuestion} disabled={!selectedMetaQuestion || !selectedKey}>
+          <Button variant="contained" onClick={handleSaveQuestion}
+                  disabled={!selectedMetaQuestion || !selectedKey || selectedDistractors.length<EXAM.MAX_DISTRACTOR_NUMBER}>
             {EXAM.SAVE_QUESTION_BUTTON}
           </Button>
         </div>

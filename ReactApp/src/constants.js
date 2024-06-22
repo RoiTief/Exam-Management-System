@@ -206,8 +206,8 @@ export const EXAM = {
   DISTRACTORS_HEADING: "Distractors",
   SELECT_QUESTION_HEADING: "Select a Question:",
   SELECT_STEM_HEADING: "Select a Stem:",
-  SELECT_KEY_HEADING: "Select The Correct Key",
-  SELECT_DISTRACTORS_HEADING: "Select Distractors",
+  SELECT_KEY_HEADING: "Select The Correct Key:",
+  SELECT_DISTRACTORS_HEADING: "Select Distractors:",
   SAVE_QUESTION_BUTTON: "Save Question",
   APPENDIX_TITLE: "Appendix: ",
   APPENDIX_CONTENT: "Content: ",
@@ -215,5 +215,12 @@ export const EXAM = {
   KEY_TITLE: "Key: ",
   DISTRACTOR_TITLE: "Distractors: ",
   NEXT: "Next",
-  DESELECT_QUESTION: "Deselect Question"
+  DESELECT_QUESTION: "Deselect Question",
+  MAX_DISTRACTOR_NUMBER: 2,
+  get SELECT_DISTRACTORS_BODY() {
+    return `Please select up to ${this.MAX_DISTRACTOR_NUMBER} distractors`;
+  },
+  get DISTRACTORS_MAX_AMOUNT() {
+    return `You have selected the maximum number of distractors (${this.MAX_DISTRACTOR_NUMBER}).`;
+  }
 };
