@@ -43,6 +43,7 @@ export const serverPath = {
 
 export const pathToReturnTypeMap={
   [serverPath.VIEW_TASKS]: {tasks:[{finished:PRIMITIVE_TYPES.BOOLEAN, }]},
+  [serverPath.GET_ALL_USERS] :{users: [{username: PRIMITIVE_TYPES.STRING, email: PRIMITIVE_TYPES.STRING, firstName: PRIMITIVE_TYPES.STRING, lastName: PRIMITIVE_TYPES.STRING, type: PRIMITIVE_TYPES.STRING}]}
 }
 
 export const latexServerPath = {
@@ -104,7 +105,7 @@ async function extractDataFromResponse(response){
     return retObject
 }
 
-export async function requestServer(path, method, body, expectedResponseType) {
+export async function requestServer(path, method, body) {
     var response
     if (Cookies.get(TOKEN_FIELD_NAME)) {
         response = await fetchWithCookies(path,method,body)
@@ -130,8 +131,8 @@ export async function requestServer(path, method, body, expectedResponseType) {
 
     const retObject = await extractDataFromResponse(response)
     
-    if(expectedResponseType){
-      validateParameters(retObject, expectedResponseType,false, false)
+    if(pathToReturnTypeMap[path]){
+      validateParameters(retObject, pathToReturnTypeMap[path], false, false)
     }
     return retObject;
 }

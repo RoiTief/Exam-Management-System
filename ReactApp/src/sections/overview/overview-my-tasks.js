@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import { httpsMethod, serverPath, requestServer } from 'src/utils/rest-api-call';
+import { httpsMethod, serverPath, requestServer, pathToReturnTypeMap } from 'src/utils/rest-api-call';
 import EllipsisVerticalIcon from '@heroicons/react/24/solid/EllipsisVerticalIcon';
 import {
   Card,

@@ -192,7 +192,7 @@ function viewMyTasks(req, res, next){
  */
 function finishATask(req, res, next) {
     try{
-        application.finishATask(data).then(()=>{
+        application.finishATask(req.body).then(()=>{
             req.log.info(req.body.taskId, "task is marked as finished")
             res.send(200, {code:200})
             next()
@@ -361,19 +361,16 @@ function getMetaQuestionForAppendix(req, res, next){
  * @throws {Error} - if fail to create
  */
 function addMetaQuestion(req, res, next){
-    try{
         application.addMetaQuestion(req.body).then(
             metaQuestion => {
                 req.log.info("request to create metaQuestion");
                 res.send(200, {code:200, metaQuestion})
                 next()
-            }
-        )
-    }
-    catch(err){
-        req.log.warn(err.message, 'failed to create meta questions');
-        next(err);
-    }
+            },
+            err => {
+                req.log.warn(err.message, 'failed to create meta questions');
+                next(err);
+            })
 }
 
 /**
