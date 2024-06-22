@@ -1,13 +1,22 @@
-const {USER_TYPES} = require("../../main/Enums");
+const {USER_TYPES, ANSWER_TYPES} = require("../../main/Enums");
 const initSequelize = require("../../main/DAL/Sequelize");
 const {EMSError, MQ_PROCESS_ERROR_CODES} = require("../../main/EMSError");
-const Lecturer = require("../../main/business/UserManager/Lecturer");
-const {DEFAULT_PASSWORD} = require("../../main/business/UserManager/User");
 const MetaQuestionRepository = require("../../main/DAL/MetaQuestion/MetaQuestionRepository");
 const MetaQuestionController = require("../../main/business/MetaQuestions/MetaQuestionController");
 
+class UserControllerMock {
+    getAllStaff(){
+        return [];
+    }
+}
+
+class TaskControllerMock {
+    addTask(data){
+    }
+}
+
 const dbConfig = {
-    database: 'user_controller_test',
+    database: 'mq_controller_test',
     username: 'user_t',
     password: '123',
     host: '164.90.223.94',
@@ -38,6 +47,21 @@ const appendixData = {
     content: 'content1'
 }
 
+const simpleMQData = {
+    stem: 'stem',
+    keywords: ['w1', 'w2'],
+    answers: [
+        {
+            content: 'key1',
+            tag: ANSWER_TYPES.KEY
+        },
+        {
+            content: 'distractor1',
+            tag: ANSWER_TYPES.DISTRACTOR
+        }
+    ],
+}
+
 describe('Happy-Path MetaQuestionController tests', () => {
     let mqController;
     let sequelize;
@@ -51,7 +75,7 @@ describe('Happy-Path MetaQuestionController tests', () => {
     });
 
     beforeEach(async () => {
-        mqController = await new MetaQuestionController(mqRepo);
+        mqController = await new MetaQuestionController(mqRepo, new TaskControllerMock(), new UserControllerMock());
         await sequelize.sync({force: true}); // cleans the 'Users' table
     })
 
@@ -121,6 +145,48 @@ describe('Happy-Path MetaQuestionController tests', () => {
     afterAll(async () => {
         await sequelize.close();
     });
+
+    test('add simple MQ', async () => {
+        try {
+            await mqController.getMetaQuestion(1);
+            expect(false).toBeTruthy();
+        } catch (e) {
+            expect(e instanceof EMSError).toBeTruthy();
+            expect(e.errorCode).toBe(MQ_PROCESS_ERROR_CODES.MQ_ID_DOESNT_EXIST)
+        }
+
+        await mqController.createMetaQuestion({
+            ...(structuredClone(simpleMQData)),
+            callingUser: lecturerCallingDetails
+        })
+        let mq;
+        try {
+            mq = await mqController.getMetaQuestion(1);
+        } catch (e) {
+            expect(false).toBeTruthy();
+        }
+        expect(mq.getStem()).toBe(simpleMQData.stem);
+        expect(mq.getKeywords().sort())
+            .toStrictEqual(appendixData.keywords.sort());
+        expect(mq.getAnswers()
+            .map(a => ({content: a.getContent(), tag: a.getTag(), ...(a.getExplanation() && {explanation: a.getExplanation()})}))
+            .sort((a,b) => a.content.localeCompare(b.content)))
+            .toStrictEqual(simpleMQData.answers.sort((a, b) => a.content.localeCompare(b.content)));
+        expect(mq.getKeys()
+            .map(k => ({content: k.getContent(), tag: k.getTag(), ...(k.getExplanation() && {explanation: k.getExplanation()})}))
+            .sort((a,b) => a.content.localeCompare(b.content)))
+            .toStrictEqual(simpleMQData.answers
+                .filter(a => a.tag === ANSWER_TYPES.KEY)
+                .sort((a, b) => a.content.localeCompare(b.content)));
+        expect(mq.getDistractors()
+            .map(d => ({content: d.getContent(), tag: d.getTag(), ...(d.getExplanation() && {explanation: d.getExplanation()})}))
+            .sort((a,b) => a.content.localeCompare(b.content)))
+            .toStrictEqual(simpleMQData.answers
+                .filter(a => a.tag === ANSWER_TYPES.DISTRACTOR)
+                .sort((a, b) => a.content.localeCompare(b.content)));
+        if (mq.getAppendixTag())
+            expect(false).toBeTruthy();
+    })
 });
 /*
 describe('MetaQuestionController FAILURE tests', () => {
