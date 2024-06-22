@@ -3,7 +3,7 @@ import { Box, TextField, Chip, Typography } from '@mui/material';
 import { FieldArray, useFormikContext } from 'formik';
 import { CREATE_QUESTION } from '../../constants';
 
-const KeywordsSection = ({ values, handleChange, handleBlur }) => {
+const KeywordsSection = ({ values, handleChange, handleBlur, error, helperText }) => {
   const { setFieldValue } = useFormikContext();
 
   useEffect(() => {
@@ -25,6 +25,8 @@ const KeywordsSection = ({ values, handleChange, handleBlur }) => {
               />
             ))}
             <TextField
+              error={error}
+              helperText={helperText}
               placeholder="Add Keyword To Describe The Question"
               onKeyDown={(e) => {
                 if (e.key === 'Enter' && e.target.value.trim() !== '') {

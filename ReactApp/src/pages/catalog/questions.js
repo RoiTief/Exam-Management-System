@@ -8,19 +8,23 @@ import { MetaQuestionTable } from '../../sections/view-questions/question-table'
 import { QuestionsSearch } from '../../sections/view-questions/question-search';
 import { httpsMethod, requestServer, serverPath } from '../../utils/rest-api-call';
 import { QUESTIONS_CATALOG } from '../../constants';
+import ErrorMessage from '../../components/errorMessage';
 
 const Page = () => {
   const router = useRouter();
   const [metaQuestions, setMetaQuestions] = useState([]);
   const [filteredData, setFilteredData] = useState(metaQuestions);
+  const [errorMessage, setErrorMessage] = useState('');
 
   useEffect(() => {
     async function fetchMetaQuestions() {
       try {
         const { metaQuestions } = await requestServer(serverPath.GET_ALL_META_QUESTIONS, httpsMethod.GET);
         setMetaQuestions(metaQuestions);
+        setErrorMessage(''); // Clear any previous error message
       } catch (error) {
         console.error('Error fetching meta questions:', error);
+        setErrorMessage(`Error fetching meta-questions: ${error.message}`)
       }
     }
 
@@ -28,8 +32,11 @@ const Page = () => {
   }, []);
 
   useEffect(() => {
-    // Call handleSearch with an empty array once metaQuestions has been updated
-    handleSearch([]);
+    try {
+      handleSearch([]);
+    } catch (err) {
+      setErrorMessage( `An error occurred during search: ${err.message}`);
+    }
   }, [metaQuestions]);
 
   const handleSearch = (keys) => {
@@ -73,6 +80,7 @@ const Page = () => {
             </Stack>
             <QuestionsSearch onSearch={handleSearch} /> {/* Render QuestionsSearch */}
             <MetaQuestionTable data={filteredData} />
+            <ErrorMessage message={errorMessage} />
           </Stack>
         </Container>
       </Box>
