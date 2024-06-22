@@ -106,6 +106,12 @@ const Page = () => {
     }
   };
 
+  const handleKeyDown = (event) => {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+    }
+  };
+
   return (
     <Formik
       initialValues={initialValues}
@@ -114,7 +120,7 @@ const Page = () => {
       enableReinitialize
     >
       {({ values, handleChange, handleBlur, isSubmitting, setFieldValue, touched, errors }) => (
-        <Form>
+        <Form onKeyDown={handleKeyDown}>
           <Box
             sx={{
               minHeight: '100vh',
