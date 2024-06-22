@@ -26,10 +26,12 @@ function StemSelection({ metaQuestions, onSelect, reselectStem }) {
     if (selectedMetaQuestion === question){
       setSelectedMetaQuestion(null);
       onSelect(null);
+      reselectStem();
     }
     else {
       setSelectedMetaQuestion(question);
       onSelect(question)
+      reselectStem();
     }
   }
 

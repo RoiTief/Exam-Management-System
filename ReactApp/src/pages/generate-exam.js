@@ -83,6 +83,16 @@ const Page = () => {
     });
   };
 
+  const onDragEnd = (result) => {
+    if (!result.destination) {
+      return;
+    }
+    const reorderedQuestions = Array.from(questions);
+    const [movedQuestion] = reorderedQuestions.splice(result.source.index, 1);
+    reorderedQuestions.splice(result.destination.index, 0, movedQuestion);
+    setQuestions(reorderedQuestions);
+  };
+
   return (
     <Box
       sx={{
@@ -110,7 +120,9 @@ const Page = () => {
             usedKeys={usedAnswers}
             usedDistractors={usedDistractors}
             />
-          <QuestionList questions={questions} removeQuestion={removeQuestion} />
+          <QuestionList questions={questions}
+                        removeQuestion={removeQuestion}
+                        onDragEnd={onDragEnd}/>
           <Button variant="contained" color="primary" sx={{ mt: 2 }}
                   onClick={saveTest}>
             {EXAM.SAVE_TEST_BUTTON}
