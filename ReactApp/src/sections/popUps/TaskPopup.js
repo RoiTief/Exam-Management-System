@@ -50,7 +50,7 @@ export const Task = (props) => {
           <p>{task.description}</p>
           {!task.finished ? (
             <div>
-              {task.options !== null ? (
+              {task.options ? (
                 <ul style={{ listStyleType: 'none', padding: 0 }}>
                   {task.options.map((option, index) => (
                     <li key={index}>
