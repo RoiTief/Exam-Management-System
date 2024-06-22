@@ -154,7 +154,32 @@ class UserController {
         if (data.email) {
             updateOperations.push(user.setEmail(data.email));
         }
+        return await Promise.all(updateOperations);
+    }
+
+    async updateMyInfo(data){
+        if (!data.username) {
+            throw new EMSError(ERROR_MSGS.USER_DETAILS_MISSING_USERNAME, ERROR_CODES.USER_DETAILS_MISSING_USERNAME);
+        }
+        const user = await this.getUser(data.username);
+        if (data.currentPassword !== "") {
+            user.verifyPassword(data.currentPassword)
+        }
+        const updateOperations = [];
+        if (data.newPassword) {
+            updateOperations.push(user.changePassword(data.newPassword));
+        }
+        if (data.firstName) {
+            updateOperations.push(user.setFirstName(data.firstName));
+        }
+        if (data.lastName) {
+            updateOperations.push(user.setLastName(data.lastName));
+        }
+        if (data.email) {
+            updateOperations.push(user.setEmail(data.email));
+        }
         await Promise.all(updateOperations);
+        return user
     }
 
     async updateStaff(data) {
