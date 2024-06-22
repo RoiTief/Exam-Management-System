@@ -8,6 +8,7 @@ import { useRouter } from 'next/router';
 import { PdfLatexPopup } from '../sections/popUps/QuestionPdfView';
 import { EXAM } from '../constants';
 import ErrorMessage from '../components/errorMessage';
+import { AddQuestionToExamPopup } from '../sections/create-exam/add-question-to-exam-popup';
 
 const Page = () => {
   const router = useRouter();
@@ -102,14 +103,14 @@ const Page = () => {
           <Button variant="contained" onClick={() => setCurrentQuestion({})} sx={{ mb: 2 }}>
             {EXAM.ADD_QUESTION_BUTTON}
           </Button>
-          {currentQuestion && (
-            <QuestionForm
-              metaQuestions={metaQuestions}
-              addQuestion={addQuestion}
-              usedKeys={usedAnswers}
-              usedDistractors={usedDistractors}
+          <AddQuestionToExamPopup
+            isOpen={currentQuestion!==null}
+            closePopup={() => setCurrentQuestion(null)}
+            metaQuestions={metaQuestions}
+            addQuestion={addQuestion}
+            usedKeys={usedAnswers}
+            usedDistractors={usedDistractors}
             />
-          )}
           <QuestionList questions={questions} removeQuestion={removeQuestion} />
           <Button variant="contained" color="primary" sx={{ mt: 2 }}
                   onClick={saveTest}>

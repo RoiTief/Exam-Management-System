@@ -213,4 +213,6 @@ export const EXAM = {
   META_QUESTION_TITLE: "Meta-Question: ",
   KEY_TITLE: "Key: ",
   DISTRACTOR_TITLE: "Distractors: ",
+  NEXT: "Next",
+  DESELECT_QUESTION: "Deselect Question"
 };

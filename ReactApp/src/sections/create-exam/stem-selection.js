@@ -1,93 +1,81 @@
 import React, { useState } from 'react';
-import { Box, Typography, Button } from '@mui/material';
+import { Box, Typography, Radio, RadioGroup, FormControlLabel, Button, Dialog, DialogTitle, DialogContent, DialogActions } from '@mui/material';
 import { EXAM } from '../../constants';
 
 function StemSelection({ metaQuestions, onSelect, reselectStem }) {
-  const [selectedMetaQuestion, setSelectedMetaQuestion] = useState(null)
+  const [temporarySelectedStem, setTemporarySelectedStem] = useState(null);
+  const [openDialog, setOpenDialog] = useState(false);
+  const [dialogContent, setDialogContent] = useState(null);
 
-  const handleSelectStem = (metaQuestion) => {
-    if (selectedMetaQuestion === metaQuestion) {
-      onSelect(null);
-      setSelectedMetaQuestion(null)
-      reselectStem();
-    }
-    else {
-      onSelect(metaQuestion);
-      setSelectedMetaQuestion(metaQuestion)
-      reselectStem(); // Reset selected distractors when a new stem is chosen
-    }
+  const handleOpenDialog = (content) => {
+    setDialogContent(content);
+    setOpenDialog(true);
   };
 
-  const groupedStems = metaQuestions.reduce((acc, question) => {
-    if (question.appendix) {
-      const appendixIndex = acc.findIndex(item => item.title === question.appendix.title);
-      if (appendixIndex !== -1) {
-        acc[appendixIndex].stems.push(question);
-      } else {
-        acc.push({ ...question.appendix, stems: [question] });
-      }
-    } else {
-      acc.push({ title: null, stems: [question] });
-    }
-    return acc;
-  }, []);
+  const handleCloseDialog = () => {
+    setOpenDialog(false);
+    setDialogContent(null);
+  };
+
+  const handleNext = () => {
+    onSelect(temporarySelectedStem);
+    reselectStem(); // Reset selected distractors when a new stem is chosen
+  };
+
+  const handleDeselect = () => {
+    setTemporarySelectedStem(null);
+    onSelect(null);
+  };
 
   return (
     <Box>
-      {groupedStems.map((group, index) => (
-        <Box key={index} sx={{ mb: 2 }}>
-          {group.title ? (
-            <>
-              <Box sx = {{ display: selectedMetaQuestion === null ||
-                (selectedMetaQuestion &&
-                  selectedMetaQuestion.appendix &&
-                  group.title === selectedMetaQuestion.appendix.title) ?
-                  'inline-block' : 'none' }}>
-                <Typography variant="subtitle1">
-                  {EXAM.APPENDIX_TITLE} {group.title}
-                </Typography>
-                <Typography variant="body2" sx={{ mb: 1 }}>
-                  {group.content}
-                </Typography>
-
-                {group.stems.map((metaQuestion, idx) => (
-                  <Button
-                    key={idx}
-                    variant="outlined"
-                    onClick={() => handleSelectStem(metaQuestion)}
-                    sx={{
-                      mr: 1,
-                      mb: 1,
-                      backgroundColor: selectedMetaQuestion === metaQuestion ? '#f87217' : 'inherit',
-                      color: selectedMetaQuestion === metaQuestion ? '#fff' : 'inherit',
-                      display: selectedMetaQuestion === null || selectedMetaQuestion === metaQuestion ? 'inline-block' : 'none',
-                    }}
-                  >
-                    {metaQuestion.stem}
-                  </Button>
-                ))}
-              </Box>
-            </>
-          ) : (
-            group.stems.map((metaQuestion, stemIndex) => (
-              <Button
-                key={stemIndex}
-                variant="outlined"
-                onClick={() => handleSelectStem(metaQuestion)}
-                sx={{
-                  mr: 1,
-                  mb: 1,
-                  backgroundColor: selectedMetaQuestion === metaQuestion ? '#f87217' : 'inherit',
-                  color: selectedMetaQuestion === metaQuestion ? '#fff' : 'inherit',
-                  display: selectedMetaQuestion === null || selectedMetaQuestion === metaQuestion ? 'inline-block' : 'none',
-                }}
-              >
-                {metaQuestion.stem}
+      <RadioGroup
+        value={temporarySelectedStem ? temporarySelectedStem.stem : ''}
+        onChange={(event) => {
+          const selectedStem = metaQuestions.find(q => q.stem === event.target.value);
+          setTemporarySelectedStem(selectedStem);
+        }}
+      >
+        {metaQuestions.map((metaQuestion, index) => (
+          <Box key={index} sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+            <FormControlLabel
+              value={metaQuestion.stem}
+              control={<Radio />}
+              label={metaQuestion.stem}
+              sx={{ flexGrow: 1 }}
+            />
+            {metaQuestion.appendix && (
+              <Button variant="outlined" onClick={() => handleOpenDialog(metaQuestion.appendix)}>
+                {EXAM.APPENDIX_HEADING}
               </Button>
-            ))
-          )}
-        </Box>
-      ))}
+            )}
+          </Box>
+        ))}
+      </RadioGroup>
+      <Button variant="contained" onClick={handleNext} disabled={!temporarySelectedStem}>
+        {EXAM.NEXT}
+      </Button>
+      <Button variant="outlined" onClick={handleDeselect} sx={{ ml: 2 }}>
+        {EXAM.DESELECT_QUESTION}
+      </Button>
+
+
+      <Dialog open={openDialog} onClose={handleCloseDialog}>
+        {dialogContent && (
+          <>
+            <DialogTitle>{dialogContent.title}</DialogTitle>
+            <DialogContent>
+              <Typography variant="body1">
+                {dialogContent.content}
+              </Typography>
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={handleCloseDialog}>Close</Button>
+            </DialogActions>
+          </>
+        )}
+      </Dialog>
+
     </Box>
   );
 }
