@@ -4,7 +4,7 @@ const {EMSError, MQ_PROCESS_ERROR_CODES} = require("../../main/EMSError");
 const Lecturer = require("../../main/business/UserManager/Lecturer");
 const {DEFAULT_PASSWORD} = require("../../main/business/UserManager/User");
 const MetaQuestionRepository = require("../../main/DAL/MetaQuestion/MetaQuestionRepository");
-const MetaQuestionControllerTest = require("../../main/business/MetaQuestions/MetaQuestionController");
+const MetaQuestionController = require("../../main/business/MetaQuestions/MetaQuestionController");
 
 const dbConfig = {
     database: 'user_controller_test',
@@ -51,7 +51,7 @@ describe('Happy-Path MetaQuestionController tests', () => {
     });
 
     beforeEach(async () => {
-        mqController = await new MetaQuestionControllerTest(mqRepo);
+        mqController = await new MetaQuestionController(mqRepo);
         await sequelize.sync({force: true}); // cleans the 'Users' table
     })
 
