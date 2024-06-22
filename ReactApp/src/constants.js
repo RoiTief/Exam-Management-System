@@ -105,7 +105,7 @@ export const CREATE_QUESTION = {
   STEM_REQUIRED: "Stem is required",
   CORRECT_ANSWER_REQUIRED: "The key cannot be empty, please fill it or delete it",
   EXPLANATION_REQUIRED: "Explanation is required",
-  DISTRACTOR_REQUIRED: "Distractor text is required or delete this distractor",
+  DISTRACTOR_REQUIRED: "The Distractor cannot be empty, please fill it or delete it",
   APPENDIX_TITLE_REQUIRED: "Title is required",
   APPENDIX_TAG_REQUIRED: "Tag is required",
   APPENDIX_CONTENT_REQUIRED: "Content is required",
