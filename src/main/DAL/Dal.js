@@ -8,6 +8,6 @@ const sequelize = initSequelize(presentationDbConfig);
 const userRepo = new UserRepository(sequelize);
 const metaQuestionsRepo = new MetaQuestionsRepository(sequelize);
 
-sequelize.sync({alter: true}).then(r => {})
+sequelize.sync({alter: true})
 
 module.exports = {userRepo, metaQuestionsRepo}
