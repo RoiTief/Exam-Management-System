@@ -214,3 +214,8 @@ export const EXAM = {
   KEY_TITLE: "Key: ",
   DISTRACTOR_TITLE: "Distractors: ",
 };
+
+export const ERROR_MESSAGES = {
+  INVALID_CREDENTIALS: "invalid credentials",
+  NOT_AUTHENTICATE: "Connection timeout, please login again",
+}
