@@ -1,5 +1,5 @@
-import { overlayStyle, popupStyle } from '../popUps/popup-style';
-import { Formik, Form, Field } from 'formik';
+import { overlayStyle, popupStyle } from './popup-style';
+import { Formik, Form } from 'formik';
 import * as Yup from 'yup';
 import {
   Button,

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Box, Button, Container, Stack, Typography } from '@mui/material';
 import { Layout as DashboardLayout } from 'src/layouts/dashboard/layout';
 import { useRouter } from 'next/router';
-import { Formik, Form, useFormik } from 'formik';
+import { Formik, Form } from 'formik';
 import * as Yup from 'yup';
 
 import KeywordsSection from 'src/sections/create-edit-meta-question/keywords-edit';
@@ -10,7 +10,7 @@ import StemSection from 'src/sections/create-edit-meta-question/stem-edit';
 import KeysSection from 'src/sections/create-edit-meta-question/correct-key-edit';
 import DistractorsSection from 'src/sections/create-edit-meta-question/distractors-edit';
 import { httpsMethod, latexServerPath, requestServer, serverPath } from '../../utils/rest-api-call';
-import { CREATE_QUESTION, EDIT_QUESTION, QUESTIONS_CATALOG } from '../../constants';
+import { CREATE_QUESTION, EDIT_QUESTION } from '../../constants';
 import { PdfLatexPopup } from '../../sections/popUps/QuestionPdfView';
 import ErrorMessage from '../../components/errorMessage';
 
