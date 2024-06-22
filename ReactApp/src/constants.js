@@ -6,7 +6,17 @@ export const HELLO_USER = (username) => `Hello, ${username}`
 export const ACCOUNT = {
   ACCOUNT: "Account",
   ACCOUNT_SETTINGS: "Account Settings",
-  SIGN_OUT: "Sign out"
+  SIGN_OUT: "Sign out",
+  PASSWORDS_DO_NOT_MATCH: "Passwords do not match",
+  ILLEGAL_PASSWORD: "Password must be at least 5 letters",
+  FIRST_NAME: "First name",
+  LAST_NAME: "Last Name",
+  EMAIL: "Email Address",
+  CHANGE_PASSWORD: "Change Password",
+  CURRENT_PASSWORD: "Current Password",
+  NEW_PASSWORD: "New Password",
+  CONFIRM_PASSWORD: "Confirm New Password",
+  FAILED: error => `${error}`
 };
 
 export const SIDE_BAR = {
@@ -52,8 +62,13 @@ export const TASK = {
 
 export const USERS = {
   ADD_USER: "Add User",
+  INSERT_USER_DETAILS: "Insert User Details",
+  SUBMIT: "Submit",
   EDIT_USER: "Edit User",
   USERNAME: "Username",
+  FIRST_NAME: "First Name",
+  LAST_NAME: "Last Name",
+  EMAIL: "Email",
   TYPE: "Type",
   ACTIONS: "Actions",
   LECTURER: "Lecturer",
@@ -63,6 +78,8 @@ export const USERS = {
   SAVE_ACTION: "Save Changes",
   CONFIRM_DELETION: "Confirm Deletion",
   CONFIRM_DELETION_MSG: (username) => `Are you sure you want to delete the user ${username}?`,
+  CONFIRM_RESET_PASSWORD: "Confirm Reset Password",
+  CONFIRM_RESET_PASSWORD_MSG: (username) => `Are you sure you want to reset the password of user ${username}?`,
 }
 
 export const LOGIN = {
@@ -77,6 +94,7 @@ export const LOGIN = {
   CANCEL_BUTTON: "Cancel",
   CHANGE_PASSWORD_BUTTON: "Change Password",
   PASSWORDS_DO_NOT_MATCH: "Passwords do not match",
+  ILLEGAL_PASSWORD: "Password must be at least 5 letters",
   FAILED_TO_CHANGE_PASSWORD: "Failed to change password:"
 };
 
@@ -87,6 +105,7 @@ export const CREATE_QUESTION = {
   CREATE_APPENDIX_PLUS_TITLE: "Create Simple Meta-Question",
   CREATE_APPENDIX_TITLE: "Create Meta-Question Based On Existing Appendix",
   SUBMIT_BUTTON: "Submit",
+  VIEW_PDF_BUTTON: "View Question As PDF",
   STEM_REQUIRED: "Stem is required",
   CORRECT_ANSWER_REQUIRED: "Correct answer text is required",
   EXPLANATION_REQUIRED: "Explanation is required",
@@ -101,7 +120,8 @@ export const CREATE_QUESTION = {
   APPENDIX_TITLE: "Appendix: ",
   APPENDIX_CONTENT: "Content: ",
   META_QUESTION_TITLE: "Meta-Question: ",
-  KEY_TITLE: "Key: ",
+  KEYWORDS_TITLE: "Keywords",
+  KEY_TITLE: "Keys: ",
   DISTRACTOR_TITLE: "Distractors: ",
   NO_KEYS_MESSAGE_1: "There are no available keys for this question!",
   NO_KEYS_MESSAGE_2: "Please choose a different question",

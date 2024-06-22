@@ -71,19 +71,19 @@ class LatexCompiler {
             + "\\pagenumbering{gobble}\n");
 
         // write the stem
-        if (metaQuestion.stem) {
-            fs.writeFileSync(texPath, "\\section*{Stem:}\n", {flag : 'a'});
-            fs.writeFileSync(texPath, metaQuestion.stem, {flag : 'a'});
-            fs.writeFileSync(texPath, "\n\\\\\n", {flag : 'a'});
-        }
+        const stem = metaQuestion.stem && metaQuestion.stem !== '' ? metaQuestion.stem : 'no stem';
+        fs.writeFileSync(texPath, "\\section*{Stem:}\n", {flag: 'a'});
+        fs.writeFileSync(texPath, stem, {flag: 'a'});
+        fs.writeFileSync(texPath, "\n\\\\\n", {flag: 'a'});
 
         // write the keys
-        if (metaQuestion.keys) {
-            fs.writeFileSync(texPath, "\\section*{Keys:}\n", {flag : 'a'});
+        const keys = metaQuestion.keys ? metaQuestion.keys.filter(k => k.text !== '') : null;
+        if (keys && keys.length > 0) {
+            fs.writeFileSync(texPath, `\\section*{Keys: (${keys.length} items)}\n`, {flag : 'a'});
             fs.writeFileSync(texPath, "\\begin{itemize}\n", {flag : 'a'});
-            metaQuestion.keys.forEach((key) => {
+            keys.forEach((key) => {
                 fs.writeFileSync(texPath,
-                    `\t\\item ${key.text} \\\\ \\textbf{Explanation:} ${key.explanation ? key.explanation : 'none'}\n`,
+                    `\t\\item ${key.text} \\\\ \\textbf{Explanation:} ${(key.explanation && key.explanation !== '') ? key.explanation : 'no explanation'}\n`,
                     {flag: 'a'});
 
             })
@@ -91,12 +91,13 @@ class LatexCompiler {
         }
 
         // write the distractors
-        if (metaQuestion.distractors) {
-            fs.writeFileSync(texPath, "\\section*{Distractors:}\n", {flag : 'a'});
+        const distractors = metaQuestion.distractors ? metaQuestion.distractors.filter(d => d.text !== '') : null;
+        if (distractors && distractors.length > 0) {
+            fs.writeFileSync(texPath, `\\section*{Distractors: (${distractors.length} items)}\n`, {flag : 'a'});
             fs.writeFileSync(texPath, "\\begin{itemize}\n", {flag : 'a'});
-            metaQuestion.distractors.forEach((distractor) => {
+            distractors.forEach((distractor) => {
                 fs.writeFileSync(texPath,
-                    `\t\\item ${distractor.text} \\\\ \\textbf{Explanation:} ${distractor.explanation ? distractor.explanation : 'none'}\n`,
+                    `\t\\item ${distractor.text} \\\\ \\textbf{Explanation:} ${(distractor.explanation && distractor.explanation !== '') ? distractor.explanation : 'no explanation'}\n`,
                     {flag: 'a'});
             })
             fs.writeFileSync(texPath, "\\end{itemize}\n", {flag : 'a'});
@@ -105,11 +106,14 @@ class LatexCompiler {
         // write the appendix
         if (metaQuestion.appendix) {
             fs.writeFileSync(texPath, "\\section*{Appendix:}\n", {flag : 'a'});
-            if (metaQuestion.appendix.title !== '') {
-                fs.writeFileSync(texPath, `\\subsection*{Title: ${metaQuestion.appendix.title}}\n`, {flag : 'a'});
+            const title = metaQuestion.appendix.title && metaQuestion.appendix.title !== '' ? metaQuestion.appendix.title : null;
+            if (title) {
+                fs.writeFileSync(texPath, `\\subsection*{Title: ${title}}\n`, {flag : 'a'});
             }
-            fs.writeFileSync(texPath, `\\subsection*{Tag: ${metaQuestion.appendix.tag}}\n`, {flag : 'a'});
-            fs.writeFileSync(texPath, metaQuestion.appendix.content, {flag : 'a'});
+            const tag = metaQuestion.appendix.tag && metaQuestion.appendix.tag !== '' ? metaQuestion.appendix.tag : 'no tag';
+            fs.writeFileSync(texPath, `\\subsection*{Tag: ${tag}}\n`, {flag : 'a'});
+            const content = metaQuestion.appendix.content && metaQuestion.appendix.content !== '' ? metaQuestion.appendix.content : 'no content';
+            fs.writeFileSync(texPath, content, {flag : 'a'});
             fs.writeFileSync(texPath, "\n\\\\\n", {flag : 'a'});
         }
 

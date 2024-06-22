@@ -3,6 +3,13 @@ const application = new ApplicationFacade();
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
 
+
+function generateJWT(data) {
+    return jwt.sign(data, process.env.SECRET_KEY, {
+        expiresIn: 60 * 15 // token expires in 15 minutes
+    });
+}
+
 /**
  * register a user
  * @param req.username - the new user username - needs to be unique
@@ -38,12 +45,13 @@ function signIn(req, res, next) {
             // send needed information derived from business
             const user = {
                 username: businessUser.getUsername(),
+                firstName: businessUser.getFirstName(),
+                lastName: businessUser.getLastName(),
+                email: businessUser.getEmail(),
                 firstSignIn: businessUser.isFirstSignIn(),
                 type: businessUser.getUserType()
             };
-            const token = jwt.sign({username: req.body.username, type:user.type}, process.env.SECRET_KEY, {
-                expiresIn: "1h" // token expires in 15 minutes
-            });
+            const token = generateJWT({username: req.body.username, type:user.type});
             req.log.info(req.body.username, 'user signed in');
             res.send(200, {code: 200, user, token})
             next()
@@ -82,13 +90,14 @@ function logout(req, res, next) {
 function changePassword(req, res, next) {
     application.changePassword(req.body).then(
         businessUser => {
-            let token = jwt.sign({username: req.body.username, type: businessUser.getUserType()}, process.env.SECRET_KEY, {
-                expiresIn: "1h" // token expires in 15 minutes
-            });
+            let token = generateJWT({username: req.body.username, type: businessUser.getUserType()});
             req.log.info(req.body.username, 'user signed in');
             res.send(200, {
                 code: 200, user: {
                     username: businessUser.getUsername(),
+                    firstName: businessUser.getFirstName(),
+                    lastName: businessUser.getLastName(),
+                    email: businessUser.getEmail(),
                     firstSignIn: businessUser.isFirstSignIn(),
                     type: businessUser.getUserType()
                 },
@@ -98,6 +107,24 @@ function changePassword(req, res, next) {
         },
         err => {
             req.log.warn(err.message, 'user unable to signIn');
+            next(err);
+        });
+}
+
+/**
+ * reset user password
+ * @param req.username - the user's username
+ * @returns {Error} - if there is no registered user with this username
+ */
+function resetPassword(req, res, next) {
+    application.resetPassword(req.body).then(
+        result => {
+            req.log.info(req.body.username, 'reset user password');
+            res.send(200, {code: 200})
+            next();
+        },
+        err => {
+            req.log.warn(err.message, 'unable to reset password');
             next(err);
         });
 }
@@ -434,9 +461,15 @@ function getAllExams(req, res, next){
 
 function editUser(req, res, next) {
     application.editUser(req.body).then(
-        result => {
-            req.log.info(req.body.username, 'edit user request');
-            res.send(200, {code:200});
+        businessUser => {
+            req.log.info(req.body.userDetails.username, 'edit user request');
+            res.send(200, {code:200, user: {
+                username: businessUser.getUsername(),
+                firstName: businessUser.getFirstName(),
+                lastName: businessUser.getLastName(),
+                email: businessUser.getEmail(),
+                firstSignIn: businessUser.isFirstSignIn(),
+                type: businessUser.getUserType()}});
             next();
         },
         err => {
@@ -451,6 +484,7 @@ module.exports = {
     signIn: signIn, 
     logout: logout,
     changePassword: changePassword,
+    resetPassword: resetPassword,
     getAllStaff: getAllStaff,
     viewMyTasks: viewMyTasks,
     finishATask: finishATask,
@@ -465,5 +499,6 @@ module.exports = {
     editMetaQuestion: editMetaQuestion,
     createExam,
     getAllExams,
-    editUser: editUser
+    editUser: editUser,
+    generateJWT,
 };

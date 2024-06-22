@@ -33,9 +33,11 @@ export const serverPath = {
     CREATE_EXAM: 'createExam',
     GET_ALL_EXAMS: 'getAllExams',
     CHANGE_PASSWORD: 'changePassword',
+    RESET_PASSWORD: 'resetPassword',
     EDIT_USER: 'editUser',
     EDIT_META_QUESTION: 'editMetaQuestion',
-    GET_META_QUESTIONS_FOR_APPENDIX: 'getMetaQuestionForAppendix'
+    GET_META_QUESTIONS_FOR_APPENDIX: 'getMetaQuestionForAppendix',
+    REFRESH_TOKEN: 'refreshJWT',
 }
 
 
@@ -72,19 +74,47 @@ export async function requestLatexServer(path, body) {
       });
 }
 
-export async function requestServer(path, method, body) {
+async function fetchWithCookies(path, method, body){
+  var response
+  response = await fetch(SERVER_ROOT_URL + path,
+    {
+        method,
+        headers: {
+            'Content-Type': 'application/json',
+            'Origin': '*',
+            'Authorization': `JWT ${Cookies.get(TOKEN_FIELD_NAME)}`
+        },
+        body: JSON.stringify(body)
+    })
+    return response
+}
+
+async function extractDataFromResponse(response){
+  try{
+    response = await response.json();
+
+    }catch(err){
+        throw new Error("Could not parse response")
+    }
+    
+    if (response.code !== 200) {
+        throw new Error(response.message)
+    }
+    var { code, ...retObject } = response
+    return retObject
+}
+
+export async function requestServer(path, method, body, expectedResponseType) {
     var response
     if (Cookies.get(TOKEN_FIELD_NAME)) {
-        response = await fetch(SERVER_ROOT_URL + path,
-            {
-                method,
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Origin': '*',
-                    'Authorization': `JWT ${Cookies.get(TOKEN_FIELD_NAME)}`
-                },
-                body: JSON.stringify(body)
-            })
+        response = await fetchWithCookies(path,method,body)
+
+        // refresh cookies
+         fetchWithCookies(serverPath.REFRESH_TOKEN ,httpsMethod.GET, undefined).then(async (refreshTokenResponse)=>{
+          const {newToken} = await extractDataFromResponse(refreshTokenResponse)
+          Cookies.set(TOKEN_FIELD_NAME, newToken, {expires: 1 / 96});
+         })
+        
     }
     else{
         response = await fetch(SERVER_ROOT_URL + path,
@@ -97,19 +127,9 @@ export async function requestServer(path, method, body) {
                 body: JSON.stringify(body)
             })
     }
-    try{
-    response = await response.json();
 
-    }catch(err){
-        throw new Error("Could not parse response")
-    }
+    const retObject = await extractDataFromResponse(response)
     
-    if (response.code !== 200) {
-        throw new Error(response.message)
-    }
-    var { code, ...retObject } = response
-
-    const expectedResponseType = pathToReturnTypeMap[path]
     if(expectedResponseType){
       validateParameters(retObject, expectedResponseType,false, false)
     }
