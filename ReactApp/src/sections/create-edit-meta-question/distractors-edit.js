@@ -4,7 +4,7 @@ import { FieldArray } from 'formik';
 import { AddCircleOutline, RemoveCircleOutline, FormatTextdirectionLToR, FormatTextdirectionRToL } from '@mui/icons-material';
 import { CREATE_QUESTION } from '../../constants';
 
-const DistractorsSection = ({ values, handleChange, handleBlur, setFieldValue }) => (
+const DistractorsSection = ({ values, handleChange, handleBlur, setFieldValue, touched, error }) => (
   <Box sx={{ mb: 2 }}>
     <Typography variant="h6" component="h3">{CREATE_QUESTION.DISTRACTOR_TITLE}</Typography>
     <FieldArray name="distractors">
@@ -15,6 +15,8 @@ const DistractorsSection = ({ values, handleChange, handleBlur, setFieldValue })
               <Box key={index} sx={{ mb: 1, flex: 4 }}>
                 <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
                   <TextField
+                    error={touched && touched[index] && error && !!error[index]?.text}
+                    helperText={touched && touched[index] && error && error[index]?.text}
                     name={`distractors[${index}].text`}
                     value={values.distractors[index].text}
                     onChange={handleChange}
@@ -30,6 +32,8 @@ const DistractorsSection = ({ values, handleChange, handleBlur, setFieldValue })
                 </Box>
                 <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
                   <TextField
+                    error={touched && touched[index] && error && !!error[index]?.explanation}
+                    helperText={touched && touched[index] && error && error[index]?.explanation}
                     name={`distractors[${index}].explanation`}
                     value={values.distractors[index].explanation}
                     onChange={handleChange}

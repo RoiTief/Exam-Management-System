@@ -10,12 +10,14 @@ import {
   Typography,
   Autocomplete
 } from '@mui/material';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { COURSE_STAFF } from '../../constants';
+import ErrorMessage from '../../components/errorMessage';
 
 export const AddPersonalToCourse = (props) => {
   const { isOpen, closePopup, state } = props;
   const [users, setUsers] = useState([]);
+  const [errorMessage, setErrorMessage] = useState('');
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -29,8 +31,10 @@ export const AddPersonalToCourse = (props) => {
             setUsers(staff.TAs.map(user => user.username));
             break;
         }
+        setErrorMessage('');
       } catch (error) {
         console.error('Error fetching users:', error);
+        setErrorMessage(`Error fetching users: ${error.message}`)
       }
     };
 
@@ -104,6 +108,7 @@ export const AddPersonalToCourse = (props) => {
             >
               {COURSE_STAFF.ADD_PERSONAL_BUTTON}
             </Button>
+            <ErrorMessage message={errorMessage} />
           </form>
         </div>
       </div>
