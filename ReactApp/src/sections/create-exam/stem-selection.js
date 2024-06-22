@@ -4,27 +4,26 @@ import { EXAM } from '../../constants';
 
 function StemSelection({ metaQuestions, onSelect, reselectStem }) {
   const [temporarySelectedStem, setTemporarySelectedStem] = useState(null);
-  const [openDialog, setOpenDialog] = useState(false);
+  const [showNextButton, setShowNextButton] = useState(true); // State to manage visibility of Next button
+  const [showDeselectButton, setShowDeselectButton] = useState(false); // State to manage visibility of Deselect button
   const [dialogContent, setDialogContent] = useState(null);
 
-  const handleOpenDialog = (content) => {
-    setDialogContent(content);
-    setOpenDialog(true);
-  };
-
   const handleCloseDialog = () => {
-    setOpenDialog(false);
     setDialogContent(null);
   };
 
   const handleNext = () => {
     onSelect(temporarySelectedStem);
     reselectStem(); // Reset selected distractors when a new stem is chosen
+    setShowNextButton(false); // Hide Next button after pressing it
+    setShowDeselectButton(true); // Show Deselect button after pressing Next
   };
 
   const handleDeselect = () => {
     setTemporarySelectedStem(null);
     onSelect(null);
+    setShowNextButton(true); // Show Next button again after deselecting
+    setShowDeselectButton(false); // Hide Deselect button after deselecting
   };
 
   return (
@@ -45,22 +44,27 @@ function StemSelection({ metaQuestions, onSelect, reselectStem }) {
               sx={{ flexGrow: 1 }}
             />
             {metaQuestion.appendix && (
-              <Button variant="outlined" onClick={() => handleOpenDialog(metaQuestion.appendix)}>
+              <Button variant="outlined" onClick={() => setDialogContent(metaQuestion.appendix)}>
                 {EXAM.APPENDIX_HEADING}
               </Button>
             )}
           </Box>
         ))}
       </RadioGroup>
-      <Button variant="contained" onClick={handleNext} disabled={!temporarySelectedStem}>
-        {EXAM.NEXT}
-      </Button>
-      <Button variant="outlined" onClick={handleDeselect} sx={{ ml: 2 }}>
-        {EXAM.DESELECT_QUESTION}
-      </Button>
 
+      {showNextButton && (
+        <Button variant="contained" onClick={handleNext} disabled={!temporarySelectedStem}>
+          {EXAM.NEXT}
+        </Button>
+      )}
 
-      <Dialog open={openDialog} onClose={handleCloseDialog}>
+      {showDeselectButton && (
+        <Button variant="outlined" onClick={handleDeselect} sx={{ ml: 2 }}>
+          {EXAM.DESELECT_QUESTION}
+        </Button>
+      )}
+
+      <Dialog open={dialogContent!==null} onClose={handleCloseDialog}>
         {dialogContent && (
           <>
             <DialogTitle>{dialogContent.title}</DialogTitle>
