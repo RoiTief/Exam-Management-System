@@ -8,21 +8,28 @@ import {
   RadioGroup,
   FormControlLabel,
   Radio,
-  Button
+  Button,
 } from '@mui/material';
 import { Layout as DashboardLayout } from '../../layouts/dashboard/layout';
 import { TAG_ANSWERS } from '../../constants';
+import { CheckExplanationPopup } from '../../sections/ask-work/checkExplanationPopup';
+import { ProvideExplanationPopup } from '../../sections/ask-work/provideExplanationPopup';
 
-const Page = () => {
+const TagAnswers = ({ question }) => {
   const [selectedTag, setSelectedTag] = useState('');
+  const [isCheckExplanationOpen, setIsCheckExplanationOpen] = useState(false);
+  const [isProvideExplanationOpen, setIsProvideExplanationOpen] = useState(false);
 
   const handleTagChange = (event) => {
     setSelectedTag(event.target.value);
   };
 
   const handleSubmit = () => {
-    // Handle the submit action here
-    console.log(`Tagging answer as: ${selectedTag}`);
+    if (selectedTag === question.tag) {
+      setIsCheckExplanationOpen(true);
+    } else {
+      setIsProvideExplanationOpen(true);
+    }
   };
 
   return (
@@ -53,27 +60,37 @@ const Page = () => {
             value={selectedTag}
             onChange={handleTagChange}
           >
-            <FormControlLabel value="key" control={<Radio />} label="Key" />
-            <FormControlLabel value="distractor" control={<Radio />} label="Distractor" />
+            <FormControlLabel value="key" control={<Radio />} label={TAG_ANSWERS.KEY} />
+            <FormControlLabel value="distractor" control={<Radio />} label={TAG_ANSWERS.DISTRACTOR} />
           </RadioGroup>
         </FormControl>
-        <Box sx={{ mt: 2 }}>
+        {selectedTag && <Box sx={{ mt: 2 }}>
           <Button variant="contained" color="primary" onClick={handleSubmit}>
-            Submit
+            {TAG_ANSWERS.SUBMIT}
           </Button>
-        </Box>
+        </Box>}
       </Container>
+
+      <CheckExplanationPopup isOpen={isCheckExplanationOpen} closePopup={() => setIsCheckExplanationOpen(false)}/>
+      <ProvideExplanationPopup isOpen={isProvideExplanationOpen} closePopup={() => setIsProvideExplanationOpen(false)}/>
+
     </Box>
   );
 };
 
 // Example usage of the TagAnswers component
-const question = {
+const exampleQuestion = {
   appendix: 'This is an example appendix.',
   stem: 'What is the capital of France?',
-  answer: 'Paris'
+  answer: 'Paris',
+  tag: 'key' // Assuming the correct tag is 'key'
 };
 
+const Page = () => {
+  return (
+    <TagAnswers question={exampleQuestion} />
+  );
+};
 
 Page.getLayout = (page) => (
   <DashboardLayout>

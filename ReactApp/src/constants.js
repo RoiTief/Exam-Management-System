@@ -221,4 +221,11 @@ export const EXAM = {
 export const TAG_ANSWERS = {
   FOLLOWING_QUESTION: "Given the following question:",
   FOLLOWING_ANSWER: "Tag the following answer:",
+  KEY: "Key",
+  DISTRACTOR: "Distractor",
+  SUBMIT: "Submit",
+  EXPLANATION_CORRECT: "Is This Explanation Correct?",
+  PROVIDE_EXPLANATION: "Please Provide a Correct Explanation:",
+  YES: "Yes",
+  NO: "No",
 }
