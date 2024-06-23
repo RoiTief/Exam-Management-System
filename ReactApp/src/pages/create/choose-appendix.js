@@ -86,7 +86,7 @@ const Page = () => {
         text: item.text,
         explanation: item.explanation
       })),
-      appendix: values.appendix,
+      appendixTag: values.appendix.tag,
     };
   }
 
