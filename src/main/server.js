@@ -182,6 +182,9 @@ function createServer(options) {
     //response: {User, token}
     server.post('/changePassword', service.changePassword);
 
+    //request: {username}
+    server.post('/resetPassword', service.resetPassword);
+
      // request: {}
     server.post('/logout', service.logout);
   

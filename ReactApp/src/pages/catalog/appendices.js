@@ -8,11 +8,13 @@ import { httpsMethod, requestServer, serverPath } from '../../utils/rest-api-cal
 import { APPENDICES_CATALOG } from '../../constants';
 import { AppendicesTable } from '../../sections/view-appendices/appendices-table';
 import { AppendicesSearch } from '../../sections/view-appendices/appendices-search';
+import ErrorMessage from '../../components/errorMessage';
 
 const AppendicesPage = () => {
   const router = useRouter();
   const [appendices, setAppendices] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
+  const [errorMessage, setErrorMessage] = useState('');
 
   useEffect(() => {
     async function fetchAppendices() {
@@ -20,8 +22,10 @@ const AppendicesPage = () => {
         const { appendices } = await requestServer(serverPath.GET_ALL_APPENDICES, httpsMethod.GET);
         setAppendices(appendices);
         setFilteredData(appendices);
+        setErrorMessage(''); // Clear any previous error message
       } catch (error) {
         console.error('Error fetching appendices:', error);
+        setErrorMessage(`Error fetching appendices: ${error.message}`)
       }
     }
 
@@ -29,7 +33,11 @@ const AppendicesPage = () => {
   }, []);
 
   useEffect(() => {
-    handleSearch([], 'opentext');
+    try {
+      handleSearch([], 'opentext');
+    } catch (err) {
+      setErrorMessage( `An error occurred during search: ${err.message}`);
+    }
   }, [appendices]);
 
   const handleSearch = (keys, searchType) => {
@@ -70,6 +78,7 @@ const AppendicesPage = () => {
             </Stack>
             <AppendicesSearch onSearch={handleSearch} />
             <AppendicesTable appendices={filteredData} />
+            <ErrorMessage message={errorMessage} />
           </Stack>
         </Container>
       </Box>

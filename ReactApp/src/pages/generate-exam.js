@@ -7,6 +7,7 @@ import { Layout as DashboardLayout } from '../layouts/dashboard/layout';
 import { useRouter } from 'next/router';
 import { PdfLatexPopup } from '../sections/popUps/QuestionPdfView';
 import { EXAM } from '../constants';
+import ErrorMessage from '../components/errorMessage';
 
 const Page = () => {
   const router = useRouter();
@@ -16,6 +17,7 @@ const Page = () => {
   const [usedAnswers, setUsedAnswers] = useState({});
   const [usedDistractors, setUsedDistractors] = useState({});
   const [showPdfView, setShowPdfView] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
 
   useEffect(() => {
     async function fetchMetaQuestions() {
@@ -24,6 +26,7 @@ const Page = () => {
         setMetaQuestions(metaQuestions);
       } catch (error) {
         console.error('Error fetching meta questions:', error);
+        setErrorMessage(`Error fetching meta questions: ${error}`)
       }
     }
 
@@ -53,7 +56,8 @@ const Page = () => {
       setShowPdfView(true)
       await requestServer(serverPath.CREATE_EXAM, httpsMethod.POST, questions);
     } catch (error) {
-      console.error('Error fetching meta questions:', error);
+      console.error('Error creating exam:', error);
+      setErrorMessage(`Error creating exam: ${error}`)
     }
   }
 
@@ -111,6 +115,7 @@ const Page = () => {
                   onClick={saveTest}>
             {EXAM.SAVE_TEST_BUTTON}
           </Button>
+          <ErrorMessage message={errorMessage} />
         </Box>
       </Container>
       {showPdfView &&

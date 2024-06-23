@@ -29,10 +29,12 @@ class TaskController {
         return this._tasks.get(taskId);
     }
 
-    getTasksOf(username){
+    getTasksOf(data){
+        validateParameters(data,{})
+        
         return Array.from(this._tasks.values())
             .filter(task=>task.assignedUsers) // remove task without assigned users
-            .filter(task => task.assignedUsers.map(user=>user.username).includes(username)) // check if username is in the assignedUsers
+            .filter(task => task.assignedUsers.map(user=>user.getUsername()).includes(data.callingUser.username)) // check if username is in the assignedUsers
     }
 
     lecturerRequestTask(lecturerUsername) {

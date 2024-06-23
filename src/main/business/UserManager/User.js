@@ -37,7 +37,22 @@ class User {
 
     async setEmail(email){
         this.#dalUser.email = email;
-        await this.#dalUser.save();
+        try {
+            await this.#dalUser.save();
+        } catch (err) {
+            // Check if the error is a SequelizeUniqueConstraintError
+            if (err.name === 'SequelizeUniqueConstraintError') {
+                err.errors.forEach(err => {
+                    if (err.path === 'email') {
+                        throw new EMSError(ERROR_MSGS.EMAIL_ALREADY_EXIST(email), ERROR_CODES.EMAIL_ALREADY_EXIST);
+                    }
+                });
+            } else {
+                // Handle other errors
+                console.error('Error adding user:', err);
+                throw err;
+            }
+        }
     }
 
     getUserType(){

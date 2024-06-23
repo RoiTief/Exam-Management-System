@@ -3,7 +3,7 @@ import { Box, TextField, Chip, Typography } from '@mui/material';
 import { FieldArray, useFormikContext } from 'formik';
 import { CREATE_QUESTION } from '../../constants';
 
-const KeywordsSection = ({ values, handleChange, handleBlur }) => {
+const KeywordsSection = ({ values, handleChange, handleBlur, error, helperText }) => {
   const { setFieldValue } = useFormikContext();
 
   useEffect(() => {
@@ -12,7 +12,12 @@ const KeywordsSection = ({ values, handleChange, handleBlur }) => {
 
   return (
     <Box sx={{ mb: 2 }}>
-      <Typography variant="h6" component="h3">{CREATE_QUESTION.KEY_TITLE}</Typography>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Typography variant="h6" component="h3">{CREATE_QUESTION.KEYWORDS_TITLE}</Typography>
+        <Typography variant="body2" color="textSecondary">
+          {CREATE_QUESTION.KEYWORDS_INSTRUCTION}
+        </Typography>
+      </Box>
       <FieldArray name="keywords">
         {({ push, remove }) => (
           <Box sx={{ mb: 1 }}>
@@ -25,6 +30,8 @@ const KeywordsSection = ({ values, handleChange, handleBlur }) => {
               />
             ))}
             <TextField
+              error={error}
+              helperText={helperText}
               placeholder="Add Keyword To Describe The Question"
               onKeyDown={(e) => {
                 if (e.key === 'Enter' && e.target.value.trim() !== '') {

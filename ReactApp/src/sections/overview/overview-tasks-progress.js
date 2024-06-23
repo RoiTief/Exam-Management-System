@@ -6,13 +6,15 @@ import {
   Stack,
   Typography
 } from '@mui/material';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {httpsMethod, serverPath, requestServer,TOKEN_FIELD_NAME} from 'src/utils/rest-api-call';
 import { TASK_PROGRESS } from '../../constants';
+import ErrorMessage from '../../components/errorMessage';
 
 
 export const OverviewTasksProgress = () => {
   const [value, setValue] = useState(0)
+  const [errorMessage, setErrorMessage] = useState('');
 
   useEffect(() => {
    const fetchList = async () => {
@@ -25,6 +27,7 @@ export const OverviewTasksProgress = () => {
      }
      catch(err){
        console.error('Error fetching task list:', err)
+       setErrorMessage(`Error fetching tasks: ${err}`)
      }
    }
  
@@ -65,6 +68,7 @@ export const OverviewTasksProgress = () => {
             </Typography>
           </Stack>
         </Stack>
+        <ErrorMessage message={errorMessage} />
       </CardContent>
     </Card>
   );
