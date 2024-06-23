@@ -4,6 +4,7 @@ import MagnifyingGlassIcon from '@heroicons/react/24/solid/MagnifyingGlassIcon';
 import { httpsMethod, requestServer, serverPath } from '../../utils/rest-api-call';
 import { CREATE_QUESTION } from '../../constants';
 import { useFormikContext } from 'formik';
+import ErrorMessage from '../../components/errorMessage';
 
 const deepEqualAppendix = (a, b) => (
   a.title === b.title && a.tag === b.tag && a.content === b.content
@@ -14,6 +15,7 @@ const AppendixList = ({ values, onSelectAppendix }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [searchBy, setSearchBy] = useState('title');
   const [appendices, setAppendices] = useState([])
+  const [errorMessage, setErrorMessage] = useState('');
 
   useEffect(() => {
     async function fetchAppendices() {
@@ -22,11 +24,12 @@ const AppendixList = ({ values, onSelectAppendix }) => {
         setAppendices(appendices);
       } catch (error) {
         console.error('Error fetching appendices:', error);
+        setErrorMessage(`Error fetching appendices: ${error.message}`)
       }
     }
 
     fetchAppendices();
-  }, []);
+  }, [setErrorMessage]);
 
   const handleSearchChange = (event) => {
     setSearchTerm(event.target.value);
@@ -89,6 +92,7 @@ const AppendixList = ({ values, onSelectAppendix }) => {
           </Paper>
         ))}
       </RadioGroup>
+      <ErrorMessage message={errorMessage} />
     </div>
   );
 };
