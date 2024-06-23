@@ -61,6 +61,13 @@ export const TASK = {
 };
 
 export const USERS = {
+  USERNAME_REQUIRED: "Username is required",
+  FIRST_NAME_REQUIRED: "First name is required",
+  LAST_NAME_REQUIRED: 'Last name is required',
+  EMAIL_REQUIRED: 'Email is required',
+  TYPE_REQUIRED: 'Type is required',
+  INVALID_EMAIL:'Invalid email',
+  INVALID_TYPE: 'Invalid type',
   ADD_USER: "Add User",
   INSERT_USER_DETAILS: "Insert User Details",
   SUBMIT: "Submit",
@@ -75,6 +82,7 @@ export const USERS = {
   TA: "TA",
   ADMIN: "Admin",
   CANCEL_ACTION: "Cancel",
+  RESET_PASSWORD: "Reset Password",
   SAVE_ACTION: "Save Changes",
   CONFIRM_DELETION: "Confirm Deletion",
   CONFIRM_DELETION_MSG: (username) => `Are you sure you want to delete the user ${username}?`,
@@ -107,9 +115,9 @@ export const CREATE_QUESTION = {
   SUBMIT_BUTTON: "Submit",
   VIEW_PDF_BUTTON: "View Question As PDF",
   STEM_REQUIRED: "Stem is required",
-  CORRECT_ANSWER_REQUIRED: "Correct answer text is required",
+  CORRECT_ANSWER_REQUIRED: "The key cannot be empty, please fill it or delete it",
   EXPLANATION_REQUIRED: "Explanation is required",
-  DISTRACTOR_REQUIRED: "Distractor text is required",
+  DISTRACTOR_REQUIRED: "The Distractor cannot be empty, please fill it or delete it",
   APPENDIX_TITLE_REQUIRED: "Title is required",
   APPENDIX_TAG_REQUIRED: "Tag is required",
   APPENDIX_CONTENT_REQUIRED: "Content is required",
@@ -118,9 +126,15 @@ export const CREATE_QUESTION = {
   SELECT_DISTRACTORS_HEADING: "Select Distractors",
   SAVE_QUESTION_BUTTON: "Save Question",
   APPENDIX_TITLE: "Appendix: ",
+  APPENDIX_TITLE_HINT: "Title",
+  APPENDIX_TAG_HINT: "Tag",
   APPENDIX_CONTENT: "Content: ",
-  META_QUESTION_TITLE: "Meta-Question: ",
+  APPENDIX_CONTENT_HINT: "Content",
   KEYWORDS_TITLE: "Keywords",
+  STEM_TITLE: "Stem: ",
+  STEM_HINT: "Stem",
+  META_QUESTION_TITLE: "Meta-Question: ",
+  KEYWORDS_INSTRUCTION: "Please press Enter after every keyword to add it.",
   KEY_TITLE: "Keys: ",
   DISTRACTOR_TITLE: "Distractors: ",
   NO_KEYS_MESSAGE_1: "There are no available keys for this question!",
@@ -160,6 +174,7 @@ export const APPENDICES_CATALOG = {
   VIEW_PDF_BUTTON: 'View PDF',
   SEARCH_PLACEHOLDER: 'Search appendices...',
   RELATED_QUESION: 'The Appendix Is Attached To Those Questions:',
+  NO_RELATED_QUESTIONS: 'The Appendix Has No Related Questions',
   SEARCH_TYPE_LABEL: 'Search Type',
   OPEN_TEXT: 'Open Text',
   TAG: 'Tag',
@@ -205,3 +220,8 @@ export const EXAM = {
   KEY_TITLE: "Key: ",
   DISTRACTOR_TITLE: "Distractors: ",
 };
+
+export const ERROR_MESSAGES = {
+  INVALID_CREDENTIALS: "invalid credentials",
+  NOT_AUTHENTICATE: "Connection timeout, please login again",
+}

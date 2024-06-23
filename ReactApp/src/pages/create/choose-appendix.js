@@ -13,6 +13,7 @@ import AppendixList from 'src/sections/create-edit-meta-question/choose-appendix
 import { httpsMethod, latexServerPath, requestServer, serverPath } from '../../utils/rest-api-call';
 import { CREATE_QUESTION, EDIT_QUESTION } from '../../constants';
 import { PdfLatexPopup } from '../../sections/popUps/QuestionPdfView';
+import ErrorMessage from '../../components/errorMessage';
 
 const validationSchema = Yup.object().shape({
   keywords: Yup.array().of(Yup.string()),
@@ -41,6 +42,7 @@ const Page = () => {
   const [question, setQuestion] = useState(null);
   const [showPdfView, setShowPdfView] = useState(false);
   const [showQuestionView, setShowQuestionView] = useState(false)
+  const [errorMessage, setErrorMessage] = useState('');
 
   useEffect(() => {
     if (router.query.question) {
@@ -84,24 +86,38 @@ const Page = () => {
         text: item.text,
         explanation: item.explanation
       })),
-      appendix: values.appendix,
+      appendixTag: values.appendix.tag,
     };
   }
 
   const handleSubmit = async (values, { setSubmitting }) => {
-    const metaQuestion = createMetaQuestion(values)
+    try {
+      const metaQuestion = createMetaQuestion(values)
 
-    let request =  question? serverPath.EDIT_META_QUESTION : serverPath.ADD_META_QUESTION
-    console.log(`${request} ${metaQuestion}`);
-    await requestServer(request, httpsMethod.POST, metaQuestion);
-    await router.push('/');
+      let request =  question? serverPath.EDIT_META_QUESTION : serverPath.ADD_META_QUESTION
+      console.log(`${request} ${metaQuestion}`);
+      await requestServer(request, httpsMethod.POST, metaQuestion);
+      await router.push('/');
+    } catch (err){
+      setErrorMessage(err)
+    }
   };
 
   const handlePdfButtonClick = (event, values) => {
-    event.stopPropagation();
-    const metaQuestion = createMetaQuestion(values)
-    setShowQuestionView(metaQuestion)
-    setShowPdfView(true); // Show PDF view when button is clicked
+    try {
+      event.stopPropagation();
+      const metaQuestion = createMetaQuestion(values)
+      setShowQuestionView(metaQuestion)
+      setShowPdfView(true); // Show PDF view when button is clicked
+    } catch (err){
+      setErrorMessage(err)
+    }
+  };
+
+  const handleKeyDown = (event) => {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+    }
   };
 
   return (
@@ -111,8 +127,8 @@ const Page = () => {
       onSubmit={handleSubmit}
       enableReinitialize
     >
-      {({ values, handleChange, handleBlur, isSubmitting, setFieldValue }) => (
-        <Form>
+      {({ values, handleChange, handleBlur, isSubmitting, setFieldValue, touched, errors }) => (
+        <Form onKeyDown={handleKeyDown}>
           <Stack
             sx={{
               minHeight: '100vh',
@@ -134,7 +150,8 @@ const Page = () => {
               <Container maxWidth="md" sx={{ backgroundColor: '#ffffff', borderRadius: 2, boxShadow: 3, p: 4, width: "50%" }}>
                 <AppendixList
                   values={values}
-                  onSelectAppendix={(appendix) => setFieldValue('appendix', appendix)} />
+                  onSelectAppendix={(appendix) => setFieldValue('appendix', appendix)}
+                />
               </Container>
               <Container maxWidth="md" sx={{ backgroundColor: '#ffffff', borderRadius: 2, boxShadow: 3, p: 4, width: "50%" }}>
                 <Box sx={{ flexGrow: 1, px: 2, py: 3 }}>
@@ -142,43 +159,54 @@ const Page = () => {
                     values={values}
                     handleChange={handleChange}
                     handleBlur={handleBlur}
+                    error = {!!touched.keywords && errors.keywords}
+                    helperText={touched.keywords && errors.keywords}
                   />
                   <StemSection
                     values={values}
                     handleChange={handleChange}
                     handleBlur={handleBlur}
                     setFieldValue={setFieldValue}
+                    error = {!!touched.stem && errors.stem}
+                    helperText={touched.stem && errors.stem}
                   />
                   <KeysSection
                     values={values}
                     handleChange={handleChange}
                     handleBlur={handleBlur}
                     setFieldValue={setFieldValue}
+                    touched = {touched.keys}
+                    error={errors.keys}
                   />
                   <DistractorsSection
                     values={values}
                     handleChange={handleChange}
                     handleBlur={handleBlur}
                     setFieldValue={setFieldValue}
+                    touched = {touched.distractors}
+                    error={errors.distractors}
                   />
                 </Box>
               </Container>
             </Stack>
-            <Stack direction="row" justifyContent="center" spacing={5} padding={2}>
-              <Button variant="contained" type="submit" disabled={isSubmitting}>
-                {CREATE_QUESTION.SUBMIT_BUTTON}
-              </Button>
-              <Button variant="outlined"
-                      sx={{
-                        backgroundColor: 'rgba(255, 165, 0, 0.3)', // Tinted background
-                        color: 'primary.main',
-                        '&:hover': {
-                          backgroundColor: 'rgba(255, 165, 0, 0.08)', // Darker tint on hover
-                        },
-                      }}
-                      onClick={(event) => handlePdfButtonClick(event, values)}>
-                {CREATE_QUESTION.VIEW_PDF_BUTTON}
-              </Button>
+            <Stack direction="column" padding={1}>
+              <Stack direction="row" justifyContent="center" spacing={5} padding={2}>
+                <Button variant="contained" type="submit" disabled={isSubmitting}>
+                  {CREATE_QUESTION.SUBMIT_BUTTON}
+                </Button>
+                <Button variant="outlined"
+                        sx={{
+                          backgroundColor: 'rgba(255, 165, 0, 0.3)', // Tinted background
+                          color: 'primary.main',
+                          '&:hover': {
+                            backgroundColor: 'rgba(255, 165, 0, 0.08)', // Darker tint on hover
+                          },
+                        }}
+                        onClick={(event) => handlePdfButtonClick(event, values)}>
+                  {CREATE_QUESTION.VIEW_PDF_BUTTON}
+                </Button>
+              </Stack>
+              <ErrorMessage message={errorMessage} />
             </Stack>
           </Stack>
           {showPdfView && (

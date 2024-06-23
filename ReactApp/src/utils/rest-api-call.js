@@ -114,7 +114,7 @@ export async function requestServer(path, method, body) {
          fetchWithCookies(serverPath.REFRESH_TOKEN ,httpsMethod.GET, undefined).then(async (refreshTokenResponse)=>{
           const {newToken} = await extractDataFromResponse(refreshTokenResponse)
           Cookies.set(TOKEN_FIELD_NAME, newToken, {expires: 1 / 96});
-         })
+         }).catch(console.error)
         
     }
     else{
