@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, TextField, IconButton } from '@mui/material';
+import { Box, TextField, IconButton, Typography } from '@mui/material';
 import { FormatTextdirectionLToR, FormatTextdirectionRToL } from '@mui/icons-material';
 import { CREATE_QUESTION } from '../../constants';
 
@@ -9,6 +9,7 @@ const StemSection = ({ values, handleChange, handleBlur, setFieldValue, error, h
       error={error}
       helperText={helperText}
       label={CREATE_QUESTION.META_QUESTION_TITLE}
+      label={CREATE_QUESTION.STEM_HINT}
       name="stem"
       value={values.stem}
       onChange={handleChange}

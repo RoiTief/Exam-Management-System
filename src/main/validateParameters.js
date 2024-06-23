@@ -23,7 +23,6 @@ function getCallingFunctionName() {
   // The third line in the stack trace should contain the caller function name
   // The format is usually like "    at functionName (file:line:column)"
   const callerLine = stackLines[3];
-  console.log(JSON.stringify(callerLine))
   // Extract the function name from the stack trace line
   const match = callerLine.trim().match(/^at (\w+)\.(\w+)/);
   

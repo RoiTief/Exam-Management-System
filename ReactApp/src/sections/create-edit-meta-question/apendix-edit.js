@@ -11,7 +11,7 @@ const AppendixSection = ({ values, handleChange, handleBlur, setFieldValue, touc
       <TextField
         error={touched?.title && errors?.title}
         helperText={touched?.title && errors?.title}
-        label={CREATE_QUESTION.APPENDIX_TITLE}
+        label={CREATE_QUESTION.APPENDIX_TITLE_HINT}
         name="appendix.title"
         value={values.appendix.title}
         onChange={handleChange}
@@ -28,7 +28,7 @@ const AppendixSection = ({ values, handleChange, handleBlur, setFieldValue, touc
       <TextField
         error={touched?.tag && errors?.tag}
         helperText={touched?.tag && errors?.tag}
-        label="Tag"
+        label={CREATE_QUESTION.APPENDIX_TAG_HINT}
         name="appendix.tag"
         value={values.appendix.tag}
         onChange={handleChange}
@@ -46,6 +46,7 @@ const AppendixSection = ({ values, handleChange, handleBlur, setFieldValue, touc
         error={touched?.content && errors?.content}
         helperText={touched?.content && errors?.content}
         label={CREATE_QUESTION.APPENDIX_CONTENT}
+        label={CREATE_QUESTION.APPENDIX_CONTENT_HINT}
         name="appendix.content"
         value={values.appendix.content}
         onChange={handleChange}

@@ -125,10 +125,16 @@ export const CREATE_QUESTION = {
   SELECT_KEY_HEADING: "Select The Correct Key",
   SELECT_DISTRACTORS_HEADING: "Select Distractors",
   SAVE_QUESTION_BUTTON: "Save Question",
-  APPENDIX_TITLE: "Title: ",
+  APPENDIX_TITLE: "Appendix: ",
+  APPENDIX_TITLE_HINT: "Title",
+  APPENDIX_TAG_HINT: "Tag",
   APPENDIX_CONTENT: "Content: ",
-  META_QUESTION_TITLE: "Meta-Question: ",
+  APPENDIX_CONTENT_HINT: "Content",
   KEYWORDS_TITLE: "Keywords",
+  STEM_TITLE: "Stem: ",
+  STEM_HINT: "Stem",
+  META_QUESTION_TITLE: "Meta-Question: ",
+  KEYWORDS_INSTRUCTION: "Please press Enter after every keyword to add it.",
   KEY_TITLE: "Keys: ",
   DISTRACTOR_TITLE: "Distractors: ",
   NO_KEYS_MESSAGE_1: "There are no available keys for this question!",
@@ -229,4 +235,9 @@ export const EXAM = {
   NUMBER_VERSIONS: "Number of Versions",
   EXAM_REASON: "Reason for Exam"
 
+};
+
+export const ERROR_MESSAGES = {
+  INVALID_CREDENTIALS: "invalid credentials",
+  NOT_AUTHENTICATE: "Connection timeout, please login again",
 };

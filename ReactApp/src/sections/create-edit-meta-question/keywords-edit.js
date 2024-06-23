@@ -12,7 +12,12 @@ const KeywordsSection = ({ values, handleChange, handleBlur, error, helperText }
 
   return (
     <Box sx={{ mb: 2 }}>
-      <Typography variant="h6" component="h3">{CREATE_QUESTION.KEYWORDS_TITLE}</Typography>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Typography variant="h6" component="h3">{CREATE_QUESTION.KEYWORDS_TITLE}</Typography>
+        <Typography variant="body2" color="textSecondary">
+          {CREATE_QUESTION.KEYWORDS_INSTRUCTION}
+        </Typography>
+      </Box>
       <FieldArray name="keywords">
         {({ push, remove }) => (
           <Box sx={{ mb: 1 }}>

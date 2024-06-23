@@ -75,7 +75,10 @@ const Page = () => {
         text: item.text,
         explanation: item.explanation
       })),
-      appendix: values.appendix,
+      appendix: {
+        ...values.appendix,
+        keywords: [],
+      },
     };
   }
 
@@ -101,6 +104,12 @@ const Page = () => {
     }
   };
 
+  const handleKeyDown = (event) => {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+    }
+  };
+
   return (
     <Formik
       initialValues={initialValues}
@@ -108,7 +117,7 @@ const Page = () => {
       onSubmit={handleSubmit}
     >
       {({ values, handleChange, handleBlur, isSubmitting, setFieldValue, touched, errors }) => (
-        <Form>
+        <Form onKeyDown={handleKeyDown}>
           <Box
             sx={{
               minHeight: '100vh',
