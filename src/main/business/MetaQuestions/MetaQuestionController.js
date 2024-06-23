@@ -55,23 +55,17 @@ class MetaQuestionController{
             answers: [{content: PRIMITIVE_TYPES.STRING, tag: PRIMITIVE_TYPES.STRING}],
             stem: PRIMITIVE_TYPES.STRING,
         });
-        console.log(">>1");
 
         const dalMQ = await this.#metaQuestionRepo.addMetaQuestion(data, data.answers, data.keywords);
 
-        console.log(">>2");
         let metaQuestion = new MetaQuestion(dalMQ);
-        console.log(">>3");
 
         let ta_s = (await this.#userController.getAllStaff(data))["TAs"];
-        console.log(">>4");
         const addTaskProperties = {...data,
              assignedUsers: ta_s, taskType: TaskTypes.ADD_KEY,
               taskPriority: TaskPriority.HIGH, description: `Please add a key For the following Question: ${metaQuestion.getStem()}`,
             metaQuestion: metaQuestion}
-        console.log(">>5");
         this.#taskController.addTask(addTaskProperties)
-        console.log(">>6");
         return metaQuestion
     }
 

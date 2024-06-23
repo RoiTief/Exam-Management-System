@@ -277,7 +277,7 @@ class ApplicationFacade{
             data.appendixTag = businessAppendix.getTag();
         }
         data.answers = data.keys.map(k => ({...k, content: k.text, tag: ANSWER_TYPES.KEY}))
-            .concat(data.distractors.map(d => ({...d, content: k.text, tag: ANSWER_TYPES.DISTRACTOR})));
+            .concat(data.distractors.map(d => ({...d, content: d.text, tag: ANSWER_TYPES.DISTRACTOR})));
         const businessMQ = await this.metaQuestionController.createMetaQuestion(data);
         return this.#mqBusinessToFE(businessMQ);
     }
