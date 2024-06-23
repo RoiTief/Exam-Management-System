@@ -6,7 +6,7 @@ import StemSelection from './stem-selection';
 import KeySelection from './keys-selection';
 import DistractorSelection from './distractor-selection';
 
-export const AddQuestionToExamPopup = ({isOpen, closePopup, metaQuestions, addQuestion, usedKeys, usedDistractors}) => {
+export const AddQuestionToExamPopup = ({isOpen, closePopup, metaQuestions, addQuestion}) => {
 
   const [selectedMetaQuestion, setSelectedMetaQuestion] = useState(null);
   const [selectedKey, setSelectedKey] = useState(null);
@@ -34,18 +34,6 @@ export const AddQuestionToExamPopup = ({isOpen, closePopup, metaQuestions, addQu
     setSelectedKey(null);
     setSelectedDistractors([]);
   };
-
-  const getFilteredOptions = (options, usedOptions, key) => {
-    return options.filter(option => !usedOptions[key]?.some(usedOption => usedOption.text === option.text));
-  };
-
-  const filteredKeys = selectedMetaQuestion
-    ? getFilteredOptions(selectedMetaQuestion.keys, usedKeys, `${selectedMetaQuestion.stem}-${selectedMetaQuestion.appendix?.title || ''}`)
-    : [];
-
-  const filteredDistractors = selectedMetaQuestion
-    ? getFilteredOptions(selectedMetaQuestion.distractors, usedDistractors, `${selectedMetaQuestion.stem}-${selectedMetaQuestion.appendix?.title || ''}`)
-    : [];
 
   const handleGenerateStateChange = (event) => {
     setGenerateState(event.target.checked);
@@ -80,9 +68,9 @@ export const AddQuestionToExamPopup = ({isOpen, closePopup, metaQuestions, addQu
             <Divider/>
             {!generateState && selectedMetaQuestion && (
               <>
-                <KeySelection keys={filteredKeys} onSelect={setSelectedKey} />
+                <KeySelection keys={selectedMetaQuestion.keys} onSelect={setSelectedKey} />
                 <Divider/>
-                {selectedKey && <DistractorSelection distractors={filteredDistractors} onSelect={setSelectedDistractors} />}
+                {selectedKey && <DistractorSelection distractors={selectedMetaQuestion.distractors} onSelect={setSelectedDistractors} />}
               </>
             )}
           </Box>

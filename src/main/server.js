@@ -261,6 +261,17 @@ function createServer(options) {
     //     }
     server.post('/addAutomaticQuestionToExam', service.addAutomaticQuestionToExam);
 
+    //request: {
+    //       stem: str,
+    //       key: {answer: str, explanation: str },
+    //       distractors: [{answer: str, explanation: str }],
+    //      appendix: {
+    //          title: str,
+    //          tag: str,
+    //          content: str
+    //       }
+    //     }
+    server.post('/removeQuestionFromExam', service.removeQuestionFromExam);
 
     //request: {
     //        id:num
@@ -299,6 +310,9 @@ function createServer(options) {
     server.post('/createExam', service.createExam)
 
     server.get('/getAllExams',service.getAllExams)
+
+    // response: MetaQuestion[]
+    server.get('/getMetaQuestionsForExam',service.getMetaQuestionsForExam)
 
     // response: Task[]
     server.get('/viewMyTasks', service.viewMyTasks);

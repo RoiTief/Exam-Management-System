@@ -308,6 +308,25 @@ function getAllMetaQuestions(req, res, next){
 }
 
 /**
+ * return a list of meta question relevant to add to the new exam:
+ * - each question has at least 1 key and 4 distractors that are not used yet in the exam
+ * - the keys and distractors returned are not used yet in the exam
+ * @throws {Error} - if fail to fetch
+ */
+function getMetaQuestionsForExam(req, res, next){
+    try{
+        let metaQuestions = application.getMetaQuestionsForExam(req.body);
+        req.log.info("a request was sent fetch all the meta questions");
+        res.send(200, {code:200, metaQuestions})
+        next()
+    }
+    catch(err){
+        req.log.warn(err.message, 'unable to request fetch all the meta questions');
+        next(err);
+    }
+}
+
+/**
  * return a list of meta question of the user's course
  * @throws {Error} - if fail to fetch
  */
@@ -378,8 +397,8 @@ function addMetaQuestion(req, res, next){
  * @param - req.body = {
  *     //       keywords: str[],
  *     //       stem: str,
- *     //       key: str,
- *     //       distractors: str[] ,
+ *     //       key: {answer: str, explanation: str },
+ *     //       distractors: [{answer: str, explanation: str }],
  *     //      appendix: {
  *     //          title: str,
  *     //          tag: str,
@@ -426,6 +445,35 @@ function addAutomaticQuestionToExam(req, res, next) {
         next()
     } catch (err) {
         req.log.warn(err.message, 'failed to add automatic question to exam');
+        next(err);
+    }
+}
+
+
+/**
+ * removes a question from the exam
+ * @param - req.body = {
+ *     //       keywords: str[],
+ *     //       stem: str,
+ *     //       key: {answer: str, explanation: str },
+ *     //       distractors: [{answer: str, explanation: str }],
+ *     //      appendix: {
+ *     //          title: str,
+ *     //          tag: str,
+ *     //          content: str
+ *     //       }
+ *     //     }
+ *     appendix could be null
+ * @throws {Error} - if fail to create
+ */
+function removeQuestionFromExam(req, res, next) {
+    try {
+        application.removeQuestionFromExam(req.body)
+        req.log.info("request to remove a question from exam");
+        res.send(200, {code: 200})
+        next()
+    } catch (err) {
+        req.log.warn(err.message, 'failed to remove a question from exam');
         next(err);
     }
 }
@@ -544,11 +592,13 @@ module.exports = {
     viewAllUsers: viewAllUsers,
     deleteUser: deleteUser,
     getAllMetaQuestions: getAllMetaQuestions,
+    getMetaQuestionsForExam,
     getAllAppendices: getAllAppendices,
     getMetaQuestionForAppendix: getMetaQuestionForAppendix,
     addMetaQuestion: addMetaQuestion,
     addManualMetaQuestionToExam: addManualMetaQuestionToExam,
     addAutomaticQuestionToExam: addAutomaticQuestionToExam,
+    removeQuestionFromExam,
     editMetaQuestion: editMetaQuestion,
     createExam,
     getAllExams,

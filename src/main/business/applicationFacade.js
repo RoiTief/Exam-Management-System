@@ -367,6 +367,20 @@ class ApplicationFacade{
     }
 
     /**
+     * return a list of meta question relevant to add to the new exam:
+     * - each question has at least 1 key and 4 distractors that are not used yet in the exam
+     * - the keys and distractors returned are not used yet in the exam
+     * @throws {Error} - If the user is not signed in or does not have the necessary permissions
+     * @return {MetaQuestion[]} all the relevant question in a meta question structure
+     */
+    getMetaQuestionsForExam(data) {
+        // todo- implement
+        // as of now we will return all the meta question without filtering
+        return this.metaQuestionController.getAllMetaQuestions()
+    }
+
+
+    /**
      * return a list of appendices of the user's course
      * @throws {Error} - If the user is not signed in or does not have the necessary permissions
      * @return {Appendix[]} all the meta question of the user's course
@@ -418,6 +432,12 @@ class ApplicationFacade{
                 { text: "fake answer 4", explanation: "fake explanation"}
             ]
         };
+    }
+
+    removeQuestionFromExam(data) {
+        //todo - implement remove question
+        // dont forget to update all the relevant questions/keys/distractors
+        return;
     }
 }
 
