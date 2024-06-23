@@ -191,17 +191,15 @@ function viewMyTasks(req, res, next){
 *                 - if this task is already finished
  */
 function finishATask(req, res, next) {
-    try{
         application.finishATask(req.body).then(()=>{
             req.log.info(req.body.taskId, "task is marked as finished")
             res.send(200, {code:200})
             next()
-    })
-    }
-    catch(err){
-        req.log.warn(err.message, 'unable to marked a task as finished');
-        next(err);
-    }
+        },(err)=>{
+            req.log.warn(err.message, 'unable to marked a task as finished');
+            next(err);
+        }
+    )
 }
 
 /**
@@ -398,19 +396,18 @@ function addMetaQuestion(req, res, next){
  * @throws {Error} - if fail to edit
  */
 function editMetaQuestion(req, res, next){
-    try{
         application.editMetaQuestion(req.body).then(
             ()=>{
                 req.log.info("request to edit metaQuestion");
                 res.send(200, {code:200})
                 next()
+            },
+            (err) => {
+                req.log.warn(err.message, 'failed to create meta questions');
+                next(err);
             }
         )
-    }
-    catch(err){
-        req.log.warn(err.message, 'failed to create meta questions');
-        next(err);
-    }
+    
 }
 
 

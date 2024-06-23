@@ -41,7 +41,7 @@ export const serverPath = {
 }
 
 
-export const pathToReturnTypeMap={
+const pathToReturnTypeMap={
   [serverPath.VIEW_TASKS]: {tasks:[{finished:PRIMITIVE_TYPES.BOOLEAN, }]},
   [serverPath.GET_ALL_USERS] :{users: [{username: PRIMITIVE_TYPES.STRING, email: PRIMITIVE_TYPES.STRING, firstName: PRIMITIVE_TYPES.STRING, lastName: PRIMITIVE_TYPES.STRING, type: PRIMITIVE_TYPES.STRING}]}
 }
