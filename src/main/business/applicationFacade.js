@@ -343,8 +343,8 @@ class ApplicationFacade{
             stem: bMQ.getStem(),
             keys: bMQ.getKeys().map(bKey => this.#answerBusinessToFE(bKey)),
             distractors: bMQ.getKeys().map(bDistractor => this.#answerBusinessToFE(bDistractor)),
-            appendixTag: bMQ.getAppendixTag(),
             keywords: bMQ.getKeywords(),
+            ...(bMQ.getAppendixTag() || {appendixTag: bMQ.getAppendixTag()}),
         }
     }
 
