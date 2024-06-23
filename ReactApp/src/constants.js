@@ -194,7 +194,8 @@ export const COURSE_STAFF = {
 export const EXAM = {
   PAGE_TITLE: "Create Exam",
   ADD_QUESTION_BUTTON: "+ Add Question",
-  SAVE_TEST_BUTTON: "Save Test",
+  SAVE_TEST_BUTTON: "Save Exam",
+  EXAM_PREVIEW_BUTTON: "Exam Preview",
   CREATED_QUESTIONS_HEADING: "Created Questions",
   MANUAL_STATE: "Manual Answer Generator",
   AUTOMATIC_STATE: "Automatic Answer Generator",

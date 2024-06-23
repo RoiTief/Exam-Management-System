@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { httpsMethod, serverPath, requestServer, latexServerPath } from 'src/utils/rest-api-call';
-import { Box, Button, Container, Typography } from '@mui/material';
+import { Box, Button, Container, Stack, Typography } from '@mui/material';
 import QuestionList from '/src/sections/create-exam/question-list';
 import { Layout as DashboardLayout } from '../layouts/dashboard/layout';
 import { useRouter } from 'next/router';
@@ -22,6 +22,7 @@ const Page = () => {
       try {
         const { metaQuestions } = await requestServer(serverPath.GET_META_QUESTIONS_FOR_EXAM, httpsMethod.GET);
         setMetaQuestions(metaQuestions);
+        setErrorMessage('')
       } catch (error) {
         console.error('Error fetching meta questions:', error);
         setErrorMessage(`Error fetching meta questions: ${error}`)
@@ -39,7 +40,7 @@ const Page = () => {
       console.log(examQuestion)
       setQuestions([...questions, examQuestion]);
       setCurrentQuestion(null)
-
+      setErrorMessage('')
     } catch (err) {
       setErrorMessage(err.message)
     }
@@ -47,8 +48,9 @@ const Page = () => {
 
   const saveTest = async () => {
     try {
-      setShowPdfView(true)
       await requestServer(serverPath.CREATE_EXAM, httpsMethod.POST, questions);
+      await router.push('/');
+      setErrorMessage('')
     } catch (error) {
       console.error('Error creating exam:', error);
       setErrorMessage(`Error creating exam: ${error}`)
@@ -61,6 +63,7 @@ const Page = () => {
       await requestServer(serverPath.REMOVE_QUESTION_FROM_EXAM, httpsMethod.POST, questionToRemove);
       const updatedQuestions = questions.filter((_, i) => i !== index);
       setQuestions(updatedQuestions);
+      setErrorMessage('')
     } catch (err) {
       setErrorMessage(err.message)
     }
@@ -104,10 +107,16 @@ const Page = () => {
           <QuestionList questions={questions}
                         removeQuestion={removeQuestion}
                         onDragEnd={onDragEnd}/>
-          <Button variant="contained" color="primary" sx={{ mt: 2 }}
-                  onClick={saveTest}>
-            {EXAM.SAVE_TEST_BUTTON}
-          </Button>
+          <Stack direction="row" spacing={2}>
+            <Button variant="contained" color="primary" sx={{ mt: 2 }}
+                    onClick={saveTest}>
+              {EXAM.SAVE_TEST_BUTTON}
+            </Button>
+            <Button variant="outlined" color="primary" sx={{ mt: 2 }}
+                    onClick={() => setShowPdfView(true)}>
+              {EXAM.EXAM_PREVIEW_BUTTON}
+            </Button>
+          </Stack>
           <ErrorMessage message={errorMessage} />
         </Box>
       </Container>
