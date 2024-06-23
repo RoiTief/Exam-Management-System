@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import {
   Box,
   Container,
@@ -28,6 +28,7 @@ const TagAnswers = ({ question }) => {
     if (selectedTag === question.tag) {
       setIsCheckExplanationOpen(true);
     } else {
+      question.tag = selectedTag;
       setIsProvideExplanationOpen(true);
     }
   };
@@ -64,15 +65,25 @@ const TagAnswers = ({ question }) => {
             <FormControlLabel value="distractor" control={<Radio />} label={TAG_ANSWERS.DISTRACTOR} />
           </RadioGroup>
         </FormControl>
-        {selectedTag && <Box sx={{ mt: 2 }}>
-          <Button variant="contained" color="primary" onClick={handleSubmit}>
+        <Box sx={{ mt: 2 }}>
+          <Button variant="contained" color="primary" onClick={handleSubmit} disabled={!selectedTag}>
             {TAG_ANSWERS.SUBMIT}
           </Button>
-        </Box>}
+        </Box>
       </Container>
 
-      <CheckExplanationPopup isOpen={isCheckExplanationOpen} closePopup={() => setIsCheckExplanationOpen(false)}/>
-      <ProvideExplanationPopup isOpen={isProvideExplanationOpen} closePopup={() => setIsProvideExplanationOpen(false)}/>
+      <CheckExplanationPopup
+        isOpen={isCheckExplanationOpen}
+        closePopup={() => setIsCheckExplanationOpen(false)}
+        explanation={question.explanation}
+        handleWrongExplanation={() => setIsProvideExplanationOpen(true)}
+        generate={() => true}/>
+
+      <ProvideExplanationPopup
+        isOpen={isProvideExplanationOpen}
+        closePopup={() => setIsProvideExplanationOpen(false)}
+        setExplanation={(newExplanation) => question.explanation = newExplanation}
+        generate={() => true}/>
 
     </Box>
   );
@@ -83,6 +94,7 @@ const exampleQuestion = {
   appendix: 'This is an example appendix.',
   stem: 'What is the capital of France?',
   answer: 'Paris',
+  explanation: "Paris is the capital city of France",
   tag: 'key' // Assuming the correct tag is 'key'
 };
 

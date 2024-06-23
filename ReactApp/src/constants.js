@@ -228,4 +228,5 @@ export const TAG_ANSWERS = {
   PROVIDE_EXPLANATION: "Please Provide a Correct Explanation:",
   YES: "Yes",
   NO: "No",
+  CLOSE: "Close",
 }
