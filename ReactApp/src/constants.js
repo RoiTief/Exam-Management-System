@@ -30,7 +30,9 @@ export const SIDE_BAR = {
   META_QUESTIONS: "Meta Questions",
   APPENDICES: "Appendices",
   MANAGE_COURSE_STAFF: "Manage Course Staff",
-  GENERATE_EXAM: "generate exams"
+  GENERATE_EXAM: "generate exams",
+  ASK_FOR_WORK: "Ask for Work",
+  TAG_ANSWERS: "Tag Answers"
 }
 
 export const CALENDAR = {
@@ -215,3 +217,8 @@ export const EXAM = {
   KEY_TITLE: "Key: ",
   DISTRACTOR_TITLE: "Distractors: ",
 };
+
+export const TAG_ANSWERS = {
+  FOLLOWING_QUESTION: "Given the following question:",
+  FOLLOWING_ANSWER: "Tag the following answer:",
+}
