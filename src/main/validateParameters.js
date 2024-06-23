@@ -81,6 +81,7 @@ function validateParameters(realObj, expectedObj, prohibitNull = true, checkCall
       callingUser: {
         username: PRIMITIVE_TYPES.STRING,
         type: PRIMITIVE_TYPES.STRING,
+        ... expectedObj.callingUser ? expectedObj.callingUser : undefined
       },
     };
   }

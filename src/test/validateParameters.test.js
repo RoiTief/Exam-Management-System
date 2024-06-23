@@ -15,7 +15,7 @@ const fullObject = {
   num: 1,
   bool: false,
   person: new Person("name", "age"),
-  callingUser: { username: "user", type: "type" },
+  callingUser: { username: "user", type: "type", exams: [{stem: "str"}] },
   nest1: { str: "str", nest2: { str: "str", num: 1 } },
   stringArray: ["one", "two"],
   personArray: [new Person("John", 30), new Person("Doe", 40)]
@@ -95,6 +95,17 @@ describe('validateParameters', () => {
   test('should pass with empty array', () => {
     const expectedObj = { stringArray: [PRIMITIVE_TYPES.STRING] };
     const emptyArrayObject = { stringArray: [] };
-    expect(() => validateParameters(emptyArrayObject, expectedObj,true, false)).not.toThrow();
+    expect(() => validateParameters(emptyArrayObject, expectedObj, true, false)).not.toThrow();
   });
+
+  test('should pass with nested callingUser fields', () => {
+    const expectedObj = { callingUser: { exams: [{stem: PRIMITIVE_TYPES.STRING}] } };
+    expect(() => validateParameters(fullObject, expectedObj)).not.toThrow();
+  })
+
+  test('should fail with invalid nested callingUser fields', () => {
+    const expectedObj = { callingUser: { exams: [{stem: PRIMITIVE_TYPES.STRING}] } };
+    const invalidObject = { callingUser: { exams: [{stem: 1}] } };
+    expect(() => validateParameters(invalidObject, expectedObj)).toThrow(EMSError);
+  })
 });
