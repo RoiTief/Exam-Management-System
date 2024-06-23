@@ -33,22 +33,32 @@ const Page = () => {
     fetchMetaQuestions();
   }, []);
 
-  const addQuestion = (question) => {
-    setQuestions([...questions, question]);
+  const addQuestion = async (question, AutomaticGenerateState) => {
 
-    const key = `${question.stem}-${question.appendix ? question.appendix.title : ''}`;
+    try{
+      console.log(question)
+      let request = AutomaticGenerateState ? serverPath.ADD_AUTOMATIC_META_QUESTION : serverPath.ADD_MANUAL_META_QUESTION
+      const { examQuestion } = await requestServer(request, httpsMethod.POST, { question });
+      console.log(examQuestion)
+      setQuestions([...questions, examQuestion]);
 
-    setUsedAnswers(prev => ({
-      ...prev,
-      [key]: [...(prev[key] || []), question.key]
-    }));
+      const key = `${examQuestion.stem}-${examQuestion.appendix ? examQuestion.appendix.title : ''}`;
 
-    setUsedDistractors(prev => ({
-      ...prev,
-      [key]: [...(prev[key] || []), ...question.distractors]
-    }));
+      setUsedAnswers(prev => ({
+        ...prev,
+        [key]: [...(prev[key] || []), examQuestion.key]
+      }));
 
-    setCurrentQuestion(null)
+      setUsedDistractors(prev => ({
+        ...prev,
+        [key]: [...(prev[key] || []), ...examQuestion.distractors]
+      }));
+
+      setCurrentQuestion(null)
+
+    } catch (err) {
+      setErrorMessage(err.message)
+    }
   };
 
   const saveTest = async () => {

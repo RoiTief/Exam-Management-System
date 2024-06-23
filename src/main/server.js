@@ -217,6 +217,52 @@ function createServer(options) {
     server.post('/addMetaQuestion', service.addMetaQuestion);
 
     //request: {
+    //       stem: str,
+    //       key: {answer: str, explanation: str },
+    //       distractors: [{answer: str, explanation: str }],
+    //      appendix: {
+    //          title: str,
+    //          tag: str,
+    //          content: str
+    //       }
+    //     }
+    //response: {
+    //       stem: str,
+    //       key: {answer: str, explanation: str },
+    //       distractors: [{answer: str, explanation: str }],
+    //      appendix: {
+    //          title: str,
+    //          tag: str,
+    //          content: str
+    //       }
+    //     }
+    server.post('/addManualMetaQuestionToExam', service.addManualMetaQuestionToExam);
+
+
+    //request: {
+    //       stem: str,
+    //       key: null,
+    //       distractors: [] - empty array,
+    //      appendix: {
+    //          title: str,
+    //          tag: str,
+    //          content: str
+    //       }
+    //     }
+    //response: {
+    //       stem: str,
+    //       key: {answer: str, explanation: str },
+    //       distractors: [{answer: str, explanation: str }],
+    //      appendix: {
+    //          title: str,
+    //          tag: str,
+    //          content: str
+    //       }
+    //     }
+    server.post('/addAutomaticQuestionToExam', service.addAutomaticQuestionToExam);
+
+
+    //request: {
     //        id:num
     //       keywords: str[],
     //       stem: str,

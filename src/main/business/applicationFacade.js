@@ -394,6 +394,39 @@ class ApplicationFacade{
         return this.userController.updateUser(data);
     }
 
+
+    addManualMetaQuestionToExam(data) {
+        //todo - implement save the question (it has all the fields)
+        // as of now it just returns the question without saving it to an "current exam" object and so all the
+        // functionality of fetching relevant questions/keys/distractors is not correct
+        return data.question;
+    }
+
+    //       stem: str,
+    //       key: {answer: str, explanation: str },
+    //       distractors: [{answer: str, explanation: str }],
+    //      appendix: {
+    //          title: str,
+    //          tag: str,
+    //          content: str
+    //       }
+    addAutomaticQuestionToExam(data) {
+        //todo - implement generate a key and 4 distractors to the stem+appendix in the data
+        // as of now it returns fake answers and distractors without
+        // saving it to an "current exam" object and so all the functionality of fetching relevant
+        // questions/keys/distractors is not correct
+        return {
+            stem: data.question.stem,
+            appendix: data.question.appendix,
+            key: { text: "fake answer", explanation: "fake explanation"},
+            distractors: [
+                { text: "fake answer 1", explanation: "fake explanation"},
+                { text: "fake answer 2", explanation: "fake explanation"},
+                { text: "fake answer 3", explanation: "fake explanation"},
+                { text: "fake answer 4", explanation: "fake explanation"}
+            ]
+        };
+    }
 }
 
 module.exports = ApplicationFacade;

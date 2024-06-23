@@ -374,6 +374,63 @@ function addMetaQuestion(req, res, next){
 }
 
 /**
+ * add a meta question to the exam
+ * @param - req.body = {
+ *     //       keywords: str[],
+ *     //       stem: str,
+ *     //       key: str,
+ *     //       distractors: str[] ,
+ *     //      appendix: {
+ *     //          title: str,
+ *     //          tag: str,
+ *     //          content: str
+ *     //       }
+ *     //     }
+ *     appendix could be null
+ * @throws {Error} - if fail to create
+ */
+function addManualMetaQuestionToExam(req, res, next) {
+    try {
+        let examQuestion = application.addManualMetaQuestionToExam(req.body)
+        req.log.info("request to add manual question to exam");
+        res.send(200, {code: 200, examQuestion})
+        next()
+    } catch (err) {
+        req.log.warn(err.message, 'failed to add manual question to exam');
+        next(err);
+    }
+}
+
+/**
+ * add a meta question to the db based on solly stem and appendix
+ * the system should randomize the answer and 4 distractors and create this question
+ * @param - req.body = {
+ *     //       keywords: str[],
+ *     //       stem: str,
+ *     //       key: null,
+ *     //       distractors: [] - empty array,
+ *     //      appendix: {
+ *     //          title: str,
+ *     //          tag: str,
+ *     //          content: str
+ *     //       }
+ *     //     }
+ *     appendix could be null
+ * @throws {Error} - if fail to create
+ */
+function addAutomaticQuestionToExam(req, res, next) {
+    try {
+        let examQuestion = application.addAutomaticQuestionToExam(req.body)
+        req.log.info("request to add automatic question to exam");
+        res.send(200, {code: 200, examQuestion})
+        next()
+    } catch (err) {
+        req.log.warn(err.message, 'failed to add automatic question to exam');
+        next(err);
+    }
+}
+
+/**
  * edit a meta question
  * @param - req.body = {
  *      //      id: num
@@ -490,6 +547,8 @@ module.exports = {
     getAllAppendices: getAllAppendices,
     getMetaQuestionForAppendix: getMetaQuestionForAppendix,
     addMetaQuestion: addMetaQuestion,
+    addManualMetaQuestionToExam: addManualMetaQuestionToExam,
+    addAutomaticQuestionToExam: addAutomaticQuestionToExam,
     editMetaQuestion: editMetaQuestion,
     createExam,
     getAllExams,
