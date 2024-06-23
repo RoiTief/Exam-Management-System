@@ -113,11 +113,13 @@ const Page = () => {
                         onDragEnd={onDragEnd} />
           <Stack direction="row" spacing={2} padding={4}>
             <Button variant="contained" color="primary" sx={{ mt: 2 }}
-                    onClick={() => setShowDialog(true)}>
+                    onClick={() => setShowDialog(true)}
+                    disabled={questions.length===0}>
               {EXAM.SAVE_TEST_BUTTON}
             </Button>
             <Button variant="outlined" color="primary" sx={{ mt: 2 }}
-                    onClick={() => setShowPdfView(true)}>
+                    onClick={() => setShowPdfView(true)}
+                    disabled={questions.length===0}>
               {EXAM.EXAM_PREVIEW_BUTTON}
             </Button>
           </Stack>
