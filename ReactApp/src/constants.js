@@ -196,6 +196,8 @@ export const EXAM = {
   ADD_QUESTION_BUTTON: "+ Add Question",
   SAVE_TEST_BUTTON: "Save Test",
   CREATED_QUESTIONS_HEADING: "Created Questions",
+  MANUAL_STATE: "Manual Answer Generator",
+  AUTOMATIC_STATE: "Automatic Answer Generator",
   NO_KEYS_MESSAGE_1: "There are no available keys for this question!",
   NO_KEYS_MESSAGE_2: "Please choose a different question",
   NO_DISTRACTORS_MESSAGE_1: "There are no available distractors for this question!",
