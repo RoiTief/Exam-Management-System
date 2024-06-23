@@ -59,10 +59,11 @@ class MetaQuestionController{
         const dalMQ = await this.#metaQuestionRepo.addMetaQuestion(data, data.answers, data.keywords);
 
         let metaQuestion = new MetaQuestion(dalMQ);
-        const ta_s = await this.#userController.getAllStaff(data)["TAs"]
+
+        let ta_s = (await this.#userController.getAllStaff(data))["TAs"];
         const addTaskProperties = {...data,
              assignedUsers: ta_s, taskType: TaskTypes.ADD_KEY,
-              taskPriority: TaskPriority.HIGH, description: `Please add a key For the following Question: ${metaQuestion.stem}`,
+              taskPriority: TaskPriority.HIGH, description: `Please add a key For the following Question: ${metaQuestion.getStem()}`,
             metaQuestion: metaQuestion}
         this.#taskController.addTask(addTaskProperties)
         return metaQuestion
@@ -81,10 +82,10 @@ class MetaQuestionController{
         const metaQuestion = await this.getMetaQuestion(data.id);
         await metaQuestion.setStem(data.stem);
 
-        const ta_s = this.#userController.getAllStaff(data)["TAs"]
+        let ta_s = (await this.#userController.getAllStaff(data))["TAs"];
         const addTaskProperties = {...data,
             assignedUsers: ta_s, taskType: TaskTypes.ADD_KEY,
-            taskPriority: TaskPriority.HIGH, description: `Please please review the changes to the following Question: ${metaQuestion.stem}`,
+            taskPriority: TaskPriority.HIGH, description: `Please please review the changes to the following Question: ${metaQuestion.getStem()}`,
             metaQuestion: metaQuestion}
         this.#taskController.addTask(addTaskProperties)
 

@@ -1,5 +1,6 @@
 import Cookies from 'js-cookie';
 import {validateParameters} from '../../../src/main/validateParameters'
+import { PRIMITIVE_TYPES } from '../../../src/main/Enums';
 export const TOKEN_FIELD_NAME = "jwt_exam_token"
 const SERVER_ROOT_URL = "http://localhost:8080/"
 const LATEX_SERVER_ROOT_URL = "http://164.90.223.94:3001/"
@@ -37,6 +38,12 @@ export const serverPath = {
     EDIT_META_QUESTION: 'editMetaQuestion',
     GET_META_QUESTIONS_FOR_APPENDIX: 'getMetaQuestionForAppendix',
     REFRESH_TOKEN: 'refreshJWT',
+}
+
+
+const pathToReturnTypeMap={
+  [serverPath.VIEW_TASKS]: {tasks:[{finished:PRIMITIVE_TYPES.BOOLEAN, }]},
+  [serverPath.GET_ALL_USERS] :{users: [{username: PRIMITIVE_TYPES.STRING, email: PRIMITIVE_TYPES.STRING, firstName: PRIMITIVE_TYPES.STRING, lastName: PRIMITIVE_TYPES.STRING, type: PRIMITIVE_TYPES.STRING}]}
 }
 
 export const latexServerPath = {
@@ -98,7 +105,7 @@ async function extractDataFromResponse(response){
     return retObject
 }
 
-export async function requestServer(path, method, body, expectedResponseType) {
+export async function requestServer(path, method, body) {
     var response
     if (Cookies.get(TOKEN_FIELD_NAME)) {
         response = await fetchWithCookies(path,method,body)
@@ -121,9 +128,11 @@ export async function requestServer(path, method, body, expectedResponseType) {
                 body: JSON.stringify(body)
             })
     }
+
     const retObject = await extractDataFromResponse(response)
-    if(expectedResponseType){
-      validateParameters(retObject, expectedResponseType,false, false)
+    
+    if(pathToReturnTypeMap[path]){
+      validateParameters(retObject, pathToReturnTypeMap[path], false, false)
     }
     return retObject;
 }
