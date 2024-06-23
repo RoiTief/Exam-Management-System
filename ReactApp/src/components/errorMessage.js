@@ -10,7 +10,7 @@ const ErrorMessage = ({ message }) => {
   }
 
   useEffect(() => {
-    if (message === ERROR_MESSAGES.INVALID_CREDENTIALS) {
+    if (message.includes(ERROR_MESSAGES.INVALID_CREDENTIALS)) {
       
         window.alert(ERROR_MESSAGES.NOT_AUTHENTICATE);
         router
