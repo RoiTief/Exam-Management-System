@@ -105,20 +105,23 @@ async function extractDataFromResponse(response){
     return retObject
 }
 
+
 export async function requestServer(path, method, body) {
     var response
+    let responsePromise
+    let refreshTokenPromise = undefined
     if (Cookies.get(TOKEN_FIELD_NAME)) {
-        response = await fetchWithCookies(path,method,body)
+      responsePromise = fetchWithCookies(path,method,body)
 
-        // refresh cookies
-         fetchWithCookies(serverPath.REFRESH_TOKEN ,httpsMethod.GET, undefined).then(async (refreshTokenResponse)=>{
+      // refresh cookies
+      refreshTokenPromise = fetchWithCookies(serverPath.REFRESH_TOKEN ,httpsMethod.GET, undefined).then(async (refreshTokenResponse)=>{
           const {newToken} = await extractDataFromResponse(refreshTokenResponse)
           Cookies.set(TOKEN_FIELD_NAME, newToken, {expires: 1 / 96});
          }).catch(console.error)
-        
+      
     }
     else{
-        response = await fetch(SERVER_ROOT_URL + path,
+      responsePromise = fetch(SERVER_ROOT_URL + path,
             {   
                 method,
                 headers: {
@@ -129,10 +132,13 @@ export async function requestServer(path, method, body) {
             })
     }
 
+    response = await responsePromise
     const retObject = await extractDataFromResponse(response)
     
     if(pathToReturnTypeMap[path]){
       validateParameters(retObject, pathToReturnTypeMap[path], false, false)
     }
+
+    if(refreshTokenPromise) await refreshTokenPromise 
     return retObject;
 }
