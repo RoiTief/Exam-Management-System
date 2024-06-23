@@ -294,7 +294,8 @@ function createServer(options) {
     server.post('/editMetaQuestion', service.editMetaQuestion);
 
     // request:
-    //  {    questions:[
+    //  {
+    //  questions:[
     //   {
     //    stem: str
     //       appendix: {
@@ -305,8 +306,9 @@ function createServer(options) {
     //       answer: str,
     //       distractors: [str]
     //     }]
+    //     numVersions: num,
+    //     examReason: str
     //   }
-    //  }
     server.post('/createExam', service.createExam)
 
     server.get('/getAllExams',service.getAllExams)
