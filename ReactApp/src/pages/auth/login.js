@@ -17,7 +17,7 @@ import {
 import { useAuth } from 'src/hooks/use-auth';
 import { Layout as AuthLayout } from 'src/layouts/auth/layout';
 import { LOGIN } from '../../constants';
-import ErrorMessage from 'src/components/ErrorMessage';
+import ErrorMessage from 'src/components/errorMessage';
 import ChangePasswordPopup from '../../sections/popUps/changePasswordPopup';
 
 const Page = () => {
