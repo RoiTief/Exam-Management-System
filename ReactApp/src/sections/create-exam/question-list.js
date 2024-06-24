@@ -15,7 +15,9 @@ function QuestionList({ questions, removeQuestion, onDragEnd }) {
                 {EXAM.CREATED_QUESTIONS_HEADING}
               </Typography>
               {questions.map((question, index) => (
-                <Draggable key={`draggable-${index}`} draggableId={`draggable-${index}`} index={index}>
+                <Draggable key={`draggable-${question.id}-${question.key.text}`}
+                           draggableId={`draggable-${question.id}-${question.key.text}`}
+                           index={index}>
                   {(provided) => (
                     <Box
                       ref={provided.innerRef}
