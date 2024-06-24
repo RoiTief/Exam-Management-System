@@ -317,10 +317,10 @@ class ApplicationFacade{
      * @throws {Error} - If the user is not signed in or does not have the necessary permissions
      * @return {MetaQuestion[]} all the relevant question in a meta question structure
      */
-    getMetaQuestionsForExam(data) {
+    async getMetaQuestionsForExam(data) {
         // todo- implement
         // as of now we will return all the meta question without filtering
-        return this.metaQuestionController.getAllMetaQuestions()
+        return this.getAllMetaQuestions()
     }
 
 

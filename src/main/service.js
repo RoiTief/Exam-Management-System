@@ -311,16 +311,15 @@ function getAllMetaQuestions(req, res, next) {
  * @throws {Error} - if fail to fetch
  */
 function getMetaQuestionsForExam(req, res, next){
-    try{
-        let metaQuestions = application.getMetaQuestionsForExam(req.body);
-        req.log.info("a request was sent fetch all the meta questions");
-        res.send(200, {code:200, metaQuestions})
-        next()
-    }
-    catch(err){
-        req.log.warn(err.message, 'unable to request fetch all the meta questions');
-        next(err);
-    }
+    application.getMetaQuestionsForExam(req.body).then(
+        metaQuestions => {
+            req.log.info("a request was sent fetch all the meta questions");
+            res.send(200, {code: 200, metaQuestions})
+            next()
+        }, err => {
+            req.log.warn(err.message, 'unable to request fetch all the meta questions');
+            next(err);
+        });
 }
 
 /**
