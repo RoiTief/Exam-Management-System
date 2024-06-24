@@ -37,10 +37,8 @@ const Page = () => {
 
   const addQuestion = async (question, AutomaticGenerateState) => {
     try{
-      console.log(question)
       let request = AutomaticGenerateState ? serverPath.ADD_AUTOMATIC_META_QUESTION : serverPath.ADD_MANUAL_META_QUESTION
       const { examQuestion } = await requestServer(request, httpsMethod.POST, { question });
-      console.log(examQuestion)
       setQuestions([...questions, examQuestion]);
       setCurrentQuestion(null)
       setErrorMessage('')
