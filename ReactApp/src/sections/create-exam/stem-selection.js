@@ -10,46 +10,66 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
-  Stack
+  Stack,
+  TextField
 } from '@mui/material';
 import { EXAM } from '../../constants';
 
 function StemSelection({ metaQuestions, onSelect, reselectStem }) {
   const [dialogContent, setDialogContent] = useState(null);
-  const [selectedMetaQuestion, setSelectedMetaQuestion] = useState(null)
+  const [selectedMetaQuestion, setSelectedMetaQuestion] = useState(null);
+  const [searchText, setSearchText] = useState('');
 
   const handleCloseDialog = () => {
     setDialogContent(null);
   };
 
   const handleRadioClick = (question) => {
-    if (selectedMetaQuestion === question){
+    if (selectedMetaQuestion === question) {
       setSelectedMetaQuestion(null);
       onSelect(null);
       reselectStem();
-    }
-    else {
+    } else {
       setSelectedMetaQuestion(question);
-      onSelect(question)
+      onSelect(question);
       reselectStem();
     }
-  }
+  };
+
+  const handleSearchChange = (event) => {
+    setSearchText(event.target.value);
+  };
+
+  const filteredQuestions = metaQuestions.filter((metaQuestion) =>
+    metaQuestion.stem.toLowerCase().includes(searchText.toLowerCase())
+  );
 
   return (
     <Box sx={{ padding: 2 }}>
       <Typography variant="h5" component="h2" mb={2}>
         {EXAM.SELECT_STEM_HEADING}
       </Typography>
-      <RadioGroup
-        value={selectedMetaQuestion ? selectedMetaQuestion.stem : ''}
-      >
-        {metaQuestions.map((metaQuestion, index) => (
-          <Box key={index}
-               sx={{
-                 display: selectedMetaQuestion === null || selectedMetaQuestion === metaQuestion ? 'flex' : 'none',
-                 alignItems: 'center',
-                 mb: 1
-          }}>
+      {selectedMetaQuestion === null && (
+        <TextField
+          label="Search"
+          variant="outlined"
+          fullWidth
+          margin="normal"
+          value={searchText}
+          onChange={handleSearchChange}
+        />
+      )}
+      <RadioGroup value={selectedMetaQuestion ? selectedMetaQuestion.stem : ''}>
+        {filteredQuestions.map((metaQuestion, index) => (
+          <Box
+            key={index}
+            sx={{
+              display:
+                selectedMetaQuestion === null || selectedMetaQuestion === metaQuestion ? 'flex' : 'none',
+              alignItems: 'center',
+              mb: 1
+            }}
+          >
             <FormControlLabel
               value={metaQuestion.stem}
               control={<Radio />}
@@ -66,7 +86,7 @@ function StemSelection({ metaQuestions, onSelect, reselectStem }) {
         ))}
       </RadioGroup>
 
-      <Dialog open={dialogContent!==null} onClose={handleCloseDialog}>
+      <Dialog open={dialogContent !== null} onClose={handleCloseDialog}>
         {dialogContent && (
           <>
             <DialogTitle>{dialogContent.title}</DialogTitle>
