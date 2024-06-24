@@ -11,14 +11,13 @@ export const AddQuestionToExamPopup = ({isOpen, closePopup, metaQuestions, addQu
   const [selectedMetaQuestion, setSelectedMetaQuestion] = useState(null);
   const [selectedKey, setSelectedKey] = useState(null);
   const [selectedDistractors, setSelectedDistractors] = useState([]);
-  const [generateState, setGenerateState] = useState(false); // Use boolean for simplicity
+  const [generateState, setGenerateState] = useState(true); // Use boolean for simplicity
 
   const handleSaveQuestion = () => {
     addQuestion({
-      stem: selectedMetaQuestion.stem,
-      appendix: selectedMetaQuestion.appendix,
-      key: selectedKey,
-      distractors: selectedDistractors
+      selectedMetaQuestion,
+      selectedKey: selectedKey,
+      selectedDistractors: selectedDistractors
     }, generateState);
     handleClosePopup()
   };
@@ -28,6 +27,7 @@ export const AddQuestionToExamPopup = ({isOpen, closePopup, metaQuestions, addQu
     setSelectedKey(null);
     setSelectedMetaQuestion(null);
     closePopup()
+    setGenerateState(true)
   }
 
   const handleReSelectStem = () => {

@@ -395,17 +395,10 @@ function addMetaQuestion(req, res, next){
 /**
  * add a meta question to the exam
  * @param - req.body = {
- *     //       keywords: str[],
- *     //       stem: str,
- *     //       key: {answer: str, explanation: str },
- *     //       distractors: [{answer: str, explanation: str }],
- *     //      appendix: {
- *     //          title: str,
- *     //          tag: str,
- *     //          content: str
- *     //       }
+ *     //       selectedMetaQuestion: MetaQuestion,
+ *     //       selectedKey: {answer: str, explanation: str },
+ *     //       selectedDistractors: [{answer: str, explanation: str }],
  *     //     }
- *     appendix could be null
  * @throws {Error} - if fail to create
  */
 function addManualMetaQuestionToExam(req, res, next) {
@@ -424,15 +417,9 @@ function addManualMetaQuestionToExam(req, res, next) {
  * add a meta question to the db based on solly stem and appendix
  * the system should randomize the answer and 4 distractors and create this question
  * @param - req.body = {
- *     //       keywords: str[],
- *     //       stem: str,
- *     //       key: null,
- *     //       distractors: [] - empty array,
- *     //      appendix: {
- *     //          title: str,
- *     //          tag: str,
- *     //          content: str
- *     //       }
+ *     //       selectedMetaQuestion: MetaQuestion,
+ *     //       selectedKey: null,
+ *     //       selectedDistractors: [] - empty array,
  *     //     }
  *     appendix could be null
  * @throws {Error} - if fail to create

@@ -217,16 +217,12 @@ function createServer(options) {
     server.post('/addMetaQuestion', service.addMetaQuestion);
 
     //request: {
-    //       stem: str,
-    //       key: {answer: str, explanation: str },
-    //       distractors: [{answer: str, explanation: str }],
-    //      appendix: {
-    //          title: str,
-    //          tag: str,
-    //          content: str
-    //       }
+    //       selectedMetaQuestion: MetaQuestion,
+    //       selectedKey: {answer: str, explanation: str },
+    //       selectedDistractors: [{answer: str, explanation: str }],
     //     }
     //response: {
+    //       id: num
     //       stem: str,
     //       key: {answer: str, explanation: str },
     //       distractors: [{answer: str, explanation: str }],
@@ -240,16 +236,12 @@ function createServer(options) {
 
 
     //request: {
-    //       stem: str,
-    //       key: null,
-    //       distractors: [] - empty array,
-    //      appendix: {
-    //          title: str,
-    //          tag: str,
-    //          content: str
-    //       }
+    //       selectedMetaQuestion: MetaQuestion,
+    //       selectedKey: null,
+    //       selectedDistractors: [] - empty array,
     //     }
     //response: {
+    //       id: num
     //       stem: str,
     //       key: {answer: str, explanation: str },
     //       distractors: [{answer: str, explanation: str }],
@@ -262,6 +254,7 @@ function createServer(options) {
     server.post('/addAutomaticQuestionToExam', service.addAutomaticQuestionToExam);
 
     //request: {
+    //       id: num
     //       stem: str,
     //       key: {answer: str, explanation: str },
     //       distractors: [{answer: str, explanation: str }],
@@ -297,14 +290,15 @@ function createServer(options) {
     //  {
     //  questions:[
     //   {
-    //    stem: str
+    //      id: num
+    //       stem: str
     //       appendix: {
     //              title: str,
     //              tag: str,
     //              content: str
     //        }
-    //       answer: str,
-    //       distractors: [str]
+    //       key: {answer: str, explanation: str },
+    //      distractors: [{answer: str, explanation: str }],
     //     }]
     //     numVersions: num,
     //     examReason: str

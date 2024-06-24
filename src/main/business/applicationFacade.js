@@ -413,7 +413,13 @@ class ApplicationFacade{
         //todo - implement save the question (it has all the fields)
         // as of now it just returns the question without saving it to an "current exam" object and so all the
         // functionality of fetching relevant questions/keys/distractors is not correct
-        return data.question;
+        return {
+            id: data.question.selectedMetaQuestion.id,
+            stem: data.question.selectedMetaQuestion.stem,
+            appendix: data.question.selectedMetaQuestion.appendix,
+            key: data.question.selectedKey,
+            distractors: data.question.selectedDistractors
+        };
     }
 
     addAutomaticQuestionToExam(data) {
@@ -422,8 +428,9 @@ class ApplicationFacade{
         // saving it to an "current exam" object and so all the functionality of fetching relevant
         // questions/keys/distractors is not correct
         return {
-            stem: data.question.stem,
-            appendix: data.question.appendix,
+            id: data.question.selectedMetaQuestion.id,
+            stem: data.question.selectedMetaQuestion.stem,
+            appendix: data.question.selectedMetaQuestion.appendix,
             key: { text: "fake answer", explanation: "fake explanation"},
             distractors: [
                 { text: "fake answer 1", explanation: "fake explanation"},
