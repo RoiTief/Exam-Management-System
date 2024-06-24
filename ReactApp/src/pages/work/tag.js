@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Box,
   Container,
@@ -14,11 +14,55 @@ import { Layout as DashboardLayout } from '../../layouts/dashboard/layout';
 import { TAG_ANSWERS } from '../../constants';
 import { CheckExplanationPopup } from '../../sections/ask-work/checkExplanationPopup';
 import { ProvideExplanationPopup } from '../../sections/ask-work/provideExplanationPopup';
+import {
+  httpsMethod,
+  requestLatexServer,
+  requestServer,
+  serverPath
+} from '../../utils/rest-api-call';
 
-const TagAnswers = ({ question }) => {
+const TagAnswers = () => {
   const [selectedTag, setSelectedTag] = useState('');
   const [isCheckExplanationOpen, setIsCheckExplanationOpen] = useState(false);
   const [isProvideExplanationOpen, setIsProvideExplanationOpen] = useState(false);
+  const [metaQuestions, setMetaQuestions] = useState([])
+  const [question, setQuestion] = useState({});
+  const [i, setI] = useState(0);
+
+  useEffect(() => {
+    const fetchRandomQuestion = async () => {
+      try {
+        const response = await requestServer(serverPath.GET_ALL_META_QUESTIONS, httpsMethod.GET);
+        setMetaQuestions(response.metaQuestions);
+        if (response.metaQuestions.length > 0){
+          handleNewQuestion(response.metaQuestions);
+        }
+        return { success: true };
+      } catch (error) {
+        console.error('Failed to fetch users:', error);
+        return { success: false, error: error };
+      }
+    };
+
+    fetchRandomQuestion();
+  }, []);
+
+  const handleNewQuestion = (metaQuestions) => {
+    if (metaQuestions.length === 0) return;
+    const newQuestion = createQuestion(metaQuestions[i]);
+    setQuestion(newQuestion);
+    setI((i + 1) % metaQuestions.length);
+  };
+
+  const createQuestion = (metaQuestion) => {
+    return {
+      appendix: metaQuestion.appendix?.content,
+      stem: metaQuestion.stem,
+      answer: metaQuestion.keys[0].text,
+      explanation: metaQuestion.keys[0].explanation,
+      tag: 'key'
+    };
+  }
 
   const handleTagChange = (event) => {
     setSelectedTag(event.target.value);
@@ -35,8 +79,8 @@ const TagAnswers = ({ question }) => {
 
   return (
     <Box sx={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: '#f0f0f0', padding: 2 }}>
-      <Container maxWidth="md" sx={{ backgroundColor: '#ffffff', borderRadius: 2, boxShadow: 3, p: 4 }}>
-        <Typography variant="h5" component="h2" gutterBottom>
+      <Container maxWidth="sm" sx={{ backgroundColor: '#ffffff', borderRadius: 2, boxShadow: 3, p: 4 }}>
+        <Typography variant="h4" component="h1" gutterBottom>
           {TAG_ANSWERS.FOLLOWING_QUESTION}
         </Typography>
         {question.appendix && (
@@ -47,7 +91,7 @@ const TagAnswers = ({ question }) => {
         <Typography variant="body1" component="div" gutterBottom>
           {question.stem}
         </Typography>
-        <Typography variant="h5" component="h2" gutterBottom>
+        <Typography variant="h4" component="h1" gutterBottom>
           {TAG_ANSWERS.FOLLOWING_ANSWER}
         </Typography>
         <Typography variant="body1" component="div" gutterBottom>
@@ -77,7 +121,7 @@ const TagAnswers = ({ question }) => {
         closePopup={() => setIsCheckExplanationOpen(false)}
         explanation={question.explanation}
         handleWrongExplanation={() => setIsProvideExplanationOpen(true)}
-        generate={() => true}/>
+        generate={() => handleNewQuestion(metaQuestions)}/>
 
       <ProvideExplanationPopup
         isOpen={isProvideExplanationOpen}
@@ -89,18 +133,9 @@ const TagAnswers = ({ question }) => {
   );
 };
 
-// Example usage of the TagAnswers component
-const exampleQuestion = {
-  appendix: 'This is an example appendix.',
-  stem: 'What is the capital of France?',
-  answer: 'Paris',
-  explanation: "Paris is the capital city of France",
-  tag: 'key' // Assuming the correct tag is 'key'
-};
-
 const Page = () => {
   return (
-    <TagAnswers question={exampleQuestion} />
+    <TagAnswers/>
   );
 };
 
