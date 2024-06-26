@@ -161,6 +161,36 @@ class LatexCompiler {
         });
     }
 
+    compileAnswer(answer, callback) {
+        this.compileNormal(answer.text, this.#createCropCallback('5 5 5 5', callback));
+    }
+
+    compileStem(stem, callback) {
+        this.compileNormal(stem, this.#createCropCallback('5 5 5 5', callback));
+    }
+
+    compileAppendix(appendix, callback) {
+        let latexCode = `\\subsection{${appendix.title}}\n` +
+        `${appendix.content} \n\n`;
+        this.compileNormal(latexCode, this.#createCropCallback('5 5 5 5', callback));
+    }
+
+    #createCropCallback(margins, callback) {
+        return (err, pdfPath) => {
+            if (err) {
+                return callback(err, null);
+            }
+            // after successful latex compilation crop trailing whitespace
+            exec(`cd ${this.#pdfDirPath} && pdfcrop --margins '${margins}' ${pdfPath} ${pdfPath}`, (error, stdout, stderr) => {
+                if (error) {
+                    console.error(`pdfcrop Error: ${stdout}`);
+                    return callback(error, null);
+                }
+                callback(null, pdfPath);
+            });
+        }
+    }
+
     /**
      * Compiles the file and send it bash
      * @param filename File to be compiled.
