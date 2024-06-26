@@ -43,7 +43,7 @@ class LatexCompiler {
         // write latex code to the file
         fs.writeFileSync(texPath, this.#preamble);
         fs.writeFileSync(texPath, this.#opening, {flag: 'a'});
-        fs.writeFileSync(filename, "\\pagenumbering{gobble}\n");
+        fs.writeFileSync(texPath, "\\pagenumbering{gobble}\n", {flag: 'a'});
         fs.writeFileSync(texPath, latexCode, {flag : 'a'});
         fs.writeFileSync(texPath, this.#closing, {flag : 'a'});
 
@@ -170,7 +170,7 @@ class LatexCompiler {
     }
 
     compileAppendix(appendix, callback) {
-        let latexCode = `\\subsection{${appendix.title}}\n` +
+        let latexCode = `\\subsection*{${appendix.title}}\n` +
         `${appendix.content} \n\n`;
         this.compileNormal(latexCode, this.#createCropCallback('5 5 5 5', callback));
     }
