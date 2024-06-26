@@ -4,17 +4,6 @@ const {EMSError, MQ_PROCESS_ERROR_CODES} = require("../../main/EMSError");
 const MetaQuestionRepository = require("../../main/DAL/MetaQuestion/MetaQuestionRepository");
 const MetaQuestionController = require("../../main/business/MetaQuestions/MetaQuestionController");
 
-class UserControllerMock {
-    getAllStaff(){
-        return [];
-    }
-}
-
-class TaskControllerMock {
-    addTask(data){
-    }
-}
-
 const dbConfig = {
     database: 'mq_controller_test',
     username: 'user_t',
@@ -75,7 +64,7 @@ describe('Happy-Path MetaQuestionController tests', () => {
     });
 
     beforeEach(async () => {
-        mqController = await new MetaQuestionController(mqRepo, new TaskControllerMock(), new UserControllerMock());
+        mqController = await new MetaQuestionController(mqRepo);
         await sequelize.sync({force: true}); // cleans the 'Users' table
     })
 

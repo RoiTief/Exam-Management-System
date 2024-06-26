@@ -9,8 +9,8 @@ const {USER_TYPES, PRIMITIVE_TYPES, ANSWER_TYPES} = require("../Enums");
 class ApplicationFacade{
     constructor() {
         this.userController = new UserController(userRepo);
+        this.metaQuestionController = new MetaQuestionController(metaQuestionsRepo);
         this.taskController = new TaskController(this.userController);
-        this.metaQuestionController = new MetaQuestionController(metaQuestionsRepo, this.taskController, this.userController);
         this.examController = new ExamController(this.taskController, this.userController)
     }
 
