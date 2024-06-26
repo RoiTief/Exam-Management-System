@@ -44,7 +44,7 @@ class MetaQuestionRepository {
     async addAppendix(appendixData, keywords) {
         try {
              const appendix = await this.#Appendix.create(appendixData);
-             return await this.addKeywordsToAppendix(appendix.tag, keywords);
+             return await this.setKeywordsToAppendix(appendix.tag, keywords);
         } catch (e) {
             if (e.name === 'SequelizeUniqueConstraintError') {
                 // Check if the error is related to username or email uniqueness
@@ -73,7 +73,7 @@ class MetaQuestionRepository {
         }
         const question = await this.#MetaQuestion.create(questionData);
         await this.addAnswersToQuestion(question.id, answers);
-        return await this.addKeywordsToQuestion(question.id, keywords);
+        return await this.setKeywordsToQuestion(question.id, keywords);
     }
 
     /**
@@ -97,10 +97,11 @@ class MetaQuestionRepository {
      * @param keywords Array of keywords: string[]
      * @returns The updated question.
      */
-    async addKeywordsToQuestion(qId, keywords) {
+    async setKeywordsToQuestion(qId, keywords) {
         const metaQuestion = await this.getMetaQuestion(qId);
         const dbKeywords = await this.#getDbKeywords(keywords)
-        await metaQuestion.addKeywords(dbKeywords);
+        await metaQuestion.setKeywords(dbKeywords);
+        await metaQuestion.save();
         await metaQuestion.reload();
         return metaQuestion;
     }
@@ -111,10 +112,11 @@ class MetaQuestionRepository {
      * @param keywords Array of keywords: string[]
      * @returns The updated appendix.
      */
-    async addKeywordsToAppendix(tag, keywords) {
+    async setKeywordsToAppendix(tag, keywords) {
         const appendix = await this.getAppendix(tag);
         const dbKeywords = await this.#getDbKeywords(keywords)
-        await appendix.addKeywords(dbKeywords);
+        await appendix.setKeywords(dbKeywords);
+        await appendix.save();
         await appendix.reload();
         return appendix;
     }
@@ -168,11 +170,6 @@ class MetaQuestionRepository {
                     model: this.#Keyword,
                     as: 'keywords',
                 },
-                {
-                    model: this.#Appendix,
-                    as: 'appendix',
-                    required: false,
-                }
             ]
         });
         if (metaQuestion === null) {
@@ -192,16 +189,30 @@ class MetaQuestionRepository {
                     model: this.#Keyword,
                     as: 'keywords',
                 },
+            ]
+        });
+    }
+
+    async getMetaQuestionsForAppendix(appendixTag) {
+        return await this.#MetaQuestion.findAll({
+            where: {
+                appendixTag: appendixTag
+            },
+            include: [
                 {
-                    model: this.#Appendix,
-                    as: 'appendix',
-                }
+                    model: this.#Answer,
+                    as: 'answers',
+                },
+                {
+                    model: this.#Keyword,
+                    as: 'keywords',
+                },
             ]
         });
     }
 
     /**
-     * Removed given Appendix from the DB.
+     * Removes given Appendix from the DB.
      * @param appendixTag Tag of the Appendix to remove.
      */
     async deleteAppendix(appendixTag) {
@@ -213,7 +224,7 @@ class MetaQuestionRepository {
     }
 
     /**
-     * Removed given Meta-Question from the DB.
+     * Removes given Meta-Question from the DB.
      * @param qId ID of the Meta-Question to remove.
      */
     async deleteMetaQuestion(qId) {
@@ -222,6 +233,26 @@ class MetaQuestionRepository {
                id: qId,
            }
         });
+    }
+
+    async deleteAnswer(aId) {
+        await this.#Answer.destroy({
+            where: {
+                id: aId,
+            },
+        })
+    }
+
+    async deleteAnswers(aIds){
+        await this.deleteAnswer(aIds);
+    }
+
+    async deleteAnswersOfMq(mqId) {
+        await this.#Answer.destroy({
+            where: {
+                metaQuestionId: mqId,
+            },
+        })
     }
 
     /**

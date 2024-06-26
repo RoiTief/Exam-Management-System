@@ -127,10 +127,15 @@ export const CREATE_QUESTION = {
   SELECT_KEY_HEADING: "Select The Correct Key",
   SELECT_DISTRACTORS_HEADING: "Select Distractors",
   SAVE_QUESTION_BUTTON: "Save Question",
-  APPENDIX_TITLE: "Title: ",
+  APPENDIX_TITLE: "Appendix: ",
+  APPENDIX_TITLE_HINT: "Title",
+  APPENDIX_TAG_HINT: "Tag",
   APPENDIX_CONTENT: "Content: ",
-  META_QUESTION_TITLE: "Meta-Question: ",
+  APPENDIX_CONTENT_HINT: "Content",
   KEYWORDS_TITLE: "Keywords",
+  STEM_TITLE: "Stem: ",
+  STEM_HINT: "Stem",
+  META_QUESTION_TITLE: "Meta-Question: ",
   KEYWORDS_INSTRUCTION: "Please press Enter after every keyword to add it.",
   KEY_TITLE: "Keys: ",
   DISTRACTOR_TITLE: "Distractors: ",
@@ -217,6 +222,11 @@ export const EXAM = {
   KEY_TITLE: "Key: ",
   DISTRACTOR_TITLE: "Distractors: ",
 };
+
+export const ERROR_MESSAGES = {
+  INVALID_CREDENTIALS: "invalid credentials",
+  NOT_AUTHENTICATE: "Connection timeout, please login again",
+}
 
 export const TAG_ANSWERS = {
   FOLLOWING_QUESTION: "Given the following question:",
