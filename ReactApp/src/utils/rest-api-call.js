@@ -38,6 +38,8 @@ export const serverPath = {
     EDIT_META_QUESTION: 'editMetaQuestion',
     GET_META_QUESTIONS_FOR_APPENDIX: 'getMetaQuestionForAppendix',
     REFRESH_TOKEN: 'refreshJWT',
+    GENERATE_TASK: 'generateTask',
+    COMPLETE_GENERATED_TASK: 'completeGeneratedTask',
 }
 
 

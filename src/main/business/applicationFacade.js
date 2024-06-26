@@ -4,7 +4,9 @@ const MetaQuestionController = require('./MetaQuestions/MetaQuestionController.j
 const ExamController = require('./ExamManager/ExamController.js');
 const { userRepo, metaQuestionsRepo } = require("../DAL/Dal");
 const { validateParameters } = require('../validateParameters.js');
-const {USER_TYPES, PRIMITIVE_TYPES, ANSWER_TYPES} = require("../Enums");
+const {USER_TYPES, PRIMITIVE_TYPES, ANSWER_TYPES, GENERATED_TASK_TYPES} = require("../Enums");
+const {EMSError, TASK_PROCESS_ERROR_CODES} = require("../EMSError");
+const {TASK_PROCESS_ERROR_MSGS} = require("../ErrorMessages");
 
 class ApplicationFacade{
     constructor() {
@@ -336,6 +338,27 @@ class ApplicationFacade{
         return this.userController.updateUser(data);
     }
 
+    async generateTask(data) {
+        validateParameters(data, {taskType: PRIMITIVE_TYPES.STRING});
+        switch (data.taskType) {
+            case GENERATED_TASK_TYPES.TAG_ANSWER:
+                return this.#generateTagAnswerTask(data)
+            default:
+                throw new EMSError(TASK_PROCESS_ERROR_MSGS.INVALID_TASK_TYPE(data.taskType), TASK_PROCESS_ERROR_CODES.INVALID_TASK_TYPE);
+        }
+    }
+
+    async completeGeneratedTask(data) {
+        validateParameters(data, {taskType: PRIMITIVE_TYPES.STRING});
+        switch (data.taskType) {
+            case GENERATED_TASK_TYPES.TAG_ANSWER:
+                console.log(data);
+                break;
+            default:
+                throw new EMSError(TASK_PROCESS_ERROR_MSGS.INVALID_TASK_TYPE(data.taskType), TASK_PROCESS_ERROR_CODES.INVALID_TASK_TYPE);
+        }
+    }
+
     #mqBusinessToFE(bMQ) {
         return {
             id: bMQ.getId(),
@@ -362,6 +385,35 @@ class ApplicationFacade{
             title: bAppendix.getTitle(),
             content: bAppendix.getContent(),
             keywords: bAppendix.getKeywords(),
+        }
+    }
+
+    /* returns
+    {
+        answer,
+        stem,
+        appendix?
+    }
+     */
+    #generateTagAnswerTask(data) {
+        return {
+            answer: {
+                id: 1,
+                tag: ANSWER_TYPES.DISTRACTOR,
+                text: 0,
+                explanation: '',
+            },
+            metaQuestion: {
+                id: 1,
+                stem: '$e^{i\\pi} + 1 = $',
+                appendixTag: "euler identity",
+            },
+            appendix: {
+                title: "Euler's identity: ",
+                tag: "euler identity",
+                content: "\\setlength{\\fboxsep}{10pt} % Set the padding (default is 3pt)\n"
+                    + "\\fbox{\\huge $e^{i\\theta} = \\cos{\\theta} + i\\sin{\\theta}$}",
+            },
         }
     }
 }

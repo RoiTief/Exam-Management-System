@@ -53,10 +53,15 @@ const MQ_PROCESS_ERROR_MSGS = {
     MQ_ID_DOESNT_EXIST: id => `A Meta-Question with ID '${id}' doesn't exist`,
 }
 
+const TASK_PROCESS_ERROR_MSGS = {
+    INVALID_TASK_TYPE: type => `Task-type '${type}' is invalid`,
+}
+
 
 module.exports = {
     USER_PROCESS_ERROR_MSGS,
     SESSION_PROCESS_ERROR_MSGS,
     MQ_PROCESS_ERROR_MSGS,
     FUNCTION_PARAMETERS_ERROR_MSGS,
+    TASK_PROCESS_ERROR_MSGS
 }
