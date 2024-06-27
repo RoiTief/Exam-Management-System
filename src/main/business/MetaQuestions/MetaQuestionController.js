@@ -77,7 +77,6 @@ class MetaQuestionController{
     #deepEqualAppendix = (a, b) => (
         a.title === b.title && a.tag === b.tag && a.content === b.content
     );
-
 }
 
 module.exports = MetaQuestionController;
