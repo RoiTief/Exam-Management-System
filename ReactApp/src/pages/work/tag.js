@@ -16,63 +16,60 @@ import { CheckExplanationPopup } from '../../sections/ask-work/checkExplanationP
 import { ProvideExplanationPopup } from '../../sections/ask-work/provideExplanationPopup';
 import {
   httpsMethod,
-  requestLatexServer,
+  latexServerPath,
   requestServer,
   serverPath
 } from '../../utils/rest-api-call';
+import { GENERATED_TASK_TYPES } from '../../../../src/main/Enums';
+import dynamic from 'next/dynamic';
+const QuestionPhotoView = dynamic(() => import('../../sections/popUps/QuestionPhotoView'), { ssr: false });
 
 const TagAnswers = () => {
   const [selectedTag, setSelectedTag] = useState('');
   const [isCheckExplanationOpen, setIsCheckExplanationOpen] = useState(false);
   const [isProvideExplanationOpen, setIsProvideExplanationOpen] = useState(false);
-  const [metaQuestions, setMetaQuestions] = useState([])
   const [question, setQuestion] = useState({});
-  const [i, setI] = useState(0);
+  const [tag, setTag] = useState("");
+  const [explanation, setExplanation] = useState("");
+  const [generate, setGenerate] = useState(false);
 
   useEffect(() => {
     const fetchRandomQuestion = async () => {
       try {
-        const response = await requestServer(serverPath.GET_ALL_META_QUESTIONS, httpsMethod.GET);
-        setMetaQuestions(response.metaQuestions);
-        if (response.metaQuestions.length > 0){
-          handleNewQuestion(response.metaQuestions);
-        }
+        const response = await requestServer(serverPath.GENERATE_TASK, httpsMethod.POST, {taskType: GENERATED_TASK_TYPES.TAG_ANSWER});
+        setQuestion(response.work);
+        setTag(response.work.answer.tag);
+        setExplanation(response.work.answer.explanation);
         return { success: true };
       } catch (error) {
-        console.error('Failed to fetch users:', error);
+        console.error('Failed to fetch question:', error);
         return { success: false, error: error };
       }
     };
-
     fetchRandomQuestion();
-  }, []);
-
-  const handleNewQuestion = (metaQuestions) => {
-    if (metaQuestions.length === 0) return;
-    const newQuestion = createQuestion(metaQuestions[i]);
-    setQuestion(newQuestion);
-    setI((i + 1) % metaQuestions.length);
-  };
-
-  const createQuestion = (metaQuestion) => {
-    return {
-      appendix: metaQuestion.appendix?.content,
-      stem: metaQuestion.stem,
-      answer: metaQuestion.keys[0].text,
-      explanation: metaQuestion.keys[0].explanation,
-      tag: 'key'
-    };
-  }
+  }, [generate]);
 
   const handleTagChange = (event) => {
     setSelectedTag(event.target.value);
   };
 
+  const handleFinishTask = async () => {
+    try {
+      const changes = {tag: tag, explanation: explanation};
+      await requestServer(serverPath.COMPLETE_GENERATED_TASK, httpsMethod.POST, {taskType: GENERATED_TASK_TYPES.TAG_ANSWER});
+      setGenerate(!generate);
+      return { success: true };
+    } catch (error) {
+      console.error('Failed to finish task:', error);
+      return { success: false, error: error };
+    }
+  };
+
   const handleSubmit = () => {
-    if (selectedTag === question.tag) {
+    if (selectedTag === tag) {
       setIsCheckExplanationOpen(true);
     } else {
-      question.tag = selectedTag;
+      setTag(selectedTag)
       setIsProvideExplanationOpen(true);
     }
   };
@@ -84,19 +81,19 @@ const TagAnswers = () => {
           {TAG_ANSWERS.FOLLOWING_QUESTION}
         </Typography>
         {question.appendix && (
-          <Typography variant="body1" component="div" gutterBottom>
-            {question.appendix}
-          </Typography>
+          <Typography variant="h6" component="h1" gutterBottom>{TAG_ANSWERS.APPENDIX}</Typography>
         )}
-        <Typography variant="body1" component="div" gutterBottom>
-          {question.stem}
-        </Typography>
+        {question.appendix && (
+          <QuestionPhotoView content={question.appendix} type={latexServerPath.COMPILE_APPENDIX}/>
+        )}
+        <Typography variant="h6" component="h1" gutterBottom>{TAG_ANSWERS.STEM}</Typography>
+        <QuestionPhotoView content={question.stem} type={latexServerPath.COMPILE_STEM}/>
         <Typography variant="h4" component="h1" gutterBottom>
           {TAG_ANSWERS.FOLLOWING_ANSWER}
         </Typography>
-        <Typography variant="body1" component="div" gutterBottom>
-          {question.answer}
-        </Typography>
+        {question.answer && (
+          <QuestionPhotoView content={question.answer} type={latexServerPath.COMPILE_ANSWER}/>
+        )}
         <FormControl component="fieldset" sx={{ mt: 2 }}>
           <FormLabel component="legend"></FormLabel>
           <RadioGroup
@@ -119,15 +116,15 @@ const TagAnswers = () => {
       <CheckExplanationPopup
         isOpen={isCheckExplanationOpen}
         closePopup={() => setIsCheckExplanationOpen(false)}
-        explanation={question.explanation}
+        explanation={question.answer?.explanation}
         handleWrongExplanation={() => setIsProvideExplanationOpen(true)}
-        generate={() => handleNewQuestion(metaQuestions)}/>
+        generate={() => handleFinishTask()}/>
 
       <ProvideExplanationPopup
         isOpen={isProvideExplanationOpen}
         closePopup={() => setIsProvideExplanationOpen(false)}
-        setExplanation={(newExplanation) => question.explanation = newExplanation}
-        generate={() => true}/>
+        setExplanation={(newExplanation) => setExplanation(newExplanation)}
+        generate={() => handleFinishTask()}/>
 
     </Box>
   );

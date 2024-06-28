@@ -51,7 +51,10 @@ const pathToReturnTypeMap={
 export const latexServerPath = {
   COMPILE: 'compile',
   COMPILE_EXAM: 'exam',
-  COMPILE_MQ: 'metaQuestion'
+  COMPILE_MQ: 'metaQuestion',
+  COMPILE_STEM: 'stem',
+  COMPILE_APPENDIX: 'appendix',
+  COMPILE_ANSWER: 'answer'
 };
 
 export async function requestLatexServer(path, body) {

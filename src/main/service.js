@@ -473,7 +473,7 @@ function editUser(req, res, next) {
 function generateTask(req, res, next) {
     application.generateTask(req.body).then(
         work => {
-            req.log.info(req.body.userDetails.username, 'generate task request');
+            req.log.info(req.body.callingUser.username, 'generate task request');
             res.send(200, {code: 200, work});
             next();
         },
@@ -487,7 +487,7 @@ function generateTask(req, res, next) {
 function completeGeneratedTask(req, res, next) {
     application.completeGeneratedTask(req.body).then(
         _ => {
-            req.log.info(req.body.userDetails.username, 'completed generated task');
+            req.log.info(req.body.callingUser.username, 'completed generated task');
             res.send(200, {code: 200});
             next();
         },

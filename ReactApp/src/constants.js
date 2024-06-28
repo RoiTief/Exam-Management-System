@@ -239,4 +239,6 @@ export const TAG_ANSWERS = {
   YES: "Yes",
   NO: "No",
   CLOSE: "Close",
+  APPENDIX: "Appendix:",
+  STEM: "Stem:",
 }
