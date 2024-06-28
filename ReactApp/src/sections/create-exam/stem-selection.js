@@ -10,15 +10,14 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
-  Stack,
-  TextField
 } from '@mui/material';
 import { EXAM } from '../../constants';
+import { QuestionsSearch } from '../view-questions/question-search';
 
 function StemSelection({ metaQuestions, onSelect, reselectStem }) {
   const [dialogContent, setDialogContent] = useState(null);
   const [selectedMetaQuestion, setSelectedMetaQuestion] = useState(null);
-  const [searchText, setSearchText] = useState('');
+  const [filteredData, setFilteredData] = useState(metaQuestions);
 
   const handleCloseDialog = () => {
     setDialogContent(null);
@@ -36,13 +35,23 @@ function StemSelection({ metaQuestions, onSelect, reselectStem }) {
     }
   };
 
-  const handleSearchChange = (event) => {
-    setSearchText(event.target.value);
+  const handleSearch = (text) => {
+    const filteredQuestions = metaQuestions.filter(question =>
+      question.stem.toLowerCase().includes(text.toLowerCase())
+    );
+    setFilteredData(filteredQuestions);
   };
 
-  const filteredQuestions = metaQuestions.filter((metaQuestion) =>
-    metaQuestion.stem.toLowerCase().includes(searchText.toLowerCase())
-  );
+  const handleKeySearch = (keys) => {
+    const filteredQuestions = metaQuestions.filter(question =>
+      keys.every(key =>
+        question.keywords.some(keyword =>
+          keyword.toLowerCase().includes(key.toString().toLowerCase())
+        )
+      )
+    );
+    setFilteredData(filteredQuestions);
+  };
 
   return (
     <Box sx={{ padding: 2 }}>
@@ -50,17 +59,11 @@ function StemSelection({ metaQuestions, onSelect, reselectStem }) {
         {EXAM.SELECT_STEM_HEADING}
       </Typography>
       {selectedMetaQuestion === null && (
-        <TextField
-          label="Search"
-          variant="outlined"
-          fullWidth
-          margin="normal"
-          value={searchText}
-          onChange={handleSearchChange}
-        />
-      )}
+        <QuestionsSearch onSearch={handleKeySearch}
+                         onTextSearch={handleSearch} />
+        )}
       <RadioGroup value={selectedMetaQuestion ? selectedMetaQuestion.stem : ''}>
-        {filteredQuestions.map((metaQuestion, index) => (
+        {filteredData.map((metaQuestion, index) => (
           <Box
             key={index}
             sx={{

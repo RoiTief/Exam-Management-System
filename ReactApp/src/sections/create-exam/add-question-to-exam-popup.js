@@ -13,6 +13,8 @@ export const AddQuestionToExamPopup = ({isOpen, closePopup, metaQuestions, addQu
   const [selectedDistractors, setSelectedDistractors] = useState([]);
   const [generateState, setGenerateState] = useState(true); // Use boolean for simplicity
 
+  console.log(metaQuestions)
+
   const handleSaveQuestion = () => {
     addQuestion({
       selectedMetaQuestion,

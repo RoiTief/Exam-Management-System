@@ -15,17 +15,27 @@ function QuestionList({ questions, removeQuestion, onDragEnd }) {
                 {EXAM.CREATED_QUESTIONS_HEADING}
               </Typography>
               {questions.map((question, index) => (
-                <Draggable key={`draggable-${question.id}-${question.key.text}`}
-                           draggableId={`draggable-${question.id}-${question.key.text}`}
-                           index={index}>
+                <Draggable
+                  key={`draggable-${question.id}-${question.key.text}`}
+                  draggableId={`draggable-${question.id}-${question.key.text}`}
+                  index={index}
+                >
                   {(provided) => (
                     <Box
                       ref={provided.innerRef}
                       {...provided.draggableProps}
                       sx={{ mb: 2 }}
                     >
-                      <Stack direction="row" alignItems="center">
-                        <Box {...provided.dragHandleProps} sx={{ cursor: 'grab', mr: 2 }}>
+                      <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                        <Box sx={{ minWidth: '30px', mr: 2 }}>
+                          <Typography variant="h6" component="h3">
+                            {index + 1}.
+                          </Typography>
+                        </Box>
+                        <Box
+                          {...provided.dragHandleProps}
+                          sx={{ cursor: 'grab', mr: 2 }}
+                        >
                           <DragHandle />
                         </Box>
                         <Box sx={{ flex: 1 }}>
@@ -42,7 +52,13 @@ function QuestionList({ questions, removeQuestion, onDragEnd }) {
                           <Typography variant="h6" component="h3">
                             {EXAM.QUESTION_HEADING}: {question.stem}
                           </Typography>
-                          <Box sx={{ display: 'flex', alignItems: 'baseline', mt: 1 }}>
+                          <Box
+                            sx={{
+                              display: 'flex',
+                              alignItems: 'baseline',
+                              mt: 1,
+                            }}
+                          >
                             <Typography variant="body1" sx={{ minWidth: '80px' }}>
                               {EXAM.ANSWER_HEADING}:
                             </Typography>
@@ -50,7 +66,13 @@ function QuestionList({ questions, removeQuestion, onDragEnd }) {
                               - {question.key.text}
                             </Typography>
                           </Box>
-                          <Box sx={{ display: 'flex', alignItems: 'baseline', mt: 1 }}>
+                          <Box
+                            sx={{
+                              display: 'flex',
+                              alignItems: 'baseline',
+                              mt: 1,
+                            }}
+                          >
                             <Typography variant="body1" sx={{ minWidth: '80px' }}>
                               {EXAM.DISTRACTORS_HEADING}:
                             </Typography>
@@ -66,7 +88,7 @@ function QuestionList({ questions, removeQuestion, onDragEnd }) {
                         <IconButton onClick={() => removeQuestion(index)} sx={{ mt: 2 }}>
                           <RemoveCircleOutline />
                         </IconButton>
-                      </Stack>
+                      </Box>
                       <Divider sx={{ mt: 2 }} />
                     </Box>
                   )}

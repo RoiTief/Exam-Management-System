@@ -157,9 +157,10 @@ export const QUESTIONS_CATALOG = {
   SHOW_LESS_DISTRACTORS: "Show less distractors",
   STEM_HEADING: "Stem",
   KEYWORDS_HEADING: "Keywords",
+  SEARCH_BY_KEYWORDS: "please press enter between keywords",
   CORRECT_ANSWERS_HEADING: "Correct Answers",
   DISTRACTORS_HEADING: "Distractors",
-  SEARCH_PLACEHOLDER: "Search question by keyword",
+  SEARCH_PLACEHOLDER: (mode) => `Search question by ${mode}?`,
   ACTION: "Action",
   VIEW_PDF_BUTTON: "View PDF",
 };
