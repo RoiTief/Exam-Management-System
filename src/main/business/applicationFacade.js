@@ -400,7 +400,7 @@ class ApplicationFacade{
             answer: {
                 id: 1,
                 tag: ANSWER_TYPES.DISTRACTOR,
-                text: 0,
+                text: '0',
                 explanation: '',
             },
             stem: '$e^{i\\pi} + 1 = $',
