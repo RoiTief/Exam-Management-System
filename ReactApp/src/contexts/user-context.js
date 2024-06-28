@@ -54,7 +54,7 @@ export const UserProvider = ({ children }) => {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await requestServer(serverPath.GET_ALL_USERS, httpsMethod.GET, undefined, {users: [{username: PRIMITIVE_TYPES.STRING, email: PRIMITIVE_TYPES.STRING, firstName: PRIMITIVE_TYPES.STRING, lastName: PRIMITIVE_TYPES.STRING, type: PRIMITIVE_TYPES.STRING}]});
+        const response = await requestServer(serverPath.GET_ALL_USERS, httpsMethod.GET);
         response.users = response.users.filter(user => user.type !== USERS.ADMIN)
         dispatch({ type: HANDLERS.SET_USER, payload: response.users });
         return { success: true };

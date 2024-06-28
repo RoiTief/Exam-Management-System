@@ -17,6 +17,8 @@ import {
 import { useAuth } from 'src/hooks/use-auth';
 import { Layout as AuthLayout } from 'src/layouts/auth/layout';
 import { LOGIN } from '../../constants';
+import ErrorMessage from 'src/components/errorMessage';
+import ChangePasswordPopup from '../../sections/popUps/changePasswordPopup';
 
 const Page = () => {
   const router = useRouter();
@@ -25,16 +27,12 @@ const Page = () => {
   const [changePasswordOpen, setChangePasswordOpen] = useState(false);
   const [changePasswordValues, setChangePasswordValues] = useState({ newPassword: '', confirmNewPassword: '' });
   const [user, setUser] = useState(null);
-
-  function validateLegalPassword(password){
-    return password.length >= 5;
-  }
+  const [errorMessage, setErrorMessage] = useState('');
 
   const formik = useFormik({
     initialValues: {
       username: '',
-      password: '',
-      submit: null
+      password: ''
     },
     validationSchema: Yup.object({
       username: Yup
@@ -46,7 +44,7 @@ const Page = () => {
         .max(255)
         .required('Password is required')
     }),
-    onSubmit: async (values, helpers) => {
+    onSubmit: async (values) => {
       try {
         const user = await auth.signIn(values.username, values.password);
         setUser(user);
@@ -56,30 +54,11 @@ const Page = () => {
           router.push('/');
         }
       } catch (err) {
-        helpers.setStatus({ success: false });
-        helpers.setErrors({ submit: err.message });
-        helpers.setSubmitting(false);
+        setErrorMessage(err.message);
+        formik.setSubmitting(false);
       }
     }
   });
-
-  const handleChangePassword = async () => {
-    if (changePasswordValues.newPassword !== changePasswordValues.confirmNewPassword) {
-      alert(LOGIN.PASSWORDS_DO_NOT_MATCH);
-      return;
-    }
-    if(!validateLegalPassword(changePasswordValues.newPassword)) {
-      alert(LOGIN.ILLEGAL_PASSWORD);
-      return;
-    }
-    try {
-      await auth.changePassword(user.username, changePasswordValues.newPassword);
-      setChangePasswordOpen(false);
-      router.push('/');
-    } catch (err) {
-      console.error(LOGIN.FAILED_TO_CHANGE_PASSWORD, err);
-    }
-  };
 
   return (
     <>
@@ -143,15 +122,6 @@ const Page = () => {
                     value={formik.values.password}
                   />
                 </Stack>
-                {formik.errors.submit && (
-                  <Typography
-                    color="error"
-                    sx={{ mt: 3 }}
-                    variant="body2"
-                  >
-                    {formik.errors.submit}
-                  </Typography>
-                )}
                 <Button
                   fullWidth
                   size="large"
@@ -161,39 +131,16 @@ const Page = () => {
                 >
                   {LOGIN.CONTINUE_BUTTON}
                 </Button>
+                <ErrorMessage message={errorMessage} />
               </form>
             )}
           </div>
         </Box>
       </Box>
 
-      <Dialog open={changePasswordOpen} onClose={() => setChangePasswordOpen(false)}>
-        <DialogTitle>{LOGIN.CHANGE_PASSWORD_TITLE}</DialogTitle>
-        <DialogContent>
-          <TextField
-            margin="dense"
-            id="newPassword"
-            label={LOGIN.NEW_PASSWORD_LABEL}
-            type="password"
-            fullWidth
-            value={changePasswordValues.newPassword}
-            onChange={(e) => setChangePasswordValues({ ...changePasswordValues, newPassword: e.target.value })}
-          />
-          <TextField
-            margin="dense"
-            id="confirmNewPassword"
-            label={LOGIN.CONFIRM_NEW_PASSWORD_LABEL}
-            type="password"
-            fullWidth
-            value={changePasswordValues.confirmNewPassword}
-            onChange={(e) => setChangePasswordValues({ ...changePasswordValues, confirmNewPassword: e.target.value })}
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setChangePasswordOpen(false)}>{LOGIN.CANCEL_BUTTON}</Button>
-          <Button onClick={handleChangePassword}>{LOGIN.CHANGE_PASSWORD_BUTTON}</Button>
-        </DialogActions>
-      </Dialog>
+      <ChangePasswordPopup user={user}
+                           isOpen={changePasswordOpen}
+                           closePopup={() => setChangePasswordOpen(false)} />
     </>
   );
 };

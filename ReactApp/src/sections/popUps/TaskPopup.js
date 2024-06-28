@@ -1,14 +1,15 @@
 import PropTypes from 'prop-types';
 import { overlayStyle, popupStyle } from './popup-style';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { httpsMethod, serverPath, requestServer } from 'src/utils/rest-api-call';
 import { TASK } from '../../constants';
+import ErrorMessage from '../../components/errorMessage';
 
 export const Task = (props) => {
   const { isOpen, closePopup, task } = props;
   const [showMore, setShowMore] = useState(false);
   const [answerValue, setAnswerValue] = useState('');
-  const [error, setError] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
 
   const toggleShowAll = () => {
     setShowMore(!showMore);
@@ -28,7 +29,7 @@ export const Task = (props) => {
         { "taskId": task.taskId, "response": answerValue });
       closePopup();
     } catch (err) {
-      setError(err.message);
+      setErrorMessage(`Error finishing task: ${err.message}`);
     }
   };
 
@@ -50,7 +51,7 @@ export const Task = (props) => {
           <p>{task.description}</p>
           {!task.finished ? (
             <div>
-              {task.options !== null ? (
+              {task.options ? (
                 <ul style={{ listStyleType: 'none', padding: 0 }}>
                   {task.options.map((option, index) => (
                     <li key={index}>
@@ -69,7 +70,7 @@ export const Task = (props) => {
               )}
               <ul></ul>
               <button onClick={handleSubmit}>{TASK.SUBMIT_BUTTON}</button>
-              {error && <p style={{ color: 'red' }}>{error}</p>}
+              <ErrorMessage message={errorMessage} />
             </div>
           ) : (
             <h4>{`${TASK.RESPONSE_MESSAGE}${task.response}`}</h4>

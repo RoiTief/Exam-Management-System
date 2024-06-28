@@ -19,6 +19,7 @@ import ChevronDoubleUpIcon from '@heroicons/react/20/solid/ChevronDoubleUpIcon';
 import PlusIcon from '@heroicons/react/24/solid/PlusIcon';
 import { AddPersonalToCourse } from 'src/sections/popUps/AddPersonalToCoursePopup';
 import { COURSE_STAFF } from '../constants';
+import ErrorMessage from '../components/errorMessage';
 
 const Page = () => {
   const [course, setCourse] = useState({});
@@ -26,14 +27,18 @@ const Page = () => {
   const [showAllTAs, setShowAllTAs] = useState(false);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [popupState, setPopupState] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
 
   useEffect(() => {
     const getCourse = async () => {
       try {
         const response = await requestServer(serverPath.GET_ALL_STAFF, httpsMethod.GET);
         setCourse(response.staff);
+        setErrorMessage('');
       } catch (error) {
         console.error('Error fetching course:', error);
+        setErrorMessage(`Error fetching course staff: ${error.message}`)
+
       }
     };
     getCourse();
@@ -152,6 +157,7 @@ const Page = () => {
               )}
             </Box>
           </Stack>
+          <ErrorMessage message={errorMessage} />
         </Paper>
       </Container>
 

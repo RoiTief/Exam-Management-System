@@ -2,93 +2,16 @@ const UserController  = require('./UserManager/UserController.js' );
 const TaskController = require('./TaskManager/TaskController.js');
 const MetaQuestionController = require('./MetaQuestions/MetaQuestionController.js');
 const ExamController = require('./ExamManager/ExamController.js');
-const userTypes = require('../Enums').USER_TYPES
-const { userRepo } = require("../DAL/Dal");
+const { userRepo, metaQuestionsRepo } = require("../DAL/Dal");
 const { validateParameters } = require('../validateParameters.js');
-const {USER_TYPES, PRIMITIVE_TYPES} = require("../Enums");
+const {USER_TYPES, PRIMITIVE_TYPES, ANSWER_TYPES} = require("../Enums");
 
 class ApplicationFacade{
     constructor() {
         this.userController = new UserController(userRepo);
         this.taskController = new TaskController(this.userController);
-        this.metaQuestionController = new MetaQuestionController(this.taskController, this.userController);
+        this.metaQuestionController = new MetaQuestionController(metaQuestionsRepo, this.taskController, this.userController);
         this.examController = new ExamController(this.taskController, this.userController)
-
-        //todo - remove for testing:
-        this.addMetaQuestion({
-            stem: '$e^{i\\pi} + 1 = $',
-            keys: [{text:'0', explanation: 'Using Euler\'s identity'}],
-            distractors: [{text:'$\\frac{what}{\\frac{The}{FUCK}}$', explanation: 'This is a fraction?'},
-                {text:'\\begin{turn}{180}This answer is upside-down\\end{turn}', explanation: 'Rotated answer'}, {text:'$\\mathbb{N}\\mathbb{I}\\mathbb{C}\\mathbb{E}$', explanation: 'This is nice, but not close to the answer.'}],
-            appendix: {
-                title: "Euler's identity: ",
-                tag: "tag1",
-                content: "\\setlength{\\fboxsep}{10pt} % Set the padding (default is 3pt)\n"
-                    + "\\fbox{\\huge $e^{i\\theta} = \\cos{\\theta} + i\\sin{\\theta}$}"
-            },
-            keywords: ['key1', 'key2', 'key3'],
-            callingUser: {user: 'Lecturer', type: USER_TYPES.LECTURER}
-        })
-
-        this.addMetaQuestion(
-                {
-                    stem: 'what did Idan listen to when he was a kid',
-                    keys: [{text:'baby motzart', explanation: 'explanation1'},
-                        {text:'baby bethoven', explanation: 'explanation2'}],
-                    distractors: [{text:'Machrozet Chaffla', explanation: 'explanation1'},
-                        {text:'zohar Argov', explanation: 'explanation2'}, {text:'Begins "tzachtzachim" speach', explanation: 'explanation3'}],
-                    keywords: ['key1', 'key2', 'key3'],
-                    callingUser: {user: 'Lecturer', type: USER_TYPES.LECTURER}
-                }
-        )
-        this.addMetaQuestion(
-                {
-                    stem: "what is Mor's last name",
-                    keys: [{text:'Abo', explanation: 'explanation1'},
-                        {text:'Abu', explanation: 'explanation2'}],
-                    distractors: [{text:'abow', explanation: 'explanation1'},
-                        {text:'abou', explanation: 'explanation2'}, {text:'aboo', explanation: 'explanation3'}],
-                    keywords: ['key1', 'key2', 'key5'],
-                    appendix: {title: "Mor's ID", tag: "tag2", content: "imagine there is my id here"},
-                    callingUser: {user: 'Lecturer', type: USER_TYPES.LECTURER}
-                }
-        )
-        this.addMetaQuestion(
-                {
-                    stem: "What is Roi's nickname",
-                    keys: [{text:'The Tief', explanation: 'explanation1'},
-                        {text:"Gali's soon to be husband", explanation: 'explanation2'}],
-                    distractors: [{text:'that blonde guy', explanation: 'explanation1'},
-                        {text:'that tall guy', explanation: 'explanation2'}, {text:'the one with the black nail polish', explanation: 'explanation3'}],
-                    keywords: ['key1', 'key2', 'key5'],
-                    appendix: {title: "Roi picture", tag: "tag3", content: "some amberesing picture of roi"},
-                    callingUser: {user: 'Lecturer', type: USER_TYPES.LECTURER}
-                }
-        )
-        this.addMetaQuestion(
-                {
-                    stem: 'How old is Mor',
-                    keys: [{text:'25', explanation: 'explanation1'},
-                        {text:'22 with "vetek"', explanation: 'explanation2'}],
-                    distractors: [{text:'19 (but thank you)', explanation: 'explanation1'},
-                        {text:'30', explanation: 'explanation2'}, {text:'35', explanation: 'explanation3'}],
-                    keywords: ['key1', 'key2', 'key5'],
-                    appendix: {title: "Mor's ID", tag: "tag2", content: "imagine there is my id here"},
-                    callingUser: {user: 'Lecturer', type: USER_TYPES.LECTURER}
-                }
-        )
-        this.addMetaQuestion(
-                {
-                    stem: 'where does Ofek leave',
-                    keys: [{text:'in Gan Yavne', explanation: 'explanation1'},
-                        {text:'next to the orange square', explanation: 'explanation2'},
-                        {text:"next to mor's brother", explanation: 'explanation1'}],
-                    distractors: [{text:'at the beach - surffing', explanation: 'explanation1'},
-                        {text:'riding bike in the fields', explanation: 'explanation2'}, {text:"in may's house", explanation: 'explanation3'}],
-                    keywords: ['key1', 'key2', 'key3'],
-                    callingUser: {user: 'Lecturer', type: USER_TYPES.LECTURER}
-                }
-        )
     }
 
     /**
@@ -283,8 +206,7 @@ class ApplicationFacade{
      * @throws {Error} - if there is no user logged in data
      */
     async viewMyTasks(data){
-        const user = await this.userController.getUser(data.callingUser.username);
-        return this.taskController.getTasksOf(user.getUsername());
+        return this.taskController.getTasksOf(data);
     }
 
     /**
@@ -338,14 +260,35 @@ class ApplicationFacade{
 
     /**
      * add meta-question, look for values in MetaQuestion.js
-     *7
      */
-    addMetaQuestion(createMetaQuestionProperties) {
-        return this.metaQuestionController.createMetaQuestion(createMetaQuestionProperties)
+    async addMetaQuestion(data) {
+        validateParameters(data, {
+            keywords: [PRIMITIVE_TYPES.STRING],
+            keys: [{text: PRIMITIVE_TYPES.STRING}],
+            distractors: [{text: PRIMITIVE_TYPES.STRING}],
+            stem: PRIMITIVE_TYPES.STRING,
+        });
+        // case where an appendix is being created alongside the MQ
+        if (data.appendix) {
+            const businessAppendix = await this.metaQuestionController.createAppendix( {
+                ...data.appendix,
+                callingUser: data.callingUser,
+            });
+            data.appendixTag = businessAppendix.getTag();
+        }
+        data.answers = data.keys.map(k => ({...k, content: k.text, tag: ANSWER_TYPES.KEY}))
+            .concat(data.distractors.map(d => ({...d, content: d.text, tag: ANSWER_TYPES.DISTRACTOR})));
+        const businessMQ = await this.metaQuestionController.createMetaQuestion(data);
+        return this.#mqBusinessToFE(businessMQ);
     }
 
-    editMetaQuestion(editedMetaQuestionProperties) {
-        this.metaQuestionController.editMetaQuestion(editedMetaQuestionProperties)
+    async editMetaQuestion(data) {
+        validateParameters(data, {id: PRIMITIVE_TYPES.NUMBER})
+        const keys = data.keys ? data.keys.map(k => ({...k, content: k.text, tag: ANSWER_TYPES.KEY})) : [];
+        const distractors = data.distractors ? data.distractors.map(distractor => ({...distractor, content: distractor.text, tag: ANSWER_TYPES.DISTRACTOR})) : [];
+        data.answers = keys.concat(distractors);
+        const businessMq = await this.metaQuestionController.editMetaQuestion(data);
+        return this.#mqBusinessToFE(businessMq);
     }
 
     /**
@@ -360,30 +303,29 @@ class ApplicationFacade{
     /**
      * return a list of meta question of the user's course
      * @throws {Error} - If the user is not signed in or does not have the necessary permissions
-     * @return {MetaQuestion[]} all the meta question of the user's course
+     * @return all the meta question of the user's course
      */
-    getAllMetaQuestions(data) {
-        return this.metaQuestionController.getAllMetaQuestions()
+    async getAllMetaQuestions(data) {
+        const businessMQs = await this.metaQuestionController.getAllMetaQuestions();
+        return businessMQs.map(bMQ => this.#mqBusinessToFE(bMQ));
     }
 
     /**
      * return a list of appendices of the user's course
      * @throws {Error} - If the user is not signed in or does not have the necessary permissions
-     * @return {Appendix[]} all the meta question of the user's course
+     * @return all the meta question of the user's course
      */
 
-    getAllAppendices(data) {
-        // return [
-        //     { title: 'Appendix A', tag: 'General', content: 'Content of Appendix A' },
-        //     { title: 'Appendix B', tag: 'Specific', content: 'Content of Appendix B' },
-        //     // Add more appendices as needed
-        // ];
-
-        return this.metaQuestionController.getAllAppendices(data)
+    async getAllAppendices(data) {
+        const businessAppendices = await this.metaQuestionController.getAllAppendices();
+        return businessAppendices.map(bAppendix => this.#appendixBusinessToFE(bAppendix));
     }
 
-    getMetaQuestionForAppendix(appendix) {
-        return this.metaQuestionController.getMetaQuestionForAppendix(appendix)
+    async getMetaQuestionForAppendix(data) {
+        validateParameters(data, {tag: PRIMITIVE_TYPES.STRING});
+        data.appendixTag = data.tag;
+        const businessMQs = await this.metaQuestionController.getMetaQuestionsForAppendix(data);
+        return businessMQs.map(bMQ => this.#mqBusinessToFE(bMQ));
     }
 
     async editUser(data){
@@ -394,6 +336,34 @@ class ApplicationFacade{
         return this.userController.updateUser(data);
     }
 
+    #mqBusinessToFE(bMQ) {
+        return {
+            id: bMQ.getId(),
+            stem: bMQ.getStem(),
+            keys: bMQ.getKeys().map(bKey => this.#answerBusinessToFE(bKey)),
+            distractors: bMQ.getKeys().map(bDistractor => this.#answerBusinessToFE(bDistractor)),
+            keywords: bMQ.getKeywords(),
+            ...(bMQ.getAppendixTag() || {appendixTag: bMQ.getAppendixTag()}),
+        }
+    }
+
+    #answerBusinessToFE(bAnswer){
+        return {
+            id: bAnswer.getId(),
+            tag: bAnswer.getTag(),
+            text: bAnswer.getContent(),
+            explanation: (bAnswer.getExplanation() || ''),
+        }
+    }
+
+    #appendixBusinessToFE(bAppendix) {
+        return {
+            tag: bAppendix.getTag(),
+            title: bAppendix.getTitle(),
+            content: bAppendix.getContent(),
+            keywords: bAppendix.getKeywords(),
+        }
+    }
 }
 
 module.exports = ApplicationFacade;

@@ -13,17 +13,17 @@ const TaskPriority = {
 
 class Task {
     constructor(addTaskProperty) {
-        this.taskId = addTaskProperty.taskId ??  null
-        this.forWhom = addTaskProperty.forWhom ?? null
-        this.taskPriority = addTaskProperty.taskPriority ?? null
-        this.type = addTaskProperty.type ?? null
+        this.taskId = addTaskProperty.taskId 
+        this.forWhom = addTaskProperty.forWhom 
+        this.taskPriority = addTaskProperty.taskPriority 
+        this.type = addTaskProperty.type 
         this.properties = addTaskProperty.properties ?? {}
-        this.description = addTaskProperty.description ?? null
+        this.description = addTaskProperty.description 
         this.assignedUsers = addTaskProperty.assignedUsers ?? []
-        this.action = addTaskProperty.action ?? null
-        this.finished = addTaskProperty.false ?? null
-        this.options = addTaskProperty.options ?? null
-        this.response = addTaskProperty.response ?? null,
+        this.action = addTaskProperty.action 
+        this.finished = addTaskProperty.finished ?? false
+        this.options = addTaskProperty.options 
+        this.response = addTaskProperty.response ,
         this.metaQuestion = addTaskProperty.metaQuestion
     }
 }

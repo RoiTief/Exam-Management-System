@@ -1,5 +1,6 @@
 import Cookies from 'js-cookie';
 import {validateParameters} from '../../../src/main/validateParameters'
+import { PRIMITIVE_TYPES } from '../../../src/main/Enums';
 export const TOKEN_FIELD_NAME = "jwt_exam_token"
 const SERVER_ROOT_URL = "http://localhost:8080/"
 const LATEX_SERVER_ROOT_URL = "http://164.90.223.94:3001/"
@@ -37,6 +38,12 @@ export const serverPath = {
     EDIT_META_QUESTION: 'editMetaQuestion',
     GET_META_QUESTIONS_FOR_APPENDIX: 'getMetaQuestionForAppendix',
     REFRESH_TOKEN: 'refreshJWT',
+}
+
+
+const pathToReturnTypeMap={
+  [serverPath.VIEW_TASKS]: {tasks:[{finished:PRIMITIVE_TYPES.BOOLEAN, }]},
+  [serverPath.GET_ALL_USERS] :{users: [{username: PRIMITIVE_TYPES.STRING, email: PRIMITIVE_TYPES.STRING, firstName: PRIMITIVE_TYPES.STRING, lastName: PRIMITIVE_TYPES.STRING, type: PRIMITIVE_TYPES.STRING}]}
 }
 
 export const latexServerPath = {
@@ -98,20 +105,23 @@ async function extractDataFromResponse(response){
     return retObject
 }
 
-export async function requestServer(path, method, body, expectedResponseType) {
-    var response
-    if (Cookies.get(TOKEN_FIELD_NAME)) {
-        response = await fetchWithCookies(path,method,body)
 
-        // refresh cookies
-         fetchWithCookies(serverPath.REFRESH_TOKEN ,httpsMethod.GET, undefined).then(async (refreshTokenResponse)=>{
+export async function requestServer(path, method, body) {
+    var response
+    let responsePromise
+    let refreshTokenPromise = undefined
+    if (Cookies.get(TOKEN_FIELD_NAME)) {
+      responsePromise = fetchWithCookies(path,method,body)
+
+      // refresh cookies
+      refreshTokenPromise = fetchWithCookies(serverPath.REFRESH_TOKEN ,httpsMethod.GET, undefined).then(async (refreshTokenResponse)=>{
           const {newToken} = await extractDataFromResponse(refreshTokenResponse)
           Cookies.set(TOKEN_FIELD_NAME, newToken, {expires: 1 / 96});
-         })
-        
+         }).catch(console.error)
+      
     }
     else{
-        response = await fetch(SERVER_ROOT_URL + path,
+      responsePromise = fetch(SERVER_ROOT_URL + path,
             {   
                 method,
                 headers: {
@@ -121,9 +131,14 @@ export async function requestServer(path, method, body, expectedResponseType) {
                 body: JSON.stringify(body)
             })
     }
+
+    response = await responsePromise
     const retObject = await extractDataFromResponse(response)
-    if(expectedResponseType){
-      validateParameters(retObject, expectedResponseType,false, false)
+    
+    if(pathToReturnTypeMap[path]){
+      validateParameters(retObject, pathToReturnTypeMap[path], false, false)
     }
+
+    if(refreshTokenPromise) await refreshTokenPromise 
     return retObject;
 }
