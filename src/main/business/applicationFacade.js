@@ -403,11 +403,7 @@ class ApplicationFacade{
                 text: 0,
                 explanation: '',
             },
-            metaQuestion: {
-                id: 1,
-                stem: '$e^{i\\pi} + 1 = $',
-                appendixTag: "euler identity",
-            },
+            stem: '$e^{i\\pi} + 1 = $',
             appendix: {
                 title: "Euler's identity: ",
                 tag: "euler identity",
