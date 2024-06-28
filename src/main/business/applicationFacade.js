@@ -2,7 +2,8 @@ const UserController  = require('./UserManager/UserController.js' );
 const TaskController = require('./TaskManager/TaskController.js');
 const MetaQuestionController = require('./MetaQuestions/MetaQuestionController.js');
 const ExamController = require('./ExamManager/ExamController.js');
-const { userRepo, metaQuestionsRepo } = require("../DAL/Dal");
+const userTypes = require('../Enums').USER_TYPES
+const { userRepo, metaQuestionsRepo, examRepo } = require("../DAL/Dal");
 const { validateParameters } = require('../validateParameters.js');
 const {USER_TYPES, PRIMITIVE_TYPES, ANSWER_TYPES} = require("../Enums");
 
@@ -11,7 +12,7 @@ class ApplicationFacade{
         this.userController = new UserController(userRepo);
         this.taskController = new TaskController(this.userController);
         this.metaQuestionController = new MetaQuestionController(metaQuestionsRepo, this.taskController, this.userController);
-        this.examController = new ExamController(this.taskController, this.userController)
+        this.examController = new ExamController(this.taskController, this.userController, examRepo)
     }
 
     /**

@@ -60,6 +60,9 @@ const EXAM_PROCESS_ERROR_MSGS = {
     QUESTION_ID_DOESNT_EXIST: qid => `Question with ID '${qid}' doesn't exist`,
     ANSWER_ID_DOESNT_EXIST: aid => `Answer with ID '${aid}' doesn't exist`
 }
+const GENERAL_ERROR_MSGS = {
+    NOT_IMPLEMENTED: 'Not implemented'
+}
 
 
 module.exports = {
@@ -68,4 +71,5 @@ module.exports = {
     MQ_PROCESS_ERROR_MSGS,
     FUNCTION_PARAMETERS_ERROR_MSGS,
     EXAM_PROCESS_ERROR_MSGS,
+    GENERAL_ERROR_MSGS,
 }

@@ -1,23 +1,27 @@
 const Exam = require("./Exam");
+const {validateParameters} = require("../../../main/validateParameters");
+const { EMSError } = require("../../EMSError");
+const { GENERAL_ERROR_MSGS } = require("../../ErrorMessages");
 
 class ExamController{
-    #exams;
-    #examId;
-    constructor(){
-        this.#exams = new Map()
-        this.#examId = 1
+    #taskController;
+    #userController; 
+    #examRepo;
+    constructor(taskController, userController, examRepo){
+        this.#taskController = taskController;
+        this.#userController = userController;
+        this.#examRepo = examRepo;
     }
 
-    createExam(createExamProperties){
-        const exam = new Exam(createExamProperties)
-        this.#exams.set(this.#examId, exam)
-        this.#examId++
-        return exam
+    async createExam(data){
+        validateParameters(data,{});
+        const dExam = await this.#examRepo.createExam(data)
+        return new Exam(dExam)
     }
 
     // get exams as array
     getAllExams(getAllExamsProperties){
-        return [...this.#exams.values()]
+        throw EMSError(GENERAL_ERROR_MSGS.NOT_IMPLEMENTED);
     }
 
 }

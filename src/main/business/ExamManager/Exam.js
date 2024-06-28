@@ -1,7 +1,18 @@
+const Question = require("./Question");
+
 class Exam {
-    constructor(examProperties) {
-        if (!examProperties.questions) throw new Exception('questions is required')
-        this.questions = examProperties.questions
+    #dalExam
+    #questions
+    constructor(dalExam) {
+        this.#dalExam = dalExam;
+        this.#questions = dalExam.questions.map(dalQ => new Question(dalQ))
+    }
+    async getExamId() {
+        return this.#dalExam.id;
+    }
+
+    async getQuestions(){
+        return this.#dalExam.questions
     }
 }
 
