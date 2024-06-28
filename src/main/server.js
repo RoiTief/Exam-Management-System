@@ -197,93 +197,16 @@ function createServer(options) {
      // request: {username}
     server.post('/addLecturer', service.addLecturer)
 
-    //request: {
-    //       keywords: str[],
-    //       stem: str,
-    //       keys: [{
-    //         answer: str,
-    //         explanation: str
-    //         }],
-    //       distractors: [{
-    //         distractor: str,
-    //         explanation: str
-    //       }],
-    //      appendix: {
-    //          title: str,
-    //          tag: str,
-    //          content: str
-    //       }
-    //     }
     server.post('/addMetaQuestion', service.addMetaQuestion);
 
-    //request: {
-    //       selectedMetaQuestion: MetaQuestion,
-    //       selectedKey: {answer: str, explanation: str },
-    //       selectedDistractors: [{answer: str, explanation: str }],
-    //     }
-    //response: {
-    //       id: num
-    //       stem: str,
-    //       key: {answer: str, explanation: str },
-    //       distractors: [{answer: str, explanation: str }],
-    //      appendix: {
-    //          title: str,
-    //          tag: str,
-    //          content: str
-    //       }
-    //     }
     server.post('/addManualMetaQuestionToExam', service.addManualMetaQuestionToExam);
 
-
-    //request: {
-    //       selectedMetaQuestion: MetaQuestion,
-    //       selectedKey: null,
-    //       selectedDistractors: [] - empty array,
-    //     }
-    //response: {
-    //       id: num
-    //       stem: str,
-    //       key: {answer: str, explanation: str },
-    //       distractors: [{answer: str, explanation: str }],
-    //      appendix: {
-    //          title: str,
-    //          tag: str,
-    //          content: str
-    //       }
-    //     }
     server.post('/addAutomaticQuestionToExam', service.addAutomaticQuestionToExam);
 
-    //request: {
-    //       id: num
-    //       stem: str,
-    //       key: {answer: str, explanation: str },
-    //       distractors: [{answer: str, explanation: str }],
-    //      appendix: {
-    //          title: str,
-    //          tag: str,
-    //          content: str
-    //       }
-    //     }
+    
     server.post('/removeQuestionFromExam', service.removeQuestionFromExam);
 
-    //request: {
-    //        id:num
-    //       keywords: str[],
-    //       stem: str,
-    //       keys: [{
-    //         answer: str,
-    //         explanation: str
-    //         }],
-    //       distractors: [{
-    //         distractor: str,
-    //         explanation: str
-    //       }],
-    //      appendix: {
-    //          title: str,
-    //          tag: str,
-    //          content: str
-    //       }
-    //     }
+    
     server.post('/editMetaQuestion', service.editMetaQuestion);
 
     // request:
