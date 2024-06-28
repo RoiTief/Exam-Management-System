@@ -15,27 +15,35 @@ pdfjs.GlobalWorkerOptions.workerSrc = new URL(
 const QuestionPhotoView = ({ content, type }) => {
   const [pdfUrl, setPdfUrl] = useState('');
   const [error, setError] = useState(null);
+  const [retries, setRetries] = useState(0);
+  const MAX_RETRIES = 3;
+
+  const retryMechanism = (message) => {
+    if (retries < MAX_RETRIES) {
+      setRetries(retries + 1);
+    }
+    else {
+      setError(message);
+    }
+    console.error(message);
+  };
 
   useEffect(() => {
     const fetchPDF = async () => {
       try {
         const response = await requestLatexServer(type, { content });
         if (!response.ok) {
-          setError('Failed to load PDF file.');
+          retryMechanism("Failed to load PDF file");
         }
         const blob = await response.blob();
         const url = URL.createObjectURL(blob);
         setPdfUrl(url);
       } catch (error) {
-        console.error('Error fetching PDF:', error.message);
-        if (error.message === 'Failed to fetch') {
-          setError('Server unreachable');
-        }
-        // Handle other errors
+        retryMechanism("Server Unreachable");
       }
     };
     fetchPDF();
-  }, [content, type]);
+  }, [content, type, retries]);
 
   return (
     <div style={{ width: '40%', height: '80%' }}>
