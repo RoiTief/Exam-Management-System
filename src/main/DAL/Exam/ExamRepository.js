@@ -30,8 +30,8 @@ class ExamRepository {
         this.#Question.belongsTo(this.#MetaQuestion, { as: 'metaQuestion', foreignKey: 'metaQuestionId' });
 
         // Question - Answer, many to many
-        this.#Question.belongsToMany(this.#Answer, {as: 'answers', through: this.#QuestionAnswer });
-        this.#Answer.belongsToMany(this.#Question, {as: 'questions', through: this.#QuestionAnswer });
+        this.#Question.belongsToMany(this.#Answer, { as: 'answers', through: this.#QuestionAnswer });
+        this.#Answer.belongsToMany(this.#Question, { as: 'questions', through: this.#QuestionAnswer });
     }
     /**
      * 
@@ -51,6 +51,16 @@ class ExamRepository {
                 {
                     model: this.#Question,
                     as: 'questions',
+                    include: [
+                        {
+                            model: this.#MetaQuestion,
+                            as: 'metaQuestion',
+                        },
+                        {
+                            model: this.#Answer,
+                            as: 'answers',
+                        }
+                    ]
                 },
             ]
         });
@@ -92,7 +102,7 @@ class ExamRepository {
      */
     async #setAnswersToQuestion(qid, answerIdToOrdinalArr) {
         const question = await this.#Question.findByPk(qid);
-         await Promise.all(
+        await Promise.all(
             answerIdToOrdinalArr.map(async answerOrdinal => {
                 const answer = await this.#Answer.findByPk(answerOrdinal.id);
                 return await question.addAnswer(answer, { through: { ordinal: answerOrdinal.ordinal } });

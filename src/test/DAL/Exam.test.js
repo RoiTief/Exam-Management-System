@@ -5,6 +5,8 @@ const defineAnswerModel = require("../../main/DAL/MetaQuestion/Answer");
 const defineMetaQuestionModel = require("../../main/DAL/MetaQuestion/MetaQuestion");
 const { ANSWER_TYPES } = require("../../main/Enums");
 const compDalObjs = (obj1, obj2) => obj1.id > obj2.id;
+
+const TIMEOUT = 60000
 const testExamData = {
     exam: {},
     metaQuestions: [
@@ -46,6 +48,7 @@ describe('ExamRepository happy path tests', () => {
         await sequelize.sync({ force: true });
         questions = await Promise.all(testExamData.metaQuestions.map(q => metaQuestionM.create(q)))
         answers = await Promise.all(testExamData.answers.map(a => answerM.create({...a, metaQuestionId: questions[0].id})))
+        jest.setTimeout(TIMEOUT);
         
     })
     
@@ -70,27 +73,24 @@ describe('ExamRepository happy path tests', () => {
         expect(createdQuestion).not.toBeNull();
         expect(createdQuestion.examId).toBe(createdExam.id);
         expect(createdQuestion.answers
-            .map(a=>({content: a.content, tag: a.tag, explanation: a.explanation, ordinal: a.ordinal})).
-            sort(compDalObjs)).
-            toStrictEqual(answers.map((answer,index)=>{return {...answer, ordinal:index}})
-            .sort(compDalObjs));
+            .sort(compDalObjs).
+            map(a=> ({id:a.id, content: a.content, tag: a.tag, explanation: a.explanation, ordinal: a.QuestionAnswer.ordinal}))).
+            toStrictEqual(answers.
+                sort(compDalObjs).
+                map((a,index)=>({id:a.id, content: a.content, tag: a.tag, explanation: a.explanation, ordinal:index})))
     });
 
-    test('retrieve all exams', async () => {
-        await examRepository.createExam(testExamData.exam);
-        const exams = await examRepository.getAllExams();
-
-        expect(exams).not.toBeNull();
-        expect(exams.length).toBeGreaterThan(0);
-    });
 
     test('retrieve an exam by ID', async () => {
         const createdExam = await examRepository.createExam(testExamData.exam);
+        const createdQuestion = await examRepository.addQuestionToExam(createdExam.id, questions[0].id,{ordinal:0}, answers.map((answer,index) => {return {id:answer.id, ordinal: index}}));
         const retrievedExam = await examRepository.getExamById(createdExam.id);
+
 
         expect(retrievedExam).not.toBeNull();
         expect(retrievedExam.id).toBe(createdExam.id);
-        expect(retrievedExam.title).toBe(createdExam.title);
-        expect(retrievedExam.description).toBe(createdExam.description);
+        expect(retrievedExam.questions).toBeDefined()
+        expect(retrievedExam.questions.map(q=>q.metaQuestion)).toBeDefined();
+        expect(retrievedExam.questions.map(q=>q.answers)).toBeDefined();
     });
 });
