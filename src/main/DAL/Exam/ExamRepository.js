@@ -2,7 +2,9 @@ const defineMetaQuestionModel = require("../MetaQuestion/MetaQuestion")
 const defineAnswerModel = require("../MetaQuestion/Answer")
 const defineExamModel = require("./Exam")
 const defineQuestionModel = require("./Question");
-const defineQuestionAnswerModel = require("./QuestionAnswer")
+const defineQuestionAnswerModel = require("./QuestionAnswer");
+const { EMSError, EXAM_PROCESS_ERROR_CODES } = require("../../EMSError");
+const { EXAM_PROCESS_ERROR_MSGS } = require("../../ErrorMessages");
 
 class ExamRepository {
     #MetaQuestion
@@ -35,7 +37,7 @@ class ExamRepository {
     }
     /**
      * 
-     * @param  examData {}
+     * @param  examData { title:string }
      * @returns New Dal exam promise
      */
     async createExam(examData) {
@@ -46,24 +48,29 @@ class ExamRepository {
      * @returns exam object
      */
     async getExamById(id) {
-        return await this.#Exam.findByPk(id, {
-            include: [
-                {
-                    model: this.#Question,
-                    as: 'questions',
-                    include: [
-                        {
-                            model: this.#MetaQuestion,
-                            as: 'metaQuestion',
-                        },
-                        {
-                            model: this.#Answer,
-                            as: 'answers',
-                        }
-                    ]
-                },
-            ]
-        });
+        try {
+            return await this.#Exam.findByPk(id, {
+                include: [
+                    {
+                        model: this.#Question,
+                        as: 'questions',
+                        include: [
+                            {
+                                model: this.#MetaQuestion,
+                                as: 'metaQuestion',
+                            },
+                            {
+                                model: this.#Answer,
+                                as: 'answers',
+                            }
+                        ]
+                    },
+                ]
+            });
+        }catch (e) {
+            console.error(e);
+            throw EMSError(EXAM_PROCESS_ERROR_MSGS.GET_EXAM_BY_ID(id), EXAM_PROCESS_ERROR_CODES.GET_EXAM_BY_ID)
+        }
     }
     /**
      * 
@@ -74,24 +81,29 @@ class ExamRepository {
      * @returns The new question
      */
     async addQuestionToExam(examId, mQid, questionData, answerIdToOrdinalArr) {
-        const exam = await this.getExamById(examId);
-        const question = await this.#Question.create(questionData);
-        const metaQuestion = await this.#MetaQuestion.findByPk(mQid);
-        await question.setMetaQuestion(metaQuestion);
-        await question.setExam(exam);
-        await this.#setAnswersToQuestion(question.id, answerIdToOrdinalArr);
-        return await this.#Question.findByPk(question.id, {
-            include: [
-                {
-                    model: this.#MetaQuestion,
-                    as: 'metaQuestion',
-                },
-                {
-                    model: this.#Answer,
-                    as: 'answers',
-                },
-            ]
-        });
+        try {
+            const exam = await this.getExamById(examId);
+            const question = await this.#Question.create(questionData);
+            const metaQuestion = await this.#MetaQuestion.findByPk(mQid);
+            await question.setMetaQuestion(metaQuestion);
+            await question.setExam(exam);
+            await this.#setAnswersToQuestion(question.id, answerIdToOrdinalArr);
+            return await this.#Question.findByPk(question.id, {
+                include: [
+                    {
+                        model: this.#MetaQuestion,
+                        as: 'metaQuestion',
+                    },
+                    {
+                        model: this.#Answer,
+                        as: 'answers',
+                    },
+                ]
+            });
+        } catch (e) {
+            console.error(e);
+            throw EMSError(EXAM_PROCESS_ERROR_MSGS.ADD_QUESTION_TO_EXAM(examId, mQid, questionData, answerIdToOrdinalArr), EXAM_PROCESS_ERROR_CODES.ADD_QUESTION_TO_EXAM)
+        }
     }
 
 
@@ -102,11 +114,17 @@ class ExamRepository {
      */
     async #setAnswersToQuestion(qid, answerIdToOrdinalArr) {
         const question = await this.#Question.findByPk(qid);
-        await Promise.all(
-            answerIdToOrdinalArr.map(async answerOrdinal => {
-                const answer = await this.#Answer.findByPk(answerOrdinal.id);
-                return await question.addAnswer(answer, { through: { ordinal: answerOrdinal.ordinal } });
-            }));
+        try {
+            await Promise.all(
+                answerIdToOrdinalArr.map(async answerOrdinal => {
+                    const answer = await this.#Answer.findByPk(answerOrdinal.id);
+                    return await question.addAnswer(answer, { through: { ordinal: answerOrdinal.ordinal } });
+                }));
+        } catch (e) {
+            console.error(e);
+            throw EMSError(EXAM_PROCESS_ERROR_MSGS.SET_ANSWERS_TO_QUESTION(qid, answerIdToOrdinalArr), EXAM_PROCESS_ERROR_CODES.SET_ANSWERS_TO_QUESTION)
+        }
+
     }
 }
 

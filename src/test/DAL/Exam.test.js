@@ -8,7 +8,7 @@ const compDalObjs = (obj1, obj2) => obj1.id > obj2.id;
 
 const TIMEOUT = 60000
 const testExamData = {
-    exam: {},
+    exam: {title: 'Exam title'},
     metaQuestions: [
         { stem: 'Question 1?' },
         { stem: 'Question 2?' }
