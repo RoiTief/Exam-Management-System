@@ -6,6 +6,7 @@ import 'react-pdf/dist/esm/Page/TextLayer.css';
 
 import pdfWorker from 'pdfjs-dist/build/pdf.worker.min.mjs';
 import { Typography } from '@mui/material';
+import ErrorMessage from '../../components/errorMessage';
 
 pdfjs.GlobalWorkerOptions.workerSrc = new URL(
   pdfWorker,
@@ -48,7 +49,7 @@ const QuestionPhotoView = ({ content, type }) => {
   return (
     <div style={{ width: '40%', height: '80%' }}>
       {error ? (
-        <Typography variant="body1" component="div">{JSON.stringify(content)}</Typography>
+        <ErrorMessage message={JSON.stringify(content)}></ErrorMessage>
       ) : (
         <div style={{ width: '100%', height: '100%' }}>
           {pdfUrl ? (
