@@ -23,6 +23,7 @@ import {
 import { GENERATED_TASK_TYPES } from '../../../../src/main/Enums';
 import dynamic from 'next/dynamic';
 const QuestionPhotoView = dynamic(() => import('../../sections/popUps/QuestionPhotoView'), { ssr: false });
+import ErrorMessage from 'src/components/errorMessage';
 
 const TagAnswers = () => {
   const [selectedTag, setSelectedTag] = useState('');
@@ -32,6 +33,7 @@ const TagAnswers = () => {
   const [tag, setTag] = useState("");
   const [explanation, setExplanation] = useState("");
   const [generate, setGenerate] = useState(false);
+  const [error, setError] = useState("")
 
   useEffect(() => {
     const fetchRandomQuestion = async () => {
@@ -40,9 +42,11 @@ const TagAnswers = () => {
         setQuestion(response.work);
         setTag(response.work.answer.tag);
         setExplanation(response.work.answer.explanation);
+        setError("")
         return { success: true };
       } catch (error) {
         console.error('Failed to fetch question:', error);
+        setError(error.message)
         return { success: false, error: error };
       }
     };
@@ -125,6 +129,8 @@ const TagAnswers = () => {
         closePopup={() => setIsProvideExplanationOpen(false)}
         setExplanation={(newExplanation) => setExplanation(newExplanation)}
         generate={() => handleFinishTask()}/>
+
+      <ErrorMessage message={error}></ErrorMessage>
 
     </Box>
   );
