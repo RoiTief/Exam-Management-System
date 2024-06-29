@@ -3,7 +3,7 @@ import { Box, Button, Card, Stack, Table, TableBody, TableCell, TableHead, Table
 import { Scrollbar } from 'src/components/scrollbar';
 import React, { useState } from 'react';
 import { Question } from '../popUps/QuestionPopup';
-import { PdfLatexPopup, QuestionPdfView } from '../popUps/QuestionPdfView';
+import { PdfLatexPopup } from '../popUps/QuestionPdfView';
 import { latexServerPath } from '../../utils/rest-api-call';
 import { QUESTIONS_CATALOG } from '../../constants';
 
@@ -46,13 +46,13 @@ export const MetaQuestionTable = ({ data }) => {
     <Stack>
       <Card>
         <Scrollbar>
-          <Box sx={{ minWidth: 800 }}>
-            <Table>
+          <Box sx={{ width: '100%' }}>
+            <Table sx={{ minWidth: 600 }}>
               <TableHead>
                 <TableRow>
                   <TableCell>{QUESTIONS_CATALOG.STEM_HEADING}</TableCell>
                   <TableCell>{QUESTIONS_CATALOG.KEYWORDS_HEADING}</TableCell>
-                  <TableCell>{QUESTIONS_CATALOG.ACTION}</TableCell>
+                  <TableCell></TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -62,10 +62,16 @@ export const MetaQuestionTable = ({ data }) => {
                     onClick={() => handleRowClick(metaquestion)}
                     style={{ cursor: 'pointer' }}
                   >
-                    <TableCell style={{ overflowWrap: 'break-word' }}>{metaquestion.stem}</TableCell>
+                    <TableCell style={{ overflowWrap: 'break-word', maxWidth: '300px' }}>{metaquestion.stem}</TableCell>
                     <TableCell>{metaquestion.keywords.join(', ')}</TableCell>
                     <TableCell>
-                      <Button variant="outlined" onClick={(event) => handlePdfButtonClick(event, metaquestion)}>{QUESTIONS_CATALOG.VIEW_PDF_BUTTON}</Button>
+                      <Button
+                        variant="outlined"
+                        onClick={(event) => handlePdfButtonClick(event, metaquestion)}
+                        sx={{ textTransform: 'none', whiteSpace: 'nowrap' }} // Ensures text stays on one line
+                      >
+                        {QUESTIONS_CATALOG.VIEW_PDF_BUTTON}
+                      </Button>
                     </TableCell>
                   </TableRow>
                 ))}
