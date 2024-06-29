@@ -6,15 +6,13 @@ import { CREATE_QUESTION } from '../../constants';
 import { useFormikContext } from 'formik';
 import ErrorMessage from '../../components/errorMessage';
 
-const deepEqualAppendix = (a, b) => (
-  a.title === b.title && a.tag === b.tag && a.content === b.content
-);
 
 const AppendixList = ({ values, onSelectAppendix }) => {
   const { setFieldValue } = useFormikContext();
   const [searchTerm, setSearchTerm] = useState('');
   const [searchBy, setSearchBy] = useState('title');
-  const [appendices, setAppendices] = useState([])
+  const [appendices, setAppendices] = useState([]);
+  const [selectedAppendix, setSelectedAppendix] = useState(values.appendix || null);
   const [errorMessage, setErrorMessage] = useState('');
 
   useEffect(() => {
@@ -24,12 +22,24 @@ const AppendixList = ({ values, onSelectAppendix }) => {
         setAppendices(appendices);
       } catch (error) {
         console.error('Error fetching appendices:', error);
-        setErrorMessage(`Error fetching appendices: ${error.message}`)
+        setErrorMessage(`Error fetching appendices: ${error.message}`);
       }
     }
 
     fetchAppendices();
   }, [setErrorMessage]);
+
+  useEffect(() => {
+    // Set initial selected appendix based on values.appendix
+    if (values.appendix) {
+      const initialAppendix = appendices.find(
+        (appendix) => appendix.tag === values.appendix.tag
+      );
+      if (initialAppendix) {
+        setSelectedAppendix(initialAppendix);
+      }
+    }
+  }, [values.appendix, appendices]);
 
   const handleSearchChange = (event) => {
     setSearchTerm(event.target.value);
@@ -40,8 +50,15 @@ const AppendixList = ({ values, onSelectAppendix }) => {
   };
 
   const handleAppendixClick = (appendix) => {
-    setFieldValue('appendix', appendix);
-    onSelectAppendix(appendix);
+    if (selectedAppendix && selectedAppendix.tag===appendix.tag) {
+      setSelectedAppendix(null);
+      setFieldValue('appendix', null);
+      onSelectAppendix(null);
+    } else {
+      setSelectedAppendix(appendix);
+      setFieldValue('appendix', appendix);
+      onSelectAppendix(appendix);
+    }
   };
 
   const filteredAppendices = appendices.filter((appendix) =>
@@ -83,7 +100,7 @@ const AppendixList = ({ values, onSelectAppendix }) => {
             }}
             onClick={() => handleAppendixClick(appendix)}
           >
-            <Radio checked={values.appendix && deepEqualAppendix(values.appendix, appendix)} />
+            <Radio checked={selectedAppendix && selectedAppendix.tag===appendix.tag} />
             <div style={{ marginLeft: '10px' }}>
               <h3>{CREATE_QUESTION.APPENDIX_TITLE}{appendix.title}</h3>
               <p>Tag: {appendix.tag}</p>

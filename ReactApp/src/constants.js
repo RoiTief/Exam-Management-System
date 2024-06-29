@@ -115,7 +115,7 @@ export const EDIT_APPENDIX = {
 }
 
 export const CREATE_QUESTION = {
-  CREATE_SIMPLE_TITLE: "Create Simple Meta-Question",
+  CREATE_SIMPLE_TITLE: "Create Meta-Question",
   CREATE_APPENDIX_PLUS_TITLE: "Create Simple Meta-Question",
   CREATE_CHOOSE_APPENDIX_TITLE: "Create Meta-Question Based On Existing Appendix",
   CREATE_APPENDIX_TITLE: "Create Appendix",

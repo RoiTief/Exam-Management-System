@@ -44,10 +44,6 @@ export const items = [
     children: [
       {
         title: SIDE_BAR.SIMPLE_META_QUESTION,
-        path: '/create/simple',
-      },
-      {
-        title: SIDE_BAR.APPENDIX_META_QUESTION,
         path: '/create/choose-appendix',
       },
       {
