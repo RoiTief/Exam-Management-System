@@ -141,11 +141,13 @@ const Page = () => {
               spacing: 4
             }}
           >
+            <Box sx={{ display: 'flex', justifyContent: 'center' }}>
             <Container maxWidth="md" sx={{ backgroundColor: '#ffffff', borderRadius: 2, boxShadow: 3, p: 4, mb: 2, width: "100%" }}>
               <Typography variant="h4" component="h1" gutterBottom>
                 {question? EDIT_QUESTION : CREATE_QUESTION.CREATE_SIMPLE_TITLE}
               </Typography>
             </Container>
+            </Box>
             <Stack display='flex' spacing={4} direction="row" width="80%">
               <Container maxWidth="md" sx={{ backgroundColor: '#ffffff', borderRadius: 2, boxShadow: 3, p: 4, width: "50%" }}>
                 <AppendixList

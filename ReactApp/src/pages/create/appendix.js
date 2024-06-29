@@ -139,11 +139,13 @@ const Page = () => {
               spacing: 4
             }}
           >
-            <Container maxWidth="md" sx={{ backgroundColor: '#ffffff', borderRadius: 2, boxShadow: 3, p: 4, mb: 2, width: "100%" }}>
+            <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+            <Container maxWidth="md" sx={{ backgroundColor: '#ffffff', borderRadius: 2, boxShadow: 3, p: 2, mb: 2, width: "100%" }}>
               <Typography variant="h4" component="h1" gutterBottom>
                 {appendix? EDIT_APPENDIX.EDIT_APPENDIX_TITLE : CREATE_QUESTION.CREATE_APPENDIX_TITLE}
               </Typography>
             </Container>
+            </Box>
             <Stack justifyContent="center" display='flex' spacing={4} direction="row" width="80%">
               {appendix && (
                 <Container maxWidth="md" sx={{ backgroundColor: '#ffffff', borderRadius: 2, boxShadow: 3, p: 4, width: "50%" }}>
