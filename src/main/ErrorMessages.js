@@ -56,6 +56,7 @@ const MQ_PROCESS_ERROR_MSGS = {
 
 const TASK_PROCESS_ERROR_MSGS = {
     INVALID_TASK_TYPE: type => `Task-type '${type}' is invalid`,
+    INSUFFICIENT_CONTENT_TO_GENERATE_TASK: `There is not enough content to generate a task of this type`,
 }
 
 
