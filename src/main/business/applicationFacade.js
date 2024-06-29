@@ -311,6 +311,20 @@ class ApplicationFacade{
     }
 
     /**
+     * return a list of meta question relevant to add to the new exam:
+     * - each question has at least 1 key and 4 distractors that are not used yet in the exam
+     * - the keys and distractors returned are not used yet in the exam
+     * @throws {Error} - If the user is not signed in or does not have the necessary permissions
+     * @return {MetaQuestion[]} all the relevant question in a meta question structure
+     */
+    async getMetaQuestionsForExam(data) {
+        // todo- implement
+        // as of now we will return all the meta question without filtering
+        return this.getAllMetaQuestions()
+    }
+
+
+    /**
      * return a list of appendices of the user's course
      * @throws {Error} - If the user is not signed in or does not have the necessary permissions
      * @return all the meta question of the user's course
@@ -334,6 +348,45 @@ class ApplicationFacade{
             return this.userController.updateMyInfo(userDetails);
         }
         return this.userController.updateUser(data);
+    }
+
+
+    addManualMetaQuestionToExam(data) {
+        //todo - implement save the question (it has all the fields)
+        // as of now it just returns the question without saving it to an "current exam" object and so all the
+        // functionality of fetching relevant questions/keys/distractors is not correct
+        return {
+            id: data.question.selectedMetaQuestion.id,
+            stem: data.question.selectedMetaQuestion.stem,
+            appendix: data.question.selectedMetaQuestion.appendix,
+            key: data.question.selectedKey,
+            distractors: data.question.selectedDistractors
+        };
+    }
+
+    addAutomaticQuestionToExam(data) {
+        //todo - implement generate a key and 4 distractors to the stem+appendix in the data
+        // as of now it returns fake answers and distractors without
+        // saving it to an "current exam" object and so all the functionality of fetching relevant
+        // questions/keys/distractors is not correct
+        return {
+            id: data.question.selectedMetaQuestion.id,
+            stem: data.question.selectedMetaQuestion.stem,
+            appendix: data.question.selectedMetaQuestion.appendix,
+            key: { text: "fake answer", explanation: "fake explanation"},
+            distractors: [
+                { text: "fake answer 1", explanation: "fake explanation"},
+                { text: "fake answer 2", explanation: "fake explanation"},
+                { text: "fake answer 3", explanation: "fake explanation"},
+                { text: "fake answer 4", explanation: "fake explanation"}
+            ]
+        };
+    }
+
+    removeQuestionFromExam(data) {
+        //todo - implement remove question
+        // dont forget to update all the relevant questions/keys/distractors
+        return;
     }
 
     #mqBusinessToFE(bMQ) {

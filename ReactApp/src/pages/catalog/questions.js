@@ -33,15 +33,26 @@ const Page = () => {
 
   useEffect(() => {
     try {
-      handleSearch([]);
+      handleSearch("");
     } catch (err) {
       setErrorMessage( `An error occurred during search: ${err.message}`);
     }
   }, [metaQuestions]);
 
-  const handleSearch = (keys) => {
+  const handleSearch = (text) => {
     const filteredQuestions = metaQuestions.filter(question =>
-      keys.every(key => question.keywords.includes(key))
+      question.stem.toLowerCase().includes(text.toLowerCase())
+    );
+    setFilteredData(filteredQuestions);
+  };
+
+  const handleKeySearch = (keys) => {
+    const filteredQuestions = metaQuestions.filter(question =>
+      keys.every(key =>
+        question.keywords.some(keyword =>
+          keyword.toLowerCase().includes(key.toString().toLowerCase())
+        )
+      )
     );
     setFilteredData(filteredQuestions);
   };
@@ -78,7 +89,7 @@ const Page = () => {
                 </Button>
               </Stack>
             </Stack>
-            <QuestionsSearch onSearch={handleSearch} /> {/* Render QuestionsSearch */}
+            <QuestionsSearch onSearch={handleKeySearch} onTextSearch={handleSearch} /> {/* Render QuestionsSearch */}
             <MetaQuestionTable data={filteredData} />
             <ErrorMessage message={errorMessage} />
           </Stack>

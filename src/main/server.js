@@ -197,62 +197,41 @@ function createServer(options) {
      // request: {username}
     server.post('/addLecturer', service.addLecturer)
 
-    //request: {
-    //       keywords: str[],
-    //       stem: str,
-    //       keys: [{
-    //         answer: str,
-    //         explanation: str
-    //         }],
-    //       distractors: [{
-    //         distractor: str,
-    //         explanation: str
-    //       }],
-    //      appendix: {
-    //          title: str,
-    //          tag: str,
-    //          content: str
-    //       }
-    //     }
     server.post('/addMetaQuestion', service.addMetaQuestion);
 
-    //request: {
-    //        id:num
-    //       keywords: str[],
-    //       stem: str,
-    //       keys: [{
-    //         answer: str,
-    //         explanation: str
-    //         }],
-    //       distractors: [{
-    //         distractor: str,
-    //         explanation: str
-    //       }],
-    //      appendix: {
-    //          title: str,
-    //          tag: str,
-    //          content: str
-    //       }
-    //     }
+    server.post('/addManualMetaQuestionToExam', service.addManualMetaQuestionToExam);
+
+    server.post('/addAutomaticQuestionToExam', service.addAutomaticQuestionToExam);
+
+    
+    server.post('/removeQuestionFromExam', service.removeQuestionFromExam);
+
+    
     server.post('/editMetaQuestion', service.editMetaQuestion);
 
     // request:
-    //  {    questions:[
+    //  {
+    //  questions:[
     //   {
-    //    stem: str
+    //      id: num
+    //       stem: str
     //       appendix: {
     //              title: str,
     //              tag: str,
     //              content: str
     //        }
-    //       answer: str,
-    //       distractors: [str]
+    //       key: {answer: str, explanation: str },
+    //      distractors: [{answer: str, explanation: str }],
     //     }]
+    //     numVersions: num,
+    //     examReason: str
     //   }
-    //  }
     server.post('/createExam', service.createExam)
 
     server.get('/getAllExams',service.getAllExams)
+
+    // response: MetaQuestion[]
+    server.get('/getMetaQuestionsForExam',service.getMetaQuestionsForExam)
 
     // response: Task[]
     server.get('/viewMyTasks', service.viewMyTasks);

@@ -157,9 +157,10 @@ export const QUESTIONS_CATALOG = {
   SHOW_LESS_DISTRACTORS: "Show less distractors",
   STEM_HEADING: "Stem",
   KEYWORDS_HEADING: "Keywords",
+  SEARCH_BY_KEYWORDS: "please press enter between keywords",
   CORRECT_ANSWERS_HEADING: "Correct Answers",
   DISTRACTORS_HEADING: "Distractors",
-  SEARCH_PLACEHOLDER: "Search question by keyword",
+  SEARCH_PLACEHOLDER: (mode) => `Search question by ${mode}?`,
   ACTION: "Action",
   VIEW_PDF_BUTTON: "View PDF",
 };
@@ -200,8 +201,11 @@ export const COURSE_STAFF = {
 export const EXAM = {
   PAGE_TITLE: "Create Exam",
   ADD_QUESTION_BUTTON: "+ Add Question",
-  SAVE_TEST_BUTTON: "Save Test",
+  SAVE_TEST_BUTTON: "Save Exam",
+  EXAM_PREVIEW_BUTTON: "Exam Preview",
   CREATED_QUESTIONS_HEADING: "Created Questions",
+  MANUAL_STATE: "Manual Answer Generator",
+  AUTOMATIC_STATE: "Automatic Answer Generator",
   NO_KEYS_MESSAGE_1: "There are no available keys for this question!",
   NO_KEYS_MESSAGE_2: "Please choose a different question",
   NO_DISTRACTORS_MESSAGE_1: "There are no available distractors for this question!",
@@ -211,17 +215,30 @@ export const EXAM = {
   ANSWER_HEADING: "Answer",
   DISTRACTORS_HEADING: "Distractors",
   SELECT_QUESTION_HEADING: "Select a Question:",
-  SELECT_KEY_HEADING: "Select The Correct Key",
-  SELECT_DISTRACTORS_HEADING: "Select Distractors",
+  SELECT_STEM_HEADING: "Select a Stem:",
+  SELECT_KEY_HEADING: "Select The Correct Key:",
+  SELECT_DISTRACTORS_HEADING: "Select Distractors:",
   SAVE_QUESTION_BUTTON: "Save Question",
   APPENDIX_TITLE: "Appendix: ",
   APPENDIX_CONTENT: "Content: ",
   META_QUESTION_TITLE: "Meta-Question: ",
   KEY_TITLE: "Key: ",
   DISTRACTOR_TITLE: "Distractors: ",
+  NEXT: "Next",
+  DESELECT_QUESTION: "Deselect Question",
+  MAX_DISTRACTOR_NUMBER: 2,
+  get SELECT_DISTRACTORS_BODY() {
+    return `Please select up to ${this.MAX_DISTRACTOR_NUMBER} distractors`;
+  },
+  get DISTRACTORS_MAX_AMOUNT() {
+    return `You have selected the maximum number of distractors (${this.MAX_DISTRACTOR_NUMBER}).`;
+  },
+  NUMBER_VERSIONS: "Number of Versions",
+  EXAM_REASON: "Reason for Exam"
+
 };
 
 export const ERROR_MESSAGES = {
   INVALID_CREDENTIALS: "invalid credentials",
   NOT_AUTHENTICATE: "Connection timeout, please login again",
-}
+};
