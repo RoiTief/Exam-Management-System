@@ -53,10 +53,19 @@ const MQ_PROCESS_ERROR_MSGS = {
     MQ_ID_DOESNT_EXIST: id => `A Meta-Question with ID '${id}' doesn't exist`,
 }
 
+const EXAM_PROCESS_ERROR_MSGS = {
+    SET_ANSWERS_TO_QUESTION: (qid, answers) => `Failed to set answers '${JSON.stringify(answers)}' to question '${qid}'`,
+    ADD_QUESTION_TO_EXAM: (examId, mQid, questionData, answers) => `Failed to add question '${mQid}' with data '${JSON.stringify(questionData)}' and answers '${JSON.stringify(answers)}' to exam '${examId}'`,
+    GET_EXAM_BY_ID: examId => `Cannot load exam with ID '${examId}'`,
+    QUESTION_ID_DOESNT_EXIST: qid => `Question with ID '${qid}' doesn't exist`,
+    ANSWER_ID_DOESNT_EXIST: aid => `Answer with ID '${aid}' doesn't exist`
+}
+
 
 module.exports = {
     USER_PROCESS_ERROR_MSGS,
     SESSION_PROCESS_ERROR_MSGS,
     MQ_PROCESS_ERROR_MSGS,
     FUNCTION_PARAMETERS_ERROR_MSGS,
+    EXAM_PROCESS_ERROR_MSGS,
 }
