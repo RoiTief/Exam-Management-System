@@ -1,46 +1,64 @@
 import React, { useState } from 'react';
-import { Box, Typography, Button, Stack } from '@mui/material';
+import { Box, Typography, Checkbox, FormControlLabel, Stack, Button } from '@mui/material';
 import { EXAM } from '../../constants';
 
 function DistractorSelection({ distractors, onSelect }) {
   const [selectedDistractors, setSelectedDistractors] = useState([]);
 
-  const handleSelectDistractor = (distractor) => {
-    let newSelectedDistractors;
-    if (selectedDistractors.includes(distractor)){
-      newSelectedDistractors = selectedDistractors.filter(item => item !== distractor);
+  const handleToggleDistractor = (distractor) => {
+    const currentIndex = selectedDistractors.indexOf(distractor);
+    const newSelectedDistractors = [...selectedDistractors];
+
+    if (currentIndex === -1) {
+      if (newSelectedDistractors.length < EXAM.MAX_DISTRACTOR_NUMBER) { // Limit selection to 4
+        newSelectedDistractors.push(distractor);
+      }
+    } else {
+      newSelectedDistractors.splice(currentIndex, 1);
     }
-    else {
-      newSelectedDistractors = [...selectedDistractors, distractor];
-    }
+
     setSelectedDistractors(newSelectedDistractors);
     onSelect(newSelectedDistractors);
   };
 
+  const isChecked = (distractor) => selectedDistractors.indexOf(distractor) !== -1;
+
   return (
-    <Box sx={{ mb: 2 }}>
+    <Box sx={{ padding: 2 }}>
       <Typography variant="h5" component="h2" mb={2}>
         {EXAM.SELECT_DISTRACTORS_HEADING}
       </Typography>
-      {distractors.length != 0 ? (
-        <>
+      <Typography variant="body1" component="h2" mb={2}>
+        {EXAM.SELECT_DISTRACTORS_BODY}
+      </Typography>
+      {distractors.length !== 0 ? (
+        <Stack direction="column">
           {distractors.map((distractor, index) => (
-            <Button
+            <FormControlLabel
               key={index}
-              variant="outlined"
-              onClick={() => handleSelectDistractor(distractor)}
-              sx={{ mr: 1, mb: 1, backgroundColor: selectedDistractors.includes(distractor) ? '#f84c4c' : 'inherit', color: selectedDistractors.includes(distractor) ? '#fff' : 'inherit' }}
-            >
-              {distractor.text}
-            </Button>
+              control={
+                <Checkbox
+                  checked={isChecked(distractor)}
+                  onChange={() => handleToggleDistractor(distractor)}
+                  color="primary"
+                />
+              }
+              label={distractor.text}
+              sx={{ mb: 1 }}
+            />
           ))}
-        </>
-      )  : (
+          {selectedDistractors.length === EXAM.MAX_DISTRACTOR_NUMBER && (
+            <Typography variant="body3" sx={{ mt: 1, color: 'neutral.500' }}>
+              {EXAM.DISTRACTORS_MAX_AMOUNT}
+            </Typography>
+          )}
+        </Stack>
+      ) : (
         <Stack>
-          <Typography variant="h10" component="h7" mb={2}>
+          <Typography variant="h6" component="h6" mb={2}>
             {EXAM.NO_DISTRACTORS_MESSAGE_1}
           </Typography>
-          <Typography variant="h10" component="h7" mb={2}>
+          <Typography variant="h6" component="h6" mb={2}>
             {EXAM.NO_DISTRACTORS_MESSAGE_2}
           </Typography>
         </Stack>

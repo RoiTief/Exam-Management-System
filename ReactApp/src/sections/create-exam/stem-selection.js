@@ -1,93 +1,110 @@
 import React, { useState } from 'react';
-import { Box, Typography, Button } from '@mui/material';
+import {
+  Box,
+  Typography,
+  Radio,
+  RadioGroup,
+  FormControlLabel,
+  Button,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+} from '@mui/material';
 import { EXAM } from '../../constants';
+import { QuestionsSearch } from '../view-questions/question-search';
 
 function StemSelection({ metaQuestions, onSelect, reselectStem }) {
-  const [selectedMetaQuestion, setSelectedMetaQuestion] = useState(null)
+  const [dialogContent, setDialogContent] = useState(null);
+  const [selectedMetaQuestion, setSelectedMetaQuestion] = useState(null);
+  const [filteredData, setFilteredData] = useState(metaQuestions);
 
-  const handleSelectStem = (metaQuestion) => {
-    if (selectedMetaQuestion === metaQuestion) {
+  const handleCloseDialog = () => {
+    setDialogContent(null);
+  };
+
+  const handleRadioClick = (question) => {
+    if (selectedMetaQuestion === question) {
+      setSelectedMetaQuestion(null);
       onSelect(null);
-      setSelectedMetaQuestion(null)
       reselectStem();
-    }
-    else {
-      onSelect(metaQuestion);
-      setSelectedMetaQuestion(metaQuestion)
-      reselectStem(); // Reset selected distractors when a new stem is chosen
+    } else {
+      setSelectedMetaQuestion(question);
+      onSelect(question);
+      reselectStem();
     }
   };
 
-  const groupedStems = metaQuestions.reduce((acc, question) => {
-    if (question.appendix) {
-      const appendixIndex = acc.findIndex(item => item.title === question.appendix.title);
-      if (appendixIndex !== -1) {
-        acc[appendixIndex].stems.push(question);
-      } else {
-        acc.push({ ...question.appendix, stems: [question] });
-      }
-    } else {
-      acc.push({ title: null, stems: [question] });
-    }
-    return acc;
-  }, []);
+  const handleSearch = (text) => {
+    const filteredQuestions = metaQuestions.filter(question =>
+      question.stem.toLowerCase().includes(text.toLowerCase())
+    );
+    setFilteredData(filteredQuestions);
+  };
+
+  const handleKeySearch = (keys) => {
+    const filteredQuestions = metaQuestions.filter(question =>
+      keys.every(key =>
+        question.keywords.some(keyword =>
+          keyword.toLowerCase().includes(key.toString().toLowerCase())
+        )
+      )
+    );
+    setFilteredData(filteredQuestions);
+  };
 
   return (
-    <Box>
-      {groupedStems.map((group, index) => (
-        <Box key={index} sx={{ mb: 2 }}>
-          {group.title ? (
-            <>
-              <Box sx = {{ display: selectedMetaQuestion === null ||
-                (selectedMetaQuestion &&
-                  selectedMetaQuestion.appendix &&
-                  group.title === selectedMetaQuestion.appendix.title) ?
-                  'inline-block' : 'none' }}>
-                <Typography variant="subtitle1">
-                  {EXAM.APPENDIX_TITLE} {group.title}
-                </Typography>
-                <Typography variant="body2" sx={{ mb: 1 }}>
-                  {group.content}
-                </Typography>
-
-                {group.stems.map((metaQuestion, idx) => (
-                  <Button
-                    key={idx}
-                    variant="outlined"
-                    onClick={() => handleSelectStem(metaQuestion)}
-                    sx={{
-                      mr: 1,
-                      mb: 1,
-                      backgroundColor: selectedMetaQuestion === metaQuestion ? '#f87217' : 'inherit',
-                      color: selectedMetaQuestion === metaQuestion ? '#fff' : 'inherit',
-                      display: selectedMetaQuestion === null || selectedMetaQuestion === metaQuestion ? 'inline-block' : 'none',
-                    }}
-                  >
-                    {metaQuestion.stem}
-                  </Button>
-                ))}
-              </Box>
-            </>
-          ) : (
-            group.stems.map((metaQuestion, stemIndex) => (
-              <Button
-                key={stemIndex}
-                variant="outlined"
-                onClick={() => handleSelectStem(metaQuestion)}
-                sx={{
-                  mr: 1,
-                  mb: 1,
-                  backgroundColor: selectedMetaQuestion === metaQuestion ? '#f87217' : 'inherit',
-                  color: selectedMetaQuestion === metaQuestion ? '#fff' : 'inherit',
-                  display: selectedMetaQuestion === null || selectedMetaQuestion === metaQuestion ? 'inline-block' : 'none',
-                }}
-              >
-                {metaQuestion.stem}
+    <Box sx={{ padding: 2 }}>
+      <Typography variant="h5" component="h2" mb={2}>
+        {EXAM.SELECT_STEM_HEADING}
+      </Typography>
+      {selectedMetaQuestion === null && (
+        <QuestionsSearch onSearch={handleKeySearch}
+                         onTextSearch={handleSearch} />
+        )}
+      <RadioGroup value={selectedMetaQuestion ? selectedMetaQuestion.stem : ''}>
+        {filteredData.map((metaQuestion, index) => (
+          <Box
+            key={index}
+            sx={{
+              display:
+                selectedMetaQuestion === null || selectedMetaQuestion === metaQuestion ? 'flex' : 'none',
+              alignItems: 'center',
+              mb: 1
+            }}
+          >
+            <FormControlLabel
+              value={metaQuestion.stem}
+              control={<Radio />}
+              label={metaQuestion.stem}
+              sx={{ flexGrow: 1 }}
+              onClick={() => handleRadioClick(metaQuestion)}
+            />
+            {metaQuestion.appendix && (
+              <Button variant="outlined" onClick={() => setDialogContent(metaQuestion.appendix)}>
+                {EXAM.APPENDIX_HEADING}
               </Button>
-            ))
-          )}
-        </Box>
-      ))}
+            )}
+          </Box>
+        ))}
+      </RadioGroup>
+
+      <Dialog open={dialogContent !== null} onClose={handleCloseDialog}>
+        {dialogContent && (
+          <>
+            <DialogTitle>{dialogContent.title}</DialogTitle>
+            <DialogContent>
+              <Typography variant="body1">
+                {dialogContent.content}
+              </Typography>
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={handleCloseDialog}>Close</Button>
+            </DialogActions>
+          </>
+        )}
+      </Dialog>
+
     </Box>
   );
 }
