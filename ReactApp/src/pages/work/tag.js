@@ -59,8 +59,8 @@ const TagAnswers = () => {
   useEffect(() => {
     const handleFinishTask = async () => {
       try {
-        if (tag || explanation){
-          const changes = {taskType: GENERATED_TASK_TYPES.TAG_ANSWER, answerId: question.answer.id};
+        if (!(tag === question?.answer?.tag && !explanation) && (tag || explanation)){
+          const changes = {taskType: GENERATED_TASK_TYPES.TAG_ANSWER, answerId: question?.answer?.id};
           if (tag) {
             changes["userTag"] = tag;
           }
@@ -87,12 +87,12 @@ const TagAnswers = () => {
   };
 
   const handleSubmit = () => {
-    if (selectedTag === question.answer.tag) {
+    if (selectedTag === question?.answer?.tag) {
       setIsCheckExplanationOpen(true);
     } else {
-      setTag(selectedTag)
       setIsProvideExplanationOpen(true);
     }
+    setTag(selectedTag);
   };
 
   const handleSetExplanation = (newExplanation) => {
