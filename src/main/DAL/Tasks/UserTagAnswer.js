@@ -1,4 +1,4 @@
-const {DataTypes} = require("sequelize");
+const {DataTypes, Sequelize} = require("sequelize");
 const {ANSWER_TYPES} = require("../../Enums");
 
 /**
@@ -13,6 +13,10 @@ function defineUserTagAnswerModel(sequelize) {
                     values: Object.values(ANSWER_TYPES),
                     allowNull: false
                 },
+                updateDate: {
+                    type: DataTypes.DATE,
+                    allowNull: false,
+                }
             }
         );
 }

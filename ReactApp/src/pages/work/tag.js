@@ -58,22 +58,21 @@ const TagAnswers = () => {
 
   useEffect(() => {
     const handleFinishTask = async () => {
-      try {
-        if (!(tag === question?.answer?.tag && !explanation) && (tag || explanation)){
-          const changes = {taskType: GENERATED_TASK_TYPES.TAG_ANSWER, answerId: question?.answer?.id};
-          if (tag) {
-            changes["userTag"] = tag;
-          }
-          if (explanation) {
-            changes["explanation"] = explanation;
-          }
+      if (isFinished) {
+        try {
+          const changes = {
+            taskType: GENERATED_TASK_TYPES.TAG_ANSWER,
+            answerId: question?.answer?.id,
+            userTag: tag,
+            ...(explanation && { explanation: explanation })
+          };
           await requestServer(serverPath.COMPLETE_GENERATED_TASK, httpsMethod.POST, changes);
+          resetStates();
+          return { success: true };
+        } catch (error) {
+          console.error('Failed to finish task:', error);
+          return { success: false, error: error };
         }
-        resetStates();
-        return { success: true };
-      } catch (error) {
-        console.error('Failed to finish task:', error);
-        return { success: false, error: error };
       }
     };
     handleFinishTask();

@@ -29,7 +29,19 @@ class TaskRepository {
         const user = await this.#getUser(username);
         const answer = await this.#getAnswer(answerId);
 
-        await user.addTaggedAnswer(answer, {through: {tag: tag}});
+        const userTag = await this.#UserTagAnswer.findOne({
+            where: {
+                UserUsername: username,
+                AnswerId: answerId
+            }
+        });
+        if (userTag) {
+            userTag.tag = tag;
+            userTag.updateDate = new Date();
+            await userTag.save();
+        } else {
+            await user.addTaggedAnswer(answer, {through: {tag: tag, updateDate: new Date()}});
+        }
     }
 
     async getTaggedAnswersOf(username) {

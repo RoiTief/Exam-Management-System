@@ -132,7 +132,7 @@ class TaskController {
                 throw new EMSError(TASK_PROCESS_ERROR_MSGS.INSUFFICIENT_CONTENT_TO_GENERATE_TASK, TASK_PROCESS_ERROR_CODES.INSUFFICIENT_CONTENT_TO_GENERATE_TASK);
             }
             userTags.sort((a, b) => a.updatedAt - b.updatedAt); // earliest first
-            chosenAnswer = await this.#taskRepo.getAnswer(userTags[0].answerId);
+            chosenAnswer = await this.#mqController.getAnswer(userTags[0].AnswerId);
         }
 
         const metaQuestion = await this.#mqController.getMetaQuestion(chosenAnswer.getMetaQuestionId());
@@ -151,7 +151,7 @@ class TaskController {
         const callingUser = data.callingUser;
         this.#taskRepo.tagAnswer(callingUser.username, data.answerId, data.userTag);
 
-        const answer = await this.#taskRepo.getAnswer(data.answerId);
+        const answer = await this.#mqController.getAnswer(data.answerId);
         if (answer.getTag() === data.userTag) return;
         switch (callingUser.type) {
             case USER_TYPES.LECTURER:
