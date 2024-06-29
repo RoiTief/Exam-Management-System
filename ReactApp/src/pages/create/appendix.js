@@ -27,7 +27,7 @@ const Page = () => {
   const [errorMessage, setErrorMessage] = useState('');
 
   useEffect(() => {
-    if (router.query.question) {
+    if (router.query.appendix) {
       setAppendix(JSON.parse(router.query.appendix));
     }
   }, [router.query.appendix]);
@@ -38,9 +38,9 @@ const Page = () => {
 
   const initialValues = {
     appendix: {
-      title: '',
-      tag: '',
-      content: '',
+      title: appendix?.title || '',
+      tag: appendix?.tag || '',
+      content: appendix?.content || '',
       isTitleRTL: true,
       isTagRTL: true,
       isContentRTL: true
