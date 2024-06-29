@@ -350,29 +350,25 @@ function getMetaQuestionForAppendix(req, res, next) {
             next(err);
         });
 }
-
 /**
- * add a meta question to the db
- * @param - req.body = {
- *     //       keywords: str[],
- *     //       stem: str,
- *     //       keys: [{
- *     //         answer: str,
- *     //         explanation: str
- *     //         }],
- *     //       distractors: [{
- *     //         distractor: str,
- *     //         explanation: str
- *     //       }],
- *     //      appendix: {
- *     //          title: str,
- *     //          tag: str,
- *     //          content: str
- *     //       }
- *     //     }
- *     //
- *     appendix could be null
- * @throws {Error} - if fail to create
+ *  request: {
+           keywords: str[],
+           stem: str,
+           keys: [{
+             answer: str,
+             explanation: str
+             }],
+           distractors: [{
+             distractor: str,
+             explanation: str
+           }],
+          appendix: {
+              title: str,
+              tag: str,
+              content: str
+           }
+         }
+     @throws {Error} - if fail to create
  */
 function addMetaQuestion(req, res, next) {
     application.addMetaQuestion(req.body).then(
@@ -388,12 +384,22 @@ function addMetaQuestion(req, res, next) {
 }
 
 /**
- * add a meta question to the exam
- * @param - req.body = {
- *     //       selectedMetaQuestion: MetaQuestion,
- *     //       selectedKey: {answer: str, explanation: str },
- *     //       selectedDistractors: [{answer: str, explanation: str }],
- *     //     }
+    request: {
+           selectedMetaQuestion: MetaQuestion,
+           selectedKey: {answer: str, explanation: str },
+           selectedDistractors: [{answer: str, explanation: str }],
+         }
+    response: {
+           id: num
+           stem: str,
+           key: {answer: str, explanation: str },
+           distractors: [{answer: str, explanation: str }],
+          appendix: {
+              title: str,
+              tag: str,
+              content: str
+           }
+         }
  * @throws {Error} - if fail to create
  */
 function addManualMetaQuestionToExam(req, res, next) {
@@ -411,12 +417,22 @@ function addManualMetaQuestionToExam(req, res, next) {
 /**
  * add a meta question to the db based on solly stem and appendix
  * the system should randomize the answer and 4 distractors and create this question
- * @param - req.body = {
- *     //       selectedMetaQuestion: MetaQuestion,
- *     //       selectedKey: null,
- *     //       selectedDistractors: [] - empty array,
- *     //     }
- *     appendix could be null
+ *  request: {
+           selectedMetaQuestion: MetaQuestion,
+           selectedKey: null,
+           selectedDistractors: [] - empty array,
+         }
+    response: {
+           id: num
+           stem: str,
+           key: {answer: str, explanation: str },
+           distractors: [{answer: str, explanation: str }],
+          appendix: {
+              title: str,
+              tag: str,
+              content: str
+           }
+         }
  * @throws {Error} - if fail to create
  */
 function addAutomaticQuestionToExam(req, res, next) {
@@ -434,18 +450,17 @@ function addAutomaticQuestionToExam(req, res, next) {
 
 /**
  * removes a question from the exam
- * @param - req.body = {
- *     //       keywords: str[],
- *     //       stem: str,
- *     //       key: {answer: str, explanation: str },
- *     //       distractors: [{answer: str, explanation: str }],
- *     //      appendix: {
- *     //          title: str,
- *     //          tag: str,
- *     //          content: str
- *     //       }
- *     //     }
- *     appendix could be null
+ request: {
+           id: num
+           stem: str,
+           key: {answer: str, explanation: str },
+           distractors: [{answer: str, explanation: str }],
+          appendix: {
+              title: str,
+              tag: str,
+              content: str
+           }
+         }
  * @throws {Error} - if fail to create
  */
 function removeQuestionFromExam(req, res, next) {
@@ -463,24 +478,24 @@ function removeQuestionFromExam(req, res, next) {
 /**
  * edit a meta question
  * @param - req.body = {
- *      //      id: num
- *     //       keywords: str[],
- *     //       stem: str,
- *     //       keys: [{
- *     //         answer: str,
- *     //         explanation: str
- *     //         }],
- *     //       distractors: [{
- *     //         distractor: str,
- *     //         explanation: str
- *     //       }],
- *     //      appendix: {
- *     //          title: str,
- *     //          tag: str,
- *     //          content: str
- *     //       }
- *     //     }
- *     //
+ *            id: num
+ *            keywords: str[],
+ *            stem: str,
+ *            keys: [{
+ *              answer: str,
+ *              explanation: str
+ *              }],
+ *            distractors: [{
+ *              distractor: str,
+ *              explanation: str
+ *            }],
+ *           appendix: {
+ *               title: str,
+ *               tag: str,
+ *               content: str
+ *            }
+ *          }
+ *     
  *     appendix could be null
  * @throws {Error} - if fail to edit
  */
@@ -581,7 +596,7 @@ module.exports = {
     addMetaQuestion: addMetaQuestion,
     addManualMetaQuestionToExam: addManualMetaQuestionToExam,
     addAutomaticQuestionToExam: addAutomaticQuestionToExam,
-    removeQuestionFromExam,
+    removeQuestionFromExam: removeQuestionFromExam,
     editMetaQuestion: editMetaQuestion,
     createExam,
     getAllExams,
