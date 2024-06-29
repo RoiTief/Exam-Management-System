@@ -1,5 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Button, Container, Stack, Typography } from '@mui/material';
+import {
+  Box,
+  Button,
+  Container,
+  Dialog, DialogActions,
+  DialogContent, DialogContentText,
+  DialogTitle,
+  Stack,
+  Typography
+} from '@mui/material';
 import { Layout as DashboardLayout } from 'src/layouts/dashboard/layout';
 import { useRouter } from 'next/router';
 import { Formik, Form } from 'formik';
@@ -27,6 +36,9 @@ const Page = () => {
   const [showPdfView, setShowPdfView] = useState(false);
   const [showAppendixView, setShowAppendixView] = useState(null);
   const [errorMessage, setErrorMessage] = useState('');
+  const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);
+  const [formValues, setFormValues] = useState(null);
+
 
   useEffect(() => {
     const fetchRelatedQuestions = async (editAppendix) => {
@@ -69,11 +81,17 @@ const Page = () => {
   }
 
   const handleSubmit = async (values) => {
+    if (appendix) {
+      setFormValues(values);
+      setIsConfirmDialogOpen(true);
+    } else {
+      submitForm(values);
+    }
+  };
+
+  const submitForm = async (values) => {
     try {
-      const newAppendix = createAppendix(values)
-
-      console.log(newAppendix)
-
+      const newAppendix = createAppendix(values);
       let request = appendix ? serverPath.EDIT_APPENDIX : serverPath.ADD_APPENDIX
       await requestServer(request, httpsMethod.POST, newAppendix);
       await router.push('/');
@@ -100,6 +118,7 @@ const Page = () => {
   };
 
   return (
+    <>
     <Formik
       initialValues={initialValues}
       validationSchema={validationSchema}
@@ -122,7 +141,7 @@ const Page = () => {
           >
             <Container maxWidth="md" sx={{ backgroundColor: '#ffffff', borderRadius: 2, boxShadow: 3, p: 4, mb: 2, width: "100%" }}>
               <Typography variant="h4" component="h1" gutterBottom>
-                {appendix? EDIT_APPENDIX : CREATE_QUESTION.CREATE_APPENDIX_TITLE}
+                {appendix? EDIT_APPENDIX.EDIT_APPENDIX_TITLE : CREATE_QUESTION.CREATE_APPENDIX_TITLE}
               </Typography>
             </Container>
             <Stack justifyContent="center" display='flex' spacing={4} direction="row" width="80%">
@@ -171,6 +190,32 @@ const Page = () => {
       </Form>
       )}
     </Formik>
+    <Dialog
+      open={isConfirmDialogOpen}
+      onClose={() => setIsConfirmDialogOpen(false)}
+    >
+      <DialogTitle>{EDIT_APPENDIX.CONFIRM_EDIT_TITLE}</DialogTitle>
+      <DialogContent>
+        <DialogContentText>
+          {EDIT_APPENDIX.CONFIRM_EDIT_BODY}
+        </DialogContentText>
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={() => setIsConfirmDialogOpen(false)} color="primary">
+          Cancel
+        </Button>
+        <Button
+          onClick={() => {
+            setIsConfirmDialogOpen(false);
+            submitForm(formValues);
+          }}
+          color="primary"
+        >
+          Confirm
+        </Button>
+      </DialogActions>
+    </Dialog>
+    </>
   );
 };
 

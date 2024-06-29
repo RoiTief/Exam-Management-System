@@ -108,7 +108,11 @@ export const LOGIN = {
 };
 
 export const EDIT_QUESTION = "Edit Question"
-export const EDIT_APPENDIX = "Edit Appendix"
+export const EDIT_APPENDIX = {
+  EDIT_APPENDIX_TITLE:  "Edit Appendix",
+  CONFIRM_EDIT_TITLE: "Confirm edit appendix",
+  CONFIRM_EDIT_BODY: "Are you sure you want to submit this changes? \nThose changes will affect the appendix in all related questions."
+}
 
 export const CREATE_QUESTION = {
   CREATE_SIMPLE_TITLE: "Create Simple Meta-Question",
