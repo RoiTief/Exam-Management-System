@@ -5,21 +5,23 @@ import { httpsMethod, requestServer, serverPath } from '../../utils/rest-api-cal
 import { CREATE_QUESTION } from '../../constants';
 import { useFormikContext } from 'formik';
 import ErrorMessage from '../../components/errorMessage';
+import { AppendicesSearch } from '../view-appendices/appendices-search';
 
 
 const AppendixList = ({ values, onSelectAppendix }) => {
   const { setFieldValue } = useFormikContext();
-  const [searchTerm, setSearchTerm] = useState('');
-  const [searchBy, setSearchBy] = useState('title');
   const [appendices, setAppendices] = useState([]);
   const [selectedAppendix, setSelectedAppendix] = useState(values.appendix || null);
   const [errorMessage, setErrorMessage] = useState('');
+  const [filteredData, setFilteredData] = useState([]);
+
 
   useEffect(() => {
     async function fetchAppendices() {
       try {
         const { appendices } = await requestServer(serverPath.GET_ALL_APPENDICES, httpsMethod.GET);
         setAppendices(appendices);
+        setFilteredData(appendices)
       } catch (error) {
         console.error('Error fetching appendices:', error);
         setErrorMessage(`Error fetching appendices: ${error.message}`);
@@ -41,14 +43,6 @@ const AppendixList = ({ values, onSelectAppendix }) => {
     }
   }, [values.appendix, appendices]);
 
-  const handleSearchChange = (event) => {
-    setSearchTerm(event.target.value);
-  };
-
-  const handleSearchByChange = (event) => {
-    setSearchBy(event.target.value);
-  };
-
   const handleAppendixClick = (appendix) => {
     if (selectedAppendix && selectedAppendix.tag===appendix.tag) {
       setSelectedAppendix(null);
@@ -61,33 +55,20 @@ const AppendixList = ({ values, onSelectAppendix }) => {
     }
   };
 
-  const filteredAppendices = appendices.filter((appendix) =>
-    appendix[searchBy].toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const handleSearch = (text, searchType) => {
+    const filteredAppendices = appendices.filter((appendix) => {
+      if (searchType === 'tag')
+        return appendix.tag.includes(text);
+      return appendix.title.includes(text) || appendix.tag.includes(text) || appendix.content.includes(text)
+    });
+    setFilteredData(filteredAppendices);
+  };
 
   return (
     <div style={{ marginLeft: '20px' }}>
-      <div style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
-        <OutlinedInput
-          fullWidth
-          placeholder={`Search by ${searchBy}`}
-          value={searchTerm}
-          onChange={handleSearchChange}
-          startAdornment={
-            <InputAdornment position="start">
-              <SvgIcon color="action" fontSize="small">
-                <MagnifyingGlassIcon />
-              </SvgIcon>
-            </InputAdornment>
-          }
-        />
-        <select value={searchBy} onChange={handleSearchByChange} style={{ marginLeft: '10px' }}>
-          <option value="title">Title</option>
-          <option value="tag">Tag</option>
-        </select>
-      </div>
+      <AppendicesSearch onSearch={handleSearch} />
       <RadioGroup>
-        {filteredAppendices.map((appendix, index) => (
+        {filteredData.map((appendix, index) => (
           <Paper
             key={index}
             style={{
