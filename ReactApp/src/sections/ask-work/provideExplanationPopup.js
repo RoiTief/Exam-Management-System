@@ -9,7 +9,7 @@ import {
 } from '@mui/material';
 import { TAG_ANSWERS } from '../../constants';
 
-export const ProvideExplanationPopup = ({ isOpen, closePopup, setExplanation, generate }) => {
+export const ProvideExplanationPopup = ({ isOpen, closePopup, handleSetExplanation, finishTask }) => {
   const [newExplanation, setNewExplanation] = useState('');
 
   const handleChange = (event) => {
@@ -17,8 +17,8 @@ export const ProvideExplanationPopup = ({ isOpen, closePopup, setExplanation, ge
   };
 
   const handleSubmit = () => {
-    setExplanation(newExplanation);
-    generate();
+    handleSetExplanation(newExplanation);
+    finishTask();
     closePopup();
   };
 

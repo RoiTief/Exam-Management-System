@@ -13,7 +13,7 @@ import {
 } from '@mui/material';
 import { TAG_ANSWERS } from '../../constants';
 
-export const CheckExplanationPopup = ({ isOpen, closePopup, explanation, handleWrongExplanation, generate }) => {
+export const CheckExplanationPopup = ({ isOpen, closePopup, explanation, handleWrongExplanation, finishTask }) => {
   const [selectedOption, setSelectedOption] = useState('');
 
   const handleOptionChange = (event) => {
@@ -24,7 +24,7 @@ export const CheckExplanationPopup = ({ isOpen, closePopup, explanation, handleW
     if (selectedOption === 'no') {
       handleWrongExplanation();
     } else {
-      generate();
+      finishTask();
     }
     closePopup();
   };

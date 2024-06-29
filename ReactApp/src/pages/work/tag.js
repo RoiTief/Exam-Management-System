@@ -33,15 +33,14 @@ const TagAnswers = () => {
   const [tag, setTag] = useState("");
   const [explanation, setExplanation] = useState("");
   const [generate, setGenerate] = useState(false);
-  const [error, setError] = useState("")
+  const [error, setError] = useState("");
+  const [isFinished, setIsFinished] = useState(false)
 
   useEffect(() => {
     const fetchRandomQuestion = async () => {
       try {
         const response = await requestServer(serverPath.GENERATE_TASK, httpsMethod.POST, {taskType: GENERATED_TASK_TYPES.TAG_ANSWER});
         setQuestion(response.work);
-        setTag(response.work.answer.tag);
-        setExplanation(response.work.answer.explanation);
         setError("")
         return { success: true };
       } catch (error) {
@@ -57,25 +56,47 @@ const TagAnswers = () => {
     setSelectedTag(event.target.value);
   };
 
-  const handleFinishTask = async () => {
-    try {
-      const changes = {tag: tag, explanation: explanation};
-      await requestServer(serverPath.COMPLETE_GENERATED_TASK, httpsMethod.POST, {taskType: GENERATED_TASK_TYPES.TAG_ANSWER});
-      setGenerate(!generate);
-      return { success: true };
-    } catch (error) {
-      console.error('Failed to finish task:', error);
-      return { success: false, error: error };
-    }
+  useEffect(() => {
+    const handleFinishTask = async () => {
+      try {
+        if (tag || explanation){
+          const changes = {taskType: GENERATED_TASK_TYPES.TAG_ANSWER, answerId: question.answer.id};
+          if (tag) {
+            changes["userTag"] = tag;
+          }
+          if (explanation) {
+            changes["explanation"] = explanation;
+          }
+          await requestServer(serverPath.COMPLETE_GENERATED_TASK, httpsMethod.POST, changes);
+        }
+        resetStates();
+        return { success: true };
+      } catch (error) {
+        console.error('Failed to finish task:', error);
+        return { success: false, error: error };
+      }
+    };
+    handleFinishTask();
+  }, [isFinished]);
+
+  const resetStates = () => {
+    setGenerate(!generate);
+    setTag("");
+    setExplanation("");
+    setIsFinished(false);
   };
 
   const handleSubmit = () => {
-    if (selectedTag === tag) {
+    if (selectedTag === question.answer.tag) {
       setIsCheckExplanationOpen(true);
     } else {
       setTag(selectedTag)
       setIsProvideExplanationOpen(true);
     }
+  };
+
+  const handleSetExplanation = (newExplanation) => {
+    setExplanation(newExplanation);
   };
 
   return (
@@ -122,13 +143,13 @@ const TagAnswers = () => {
         closePopup={() => setIsCheckExplanationOpen(false)}
         explanation={question.answer?.explanation}
         handleWrongExplanation={() => setIsProvideExplanationOpen(true)}
-        generate={() => handleFinishTask()}/>
+        finishTask={() => setIsFinished(true)}/>
 
       <ProvideExplanationPopup
         isOpen={isProvideExplanationOpen}
         closePopup={() => setIsProvideExplanationOpen(false)}
-        setExplanation={(newExplanation) => setExplanation(newExplanation)}
-        generate={() => handleFinishTask()}/>
+        handleSetExplanation={handleSetExplanation}
+        finishTask={() => setIsFinished(true)}/>
 
       <ErrorMessage message={error}></ErrorMessage>
 
