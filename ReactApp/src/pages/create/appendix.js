@@ -76,7 +76,8 @@ const Page = () => {
     return {
       title: values.appendix.title,
       tag: values.appendix.tag,
-      content: values.appendix.content
+      content: values.appendix.content,
+      keywords: []
     }
   }
 
@@ -93,7 +94,7 @@ const Page = () => {
     try {
       const newAppendix = createAppendix(values);
       let request = appendix ? serverPath.EDIT_APPENDIX : serverPath.ADD_APPENDIX
-      await requestServer(request, httpsMethod.POST, newAppendix);
+      await requestServer(request, httpsMethod.POST, {appendix : newAppendix});
       await router.push('/');
     } catch (err) {
       setErrorMessage(err.message);
@@ -161,6 +162,7 @@ const Page = () => {
                   setFieldValue={setFieldValue}
                   touched = {touched.appendix}
                   errors={errors.appendix}
+                  isEditMode={appendix!==null}
                   />
                 </Box>
               </Container>

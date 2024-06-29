@@ -291,6 +291,22 @@ class ApplicationFacade{
         return await this.#mqBusinessToFE(businessMq);
     }
 
+    async addAppendix(data) {
+        const businessAppendix = await this.metaQuestionController.createAppendix( {
+            ...data.appendix,
+            callingUser: data.callingUser,
+        });
+        return this.#appendixBusinessToFE(businessAppendix)
+    }
+
+    async editAppendix(data) {
+        const businessAppendix = await this.metaQuestionController.editAppendix( {
+            ...data.appendix,
+            callingUser: data.callingUser,
+        });
+        return this.#appendixBusinessToFE(businessAppendix)
+    }
+
     /**
      * Delete a user from the system
      * @param data.username - The user we want to delete
