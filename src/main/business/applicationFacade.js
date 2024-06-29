@@ -12,7 +12,7 @@ class ApplicationFacade{
         this.userController = new UserController(userRepo);
         this.taskController = new TaskController(this.userController);
         this.metaQuestionController = new MetaQuestionController(metaQuestionsRepo, this.taskController, this.userController);
-        this.examController = new ExamController(this.taskController, this.userController, examRepo)
+        this.examController = new ExamController(this.metaQuestionController, examRepo);
     }
 
     /**

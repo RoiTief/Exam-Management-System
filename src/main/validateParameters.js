@@ -140,4 +140,8 @@ function validateParameters(realObj, expectedObj, prohibitNull = true, checkCall
   }
 }
 
-module.exports = { validateParameters };
+function validateParametersWithoutCallingUser(realObj, expectedObj, prohibitNull = true) {
+  validateParameters(realObj, expectedObj, prohibitNull, false);
+}
+
+module.exports = { validateParameters,validateParametersWithoutCallingUser };

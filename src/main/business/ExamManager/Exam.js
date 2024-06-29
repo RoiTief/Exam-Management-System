@@ -7,12 +7,15 @@ class Exam {
         this.#dalExam = dalExam;
         this.#questions = dalExam.questions.map(dalQ => new Question(dalQ))
     }
-    async getExamId() {
+    getExamId() {
         return this.#dalExam.id;
     }
 
-    async getQuestions(){
-        return this.#dalExam.questions
+    getQuestions() {
+        return this.#questions
+    }
+    getTitle() {
+        return this.#dalExam.title;
     }
 }
 

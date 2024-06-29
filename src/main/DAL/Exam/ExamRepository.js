@@ -5,6 +5,8 @@ const defineQuestionModel = require("./Question");
 const defineQuestionAnswerModel = require("./QuestionAnswer");
 const { EMSError, EXAM_PROCESS_ERROR_CODES } = require("../../EMSError");
 const { EXAM_PROCESS_ERROR_MSGS } = require("../../ErrorMessages");
+const { PRIMITIVE_TYPES } = require("../../Enums");
+const {validateParametersWithoutCallingUser} = require("../../validateParameters")
 
 class ExamRepository {
     #MetaQuestion
@@ -69,7 +71,7 @@ class ExamRepository {
             });
         }catch (e) {
             console.error(e);
-            throw EMSError(EXAM_PROCESS_ERROR_MSGS.GET_EXAM_BY_ID(id), EXAM_PROCESS_ERROR_CODES.GET_EXAM_BY_ID)
+            throw new EMSError(EXAM_PROCESS_ERROR_MSGS.GET_EXAM_BY_ID(id), EXAM_PROCESS_ERROR_CODES.GET_EXAM_BY_ID)
         }
     }
     /**
@@ -77,17 +79,18 @@ class ExamRepository {
      * @param  examId 
      * @param  mQid : the metaQuestion id of the question
      * @param  questionData : {ordinal : the ordinal of the question in the exam}
-     * @param  answerOrdinalObj : an array of object, maps the answerId to its ordinal in the question. type [{id, ordinal}]
+     * @param  answerData : an array of object, contains the answerId its ordinal and permutation in the question. type [{id, ordinal, permutation}]
      * @returns The new question
      */
-    async addQuestionToExam(examId, mQid, questionData, answerIdToOrdinalArr) {
+    async addQuestionToExam(examId, mQid, questionData, answerData) {
+        validateParametersWithoutCallingUser(questionData, {ordinal:PRIMITIVE_TYPES.NUMBER})
         try {
             const exam = await this.getExamById(examId);
             const question = await this.#Question.create(questionData);
             const metaQuestion = await this.#MetaQuestion.findByPk(mQid);
             await question.setMetaQuestion(metaQuestion);
             await question.setExam(exam);
-            await this.#setAnswersToQuestion(question.id, answerIdToOrdinalArr);
+            await this.#setAnswersToQuestion(question.id, answerData);
             return await this.#Question.findByPk(question.id, {
                 include: [
                     {
@@ -102,7 +105,7 @@ class ExamRepository {
             });
         } catch (e) {
             console.error(e);
-            throw EMSError(EXAM_PROCESS_ERROR_MSGS.ADD_QUESTION_TO_EXAM(examId, mQid, questionData, answerIdToOrdinalArr), EXAM_PROCESS_ERROR_CODES.ADD_QUESTION_TO_EXAM)
+            throw new EMSError(EXAM_PROCESS_ERROR_MSGS.ADD_QUESTION_TO_EXAM(examId, mQid, questionData, answerData), EXAM_PROCESS_ERROR_CODES.ADD_QUESTION_TO_EXAM)
         }
     }
 
@@ -110,19 +113,21 @@ class ExamRepository {
     /**
      * 
      * @param  qid : the question id of the question
-     * @param  answerIdToOrdinalArr : an array of object, maps the answerId to its ordinal in the question. type [{id:ordinal}]
+     * @param  answersData : an array of object, contains the answerId its ordinal and permutation in the question. type [{id, ordinal, permutation}]
      */
-    async #setAnswersToQuestion(qid, answerIdToOrdinalArr) {
+    async #setAnswersToQuestion(qid, answersData) {
+        validateParametersWithoutCallingUser(answersData,[{id:PRIMITIVE_TYPES.NUMBER, ordinal:PRIMITIVE_TYPES.NUMBER, permutation:PRIMITIVE_TYPES.NUMBER}])
+
         const question = await this.#Question.findByPk(qid);
         try {
             await Promise.all(
-                answerIdToOrdinalArr.map(async answerOrdinal => {
-                    const answer = await this.#Answer.findByPk(answerOrdinal.id);
-                    return await question.addAnswer(answer, { through: { ordinal: answerOrdinal.ordinal } });
+                answersData.map(async answerData => {
+                    const answer = await this.#Answer.findByPk(answerData.id);
+                    return await question.addAnswer(answer, { through: {answerId:answer.id, questionId:qid, ordinal:answerData.ordinal, permutation:answerData.permutation} });
                 }));
         } catch (e) {
             console.error(e);
-            throw EMSError(EXAM_PROCESS_ERROR_MSGS.SET_ANSWERS_TO_QUESTION(qid, answerIdToOrdinalArr), EXAM_PROCESS_ERROR_CODES.SET_ANSWERS_TO_QUESTION)
+            throw new EMSError(EXAM_PROCESS_ERROR_MSGS.SET_ANSWERS_TO_QUESTION(qid, answersData), EXAM_PROCESS_ERROR_CODES.SET_ANSWERS_TO_QUESTION)
         }
 
     }

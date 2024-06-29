@@ -68,7 +68,7 @@ describe('ExamRepository happy path tests', () => {
 
     test('add a question to the exam', async () => {
         const createdExam = await examRepository.createExam(testExamData.exam);
-        const createdQuestion = await examRepository.addQuestionToExam(createdExam.id, questions[0].id,{ordinal:0}, answers.map((answer,index) => {return {id:answer.id, ordinal: index}}));
+        const createdQuestion = await examRepository.addQuestionToExam(createdExam.id, questions[0].id,{ordinal:0}, answers.map((answer,index) => ({id:answer.id, ordinal: index, permutation: 0})));
 
         expect(createdQuestion).not.toBeNull();
         expect(createdQuestion.examId).toBe(createdExam.id);
@@ -83,7 +83,7 @@ describe('ExamRepository happy path tests', () => {
 
     test('retrieve an exam by ID', async () => {
         const createdExam = await examRepository.createExam(testExamData.exam);
-        const createdQuestion = await examRepository.addQuestionToExam(createdExam.id, questions[0].id,{ordinal:0}, answers.map((answer,index) => {return {id:answer.id, ordinal: index}}));
+        const createdQuestion = await examRepository.addQuestionToExam(createdExam.id, questions[0].id,{ordinal:0}, answers.map((answer,index) => ({id:answer.id, ordinal: index, permutation: 0})));
         const retrievedExam = await examRepository.getExamById(createdExam.id);
 
 
