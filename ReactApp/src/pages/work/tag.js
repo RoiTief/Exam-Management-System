@@ -112,7 +112,9 @@ const TagAnswers = () => {
           <QuestionPhotoView content={question.appendix} type={latexServerPath.COMPILE_APPENDIX}/>
         )}
         <Typography variant="h6" component="h1" gutterBottom>{TAG_ANSWERS.STEM}</Typography>
-        <QuestionPhotoView content={question.stem} type={latexServerPath.COMPILE_STEM}/>
+        {question.stem && (
+          <QuestionPhotoView content={question.stem} type={latexServerPath.COMPILE_STEM}/>
+        )}
         <Typography variant="h4" component="h1" gutterBottom>
           {TAG_ANSWERS.FOLLOWING_ANSWER}
         </Typography>

@@ -1,5 +1,6 @@
 const MetaQuestion = require('./MetaQuestion')
 const Appendix = require('./Appendix')
+const Answer = require('./Answer')
 const {ANSWER_TYPES, PRIMITIVE_TYPES} = require("../../Enums");
 const {validateParameters} = require("../../validateParameters");
 
@@ -96,6 +97,11 @@ class MetaQuestionController{
         validateParameters(data, {appendixTag: PRIMITIVE_TYPES.STRING});
         const dalMQs = await this.#metaQuestionRepo.getMetaQuestionsForAppendix(data.appendixTag);
         return dalMQs.map(dalMQ => new MetaQuestion(dalMQ));
+    }
+
+    async getAnswer(answerId) {
+        const dalAnswer = await this.#metaQuestionRepo.getAnswer(answerId);
+        return new Answer(dalAnswer);
     }
 }
 
