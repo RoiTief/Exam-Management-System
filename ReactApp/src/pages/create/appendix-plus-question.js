@@ -76,8 +76,7 @@ const Page = () => {
         explanation: item.explanation
       })),
       appendix: {
-        ...values.appendix,
-        keywords: [],
+        ...values.appendix
       },
     };
   }

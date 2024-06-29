@@ -143,7 +143,7 @@ const Page = () => {
           >
             <Container maxWidth="md" sx={{ backgroundColor: '#ffffff', borderRadius: 2, boxShadow: 3, p: 4, mb: 2, width: "100%" }}>
               <Typography variant="h4" component="h1" gutterBottom>
-                {question? EDIT_QUESTION : CREATE_QUESTION.CREATE_APPENDIX_TITLE}
+                {question? EDIT_QUESTION : CREATE_QUESTION.CREATE_CHOOSE_APPENDIX_TITLE}
               </Typography>
             </Container>
             <Stack display='flex' spacing={4} direction="row" width="80%">

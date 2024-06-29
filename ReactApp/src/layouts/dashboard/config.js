@@ -53,6 +53,10 @@ export const items = [
       {
         title: SIDE_BAR.APPENDIX_PLUS_META_QUESTION,
         path: '/create/appendix-plus-question',
+      },
+      {
+        title: SIDE_BAR.APPENDIX,
+        path: '/create/appendix',
       }
     ]
   },
