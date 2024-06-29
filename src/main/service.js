@@ -305,6 +305,24 @@ function getAllMetaQuestions(req, res, next) {
 }
 
 /**
+ * return a list of meta question relevant to add to the new exam:
+ * - each question has at least 1 key and 4 distractors that are not used yet in the exam
+ * - the keys and distractors returned are not used yet in the exam
+ * @throws {Error} - if fail to fetch
+ */
+function getMetaQuestionsForExam(req, res, next){
+    application.getMetaQuestionsForExam(req.body).then(
+        metaQuestions => {
+            req.log.info("a request was sent fetch all the meta questions");
+            res.send(200, {code: 200, metaQuestions})
+            next()
+        }, err => {
+            req.log.warn(err.message, 'unable to request fetch all the meta questions');
+            next(err);
+        });
+}
+
+/**
  * return a list of meta question of the user's course
  * @throws {Error} - if fail to fetch
  */
@@ -332,29 +350,25 @@ function getMetaQuestionForAppendix(req, res, next) {
             next(err);
         });
 }
-
 /**
- * add a meta question to the db
- * @param - req.body = {
- *     //       keywords: str[],
- *     //       stem: str,
- *     //       keys: [{
- *     //         answer: str,
- *     //         explanation: str
- *     //         }],
- *     //       distractors: [{
- *     //         distractor: str,
- *     //         explanation: str
- *     //       }],
- *     //      appendix: {
- *     //          title: str,
- *     //          tag: str,
- *     //          content: str
- *     //       }
- *     //     }
- *     //
- *     appendix could be null
- * @throws {Error} - if fail to create
+ *  request: {
+           keywords: str[],
+           stem: str,
+           keys: [{
+             answer: str,
+             explanation: str
+             }],
+           distractors: [{
+             distractor: str,
+             explanation: str
+           }],
+          appendix: {
+              title: str,
+              tag: str,
+              content: str
+           }
+         }
+     @throws {Error} - if fail to create
  */
 function addMetaQuestion(req, res, next) {
     application.addMetaQuestion(req.body).then(
@@ -370,26 +384,118 @@ function addMetaQuestion(req, res, next) {
 }
 
 /**
+    request: {
+           selectedMetaQuestion: MetaQuestion,
+           selectedKey: {answer: str, explanation: str },
+           selectedDistractors: [{answer: str, explanation: str }],
+         }
+    response: {
+           id: num
+           stem: str,
+           key: {answer: str, explanation: str },
+           distractors: [{answer: str, explanation: str }],
+          appendix: {
+              title: str,
+              tag: str,
+              content: str
+           }
+         }
+ * @throws {Error} - if fail to create
+ */
+function addManualMetaQuestionToExam(req, res, next) {
+    try {
+        let examQuestion = application.addManualMetaQuestionToExam(req.body)
+        req.log.info("request to add manual question to exam");
+        res.send(200, {code: 200, examQuestion})
+        next()
+    } catch (err) {
+        req.log.warn(err.message, 'failed to add manual question to exam');
+        next(err);
+    }
+}
+
+/**
+ * add a meta question to the db based on solly stem and appendix
+ * the system should randomize the answer and 4 distractors and create this question
+ *  request: {
+           selectedMetaQuestion: MetaQuestion,
+           selectedKey: null,
+           selectedDistractors: [] - empty array,
+         }
+    response: {
+           id: num
+           stem: str,
+           key: {answer: str, explanation: str },
+           distractors: [{answer: str, explanation: str }],
+          appendix: {
+              title: str,
+              tag: str,
+              content: str
+           }
+         }
+ * @throws {Error} - if fail to create
+ */
+function addAutomaticQuestionToExam(req, res, next) {
+    try {
+        let examQuestion = application.addAutomaticQuestionToExam(req.body)
+        req.log.info("request to add automatic question to exam");
+        res.send(200, {code: 200, examQuestion})
+        next()
+    } catch (err) {
+        req.log.warn(err.message, 'failed to add automatic question to exam');
+        next(err);
+    }
+}
+
+
+/**
+ * removes a question from the exam
+ request: {
+           id: num
+           stem: str,
+           key: {answer: str, explanation: str },
+           distractors: [{answer: str, explanation: str }],
+          appendix: {
+              title: str,
+              tag: str,
+              content: str
+           }
+         }
+ * @throws {Error} - if fail to create
+ */
+function removeQuestionFromExam(req, res, next) {
+    try {
+        application.removeQuestionFromExam(req.body)
+        req.log.info("request to remove a question from exam");
+        res.send(200, {code: 200})
+        next()
+    } catch (err) {
+        req.log.warn(err.message, 'failed to remove a question from exam');
+        next(err);
+    }
+}
+
+/**
  * edit a meta question
  * @param - req.body = {
- *      //      id: num
- *     //       keywords: str[],
- *     //       stem: str,
- *     //       keys: [{
- *     //         answer: str,
- *     //         explanation: str
- *     //         }],
- *     //       distractors: [{
- *     //         distractor: str,
- *     //         explanation: str
- *     //       }],
- *     //      appendix: {
- *     //          title: str,
- *     //          tag: str,
- *     //          content: str
- *     //       }
- *     //     }
- *     //
+ *            id: num
+ *            keywords: str[],
+ *            stem: str,
+ *            keys: [{
+ *              answer: str,
+ *              explanation: str
+ *              }],
+ *            distractors: [{
+ *              distractor: str,
+ *              explanation: str
+ *            }],
+ *           appendix: {
+ *               title: str,
+ *               tag: str,
+ *               content: str
+ *            }
+ *          }
+ *     
  *     appendix could be null
  * @throws {Error} - if fail to edit
  */
@@ -512,9 +618,13 @@ module.exports = {
     viewAllUsers: viewAllUsers,
     deleteUser: deleteUser,
     getAllMetaQuestions: getAllMetaQuestions,
+    getMetaQuestionsForExam,
     getAllAppendices: getAllAppendices,
     getMetaQuestionForAppendix: getMetaQuestionForAppendix,
     addMetaQuestion: addMetaQuestion,
+    addManualMetaQuestionToExam: addManualMetaQuestionToExam,
+    addAutomaticQuestionToExam: addAutomaticQuestionToExam,
+    removeQuestionFromExam: removeQuestionFromExam,
     editMetaQuestion: editMetaQuestion,
     createExam,
     getAllExams,
