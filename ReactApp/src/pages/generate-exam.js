@@ -13,7 +13,9 @@ const Page = () => {
   const router = useRouter();
   const [questions, setQuestions] = useState([]);
   const [metaQuestions, setMetaQuestions] = useState([]);
-  const [currentQuestion, setCurrentQuestion] = useState(null);
+  const [isAddQuestionPopupOpen, setIsAddQuestionPopupOpen] = useState(false);
+  const [usedAnswers, setUsedAnswers] = useState({});
+  const [usedDistractors, setUsedDistractors] = useState({});
   const [showPdfView, setShowPdfView] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [showDialog, setShowDialog] = useState(false);
@@ -23,7 +25,7 @@ const Page = () => {
   useEffect(() => {
     async function fetchMetaQuestions() {
       try {
-        const { metaQuestions } = await requestServer(serverPath.GET_META_QUESTIONS_FOR_EXAM, httpsMethod.GET);
+        const { metaQuestions } = await requestServer(serverPath.GET_ALL_META_QUESTIONS, httpsMethod.GET);
         setMetaQuestions(metaQuestions);
         setErrorMessage('')
       } catch (error) {
@@ -33,19 +35,35 @@ const Page = () => {
     }
 
     fetchMetaQuestions();
-  }, [setQuestions]);
+  }, []);
 
-  const addQuestion = async (question, AutomaticGenerateState) => {
-    try{
-      let request = AutomaticGenerateState ? serverPath.ADD_AUTOMATIC_META_QUESTION : serverPath.ADD_MANUAL_META_QUESTION
-      const { examQuestion } = await requestServer(request, httpsMethod.POST, { question });
-      setQuestions([...questions, examQuestion]);
-      setCurrentQuestion(null)
-      setErrorMessage('')
-    } catch (err) {
-      setErrorMessage(err.message)
+  async function addQuestion(question) {
+    let examQuestion = extractQuestion(question)
+    setQuestions(prevQuestions => [...prevQuestions, examQuestion]);
+
+    setUsedAnswers(prev => ({
+      ...prev,
+      [examQuestion.id]: [...(prev[examQuestion.id] || []), examQuestion.key]
+    }));
+
+    setUsedDistractors(prev => ({
+      ...prev,
+      [examQuestion.id]: [...(prev[examQuestion.id] || []), ...examQuestion.distractors]
+    }));
+
+    setIsAddQuestionPopupOpen(false)
+    setErrorMessage('')
+  }
+
+  const extractQuestion = (question) => {
+    return {
+      id: question.selectedMetaQuestion.id,
+      stem: question.selectedMetaQuestion.stem,
+      key: question.selectedKey,
+      distractors:question.selectedDistractors,
+    ...( question.selectedMetaQuestion.appendix && {appendix: question.selectedMetaQuestion.appendix})
     }
-  };
+  }
 
   const saveTest = async () => {
     setShowDialog(false);
@@ -60,15 +78,23 @@ const Page = () => {
   }
 
   const removeQuestion = async (index) => {
-    try {
-      const questionToRemove = questions[index];
-      await requestServer(serverPath.REMOVE_QUESTION_FROM_EXAM, httpsMethod.POST, questionToRemove);
-      const updatedQuestions = questions.filter((_, i) => i !== index);
-      setQuestions(updatedQuestions);
-      setErrorMessage('')
-    } catch (err) {
-      setErrorMessage(err.message)
-    }
+    const questionToRemove = questions[index];
+    const updatedQuestions = questions.filter((_, i) => i !== index);
+    await setQuestions(updatedQuestions);
+
+    setUsedAnswers(prevUsedAnswers => {
+      const updatedAnswers = { ...prevUsedAnswers };
+      updatedAnswers[questionToRemove.id] = updatedAnswers[questionToRemove.id].filter(a => a.text !== questionToRemove.key.text);
+      return updatedAnswers;
+    });
+
+    setUsedDistractors(prevUsedDistractors => {
+      const updatedDistractors = { ...prevUsedDistractors };
+      updatedDistractors[questionToRemove.id] = updatedDistractors[questionToRemove.id].filter(d =>
+        !questionToRemove.distractors.some(dist => dist.text === d.text)
+      );
+      return updatedDistractors;
+    });
   };
 
   const onDragEnd = (result) => {
@@ -97,14 +123,16 @@ const Page = () => {
           {EXAM.PAGE_TITLE}
         </Typography>
         <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-          <Button variant="contained" onClick={() => setCurrentQuestion({})} sx={{ mb: 2 }}>
+          <Button variant="contained" onClick={() => setIsAddQuestionPopupOpen(true)} sx={{ mb: 2 }}>
             {EXAM.ADD_QUESTION_BUTTON}
           </Button>
           <AddQuestionToExamPopup
-            isOpen={currentQuestion !== null}
-            closePopup={() => setCurrentQuestion(null)}
+            isOpen={isAddQuestionPopupOpen}
+            closePopup={() => setIsAddQuestionPopupOpen(false)}
             metaQuestions={metaQuestions}
             addQuestion={addQuestion}
+            usedKeys={usedAnswers}
+            usedDistractors={usedDistractors}
           />
           <QuestionList questions={questions}
                         removeQuestion={removeQuestion}
