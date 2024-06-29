@@ -10,6 +10,7 @@ import { CREATE_QUESTION, EDIT_APPENDIX, EDIT_QUESTION } from '../../constants';
 import { PdfLatexPopup } from '../../sections/popUps/QuestionPdfView';
 import ErrorMessage from '../../components/errorMessage';
 import AppendixSection from '../../sections/create-edit-meta-question/apendix-edit';
+import { MetaQuestionTable } from '../../sections/view-questions/question-table';
 
 const validationSchema = Yup.object().shape({
   appendix: Yup.object().shape({
@@ -22,13 +23,25 @@ const validationSchema = Yup.object().shape({
 const Page = () => {
   const router = useRouter();
   const [appendix, setAppendix] = useState(null);
+  const [relatedQuestions, setRelatedQuestions] = useState([]);
   const [showPdfView, setShowPdfView] = useState(false);
   const [showAppendixView, setShowAppendixView] = useState(null);
   const [errorMessage, setErrorMessage] = useState('');
 
   useEffect(() => {
+    const fetchRelatedQuestions = async (editAppendix) => {
+      try {
+        const { metaQuestions } = await requestServer(serverPath.GET_META_QUESTIONS_FOR_APPENDIX, httpsMethod.POST, editAppendix);
+        setRelatedQuestions(metaQuestions);
+      } catch (error) {
+        setErrorMessage(`Error fetching related questions: ${error.message}`);
+      }
+    }
+
     if (router.query.appendix) {
-      setAppendix(JSON.parse(router.query.appendix));
+      let editAppendix = JSON.parse(router.query.appendix)
+      setAppendix(editAppendix);
+      fetchRelatedQuestions(editAppendix)
     }
   }, [router.query.appendix]);
 
@@ -95,7 +108,7 @@ const Page = () => {
     >
       {({ values, handleChange, handleBlur, isSubmitting, setFieldValue, touched, errors }) => (
         <Form onKeyDown={handleKeyDown}>
-          <Box
+          <Stack
             sx={{
               minHeight: '100vh',
               display: 'flex',
@@ -103,48 +116,59 @@ const Page = () => {
               justifyContent: 'center',
               backgroundColor: '#f0f0f0',
               padding: 2,
+              flexDirection: "column",
+              spacing: 4
             }}
           >
-            <Container maxWidth="sm" sx={{ backgroundColor: '#ffffff', borderRadius: 2, boxShadow: 3, p: 4 }}>
+            <Container maxWidth="md" sx={{ backgroundColor: '#ffffff', borderRadius: 2, boxShadow: 3, p: 4, mb: 2, width: "100%" }}>
               <Typography variant="h4" component="h1" gutterBottom>
                 {appendix? EDIT_APPENDIX : CREATE_QUESTION.CREATE_APPENDIX_TITLE}
               </Typography>
-              <AppendixSection
-                values={values}
-                handleChange={handleChange}
-                handleBlur={handleBlur}
-                setFieldValue={setFieldValue}
-                touched = {touched.appendix}
-                errors={errors.appendix}
-              />
-              <Stack direction="column" padding={1}>
-                <Stack direction="row" justifyContent="space-between" width="100%">
-                  <Button variant="contained" type="submit" disabled={isSubmitting}>
-                    {CREATE_QUESTION.SUBMIT_BUTTON}
-                  </Button>
-                  <Button variant="outlined"
-                          sx={{
-                            backgroundColor: 'rgba(255, 165, 0, 0.3)', // Tinted background
-                            color: 'primary.main',
-                            '&:hover': {
-                              backgroundColor: 'rgba(255, 165, 0, 0.08)', // Darker tint on hover
-                            },
-                          }}
-                          onClick={(event) => handlePdfButtonClick(event, values)}>
-                    {CREATE_QUESTION.VIEW_APPENDIX_PDF_BUTTON}
-                  </Button>
-                </Stack>
-                <ErrorMessage message={errorMessage} />
-              </Stack>
             </Container>
-          </Box>
-          {showPdfView && (
-            <PdfLatexPopup isOpen={showPdfView}
-                           closePopup={closePopup}
-                           content={showAppendixView}
-                           type={latexServerPath.APPENDIX}/>
-          )}
-        </Form>
+            <Stack justifyContent="center" display='flex' spacing={4} direction="row" width="80%">
+              {appendix && (
+                <Container maxWidth="md" sx={{ backgroundColor: '#ffffff', borderRadius: 2, boxShadow: 3, p: 4, width: "50%" }}>
+                  <MetaQuestionTable data={relatedQuestions} />
+                </Container>
+              )}
+              <Container maxWidth="md" sx={{ backgroundColor: '#ffffff', borderRadius: 2, boxShadow: 3, p: 4, width: "50%" }}>
+                <Box sx={{ flexGrow: 1, px: 2, py: 3 }}>
+                  <AppendixSection
+                  values={values}
+                  handleChange={handleChange}
+                  handleBlur={handleBlur}
+                  setFieldValue={setFieldValue}
+                  touched = {touched.appendix}
+                  errors={errors.appendix}
+                  />
+                </Box>
+              </Container>
+            </Stack>
+            <Stack direction="row" justifyContent="center" spacing={5} padding={2}>
+              <Button variant="contained" type="submit" disabled={isSubmitting}>
+                {CREATE_QUESTION.SUBMIT_BUTTON}
+              </Button>
+              <Button variant="outlined"
+                      sx={{
+                        backgroundColor: 'rgba(255, 165, 0, 0.3)', // Tinted background
+                        color: 'primary.main',
+                        '&:hover': {
+                          backgroundColor: 'rgba(255, 165, 0, 0.08)', // Darker tint on hover
+                        },
+                      }}
+                      onClick={(event) => handlePdfButtonClick(event, values)}>
+                {CREATE_QUESTION.VIEW_APPENDIX_PDF_BUTTON}
+              </Button>
+            </Stack>
+            <ErrorMessage message={errorMessage} />
+          </Stack>
+        {showPdfView && (
+          <PdfLatexPopup isOpen={showPdfView}
+                         closePopup={closePopup}
+                         content={showAppendixView}
+                         type={latexServerPath.APPENDIX}/>
+        )}
+      </Form>
       )}
     </Formik>
   );

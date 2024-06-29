@@ -6,7 +6,7 @@ import { CREATE_QUESTION } from '../../constants';
 const AppendixSection = ({ values, handleChange, handleBlur, setFieldValue, touched, errors }) => {
   return (
     <Box sx={{ mb: 2 }}>
-    <Typography variant="h6" component="h3">{CREATE_QUESTION.APPENDIX_TITLE}</Typography>
+    <Typography variant="h6" component="h3" padding={2}>{CREATE_QUESTION.APPENDIX_TITLE}</Typography>
     <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
       <TextField
         error={touched?.title && errors?.title}
