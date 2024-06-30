@@ -40,6 +40,8 @@ export const serverPath = {
   EDIT_USER: 'editUser',
   EDIT_META_QUESTION: 'editMetaQuestion',
   GET_META_QUESTIONS_FOR_APPENDIX: 'getMetaQuestionForAppendix',
+  EDIT_APPENDIX: 'editAppendix',
+  ADD_APPENDIX: 'addAppendix',
   REFRESH_TOKEN: 'refreshJWT',
 }
 
@@ -52,7 +54,8 @@ const pathToReturnTypeMap={
 export const latexServerPath = {
   COMPILE: 'compile',
   COMPILE_EXAM: 'exam',
-  COMPILE_MQ: 'metaQuestion'
+  COMPILE_MQ: 'metaQuestion',
+  APPENDIX: 'appendix'
 };
 
 export async function requestLatexServer(path, body) {

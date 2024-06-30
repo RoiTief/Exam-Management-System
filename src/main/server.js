@@ -209,6 +209,10 @@ function createServer(options) {
     
     server.post('/editMetaQuestion', service.editMetaQuestion);
 
+    server.post('/addAppendix', service.addAppendix);
+
+    server.post('/editAppendix', service.editAppendix);
+
     // request:
     //  {
     //  questions:[

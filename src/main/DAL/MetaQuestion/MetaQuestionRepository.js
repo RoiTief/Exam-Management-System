@@ -189,6 +189,10 @@ class MetaQuestionRepository {
                     model: this.#Keyword,
                     as: 'keywords',
                 },
+                {
+                    model: this.#Appendix,
+                    as: 'appendix'
+                }
             ]
         });
     }

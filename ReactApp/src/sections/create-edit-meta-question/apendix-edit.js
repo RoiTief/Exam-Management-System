@@ -3,10 +3,10 @@ import { Box, TextField, IconButton, Typography } from '@mui/material';
 import { FormatTextdirectionLToR, FormatTextdirectionRToL } from '@mui/icons-material';
 import { CREATE_QUESTION } from '../../constants';
 
-const AppendixSection = ({ values, handleChange, handleBlur, setFieldValue, touched, errors }) => {
+const AppendixSection = ({ values, handleChange, handleBlur, setFieldValue, touched, errors, isEditMode }) => {
   return (
     <Box sx={{ mb: 2 }}>
-    <Typography variant="h6" component="h3">{CREATE_QUESTION.APPENDIX_TITLE}</Typography>
+    <Typography variant="h6" component="h3" padding={2}>{CREATE_QUESTION.APPENDIX_TITLE}</Typography>
     <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
       <TextField
         error={touched?.title && errors?.title}
@@ -36,6 +36,7 @@ const AppendixSection = ({ values, handleChange, handleBlur, setFieldValue, touc
         fullWidth
         variant="outlined"
         sx={{ direction: values.appendix.isTagRTL ? 'rtl' : 'ltr', mr: 1 }}
+        disabled={isEditMode}
       />
       <IconButton onClick={() => setFieldValue('appendix.isTagRTL', !values.appendix.isTagRTL)}>
         {values.appendix.isTagRTL ? <FormatTextdirectionRToL/> : <FormatTextdirectionLToR/>}

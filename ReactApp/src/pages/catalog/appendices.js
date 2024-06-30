@@ -40,15 +40,11 @@ const AppendicesPage = () => {
     }
   }, [appendices]);
 
-  const handleSearch = (keys, searchType) => {
+  const handleSearch = (text, searchType) => {
     const filteredAppendices = appendices.filter((appendix) => {
-      if (searchType === 'tag') {
-        return keys.every((key) => appendix.tag.includes(key));
-      } else {
-        return keys.every((key) =>
-          appendix.title.includes(key) || appendix.tag.includes(key) || appendix.content.includes(key)
-        );
-      }
+      if (searchType === 'tag')
+        return appendix.tag.includes(text);
+      return appendix.title.includes(text) || appendix.tag.includes(text) || appendix.content.includes(text)
     });
     setFilteredData(filteredAppendices);
   };
