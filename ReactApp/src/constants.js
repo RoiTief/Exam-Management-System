@@ -259,3 +259,8 @@ export const TAG_ANSWERS = {
   APPENDIX: "Appendix:",
   STEM: "Stem:",
 };
+
+export const QuestionView = {
+  LOAD_PDF: "Failed to load PDF file",
+  SERVER_UNREACHABLE: "Server Unreachable",
+};
