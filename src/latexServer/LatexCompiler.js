@@ -43,7 +43,7 @@ class LatexCompiler {
         // write latex code to the file
         fs.writeFileSync(texPath, this.#preamble);
         fs.writeFileSync(texPath, this.#opening, {flag: 'a'});
-        fs.writeFileSync(filename, "\\pagenumbering{gobble}\n");
+        fs.writeFileSync(texPath, "\\pagenumbering{gobble}\n", {flag: 'a'});
         fs.writeFileSync(texPath, latexCode, {flag : 'a'});
         fs.writeFileSync(texPath, this.#closing, {flag : 'a'});
 
@@ -159,6 +159,36 @@ class LatexCompiler {
         examCompiler.compile(exam, () => {
             this.#compile(filename, callback)
         });
+    }
+
+    compileAnswer(answer, callback) {
+        this.compileNormal(answer.text, this.#createCropCallback('5 5 5 5', callback));
+    }
+
+    compileStem(stem, callback) {
+        this.compileNormal(stem, this.#createCropCallback('5 5 5 5', callback));
+    }
+
+    compileAppendix(appendix, callback) {
+        let latexCode = `\\subsection*{${appendix.title}}\n` +
+        `${appendix.content} \n\n`;
+        this.compileNormal(latexCode, this.#createCropCallback('5 5 5 5', callback));
+    }
+
+    #createCropCallback(margins, callback) {
+        return (err, pdfPath) => {
+            if (err) {
+                return callback(err, null);
+            }
+            // after successful latex compilation crop trailing whitespace
+            exec(`cd ${this.#pdfDirPath} && pdfcrop --margins '${margins}' ${pdfPath} ${pdfPath}`, (error, stdout, stderr) => {
+                if (error) {
+                    console.error(`pdfcrop Error: ${stdout}`);
+                    return callback(error, null);
+                }
+                callback(null, pdfPath);
+            });
+        }
     }
 
     /**

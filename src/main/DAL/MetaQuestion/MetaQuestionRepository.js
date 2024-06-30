@@ -211,6 +211,14 @@ class MetaQuestionRepository {
         });
     }
 
+    async getAnswer(answerId) {
+        const answer = await this.#Answer.findByPk(answerId);
+        if (answer === null) {
+            throw new EMSError(ERROR_MSGS.ANSWER_ID_DOESNT_EXIST(answerId), ERROR_CODES.ANSWER_ID_DOESNT_EXIST);
+        }
+        return answer;
+    }
+
     /**
      * Removes given Appendix from the DB.
      * @param appendixTag Tag of the Appendix to remove.

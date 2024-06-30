@@ -5,7 +5,7 @@ import {
   AdminPanelSettingsRounded,
   Newspaper,
   QuestionMark,
-  SchoolOutlined,
+  SchoolOutlined, Work
 } from '@mui/icons-material';
 import { ACCOUNT, SIDE_BAR } from '../../constants';
 
@@ -32,6 +32,21 @@ export const items = [
       </SvgIcon>
     ),
     permissions: [types.ADMIN]
+  },
+  {
+    title: SIDE_BAR.ASK_FOR_WORK,
+    icon: (
+      <SvgIcon fontSize="small">
+        <Work />
+      </SvgIcon>
+    ),
+    permissions: [types.LECTURER, types.TA],
+    children: [
+      {
+        title: SIDE_BAR.TAG_ANSWERS,
+        path: '/work/tag',
+      }
+    ]
   },
   {
     title: SIDE_BAR.CREATE_META_QUESTION,
