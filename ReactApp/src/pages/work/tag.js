@@ -38,15 +38,17 @@ const TagAnswers = () => {
 
   useEffect(() => {
     const fetchRandomQuestion = async () => {
-      try {
-        const response = await requestServer(serverPath.GENERATE_TASK, httpsMethod.POST, {taskType: GENERATED_TASK_TYPES.TAG_ANSWER});
-        setQuestion(response.work);
-        setError("")
-        return { success: true };
-      } catch (error) {
-        console.error('Failed to fetch question:', error);
-        setError(error.message)
-        return { success: false, error: error };
+      if (Object.keys(question).length === 0) {
+        try {
+          const response = await requestServer(serverPath.GENERATE_TASK, httpsMethod.POST, {taskType: GENERATED_TASK_TYPES.TAG_ANSWER});
+          setQuestion(response.work);
+          setError("")
+          return { success: true };
+        } catch (error) {
+          console.error('Failed to fetch question:', error);
+          setError(error.message)
+          return { success: false, error: error };
+        }
       }
     };
     fetchRandomQuestion();
@@ -71,6 +73,7 @@ const TagAnswers = () => {
           return { success: true };
         } catch (error) {
           console.error('Failed to finish task:', error);
+          setError(error.message)
           return { success: false, error: error };
         }
       }
@@ -80,8 +83,10 @@ const TagAnswers = () => {
 
   const resetStates = () => {
     setGenerate(!generate);
+    setQuestion({});
     setTag("");
     setExplanation("");
+    setError("");
     setIsFinished(false);
   };
 
@@ -137,6 +142,7 @@ const TagAnswers = () => {
             {TAG_ANSWERS.SUBMIT}
           </Button>
         </Box>
+        <ErrorMessage message={error}></ErrorMessage>
       </Container>
 
       <CheckExplanationPopup
@@ -151,8 +157,6 @@ const TagAnswers = () => {
         closePopup={() => setIsProvideExplanationOpen(false)}
         handleSetExplanation={handleSetExplanation}
         finishTask={() => setIsFinished(true)}/>
-
-      <ErrorMessage message={error}></ErrorMessage>
 
     </Box>
   );
