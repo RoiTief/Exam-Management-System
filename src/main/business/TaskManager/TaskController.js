@@ -149,7 +149,7 @@ class TaskController {
     async #completeTagAnswerTask(data) {
         validateParameters(data, {answerId: PRIMITIVE_TYPES.NUMBER, userTag: PRIMITIVE_TYPES.STRING});
         const callingUser = data.callingUser;
-        this.#taskRepo.tagAnswer(callingUser.username, data.answerId, data.userTag);
+        await this.#taskRepo.tagAnswer(callingUser.username, data.answerId, data.userTag);
 
         const answer = await this.#mqController.getAnswer(data.answerId);
         if (answer.getTag() === data.userTag) return;
