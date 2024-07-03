@@ -16,13 +16,13 @@ class TaskRepository {
         this.#User = defineUserModel(sequelize);
         this.#Answer = defineAnswerModel(sequelize);
         this.#UserTagAnswer = defineUserTagAnswerModel(sequelize);
-        this.#RoleTask = defineRoleTaskModel(sequelize);
+        this.#RoleTask = defineRoleTaskModel(sequelize, this.#User);
 
         this.#User.belongsToMany(this.#Answer, {as: 'taggedAnswers', through: this.#UserTagAnswer});
         this.#Answer.belongsToMany(this.#User, {as: 'users', through: this.#UserTagAnswer });
 
-        this.#User.hasMany(this.#RoleTask, {as: 'createdRoleTasks', foreignKey: 'createdUser', onDelete: 'CASCADE'});
-        this.#RoleTask.belongsTo(this.#User, {foreignKey: 'createdUser'});
+        this.#User.hasMany(this.#RoleTask, {as: 'createdRoleTasks', foreignKey: 'creatingUser'});
+        this.#RoleTask.belongsTo(this.#User, {foreignKey: 'creatingUser', onDelete: 'CASCADE'});
     }
 
     /**

@@ -4,7 +4,7 @@ const {USER_TYPES} = require("../../Enums");
 /**
  * Defines a 'Answer' model within the given database
  */
-function defineRoleTaskModel(sequelize) {
+function defineRoleTaskModel(sequelize, UserModel) {
     return sequelize.modelManager.models.some(model => model.name === 'RoleTask') ?
         sequelize.models.RoleTask :
         sequelize.define('RoleTask', {
@@ -22,6 +22,14 @@ function defineRoleTaskModel(sequelize) {
                 taskData: {
                     type: DataTypes.JSON,
                     allowNull: false,
+                },
+                creatingUser: {
+                    type: DataTypes.STRING,
+                    references: {
+                        model: UserModel,
+                        key: 'username',
+                    },
+                    allowNull: false
                 }
             }
         );
