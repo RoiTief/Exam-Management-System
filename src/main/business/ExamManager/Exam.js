@@ -5,9 +5,9 @@ class Exam {
     #questions
     constructor(dalExam) {
         this.#dalExam = dalExam;
-        this.#questions = dalExam.questions.map(dalQ => new Question(dalQ))
+        this.#questions = dalExam.questions?.map(dalQ => new Question(dalQ))
     }
-    getExamId() {
+    getId() {
         return this.#dalExam.id;
     }
 

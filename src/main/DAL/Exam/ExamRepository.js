@@ -6,7 +6,7 @@ const defineQuestionAnswerModel = require("./QuestionAnswer");
 const { EMSError, EXAM_PROCESS_ERROR_CODES } = require("../../EMSError");
 const { EXAM_PROCESS_ERROR_MSGS } = require("../../ErrorMessages");
 const { PRIMITIVE_TYPES } = require("../../Enums");
-const {validateParametersWithoutCallingUser} = require("../../validateParameters")
+const {validateParametersWithoutCallingUser} = require("../../validateParameters");
 
 class ExamRepository {
     #MetaQuestion
@@ -82,15 +82,16 @@ class ExamRepository {
      * @param  answerData : an array of object, contains the answerId its ordinal and permutation in the question. type [{id, ordinal, permutation}]
      * @returns The new question
      */
-    async addQuestionToExam(examId, mQid, questionData, answerData) {
+    async addQuestionToExam(examId, mQid, questionData, answersData) {
         validateParametersWithoutCallingUser(questionData, {ordinal:PRIMITIVE_TYPES.NUMBER})
         try {
             const exam = await this.getExamById(examId);
             const question = await this.#Question.create(questionData);
+            await question.save()
             const metaQuestion = await this.#MetaQuestion.findByPk(mQid);
             await question.setMetaQuestion(metaQuestion);
             await question.setExam(exam);
-            await this.#setAnswersToQuestion(question.id, answerData);
+            await this.#setAnswersToQuestion(question.id, answersData);
             return await this.#Question.findByPk(question.id, {
                 include: [
                     {
