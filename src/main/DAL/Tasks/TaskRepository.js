@@ -1,22 +1,28 @@
 const defineUserModel = require("../User/User");
 const defineAnswerModel = require("../MetaQuestion/Answer");
 const defineUserTagAnswerModel = require("./UserTagAnswer");
-const {EMSError, USER_PROCESS_ERROR_CODES, MQ_PROCESS_ERROR_CODES} = require("../../EMSError");
-const {USER_PROCESS_ERROR_MSGS, MQ_PROCESS_ERROR_MSGS} = require("../../ErrorMessages");
+const defineRoleTaskModel = require("./RoleTask");
+const {EMSError, USER_PROCESS_ERROR_CODES, MQ_PROCESS_ERROR_CODES, TASK_PROCESS_ERROR_CODES} = require("../../EMSError");
+const {USER_PROCESS_ERROR_MSGS, MQ_PROCESS_ERROR_MSGS, TASK_PROCESS_ERROR_MSGS} = require("../../ErrorMessages");
 const {Sequelize} = require("sequelize");
 
 class TaskRepository {
     #User
     #Answer
     #UserTagAnswer
+    #RoleTask
 
     constructor(sequelize) {
         this.#User = defineUserModel(sequelize);
         this.#Answer = defineAnswerModel(sequelize);
         this.#UserTagAnswer = defineUserTagAnswerModel(sequelize);
+        this.#RoleTask = defineRoleTaskModel(sequelize);
 
         this.#User.belongsToMany(this.#Answer, {as: 'taggedAnswers', through: this.#UserTagAnswer});
         this.#Answer.belongsToMany(this.#User, {as: 'users', through: this.#UserTagAnswer });
+
+        this.#User.hasMany(this.#RoleTask, {as: 'createdRoleTasks', foreignKey: 'createdUser', onDelete: 'CASCADE'});
+        this.#RoleTask.belongsTo(this.#User, {foreignKey: 'createdUser'});
     }
 
     /**
@@ -73,6 +79,22 @@ class TaskRepository {
 
     async getUserTags(username) {
         return await this.#UserTagAnswer.findAll({where : { UserUsername: username }})
+    }
+
+    async createRoleTask(data) {
+        return await this.#RoleTask.create(data);
+    }
+
+    async getRoleTask(taskId) {
+        const foundTask = await this.#RoleTask.findByPk(taskId);
+        if (foundTask) {
+            throw new EMSError(TASK_PROCESS_ERROR_MSGS.INVALID_TASK_ID, TASK_PROCESS_ERROR_CODES.INVALID_TASK_ID);
+        }
+        return foundTask;
+    }
+
+    async getTasksOfRole(role) {
+        return await this.#RoleTask.findAll({ where : { role: role } });
     }
 
     async #getUser(username) {

@@ -1,7 +1,7 @@
 const { validateParameters } = require('../../validateParameters');
 var {Task} = require('./Task')
 var {TaskTypes} = require('./Task')
-const {PRIMITIVE_TYPES, GENERATED_TASK_TYPES, ANSWER_TYPES, USER_TYPES} = require("../../Enums");
+const {PRIMITIVE_TYPES, GENERATED_TASK_TYPES, ANSWER_TYPES, USER_TYPES, CREATED_TASK_TYPES} = require("../../Enums");
 const {EMSError, TASK_PROCESS_ERROR_CODES, USER_PROCESS_ERROR_CODES} = require("../../EMSError");
 const {TASK_PROCESS_ERROR_MSGS} = require("../../ErrorMessages");
 
@@ -99,6 +99,17 @@ class TaskController {
         }
     }
 
+    async createRoleTask(data) {
+        validateParameters(data,
+            {
+                role: PRIMITIVE_TYPES.STRING,
+                leaveOpen: PRIMITIVE_TYPES.BOOLEAN,
+                taskData: {taskType: PRIMITIVE_TYPES.STRING}
+            });
+        data.creatingUser = data.callingUser.username;
+        await this.#taskRepo.createRoleTask(data);
+    }
+
     async completeGeneratedTask(data) {
         validateParameters(data, {taskType: PRIMITIVE_TYPES.STRING});
         switch (data.taskType) {
@@ -152,14 +163,41 @@ class TaskController {
         await this.#taskRepo.tagAnswer(callingUser.username, data.answerId, data.userTag);
 
         const answer = await this.#mqController.getAnswer(data.answerId);
-        if (answer.getTag() === data.userTag) return;
+        if (answer.getTag() === data.userTag && !data.explanation) return;
         switch (callingUser.type) {
             case USER_TYPES.LECTURER:
-                answer.setTag(data.userTag);
-                answer.setExplanation(data.explanation);
+                await answer.setTag(data.userTag);
+                if (data.explanation) await answer.setExplanation(data.explanation);
                 break;
             case USER_TYPES.TA:
-                // TODO: set task for lecturers to go over TA's work
+                if (answer.getTag() !== data.userTag) {
+                    // TA tagged differently and has an explanation
+                    this.createRoleTask(
+                        {
+                            role: USER_TYPES.LECTURER,
+                            leaveOpen: false,
+                            taskData: {
+                                taskType: CREATED_TASK_TYPES.TAG_REVIEW,
+                                answerId: data.answerId,
+                                suggestedTag: data.userTag,
+                                suggestedExplanation: data.explanation,
+                            },
+                            callingUser: callingUser
+                        })
+                } else if (data.explanation) {
+                    // TA only thinks he has a better explanation
+                    this.createRoleTask(
+                        {
+                            role: USER_TYPES.LECTURER,
+                            leaveOpen: false,
+                            taskData: {
+                                taskType: CREATED_TASK_TYPES.EXPLANATION_COMPARISON,
+                                answerId: data.answerId,
+                                suggestedExplanation: data.explanation,
+                            },
+                            callingUser: callingUser
+                        })
+                }
                 break;
         }
     }
