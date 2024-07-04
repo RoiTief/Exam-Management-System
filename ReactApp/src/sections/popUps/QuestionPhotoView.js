@@ -7,6 +7,7 @@ import 'react-pdf/dist/esm/Page/TextLayer.css';
 import pdfWorker from 'pdfjs-dist/build/pdf.worker.min.mjs';
 import { Typography } from '@mui/material';
 import ErrorMessage from '../../components/errorMessage';
+import { QuestionView } from '../../constants';
 
 pdfjs.GlobalWorkerOptions.workerSrc = new URL(
   pdfWorker,
@@ -34,13 +35,13 @@ const QuestionPhotoView = ({ content, type }) => {
       try {
         const response = await requestLatexServer(type, { content });
         if (!response.ok) {
-          retryMechanism("Failed to load PDF file");
+          retryMechanism(QuestionView.LOAD_PDF);
         }
         const blob = await response.blob();
         const url = URL.createObjectURL(blob);
         setPdfUrl(url);
       } catch (error) {
-        retryMechanism("Server Unreachable");
+        retryMechanism(QuestionView.SERVER_UNREACHABLE);
       }
     };
     fetchPDF();
