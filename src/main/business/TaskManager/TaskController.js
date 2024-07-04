@@ -141,6 +141,7 @@ class TaskController {
         return taskData;
     }
 
+
     async #completeTagAnswerTask(data) {
         validateParameters(data, {answerId: PRIMITIVE_TYPES.NUMBER, userTag: PRIMITIVE_TYPES.STRING});
         const callingUser = data.callingUser;
@@ -221,6 +222,7 @@ class TaskController {
                 break;
         }
         return task;
+
     }
 }
 
