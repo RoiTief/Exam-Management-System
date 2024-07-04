@@ -44,6 +44,21 @@ app.post('/metaQuestion', upload.none(), (req, res) => {
     latexCompiler.compileMetaQuestion(metaQuestion, compileCallback(res));
 });
 
+app.post('/answer', upload.none(), (req, res) => {
+    const answer = req.body.content;
+    latexCompiler.compileAnswer(answer, compileCallback(res));
+});
+
+app.post('/stem', upload.none(), (req, res) => {
+    const stem = req.body.content;
+    latexCompiler.compileStem(stem, compileCallback(res));
+});
+
+app.post('/appendix', upload.none(), (req, res) => {
+    const appendix = req.body.content;
+    latexCompiler.compileAppendix(appendix, compileCallback(res));
+});
+
 app.listen(port, () => {
     console.log(`Server running on port ${port}`);
 });

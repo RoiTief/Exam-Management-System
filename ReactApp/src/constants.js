@@ -30,7 +30,9 @@ export const SIDE_BAR = {
   META_QUESTIONS: "Meta Questions",
   APPENDICES: "Appendices",
   MANAGE_COURSE_STAFF: "Manage Course Staff",
-  GENERATE_EXAM: "generate exams"
+  GENERATE_EXAM: "generate exams",
+  ASK_FOR_WORK: "Ask for Work",
+  TAG_ANSWERS: "Tag Answers"
 }
 
 export const CALENDAR = {
@@ -241,4 +243,24 @@ export const EXAM = {
 export const ERROR_MESSAGES = {
   INVALID_CREDENTIALS: "invalid credentials",
   NOT_AUTHENTICATE: "Connection timeout, please login again",
+};
+
+export const TAG_ANSWERS = {
+  FOLLOWING_QUESTION: "Given the following question:",
+  FOLLOWING_ANSWER: "Tag the following answer:",
+  KEY: "Key",
+  DISTRACTOR: "Distractor",
+  SUBMIT: "Submit",
+  EXPLANATION_CORRECT: "Is This Explanation Correct?",
+  PROVIDE_EXPLANATION: "Please Provide a Correct Explanation:",
+  YES: "Yes",
+  NO: "No",
+  CLOSE: "Close",
+  APPENDIX: "Appendix:",
+  STEM: "Stem:",
+};
+
+export const QuestionView = {
+  LOAD_PDF: "Failed to load PDF file",
+  SERVER_UNREACHABLE: "Server Unreachable",
 };

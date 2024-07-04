@@ -18,7 +18,7 @@ export const httpsMethod = {
 export const serverPath = {
   SIGN_UP: 'signUp',
   SIGN_IN: 'signIn',
-  GET_ALL_STAFF : 'getAllStaff',
+  GET_ALL_STAFF: 'getAllStaff',
   SIGN_OUT: 'logout',
   VIEW_TASKS: 'viewMyTasks',
   ADD_TA: 'addTA',
@@ -41,7 +41,10 @@ export const serverPath = {
   EDIT_META_QUESTION: 'editMetaQuestion',
   GET_META_QUESTIONS_FOR_APPENDIX: 'getMetaQuestionForAppendix',
   REFRESH_TOKEN: 'refreshJWT',
-}
+  GET_ALL_EXAMS: 'getAllExams',
+  GENERATE_TASK: 'generateTask',
+  COMPLETE_GENERATED_TASK: 'completeGeneratedTask'
+};
 
 
 const pathToReturnTypeMap={
@@ -52,7 +55,10 @@ const pathToReturnTypeMap={
 export const latexServerPath = {
   COMPILE: 'compile',
   COMPILE_EXAM: 'exam',
-  COMPILE_MQ: 'metaQuestion'
+  COMPILE_MQ: 'metaQuestion',
+  COMPILE_STEM: 'stem',
+  COMPILE_APPENDIX: 'appendix',
+  COMPILE_ANSWER: 'answer'
 };
 
 export async function requestLatexServer(path, body) {
