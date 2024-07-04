@@ -108,7 +108,7 @@ const Page = () => {
       setShowAppendixView(newAppendix)
       setShowPdfView(true); // Show PDF view when button is clicked
     } catch (err) {
-      setErrorMessage(err)
+      setErrorMessage(err.message)
     }
   };
 

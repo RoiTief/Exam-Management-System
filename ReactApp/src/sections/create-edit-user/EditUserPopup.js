@@ -37,7 +37,7 @@ const EditUserPopup = ({user, editMode, isOpen, closePopup}) => {
       editMode ? await editUser({ ...user, ...values }) : await addUser({ ...values });
       closePopup()
     } catch (err) {
-      setErrorMessage(err)
+      setErrorMessage(err.message)
     }
   };
 
