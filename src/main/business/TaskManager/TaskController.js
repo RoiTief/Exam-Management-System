@@ -82,8 +82,26 @@ class TaskController {
     }
 
     async completeCreatedTask(data) {
-        console.log(data);
-        // TODO: implement
+        validateParameters(data, {taskId: PRIMITIVE_TYPES.NUMBER, type: PRIMITIVE_TYPES.STRING, superType: PRIMITIVE_TYPES.STRING});
+        switch (data.superType) {
+            case CREATED_TASK_SUPER_TYPES.ROLE_SPECIFIC:
+                await this.#taskRepo.completeRoleTask(data.taskId);
+                break;
+            case CREATED_TASK_SUPER_TYPES.USER_SPECIFIC:
+                break;
+            default:
+                throw new EMSError(TASK_PROCESS_ERROR_MSGS.INVALID_TASK_SUPER_TYPE(data.superType), TASK_PROCESS_ERROR_CODES.INVALID_TASK_SUPER_TYPE);
+        }
+        switch (data.type) {
+            case CREATED_TASK_TYPES.TAG_REVIEW:
+                await this.#completeTagAnswerTask(data);
+                break;
+            case CREATED_TASK_TYPES.EXPLANATION_COMPARISON:
+                await this.#completeExplanationComparisonTask(data);
+                break;
+            default:
+                throw new EMSError(TASK_PROCESS_ERROR_MSGS.INVALID_TASK_TYPE(data.type), TASK_PROCESS_ERROR_CODES.INVALID_TASK_TYPE);
+        }
     }
 
     /* returns
@@ -166,6 +184,12 @@ class TaskController {
                 }
                 break;
         }
+    }
+
+    async #completeExplanationComparisonTask(data) {
+        validateParameters(data, {answerId: PRIMITIVE_TYPES.NUMBER, explanation: PRIMITIVE_TYPES.STRING});
+        const answer = await this.#mqController.getAnswer(data.answerId);
+        await answer.setExplanation(data.explanation);
     }
 
     /**

@@ -97,6 +97,11 @@ class TaskRepository {
         return await this.#RoleTask.findAll({ where : { role: role } });
     }
 
+    async completeRoleTask(taskId) {
+        const task = await this.getRoleTask(taskId);
+        if (!task.leaveOpen) await task.destroy();
+    }
+
     async #getUser(username) {
         const foundUser = await this.#User.findByPk(username);
         if (foundUser === null) {
