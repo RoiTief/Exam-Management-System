@@ -1,5 +1,5 @@
 const {DataTypes, } = require("sequelize");
-const {USER_TYPES} = require("../../Enums");
+const {USER_TYPES, CREATED_TASK_TYPES} = require("../../Enums");
 
 /**
  * Defines a 'Answer' model within the given database
@@ -11,6 +11,11 @@ function defineRoleTaskModel(sequelize, UserModel) {
                 role: {
                     type: DataTypes.ENUM,
                     values: Object.values(USER_TYPES),
+                    allowNull: false
+                },
+                taskType: {
+                    type: DataTypes.ENUM,
+                    values: Object.values(CREATED_TASK_TYPES),
                     allowNull: false
                 },
                 leaveOpen: {

@@ -1,76 +1,37 @@
 const { validateParameters } = require('../../validateParameters');
 var {Task} = require('./Task')
 var {TaskTypes} = require('./Task')
-const {PRIMITIVE_TYPES, GENERATED_TASK_TYPES, ANSWER_TYPES, USER_TYPES, CREATED_TASK_TYPES} = require("../../Enums");
+const {PRIMITIVE_TYPES, GENERATED_TASK_TYPES, ANSWER_TYPES, USER_TYPES, CREATED_TASK_TYPES, CREATED_TASK_SUPER_TYPES} = require("../../Enums");
 const {EMSError, TASK_PROCESS_ERROR_CODES, USER_PROCESS_ERROR_CODES} = require("../../EMSError");
 const {TASK_PROCESS_ERROR_MSGS} = require("../../ErrorMessages");
 
 class TaskController {
     #taskRepo
+    #userController
     #mqController
 
-    constructor(taskRepository, metaQuestionsController){
+    constructor(taskRepository, userController, metaQuestionsController) {
         this.#taskRepo = taskRepository;
+        this.#userController = userController;
         this.#mqController = metaQuestionsController;
         this._tasks = new Map();
-        this._id = 1
-    }
-
-    addTask(addTaskProperties){
-        addTaskProperties = {...addTaskProperties, taskId: this._id}
-        const task = new Task(addTaskProperties)
-        this._tasks.set(this._id, task);
-        this._id += 1
-        return task;
-    }
-
-    addTaskToSpecificUser(forWhom, priority, type, properties, description, options, assignedUsers, action){
-        const taskProperties = {taskId : this._id,forWhom, priority, type, properties, description, options, assignedUsers, action}
-        this._tasks.set(this._id, new Task(taskProperties));
-        this._id += 1
-        return true;
     }
 
     getTask(taskId){
         return this._tasks.get(taskId);
     }
 
-    getTasksOf(data){
+    async getTasksOf(data){
         validateParameters(data,{})
-        
-        return Array.from(this._tasks.values())
-            .filter(task=>task.assignedUsers) // remove task without assigned users
-            .filter(task => task.assignedUsers.map(user=>user.getUsername()).includes(data.callingUser.username)) // check if username is in the assignedUsers
-    }
 
-    lecturerRequestTask(lecturerUsername) {
-        this.addTaskToSpecificUser(null, 0, TaskTypes.LECTURER_REQUEST, {},
-            "if you accept this request you will be the lecturer, do notice that this will overrun you current course assignment",
-            ["yes", "no"],
-            [lecturerUsername], (applicationFacade, response) => {
-                                            if(response === "yes")
-                                                applicationFacade.setUserAsLecturer(lecturerUsername)
-                                                });
-    }
+        const callingUser = data.callingUser;
 
-    newTARequestTask(TAUsername) {
-        this.addTaskToSpecificUser(null, 0, TaskTypes.NEW_TA_REQUEST,{},
-            "if you accept this request you will be a TA",
-            ["yes", "no"],
-            [TAUsername], (applicationFacade, approved) => {
-                if(approved === "yes")
-                    applicationFacade.setUserAsTA(TAUsername)
-            });
-    }
+        const myDalRoleTasks = await this.#taskRepo.getTasksOfRole(callingUser.type);
+        const myRoleTasks = await Promise.all(myDalRoleTasks.map(async dalTask => await this.#createdTaskFactory(dalTask)));
+        myRoleTasks.forEach(roleTask => roleTask.superType = CREATED_TASK_SUPER_TYPES.ROLE_SPECIFIC);
 
-    newGraderRequestTask(graderUsername) {
-        this.addTaskToSpecificUser(null, 0, TaskTypes.newGraderRequestTask,{},
-            "if you accept this request you will be a grader",
-            ["yes", "no"],
-            [graderUsername], (applicationFacade, approved) => {
-                if(approved === "yes")
-                    applicationFacade.setUserAsGrader(graderUsername)
-            });
+        // at a future point where user-specific tasks exist as well, concatenate the user-tasks and role-tasks
+        return myRoleTasks;
     }
 
     finishTask(data, applicationFacade) {
@@ -118,6 +79,11 @@ class TaskController {
             default:
                 throw new EMSError(TASK_PROCESS_ERROR_MSGS.INVALID_TASK_TYPE(data.taskType), TASK_PROCESS_ERROR_CODES.INVALID_TASK_TYPE);
         }
+    }
+
+    async completeCreatedTask(data) {
+        console.log(data);
+        // TODO: implement
     }
 
     /* returns
@@ -175,9 +141,9 @@ class TaskController {
                     this.createRoleTask(
                         {
                             role: USER_TYPES.LECTURER,
+                            taskType: CREATED_TASK_TYPES.TAG_REVIEW,
                             leaveOpen: false,
                             taskData: {
-                                taskType: CREATED_TASK_TYPES.TAG_REVIEW,
                                 answerId: data.answerId,
                                 suggestedTag: data.userTag,
                                 suggestedExplanation: data.explanation,
@@ -189,9 +155,9 @@ class TaskController {
                     this.createRoleTask(
                         {
                             role: USER_TYPES.LECTURER,
+                            taskType: CREATED_TASK_TYPES.EXPLANATION_COMPARISON,
                             leaveOpen: false,
                             taskData: {
-                                taskType: CREATED_TASK_TYPES.EXPLANATION_COMPARISON,
                                 answerId: data.answerId,
                                 suggestedExplanation: data.explanation,
                             },
@@ -200,6 +166,37 @@ class TaskController {
                 }
                 break;
         }
+    }
+
+    /**
+     * Converts a given created task to a filled object with all relevant business level data
+     * @param dalTask
+     */
+    async #createdTaskFactory(dalTask) {
+        const task = {
+            taskId: dalTask.id,
+            type: dalTask.taskType,
+            creatingUser: await this.#userController.getUser(dalTask.creatingUser),
+        }
+        const taskData = dalTask.taskData;
+        switch (task.type) {
+
+            case CREATED_TASK_TYPES.EXPLANATION_COMPARISON:
+                task.answer = await this.#mqController.getAnswer(taskData.answerId);
+                task.metaQuestion = await this.#mqController.getMetaQuestion(task.answer.getMetaQuestionId());
+                if (task.metaQuestion.getAppendixTag()) task.appendix = await this.#mqController.getAppendix(task.metaQuestion.getAppendixTag());
+                task.suggestedExplanation = taskData.suggestedExplanation;
+                break;
+
+            case CREATED_TASK_TYPES.TAG_REVIEW:
+                task.suggestedTag = taskData.suggestedTag;
+                task.answer = await this.#mqController.getAnswer(taskData.answerId);
+                task.metaQuestion = await this.#mqController.getMetaQuestion(task.answer.getMetaQuestionId());
+                if (task.metaQuestion.getAppendixTag()) task.appendix = await this.#mqController.getAppendix(task.metaQuestion.getAppendixTag());
+                task.suggestedExplanation = taskData.suggestedExplanation;
+                break;
+        }
+        return task;
     }
 }
 

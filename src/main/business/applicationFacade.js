@@ -12,7 +12,7 @@ class ApplicationFacade{
     constructor() {
         this.userController = new UserController(userRepo);
         this.metaQuestionController = new MetaQuestionController(metaQuestionsRepo);
-        this.taskController = new TaskController(taskRepo, this.metaQuestionController);
+        this.taskController = new TaskController(taskRepo, this.userController, this.metaQuestionController);
         this.examController = new ExamController(this.taskController, this.userController)
     }
 
@@ -204,11 +204,10 @@ class ApplicationFacade{
     /**
      * view my tasks
      * @param data - the user who tries to view his tasks
-     * @return {[Task]}
      * @throws {Error} - if there is no user logged in data
      */
     async viewMyTasks(data){
-        return this.taskController.getTasksOf(data);
+        return await this.taskController.getTasksOf(data);
     }
 
     /**
@@ -403,6 +402,10 @@ class ApplicationFacade{
 
     async completeGeneratedTask(data) {
         return await this.taskController.completeGeneratedTask(data);
+    }
+
+    async completeCreatedTask(data) {
+        return await this.taskController.completeCreatedTask(data);
     }
 
     #mqBusinessToFE(bMQ) {

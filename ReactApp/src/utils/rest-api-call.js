@@ -43,7 +43,8 @@ export const serverPath = {
   REFRESH_TOKEN: 'refreshJWT',
   GET_ALL_EXAMS: 'getAllExams',
   GENERATE_TASK: 'generateTask',
-  COMPLETE_GENERATED_TASK: 'completeGeneratedTask'
+  COMPLETE_GENERATED_TASK: 'completeGeneratedTask',
+  COMPLETE_CREATED_TASK: 'completeCreatedTask',
 };
 
 

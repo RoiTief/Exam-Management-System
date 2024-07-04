@@ -266,6 +266,8 @@ function createServer(options) {
     // request: work_type
     server.post('/completeGeneratedTask', service.completeGeneratedTask)
 
+    server.post('/completeCreatedTask', service.completeCreatedTask)
+
 
     server.get('/', function root(req, res, next) {
         var routes = [
