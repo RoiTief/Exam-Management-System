@@ -41,8 +41,9 @@ class ExamController {
 
 
     // get exams as array
-    async getAllExams(getAllExamsProperties) {
-        throw EMSError(GENERAL_ERROR_MSGS.NOT_IMPLEMENTED);
+    async getAllExams(data) {
+        validateParameters(data, {})
+        return await this.#examRepo.getAllExams()
     }
 }
 

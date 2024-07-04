@@ -6,7 +6,7 @@ const defineQuestionAnswerModel = require("./QuestionAnswer");
 const { EMSError, EXAM_PROCESS_ERROR_CODES } = require("../../EMSError");
 const { EXAM_PROCESS_ERROR_MSGS } = require("../../ErrorMessages");
 const { PRIMITIVE_TYPES } = require("../../Enums");
-const {validateParametersWithoutCallingUser} = require("../../validateParameters");
+const { validateParametersWithoutCallingUser } = require("../../validateParameters");
 
 class ExamRepository {
     #MetaQuestion
@@ -69,7 +69,7 @@ class ExamRepository {
                     },
                 ]
             });
-        }catch (e) {
+        } catch (e) {
             console.error(e);
             throw new EMSError(EXAM_PROCESS_ERROR_MSGS.GET_EXAM_BY_ID(id), EXAM_PROCESS_ERROR_CODES.GET_EXAM_BY_ID)
         }
@@ -83,7 +83,7 @@ class ExamRepository {
      * @returns The new question
      */
     async addQuestionToExam(examId, mQid, questionData, answersData) {
-        validateParametersWithoutCallingUser(questionData, {ordinal:PRIMITIVE_TYPES.NUMBER})
+        validateParametersWithoutCallingUser(questionData, { ordinal: PRIMITIVE_TYPES.NUMBER })
         try {
             const exam = await this.getExamById(examId);
             const question = await this.#Question.create(questionData);
@@ -117,20 +117,39 @@ class ExamRepository {
      * @param  answersData : an array of object, contains the answerId its ordinal and permutation in the question. type [{id, ordinal, permutation}]
      */
     async #setAnswersToQuestion(qid, answersData) {
-        validateParametersWithoutCallingUser(answersData,[{id:PRIMITIVE_TYPES.NUMBER, ordinal:PRIMITIVE_TYPES.NUMBER, permutation:PRIMITIVE_TYPES.NUMBER}])
+        validateParametersWithoutCallingUser(answersData, [{ id: PRIMITIVE_TYPES.NUMBER, ordinal: PRIMITIVE_TYPES.NUMBER, permutation: PRIMITIVE_TYPES.NUMBER }])
 
         const question = await this.#Question.findByPk(qid);
         try {
             await Promise.all(
                 answersData.map(async answerData => {
                     const answer = await this.#Answer.findByPk(answerData.id);
-                    return await question.addAnswer(answer, { through: {answerId:answer.id, questionId:qid, ordinal:answerData.ordinal, permutation:answerData.permutation} });
+                    return await question.addAnswer(answer, { through: { answerId: answer.id, questionId: qid, ordinal: answerData.ordinal, permutation: answerData.permutation } });
                 }));
         } catch (e) {
             console.error(e);
             throw new EMSError(EXAM_PROCESS_ERROR_MSGS.SET_ANSWERS_TO_QUESTION(qid, answersData), EXAM_PROCESS_ERROR_CODES.SET_ANSWERS_TO_QUESTION)
         }
 
+    }
+
+    async getAllExams() {
+        return await this.#Exam.findAll(
+            {
+                include: [
+                    {
+                        model: this.#Question, as: 'questions',
+                        include: [
+                            {
+                                model: this.#MetaQuestion, as: 'metaQuestion'
+                            },
+                            {
+                                model: this.#Answer, as: 'answers'
+                            }
+                        ]
+                    }
+                ]
+            });
     }
 }
 

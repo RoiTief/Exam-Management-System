@@ -10,19 +10,25 @@ const callingUser = {
     username: 'name',
     type: USER_TYPES.LECTURER
 }
-const examData = {
+const examDataArr = Array.from({ length: 10 }, (_, i) => ({
     callingUser,
-    title: 'title',
-}
+    title: `title ${i}`
+}));
+const mqDataArr = Array.from({ length: 10 }, (_, i) => ({
+    stem: `stem ${i}`,
+     answers: [{ content: `content ${i}`, tag: i > 4 ? ANSWER_TYPES.DISTRACTOR :ANSWER_TYPES.KEY, explanation: `Explanation ${i}` }]
+}));
 
-
-const mqData = {
-    stem: 'stem',
-    answers: [{ content: "content", tag: ANSWER_TYPES.DISTRACTOR, explanation: "Explanation" }]
-}
 const emptyArr = []
 
-class  MetaQuestionControllerMock{
+async function createExamWithQuestions(examController, examData, addQuestionToExamRawDataArr) {
+    const exam = await examController.createExam(examData)
+    const addQuestionToExamDataArr = addQuestionToExamRawDataArr.map(data=> ({...data, examId : exam.getId()}))
+    await Promise.all(addQuestionToExamDataArr.map(addQuestionData => examController.addQuestionToExam(addQuestionData)))
+    return exam.getId()
+}
+
+class MetaQuestionControllerMock {
 
 }
 
@@ -52,15 +58,15 @@ describe('Happy-Path ExamController tests', () => {
     beforeEach(async () => {
         examController = new ExamController(new MetaQuestionControllerMock(), examRepo);
         await sequelize.sync({ force: true }); // cleans db
-        dalMq = await mqRepo.addMetaQuestion(mqData,mqData.answers, emptyArr)
+        dalMq = await mqRepo.addMetaQuestion(mqDataArr[0], mqDataArr[0].answers, emptyArr)
         addQuestionToExamData.mQId = dalMq.id
-        addQuestionToExamData.answersData = [{id:dalMq.answers[0].id, ordinal:1, permutation:1}]
+        addQuestionToExamData.answersData = [{ id: dalMq.answers[0].id, ordinal: 1, permutation: 1 }]
     })
 
     test('create exam', async () => {
         try {
-            const exam = await examController.createExam(examData)
-            expect(exam.getTitle()).toBe(examData.title);
+            const exam = await examController.createExam(examDataArr[0])
+            expect(exam.getTitle()).toBe(examDataArr[0].title);
         } catch (e) {
             console.log(e)
             expect(false).toBeTruthy()
@@ -69,13 +75,31 @@ describe('Happy-Path ExamController tests', () => {
 
     test('add question to exam', async () => {
         try {
-            const exam = await examController.createExam(examData)
+            const exam = await examController.createExam(examDataArr[0])
             addQuestionToExamData.examId = exam.getId()
             const question = await examController.addQuestionToExam(addQuestionToExamData)
             expect(question.getOrdinal()).toBe(addQuestionToExamData.questionData.ordinal);
             question.getAnswers().forEach((answer) => {
                 expect(answer.getOrdinal()).toBe(addQuestionToExamData.answersData[0].ordinal);
             })
+        } catch (e) {
+            console.log(e)
+            expect(false).toBeTruthy()
+        }
+    })
+
+    test('Get all exams', async () => {
+        try {
+            await createExamWithQuestions(examController, examDataArr[0], [addQuestionToExamData])
+            // const exam = await examController.createExam(examDataArr[0])
+            // addQuestionToExamData.examId = exam.getId()
+            // await examController.addQuestionToExam(addQuestionToExamData)
+            const loadedExams = await examController.getAllExams({ callingUser })
+            console.log(loadedExams)
+            console.log(loadedExams.length)
+            expect(loadedExams.length).toBeGreaterThan(0);
+            
+
         } catch (e) {
             console.log(e)
             expect(false).toBeTruthy()
