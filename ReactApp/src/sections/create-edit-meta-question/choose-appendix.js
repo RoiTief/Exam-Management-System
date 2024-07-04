@@ -7,6 +7,7 @@ import { useFormikContext } from 'formik';
 import ErrorMessage from '../../components/errorMessage';
 import { AppendicesSearch } from '../view-appendices/appendices-search';
 
+const emptyAppendix = { title: '', tag: '', content: '' }
 
 const AppendixList = ({ values, onSelectAppendix }) => {
   const { setFieldValue } = useFormikContext();
@@ -44,10 +45,12 @@ const AppendixList = ({ values, onSelectAppendix }) => {
   }, [values.appendix, appendices]);
 
   const handleAppendixClick = (appendix) => {
+    console.log(`appendix click: ${JSON.stringify(appendix)}`)
     if (selectedAppendix && selectedAppendix.tag===appendix.tag) {
-      setSelectedAppendix(null);
-      setFieldValue('appendix', null);
-      onSelectAppendix(null);
+      console.log(`appendixr reselect`)
+      setSelectedAppendix(emptyAppendix);
+      setFieldValue('appendix', emptyAppendix);
+      onSelectAppendix(emptyAppendix);
     } else {
       setSelectedAppendix(appendix);
       setFieldValue('appendix', appendix);
