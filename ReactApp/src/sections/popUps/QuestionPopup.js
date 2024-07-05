@@ -53,7 +53,7 @@ export const Question = (props) => {
   };
 
   const handleEdit = () => {
-    const pathname = question.appendix ? '/create/choose-appendix' : '/create/simple';
+    const pathname = '/create/choose-appendix';
     const query = {
       question: JSON.stringify(question)
     };

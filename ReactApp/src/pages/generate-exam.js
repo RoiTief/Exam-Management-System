@@ -72,8 +72,8 @@ const Page = () => {
       await router.push('/');
       setErrorMessage('')
     } catch (error) {
-      console.error('Error creating exam:', error);
-      setErrorMessage(`Error creating exam: ${error}`)
+      console.error('Error creating exam:', error.message);
+      setErrorMessage(`Error creating exam: ${error.message}`)
     }
   }
 

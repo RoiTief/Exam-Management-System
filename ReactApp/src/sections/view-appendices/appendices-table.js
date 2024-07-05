@@ -12,7 +12,7 @@ import {
   TablePagination,
   TableRow,
   Collapse,
-  Typography
+  Typography, IconButton
 } from '@mui/material';
 import { Scrollbar } from 'src/components/scrollbar';
 import { PdfLatexPopup } from '../popUps/QuestionPdfView';
@@ -20,8 +20,11 @@ import { httpsMethod, latexServerPath, requestServer, serverPath } from '../../u
 import { APPENDICES_CATALOG } from '../../constants';
 import { MetaQuestionTable } from '../view-questions/question-table';
 import ErrorMessage from '../../components/errorMessage';
+import EditIcon from '@mui/icons-material/Edit';
+import { useRouter } from 'next/router';
 
 export const AppendicesTable = ({ appendices }) => {
+  const router = useRouter();
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [expandedAppendix, setExpandedAppendix] = useState(null);
@@ -46,6 +49,14 @@ export const AppendicesTable = ({ appendices }) => {
       setExpandedAppendix(appendix);
     }
   };
+
+  const handleEdit = (appendix) => {
+    const pathname = '/create/appendix';
+    const query = {
+      appendix: JSON.stringify(appendix)
+    };
+    router.push({ pathname, query });
+  }
 
   const handlePdfButtonClick = (event, question) => {
     event.stopPropagation();
@@ -79,6 +90,7 @@ export const AppendicesTable = ({ appendices }) => {
                 <TableCell>{APPENDICES_CATALOG.TITLE_HEADING}</TableCell>
                 <TableCell>{APPENDICES_CATALOG.TAG_HEADING}</TableCell>
                 <TableCell>{APPENDICES_CATALOG.CONTENT_HEADING}</TableCell>
+                <TableCell></TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -88,6 +100,11 @@ export const AppendicesTable = ({ appendices }) => {
                     <TableCell>{appendix.title}</TableCell>
                     <TableCell>{appendix.tag}</TableCell>
                     <TableCell>{appendix.content}</TableCell>
+                    <TableCell>
+                      <IconButton onClick={() => handleEdit(appendix)}>
+                        <EditIcon />
+                      </IconButton>
+                    </TableCell>
                   </TableRow>
                   <TableRow>
                     <TableCell colSpan={3} style={{ paddingBottom: 0, paddingTop: 0 }}>

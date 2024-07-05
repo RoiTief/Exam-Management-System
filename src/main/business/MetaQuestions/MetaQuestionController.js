@@ -69,6 +69,7 @@ class MetaQuestionController{
         await this.#metaQuestionRepo.addAnswersToQuestion(data.id, data.answers);
         const metaQuestion = await this.getMetaQuestion(data.id);
         await metaQuestion.setStem(data.stem);
+        await metaQuestion.setAppendix(data.appendixTag ? data.appendixTag : null);
 
         return metaQuestion;
     }

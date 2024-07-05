@@ -59,15 +59,15 @@ export const items = [
     children: [
       {
         title: SIDE_BAR.SIMPLE_META_QUESTION,
-        path: '/create/simple',
-      },
-      {
-        title: SIDE_BAR.APPENDIX_META_QUESTION,
         path: '/create/choose-appendix',
       },
       {
         title: SIDE_BAR.APPENDIX_PLUS_META_QUESTION,
         path: '/create/appendix-plus-question',
+      },
+      {
+        title: SIDE_BAR.APPENDIX,
+        path: '/create/appendix',
       }
     ]
   },

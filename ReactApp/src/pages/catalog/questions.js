@@ -75,7 +75,7 @@ const Page = () => {
                   color="inherit"
                   startIcon={<SvgIcon fontSize="small"><PlusIcon /></SvgIcon>}
                   variant="contained"
-                  onClick={() => router.push('/create/simple')}
+                  onClick={() => router.push('/create/choose-appendix')}
                 >
                   {QUESTIONS_CATALOG.CREATE_SIMPLE_BUTTON}
                 </Button>
@@ -83,7 +83,7 @@ const Page = () => {
                   color="inherit"
                   startIcon={<SvgIcon fontSize="small"><PlusIcon /></SvgIcon>}
                   variant="contained"
-                  onClick={() => router.push('/create/choose-appendix')}
+                  onClick={() => router.push('/create/appendix-plus-question')}
                 >
                   {QUESTIONS_CATALOG.CREATE_APPENDIX_BUTTON}
                 </Button>
