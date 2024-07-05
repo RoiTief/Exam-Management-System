@@ -264,3 +264,27 @@ export const QuestionView = {
   LOAD_PDF: "Failed to load PDF file",
   SERVER_UNREACHABLE: "Server Unreachable",
 };
+
+export const UnmatchedTag = {
+  FOLLOWING_QUESTION: "Given the following question:",
+  FOLLOWING_ANSWER: "Tag the following answer:",
+  KEY: "Key",
+  DISTRACTOR: "Distractor",
+  SUBMIT: "Submit",
+  APPENDIX: "Appendix:",
+  STEM: "Stem:",
+  THINKS_SAME: (firstName, lastName) => `${firstName} ${lastName} thinks so too, here's the explanation he gave:`,
+  IS_CORRECT: 'Is this a correct explanation?',
+  THINKS_DIFFERENT: (firstName, lastName) => `${firstName} ${lastName} thinks otherwise, can you check again and make sure?`,
+  SURE: 'Yes I am sure',
+};
+
+export const NewExplanation = {
+  REVIEW_EXPLANATION: "Review Explanation",
+  TAGGED: (tag) => `This answer is  tagged as a ${tag}, which of these explains it better:`,
+  IS_CORRECT: 'Is this a correct explanation?',
+  SURE: 'Yes I am sure',
+  APPENDIX: "Appendix:",
+  STEM: "Stem:",
+  ANSWER: "Answer:"
+};
