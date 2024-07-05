@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import {
   Box,
@@ -33,21 +33,29 @@ export const AppendicesTable = ({ appendices }) => {
   const [showPdfView, setShowPdfView] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
 
+  const fetchRelatedQuestions = async () => {
+    try {
+      const { metaQuestions } = await requestServer(serverPath.GET_META_QUESTIONS_FOR_APPENDIX, httpsMethod.POST, expandedAppendix);
+      setRelatedQuestions(metaQuestions);
+      setErrorMessage(metaQuestions.length === 0 ? 'No related questions found.' : '');
+    } catch (error) {
+      setErrorMessage(`Error fetching related questions: ${error.message}`);
+    }
+  }
+
+  useEffect(() => {
+    if (expandedAppendix == null)
+      setRelatedQuestions([])
+    else
+      fetchRelatedQuestions()
+  }, [expandedAppendix]);
+
   const handleExpandAppendix = async (appendix) => {
     if (expandedAppendix === appendix) {
       setExpandedAppendix(null);
       return;
     }
-    try {
-      const { metaQuestions } = await requestServer(serverPath.GET_META_QUESTIONS_FOR_APPENDIX, httpsMethod.POST, appendix);
-      setRelatedQuestions(metaQuestions);
-      setErrorMessage(metaQuestions.length === 0 ? 'No related questions found.' : '');
-      setExpandedAppendix(appendix);
-    } catch (error) {
-      console.error('Error fetching related questions:', error);
-      setErrorMessage(`Error fetching related questions: ${error.message}`);
-      setExpandedAppendix(appendix);
-    }
+    setExpandedAppendix(appendix);
   };
 
   const handleEdit = (appendix) => {
@@ -113,7 +121,9 @@ export const AppendicesTable = ({ appendices }) => {
                           {errorMessage==='' && relatedQuestions.length>0 && (
                             <Stack>
                               <Typography variant="h6" padding={2}>{APPENDICES_CATALOG.RELATED_QUESION}</Typography>
-                              <MetaQuestionTable data={relatedQuestions} setErrorMessage={setErrorMessage} />
+                              <MetaQuestionTable data={relatedQuestions}
+                                                 setErrorMessage={setErrorMessage}
+                                                 fetchMetaQuestions={fetchRelatedQuestions}/>
                             </Stack>
                           )}
                           {errorMessage==='' && relatedQuestions.length===0 &&(

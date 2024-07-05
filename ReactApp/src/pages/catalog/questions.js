@@ -16,18 +16,18 @@ const Page = () => {
   const [filteredData, setFilteredData] = useState(metaQuestions);
   const [errorMessage, setErrorMessage] = useState('');
 
-  useEffect(() => {
-    async function fetchMetaQuestions() {
-      try {
-        const { metaQuestions } = await requestServer(serverPath.GET_ALL_META_QUESTIONS, httpsMethod.GET);
-        setMetaQuestions(metaQuestions);
-        setErrorMessage(''); // Clear any previous error message
-      } catch (error) {
-        console.error('Error fetching meta questions:', error);
-        setErrorMessage(`Error fetching meta-questions: ${error.message}`)
-      }
+  const fetchMetaQuestions = async () => {
+    try {
+      const { metaQuestions } = await requestServer(serverPath.GET_ALL_META_QUESTIONS, httpsMethod.GET);
+      setMetaQuestions(metaQuestions);
+      setErrorMessage(''); // Clear any previous error message
+    } catch (error) {
+      console.error('Error fetching meta questions:', error);
+      setErrorMessage(`Error fetching meta-questions: ${error.message}`);
     }
+  };
 
+  useEffect(() => {
     fetchMetaQuestions();
   }, []);
 
@@ -89,8 +89,11 @@ const Page = () => {
                 </Button>
               </Stack>
             </Stack>
-            <QuestionsSearch onSearch={handleKeySearch} onTextSearch={handleSearch} /> {/* Render QuestionsSearch */}
-            <MetaQuestionTable data={filteredData} setErrorMessage={setErrorMessage} />
+            <QuestionsSearch onSearch={handleKeySearch}
+                             onTextSearch={handleSearch} />
+            <MetaQuestionTable data={filteredData}
+                               setErrorMessage={setErrorMessage}
+                               fetchMetaQuestions={fetchMetaQuestions} />
             <ErrorMessage message={errorMessage} />
           </Stack>
         </Container>

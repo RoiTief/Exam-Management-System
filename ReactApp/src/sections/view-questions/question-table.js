@@ -22,7 +22,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import { useRouter } from 'next/router';
 
-export const MetaQuestionTable = ({ data, setErrorMessage }) => {
+export const MetaQuestionTable = ({ data, setErrorMessage, fetchMetaQuestions }) => {
   const router = useRouter();
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
@@ -80,6 +80,7 @@ export const MetaQuestionTable = ({ data, setErrorMessage }) => {
           setDeleteAppendixDialog(true)
         }
       }
+      fetchMetaQuestions()
     } catch (err) {
       setErrorMessage(err.message)
     }
