@@ -1,21 +1,21 @@
 import PropTypes from 'prop-types';
 import { httpsMethod, serverPath, requestServer } from 'src/utils/rest-api-call';
-import EllipsisVerticalIcon from '@heroicons/react/24/solid/EllipsisVerticalIcon';
 import {
   Card,
   CardActions,
   CardHeader,
   Stack,
-  IconButton,
   List,
   ListItem,
   ListItemText,
-  SvgIcon
+  Typography,
+  Box
 } from '@mui/material';
 import React, { useEffect, useState } from 'react';
-import { Task } from '../popUps/TaskPopup';
 import { TASK } from '../../constants';
 import ErrorMessage from '../../components/errorMessage';
+import NextLink from 'next/link';
+import TaskIcon from '@mui/icons-material/Assignment'; // Import an icon for tasks
 
 export const OverviewAssignedTasks = () => {
   const [tasks, setList] = useState([]);
@@ -26,73 +26,84 @@ export const OverviewAssignedTasks = () => {
     setTask(task);
   };
 
-  const closePopup = () => {
-    setTask(null);
-  };
-
-  useEffect( (task) => {handleButtonClick(task)}, []);
-  useEffect( () => {closePopup()}, []);
-
   useEffect(() => {
     const fetchList = async () => {
       try {
         const { tasks } = await requestServer(serverPath.VIEW_TASKS, httpsMethod.GET);
         setList(tasks);
-      }
-      catch(err){
+      } catch(err) {
         console.error('Error fetching task list:', err);
-        setErrorMessage(`Error fetching tasks: ${err}`)
+        setErrorMessage(`Error fetching tasks: ${err}`);
       }
     };
 
     fetchList();
   }, []);
 
-  const handleClick = () => {};
-
   return (
-    <Stack>
+    <Stack spacing={2} sx={{ width: '100%', maxWidth: 600, mx: 'auto', mt: 4 }}>
       <Card>
-        <CardHeader title={TASK.MY_TASKS_TITLE} />
+        <CardHeader
+          title={TASK.MY_TASKS_TITLE}
+          sx={{
+            textAlign: 'center',
+            py: 2,
+            borderBottom: '1px solid #e0e0e0'
+          }}
+          titleTypographyProps={{ variant: 'h6', fontWeight: 'bold'}}
+        />
         <List>
-          {tasks.filter(task => !task.finished).map((task) => {
+          {tasks.map((task) => {
+            const href = task.type === "tag-review"
+              ? `/task/new-explanation?task=${encodeURIComponent(JSON.stringify(task))}`
+              : `/task/unmatched-tag?task=${encodeURIComponent(JSON.stringify(task))}`;
+
             return (
-              <ListItem key={task.taskId}>
-                <button
+              <NextLink key={task.taskId} href={href} passHref>
+                <ListItem
+                  component="a"
                   onClick={() => handleButtonClick(task)}
-                  style={{
-                    background: 'none',
-                    border: 'none',
-                    cursor: 'pointer',
-                    textAlign: 'left',
+                  sx={{
+                    borderBottom: '1px solid #e0e0e0',
+                    '&:hover': {
+                      backgroundColor: '#f9f9f9'
+                    },
+                    textDecoration: 'none',
+                    color: 'inherit',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    px: 2,
+                    py: 1.5
                   }}
                 >
-                  <ListItemText
-                    primary={task.type}
-                    primaryTypographyProps={{ variant: 'subtitle1' }}
-                    secondary={task.description}
-                    secondaryTypographyProps={{ variant: 'body2' }}
-                  />
-                </button>
-                <IconButton edge="end">
-                  <SvgIcon>
-                    <EllipsisVerticalIcon />
-                  </SvgIcon>
-                </IconButton>
-              </ListItem>
+                  <Box display="flex" alignItems="center" sx={{ textDecoration: 'none' }}>
+                    <TaskIcon sx={{ color: '#f38946', mr: 2 }} />
+                    <ListItemText
+                      primary={
+                        <Typography variant="subtitle1" fontWeight="bold" color="black" sx={{ textDecoration: 'none' }}>
+                          {task.type}
+                        </Typography>
+                      }
+                      secondary={
+                        <Typography variant="body2" color="textSecondary" sx={{ textDecoration: 'none' }}>
+                          {task.metaQuestion?.stem}
+                        </Typography>
+                      }
+                    />
+                  </Box>
+                </ListItem>
+              </NextLink>
             );
           })}
         </List>
-        <ErrorMessage message={errorMessage} />
-        <CardActions sx={{ justifyContent: 'flex-end' }}>
+        {errorMessage && <ErrorMessage message={errorMessage} />}
+        <CardActions sx={{ justifyContent: 'flex-end', p: 2 }}>
+          <Typography variant="caption" color="textSecondary">
+            {TASK.NUM_ASSIGNED(tasks.length)}
+          </Typography>
         </CardActions>
       </Card>
-      <div>
-        <Task
-          isOpen={taskToView != null}
-          closePopup={() => closePopup()}
-          task={taskToView} />
-      </div>
     </Stack>
   );
 };

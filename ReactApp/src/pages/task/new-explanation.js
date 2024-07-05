@@ -11,10 +11,7 @@ import {
   Button,
 } from '@mui/material';
 import { Layout as DashboardLayout } from '../../layouts/dashboard/layout';
-import { NewExplanation, TAG_ANSWERS, UnmatchedTag } from '../../constants';
-import { SameTagPopup } from '../../sections/tag/sameTagPopup';
-import { DifferentTagPopup } from '../../sections/tag/differentTagPopup';
-import { ProvideExplanationPopup } from '../../sections/ask-work/provideExplanationPopup';
+import { NewExplanation } from '../../constants';
 import {
   httpsMethod,
   latexServerPath,
@@ -25,8 +22,12 @@ import { GENERATED_TASK_TYPES } from '../../../../src/main/Enums';
 import dynamic from 'next/dynamic';
 const QuestionPhotoView = dynamic(() => import('../../sections/popUps/QuestionPhotoView'), { ssr: false });
 import ErrorMessage from 'src/components/errorMessage';
+import { useRouter } from 'next/router';
 
 const UnmatchedTags = () => {
+  const router = useRouter();
+  const { task } = router.query
+  const [taskData, setTaskData] = useState({});
   const [selectedTag, setSelectedTag] = useState('');
   const [question, setQuestion] = useState({});
   const [tag, setTag] = useState("");
@@ -42,13 +43,12 @@ const UnmatchedTags = () => {
   });
 
   useEffect(() => {
-    const fetchRandomQuestion = async () => {
-      if (Object.keys(question).length === 0) {
+      if (task) {
         try {
-          const response = await requestServer(serverPath.GENERATE_TASK, httpsMethod.POST, {taskType: GENERATED_TASK_TYPES.TAG_ANSWER});
-          setQuestion(response.work);
+          const parsedTask = JSON.parse(decodeURIComponent(task));
+          setTaskData(parsedTask);
           setTaDetails({
-            taTag: 'key',
+            taTag: taskData,
             taExplanation: 'because this is true',
             firstName: 'Idan',
             lastName: 'Aharoni'
@@ -61,9 +61,7 @@ const UnmatchedTags = () => {
           return { success: false, error: error };
         }
       }
-    };
-    fetchRandomQuestion();
-  }, [generate]);
+  }, [task]);
 
   const handleTagChange = (event) => {
     setSelectedTag(event.target.value);
@@ -144,7 +142,7 @@ const UnmatchedTags = () => {
         </FormControl>
         <Box sx={{ mt: 2 }}>
           <Button variant="contained" color="primary" onClick={handleSubmit} disabled={!selectedTag}>
-            {TAG_ANSWERS.SUBMIT}
+            {NewExplanation.SUBMIT}
           </Button>
         </Box>
         <ErrorMessage message={error}></ErrorMessage>
