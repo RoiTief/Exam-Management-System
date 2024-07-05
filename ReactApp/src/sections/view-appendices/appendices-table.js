@@ -22,8 +22,9 @@ import { MetaQuestionTable } from '../view-questions/question-table';
 import ErrorMessage from '../../components/errorMessage';
 import EditIcon from '@mui/icons-material/Edit';
 import { useRouter } from 'next/router';
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 
-export const AppendicesTable = ({ appendices }) => {
+export const AppendicesTable = ({ appendices, fetchAppendices }) => {
   const router = useRouter();
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
@@ -66,6 +67,17 @@ export const AppendicesTable = ({ appendices }) => {
     router.push({ pathname, query });
   }
 
+  const handleDelete = async (event, appendix) => {
+    event.stopPropagation();
+    setExpandedAppendix(appendix)
+    try {
+      await requestServer(serverPath.DELETE_APPENDIX, httpsMethod.POST, { tag: appendix.tag });
+      fetchAppendices()
+    } catch (err) {
+      setErrorMessage(err.message)
+    }
+  }
+
   const handlePdfButtonClick = (event, question) => {
     event.stopPropagation();
     setSelectedQuestion(question);
@@ -98,7 +110,8 @@ export const AppendicesTable = ({ appendices }) => {
                 <TableCell>{APPENDICES_CATALOG.TITLE_HEADING}</TableCell>
                 <TableCell>{APPENDICES_CATALOG.TAG_HEADING}</TableCell>
                 <TableCell>{APPENDICES_CATALOG.CONTENT_HEADING}</TableCell>
-                <TableCell></TableCell>
+                <TableCell/>
+                <TableCell/>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -111,6 +124,12 @@ export const AppendicesTable = ({ appendices }) => {
                     <TableCell>
                       <IconButton onClick={() => handleEdit(appendix)}>
                         <EditIcon />
+                      </IconButton>
+                    </TableCell>
+                    <TableCell>
+                      <IconButton onClick={(event) => handleDelete(event, appendix)}
+                                  disabled={ !expandedAppendix || expandedAppendix.tag!==appendix.tag || relatedQuestions.length>0 }>
+                        <DeleteOutlineIcon/>
                       </IconButton>
                     </TableCell>
                   </TableRow>
