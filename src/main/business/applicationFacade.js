@@ -206,8 +206,10 @@ class ApplicationFacade{
      * @param data - the user who tries to view his tasks
      * @throws {Error} - if there is no user logged in data
      */
-    async viewMyTasks(data){
-        return await this.taskController.getTasksOf(data);
+    async viewMyTasks(data) {
+        const businessTasks = await this.taskController.getTasksOf(data);
+        const feTasks = businessTasks.map(bTask => this.#taskBusinessToFE(bTask));
+        return feTasks;
     }
 
     /**
@@ -408,6 +410,16 @@ class ApplicationFacade{
         return await this.taskController.completeCreatedTask(data);
     }
 
+    #userBusinessToFE(bUser) {
+        return {
+            username: bUser.getUsername(),
+            fname: bUser.getFirstName(),
+            lname: bUser.getLastName(),
+            email: bUser.getEmail(),
+            type: bUser.getUserType(),
+        }
+    }
+
     #mqBusinessToFE(bMQ) {
         return {
             id: bMQ.getId(),
@@ -434,6 +446,18 @@ class ApplicationFacade{
             title: bAppendix.getTitle(),
             content: bAppendix.getContent(),
             keywords: bAppendix.getKeywords(),
+        }
+    }
+
+    #taskBusinessToFE(bTask) {
+        return {
+            taskId: bTask.id,
+            superType: bTask.superType,
+            type: bTask.taskType,
+            creatingUser: this.#userBusinessToFE(bTask.creatingUser),
+            ...(bTask.appendix && {appendix: this.#appendixBusinessToFE(bTask.appendix)}),
+            ...(bTask.metaQuestion && {metaQuestion: this.#mqBusinessToFE(bTask.metaQuestion)}),
+            ...(bTask.answer && {answer: this.#answerBusinessToFE(bTask.answer)}),
         }
     }
 
