@@ -6,6 +6,7 @@ const MetaQuestionRepository = require("../../main/DAL/MetaQuestion/MetaQuestion
 const ExamController = require("../../main/business/ExamManager/ExamController");
 const MetaQuestion = require("../../main/business/MetaQuestions/MetaQuestion");
 const { EXAM_CONSTANTS } = require("../../main/constants");
+const MetaQuestionController = require("../../main/business/MetaQuestions/MetaQuestionController");
 
 const EXAM_NUM = 10
 const MQ_NUM = 10 
@@ -33,18 +34,8 @@ async function createExamWithQuestions(examController, examData, addQuestionToEx
     return exam.getId()
 }
 
-class MetaQuestionControllerMock {
-    #mqs
-    setMetaQuestion(dalMqs) {
-        this.#mqs =  dalMqs.map(dmq => new MetaQuestion(dmq))
-    }
-    getMetaQuestion(mqId) {
-        return this.#mqs.filter(mq => mq.getId() !== mqId)[0] ?? {}
-    }
-}
 
 describe('Happy-Path ExamController tests', () => {
-    const metaQuestionControllerMock = new MetaQuestionControllerMock()
     let examController;
     let sequelize;
     let examRepo;
@@ -76,14 +67,13 @@ describe('Happy-Path ExamController tests', () => {
     beforeEach(async () => {
         await sequelize.sync({ force: true }); // cleans db
         dalMqs = await (Promise.all(mqDataArr.map(mqData => mqRepo.addMetaQuestion(mqData, mqData.answers, emptyArr))))
-        metaQuestionControllerMock.setMetaQuestion(dalMqs)
         dalMq = dalMqs[0]
         addQData.mqId = dalMq.id
         addQData.answersData = [{ id: dalMq.answers[0].id, ordinal: 1, permutation: 1 }]
         addAutoQDataArr = addAutoQDataArr.map(data => ({ ...data, mqId: dalMq.id }))
 
 
-        examController = new ExamController(metaQuestionControllerMock, examRepo);
+        examController = new ExamController(new MetaQuestionController(mqRepo), examRepo);
     })
 
     test('create exam', async () => {

@@ -1,11 +1,17 @@
 const { validateParameters } = require('../../validateParameters');
 var {Task} = require('./Task')
 var {TaskTypes} = require('./Task')
+const {PRIMITIVE_TYPES, GENERATED_TASK_TYPES, ANSWER_TYPES, USER_TYPES} = require("../../Enums");
+const {EMSError, TASK_PROCESS_ERROR_CODES, USER_PROCESS_ERROR_CODES} = require("../../EMSError");
+const {TASK_PROCESS_ERROR_MSGS} = require("../../ErrorMessages");
 
 class TaskController {
+    #taskRepo
+    #mqController
 
-
-    constructor(){
+    constructor(taskRepository, metaQuestionsController){
+        this.#taskRepo = taskRepository;
+        this.#mqController = metaQuestionsController;
         this._tasks = new Map();
         this._id = 1
     }
@@ -83,7 +89,80 @@ class TaskController {
         task.finished = true;
     }
 
+    async generateTask(data) {
+        validateParameters(data, {taskType: PRIMITIVE_TYPES.STRING});
+        switch (data.taskType) {
+            case GENERATED_TASK_TYPES.TAG_ANSWER:
+                return await this.#generateTagAnswerTask(data)
+            default:
+                throw new EMSError(TASK_PROCESS_ERROR_MSGS.INVALID_TASK_TYPE(data.taskType), TASK_PROCESS_ERROR_CODES.INVALID_TASK_TYPE);
+        }
+    }
 
+    async completeGeneratedTask(data) {
+        validateParameters(data, {taskType: PRIMITIVE_TYPES.STRING});
+        switch (data.taskType) {
+            case GENERATED_TASK_TYPES.TAG_ANSWER:
+                return await this.#completeTagAnswerTask(data);
+            default:
+                throw new EMSError(TASK_PROCESS_ERROR_MSGS.INVALID_TASK_TYPE(data.taskType), TASK_PROCESS_ERROR_CODES.INVALID_TASK_TYPE);
+        }
+    }
+
+    /* returns
+    {
+        answer,
+        metaQuestion,
+        appendix?
+    }
+     */
+    async #generateTagAnswerTask(data) {
+        const callingUser = data.callingUser;
+        let chosenAnswer;
+
+        // choose answer from untagged answers
+        const untaggedDalAnswers = await this.#taskRepo.getUntaggedAnswersOf(callingUser.username);
+        if (untaggedDalAnswers.length > 0) {
+            const chosenDalAnswer = untaggedDalAnswers[Math.floor(Math.random() * untaggedDalAnswers.length)]; // random answer
+            chosenAnswer = await this.#mqController.getAnswer(chosenDalAnswer.id);
+        } else {
+            //choose oldest tagged answer (maybe tasker learned something new? or least probable he remembers what he tagged)
+            const userTags = await this.#taskRepo.getUserTags(callingUser.username);
+            if (userTags.length === 0) { // no untagged AND no tagged answers <==> 0 answers in the system
+                throw new EMSError(TASK_PROCESS_ERROR_MSGS.INSUFFICIENT_CONTENT_TO_GENERATE_TASK, TASK_PROCESS_ERROR_CODES.INSUFFICIENT_CONTENT_TO_GENERATE_TASK);
+            }
+            userTags.sort((a, b) => a.updatedAt - b.updatedAt); // earliest first
+            chosenAnswer = await this.#mqController.getAnswer(userTags[0].AnswerId);
+        }
+
+        const metaQuestion = await this.#mqController.getMetaQuestion(chosenAnswer.getMetaQuestionId());
+        const taskData = {
+            answer: chosenAnswer,
+            metaQuestion: metaQuestion,
+        }
+        if (metaQuestion.getAppendixTag()) {
+            taskData.appendix = await this.#mqController.getAppendix(metaQuestion.getAppendixTag());
+        }
+        return taskData;
+    }
+
+    async #completeTagAnswerTask(data) {
+        validateParameters(data, {answerId: PRIMITIVE_TYPES.NUMBER, userTag: PRIMITIVE_TYPES.STRING});
+        const callingUser = data.callingUser;
+        await this.#taskRepo.tagAnswer(callingUser.username, data.answerId, data.userTag);
+
+        const answer = await this.#mqController.getAnswer(data.answerId);
+        if (answer.getTag() === data.userTag) return;
+        switch (callingUser.type) {
+            case USER_TYPES.LECTURER:
+                answer.setTag(data.userTag);
+                answer.setExplanation(data.explanation);
+                break;
+            case USER_TYPES.TA:
+                // TODO: set task for lecturers to go over TA's work
+                break;
+        }
+    }
 }
 
 module.exports = TaskController;

@@ -51,6 +51,12 @@ const MQ_PROCESS_ERROR_MSGS = {
     APPENDIX_TAG_ALREADY_EXIST: tag => `Tag '${tag}' is already in use by another appendix`,
     APPENDIX_TAG_DOESNT_EXIST: tag => `Tag '${tag}' doesn't exist`,
     MQ_ID_DOESNT_EXIST: id => `A Meta-Question with ID '${id}' doesn't exist`,
+    ANSWER_ID_DOESNT_EXIST: id => `An Answer with ID '${id}' doesn't exist`,
+}
+
+const TASK_PROCESS_ERROR_MSGS = {
+    INVALID_TASK_TYPE: type => `Task-type '${type}' is invalid`,
+    INSUFFICIENT_CONTENT_TO_GENERATE_TASK: `There is not enough content to generate a task of this type`,
 }
 
 const EXAM_PROCESS_ERROR_MSGS = {
@@ -72,4 +78,5 @@ module.exports = {
     FUNCTION_PARAMETERS_ERROR_MSGS,
     EXAM_PROCESS_ERROR_MSGS,
     GENERAL_ERROR_MSGS,
+    TASK_PROCESS_ERROR_MSGS,
 }
