@@ -451,9 +451,9 @@ class ApplicationFacade{
 
     #taskBusinessToFE(bTask) {
         return {
-            taskId: bTask.id,
+            taskId: bTask.taskId,
             superType: bTask.superType,
-            type: bTask.taskType,
+            type: bTask.type,
             creatingUser: this.#userBusinessToFE(bTask.creatingUser),
             ...(bTask.appendix && {appendix: this.#appendixBusinessToFE(bTask.appendix)}),
             ...(bTask.metaQuestion && {metaQuestion: this.#mqBusinessToFE(bTask.metaQuestion)}),
