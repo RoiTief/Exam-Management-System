@@ -1,3 +1,4 @@
+import {EXAM_CONSTANTS} from "../../src/main/constants"
 export const APP_NAME = "Exam Management System";
 
 export const APP_HEADER = "Exam Management";
@@ -226,7 +227,7 @@ export const EXAM = {
   DISTRACTOR_TITLE: "Distractors: ",
   NEXT: "Next",
   DESELECT_QUESTION: "Deselect Question",
-  MAX_DISTRACTOR_NUMBER: 2,
+  MAX_DISTRACTOR_NUMBER: EXAM_CONSTANTS.MAX_DISTRACTOR_NUMBER,
   get SELECT_DISTRACTORS_BODY() {
     return `Please select up to ${this.MAX_DISTRACTOR_NUMBER} distractors`;
   },

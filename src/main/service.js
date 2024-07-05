@@ -436,15 +436,16 @@ function addManualMetaQuestionToExam(req, res, next) {
  * @throws {Error} - if fail to create
  */
 function addAutomaticQuestionToExam(req, res, next) {
-    try {
-        let examQuestion = application.addAutomaticQuestionToExam(req.body)
-        req.log.info("request to add automatic question to exam");
-        res.send(200, {code: 200, examQuestion})
-        next()
-    } catch (err) {
-        req.log.warn(err.message, 'failed to add automatic question to exam');
-        next(err);
-    }
+    
+        application.addAutomaticQuestionToExam(req.body).then(examQuestion =>{
+            req.log.info("request to add automatic question to exam");
+            res.send(200, {code: 200, examQuestion})
+            next()
+        }, err => {
+            req.log.warn(err.message, 'failed to add automatic question to exam');
+            next(err);
+    
+        })
 }
 
 
@@ -544,16 +545,15 @@ function createExam(req, res, next){
 }
 
 function getAllExams(req, res, next){
-    try{
+    
         req.log.info("request to get all exams");
-        const exams = application.getAllExams(req.body)
-        res.send(200, {code:200,exams})
-        next()
-    }
-    catch(err){
-        req.log.warn(err.message, 'failed to get all exams');
-        next(err);
-    }
+        const exams = application.getAllExams(req.body).then(exams =>{
+            res.send(200, {code:200,exams})
+            next()
+        }, err =>{
+            req.log.warn(err.message, 'failed to get all exams');
+            next(err);
+        })
 }
 
 function editUser(req, res, next) {

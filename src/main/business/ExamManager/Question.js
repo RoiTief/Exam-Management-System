@@ -8,7 +8,7 @@ class Question {
     #ExamAnswers
     constructor(dalQuestion) {
         this.#dalQuestion = dalQuestion;
-        dalQuestion.metaQuestion.answers = dalQuestion.answers ?? []
+        dalQuestion.metaQuestion.answers = dalQuestion.answers ? dalQuestion.answers : []
         this.#metaQuestion = new MetaQuestion(dalQuestion.metaQuestion)
         this.#ExamAnswers = dalQuestion.answers.map(dExamAnswer => new ExamAnswer(dExamAnswer))
     }

@@ -1,51 +1,69 @@
 const { USER_TYPES, ANSWER_TYPES } = require("../../main/Enums");
 const initSequelize = require("../../main/DAL/Sequelize");
-const { EMSError, MQ_PROCESS_ERROR_CODES } = require("../../main/EMSError");
 const testDbConfig = require("../DAL/TestConfig");
 const ExamRepository = require("../../main/DAL/Exam/ExamRepository");
 const MetaQuestionRepository = require("../../main/DAL/MetaQuestion/MetaQuestionRepository");
 const ExamController = require("../../main/business/ExamManager/ExamController");
+const MetaQuestion = require("../../main/business/MetaQuestions/MetaQuestion");
+const { EXAM_CONSTANTS } = require("../../main/constants");
+
+const EXAM_NUM = 10
+const MQ_NUM = 10 
+const ANSWERS_IN_META_QUESTION = 10
 
 const callingUser = {
     username: 'name',
     type: USER_TYPES.LECTURER
 }
-const examDataArr = Array.from({ length: 10 }, (_, i) => ({
+const examDataArr = Array.from({ length: EXAM_NUM }, (_, i) => ({
     callingUser,
     title: `title ${i}`
 }));
-const mqDataArr = Array.from({ length: 10 }, (_, i) => ({
+const mqDataArr = Array.from({ length: MQ_NUM }, (_, i) => ({
     stem: `stem ${i}`,
-     answers: [{ content: `content ${i}`, tag: i > 4 ? ANSWER_TYPES.DISTRACTOR :ANSWER_TYPES.KEY, explanation: `Explanation ${i}` }]
+    answers: Array.from({ length: ANSWERS_IN_META_QUESTION }, (_, j) => ({ content: `content ${i}`, tag: j > 4 ? ANSWER_TYPES.DISTRACTOR : ANSWER_TYPES.KEY, explanation: `Explanation ${i}` }))
 }));
 
 const emptyArr = []
 
 async function createExamWithQuestions(examController, examData, addQuestionToExamRawDataArr) {
     const exam = await examController.createExam(examData)
-    const addQuestionToExamDataArr = addQuestionToExamRawDataArr.map(data=> ({...data, examId : exam.getId()}))
-    await Promise.all(addQuestionToExamDataArr.map(addQuestionData => examController.addQuestionToExam(addQuestionData)))
+    const addQDataArr = addQuestionToExamRawDataArr.map(data => ({ ...data, examId: exam.getId() }))
+    await Promise.all(addQDataArr.map(addQuestionData => examController.addQuestionToExam(addQuestionData)))
     return exam.getId()
 }
 
 class MetaQuestionControllerMock {
-
+    #mqs
+    setMetaQuestion(dalMqs) {
+        this.#mqs =  dalMqs.map(dmq => new MetaQuestion(dmq))
+    }
+    getMetaQuestion(mqId) {
+        return this.#mqs.filter(mq => mq.getId() !== mqId)[0] ?? {}
+    }
 }
 
 describe('Happy-Path ExamController tests', () => {
+    const metaQuestionControllerMock = new MetaQuestionControllerMock()
     let examController;
     let sequelize;
     let examRepo;
     let mqRepo;
     let dalMq;
-    let addQuestionToExamData = {
+    let dalMqs;
+    let addQData = {
         callingUser,
         examId: undefined, // will be set at runtime
-        mQId: undefined, // will be set at runtime
+        mqId: undefined, // will be set at runtime
         questionData: { ordinal: 5 },
         answersData: undefined // will be set at runtime
 
     }
+    let addAutoQDataArr = mqDataArr.map(mqData => ({
+        callingUser,
+        examId: undefined, // will be set at runtime
+        mqId: undefined // will be set at runtime
+    }));
 
     beforeAll(async () => {
         sequelize = initSequelize(testDbConfig);
@@ -56,11 +74,16 @@ describe('Happy-Path ExamController tests', () => {
     });
 
     beforeEach(async () => {
-        examController = new ExamController(new MetaQuestionControllerMock(), examRepo);
         await sequelize.sync({ force: true }); // cleans db
-        dalMq = await mqRepo.addMetaQuestion(mqDataArr[0], mqDataArr[0].answers, emptyArr)
-        addQuestionToExamData.mQId = dalMq.id
-        addQuestionToExamData.answersData = [{ id: dalMq.answers[0].id, ordinal: 1, permutation: 1 }]
+        dalMqs = await (Promise.all(mqDataArr.map(mqData => mqRepo.addMetaQuestion(mqData, mqData.answers, emptyArr))))
+        metaQuestionControllerMock.setMetaQuestion(dalMqs)
+        dalMq = dalMqs[0]
+        addQData.mqId = dalMq.id
+        addQData.answersData = [{ id: dalMq.answers[0].id, ordinal: 1, permutation: 1 }]
+        addAutoQDataArr = addAutoQDataArr.map(data => ({ ...data, mqId: dalMq.id }))
+
+
+        examController = new ExamController(metaQuestionControllerMock, examRepo);
     })
 
     test('create exam', async () => {
@@ -76,11 +99,11 @@ describe('Happy-Path ExamController tests', () => {
     test('add question to exam', async () => {
         try {
             const exam = await examController.createExam(examDataArr[0])
-            addQuestionToExamData.examId = exam.getId()
-            const question = await examController.addQuestionToExam(addQuestionToExamData)
-            expect(question.getOrdinal()).toBe(addQuestionToExamData.questionData.ordinal);
+            addQData.examId = exam.getId()
+            const question = await examController.addQuestionToExam(addQData)
+            expect(question.getOrdinal()).toBe(addQData.questionData.ordinal);
             question.getAnswers().forEach((answer) => {
-                expect(answer.getOrdinal()).toBe(addQuestionToExamData.answersData[0].ordinal);
+                expect(answer.getOrdinal()).toBe(addQData.answersData[0].ordinal);
             })
         } catch (e) {
             console.log(e)
@@ -90,15 +113,10 @@ describe('Happy-Path ExamController tests', () => {
 
     test('Get all exams', async () => {
         try {
-            await createExamWithQuestions(examController, examDataArr[0], [addQuestionToExamData])
-            // const exam = await examController.createExam(examDataArr[0])
-            // addQuestionToExamData.examId = exam.getId()
-            // await examController.addQuestionToExam(addQuestionToExamData)
+            await createExamWithQuestions(examController, examDataArr[0], [addQData])
             const loadedExams = await examController.getAllExams({ callingUser })
-            console.log(loadedExams)
-            console.log(loadedExams.length)
             expect(loadedExams.length).toBeGreaterThan(0);
-            
+
 
         } catch (e) {
             console.log(e)
@@ -106,6 +124,32 @@ describe('Happy-Path ExamController tests', () => {
         }
     })
 
+    test('Add automatic question', async () => {
+        try {
+            let exam = await examController.createExam(examDataArr[0])
+            addAutoQDataArr = addAutoQDataArr.map(data => ({ ...data, examId: exam.getId() }))
+            exam = await examController.getExam({ callingUser, id: exam.getId() })
+            expect(exam.getQuestions().length).toBe(0);
+            
+            await Promise.all(addAutoQDataArr.map(data => examController.addAutomaticQuestionToExam(data)))
+
+            exam = await examController.getExam({ callingUser, id: exam.getId() })
+            expect(exam.getQuestions().length).toBe(MQ_NUM);
+            exam.getQuestions().forEach((question) => {
+                expect(dalMqs.map(dmq=>dmq.id).includes(question.getMetaQuestion().getId()))
+            })
+
+            // check answer ordinal is 1-(EXAM_CONSTANTS.MAX_DISTRACTOR_NUMBER + 1)
+            exam.getQuestions().forEach(q=>expect(q.getAnswers().map(a=>a.getOrdinal()).sort()).toEqual(Array.from({ length: EXAM_CONSTANTS.NUMBER_OF_QUESTIONS }, (_, i) => i + 1)))
+
+            // check number of keys keys and distractors
+            exam.getQuestions().forEach(q=>expect(q.getAnswers().map(a=>a.getTag()).filter(t=> t === ANSWER_TYPES.KEY).length).toBe(1))
+            exam.getQuestions().forEach(q=>expect(q.getAnswers().map(a=>a.getTag()).filter(t=> t === ANSWER_TYPES.DISTRACTOR).length).toBe(EXAM_CONSTANTS.MAX_DISTRACTOR_NUMBER))
+        } catch (e) {
+            console.log(e)
+            expect(false).toBeTruthy()
+        }
+    })
 
     // test('edit appendix', async () => {
     //     await mqController.createAppendix({
