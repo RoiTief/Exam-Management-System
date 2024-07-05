@@ -622,6 +622,34 @@ function editUser(req, res, next) {
     );
 }
 
+function generateTask(req, res, next) {
+    application.generateTask(req.body).then(
+        work => {
+            req.log.info(req.body.callingUser.username, 'generate task request');
+            res.send(200, {code: 200, work});
+            next();
+        },
+        err => {
+            req.log.warn(err.message, 'failed generating task');
+            next(err);
+        }
+    );
+}
+
+function completeGeneratedTask(req, res, next) {
+    application.completeGeneratedTask(req.body).then(
+        _ => {
+            req.log.info(req.body.callingUser.username, 'completed generated task');
+            res.send(200, {code: 200});
+            next();
+        },
+        err => {
+            req.log.warn(err.message, 'failed completing generated task');
+            next(err);
+        }
+    );
+}
+
 module.exports = {
     signUp: signUp,
     signIn: signIn, 
@@ -648,6 +676,8 @@ module.exports = {
     getAllExams,
     editUser: editUser,
     generateJWT,
+    generateTask: generateTask,
+    completeGeneratedTask: completeGeneratedTask,
     addAppendix,
     editAppendix
 };

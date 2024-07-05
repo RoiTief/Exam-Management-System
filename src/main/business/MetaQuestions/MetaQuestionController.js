@@ -1,18 +1,14 @@
 const MetaQuestion = require('./MetaQuestion')
 const Appendix = require('./Appendix')
-const {TaskTypes, TaskPriority} = require('../TaskManager/Task')
+const Answer = require('./Answer')
 const {ANSWER_TYPES, PRIMITIVE_TYPES} = require("../../Enums");
 const {validateParameters} = require("../../validateParameters");
 
 class MetaQuestionController{
-    #taskController;
-    #userController;
     #metaQuestionRepo
 
-    constructor(metaQuestionRepo, taskController,userController) {
+    constructor(metaQuestionRepo) {
         this.#metaQuestionRepo = metaQuestionRepo;
-        this.#taskController = taskController;
-        this.#userController = userController;
     }
 
     async createAppendix(data) {
@@ -58,15 +54,7 @@ class MetaQuestionController{
 
         const dalMQ = await this.#metaQuestionRepo.addMetaQuestion(data, data.answers, data.keywords);
 
-        let metaQuestion = new MetaQuestion(dalMQ);
-
-        let ta_s = (await this.#userController.getAllStaff(data))["TAs"];
-        const addTaskProperties = {...data,
-             assignedUsers: ta_s, taskType: TaskTypes.ADD_KEY,
-              taskPriority: TaskPriority.HIGH, description: `Please add a key For the following Question: ${metaQuestion.getStem()}`,
-            metaQuestion: metaQuestion}
-        this.#taskController.addTask(addTaskProperties)
-        return metaQuestion
+        return new MetaQuestion(dalMQ)
     }
 
     async editMetaQuestion(data) {
@@ -82,13 +70,6 @@ class MetaQuestionController{
         const metaQuestion = await this.getMetaQuestion(data.id);
         await metaQuestion.setStem(data.stem);
         await metaQuestion.setAppendix(data.appendixTag ? data.appendixTag : null);
-
-        let ta_s = (await this.#userController.getAllStaff(data))["TAs"];
-        const addTaskProperties = {...data,
-            assignedUsers: ta_s, taskType: TaskTypes.ADD_KEY,
-            taskPriority: TaskPriority.HIGH, description: `Please please review the changes to the following Question: ${metaQuestion.getStem()}`,
-            metaQuestion: metaQuestion}
-        this.#taskController.addTask(addTaskProperties)
 
         return metaQuestion;
     }
@@ -117,6 +98,11 @@ class MetaQuestionController{
         validateParameters(data, {appendixTag: PRIMITIVE_TYPES.STRING});
         const dalMQs = await this.#metaQuestionRepo.getMetaQuestionsForAppendix(data.appendixTag);
         return dalMQs.map(dalMQ => new MetaQuestion(dalMQ));
+    }
+
+    async getAnswer(answerId) {
+        const dalAnswer = await this.#metaQuestionRepo.getAnswer(answerId);
+        return new Answer(dalAnswer);
     }
 }
 

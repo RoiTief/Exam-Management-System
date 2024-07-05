@@ -18,7 +18,7 @@ export const httpsMethod = {
 export const serverPath = {
   SIGN_UP: 'signUp',
   SIGN_IN: 'signIn',
-  GET_ALL_STAFF : 'getAllStaff',
+  GET_ALL_STAFF: 'getAllStaff',
   SIGN_OUT: 'logout',
   VIEW_TASKS: 'viewMyTasks',
   ADD_TA: 'addTA',
@@ -43,7 +43,10 @@ export const serverPath = {
   EDIT_APPENDIX: 'editAppendix',
   ADD_APPENDIX: 'addAppendix',
   REFRESH_TOKEN: 'refreshJWT',
-}
+  GET_ALL_EXAMS: 'getAllExams',
+  GENERATE_TASK: 'generateTask',
+  COMPLETE_GENERATED_TASK: 'completeGeneratedTask'
+};
 
 
 const pathToReturnTypeMap={
@@ -55,6 +58,9 @@ export const latexServerPath = {
   COMPILE: 'compile',
   COMPILE_EXAM: 'exam',
   COMPILE_MQ: 'metaQuestion',
+  COMPILE_STEM: 'stem',
+  COMPILE_APPENDIX: 'appendix',
+  COMPILE_ANSWER: 'answer',
   APPENDIX: 'appendix'
 };
 

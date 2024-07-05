@@ -264,6 +264,11 @@ function createServer(options) {
     
     server.get('/refreshJWT',refreshJwt)
 
+    // request: work_type
+    server.post('/generateTask', service.generateTask)
+
+    // request: work_type
+    server.post('/completeGeneratedTask', service.completeGeneratedTask)
 
 
     server.get('/', function root(req, res, next) {

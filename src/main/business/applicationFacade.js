@@ -2,15 +2,17 @@ const UserController  = require('./UserManager/UserController.js' );
 const TaskController = require('./TaskManager/TaskController.js');
 const MetaQuestionController = require('./MetaQuestions/MetaQuestionController.js');
 const ExamController = require('./ExamManager/ExamController.js');
-const { userRepo, metaQuestionsRepo } = require("../DAL/Dal");
+const { userRepo, metaQuestionsRepo, taskRepo} = require("../DAL/Dal");
 const { validateParameters } = require('../validateParameters.js');
-const {USER_TYPES, PRIMITIVE_TYPES, ANSWER_TYPES} = require("../Enums");
+const {USER_TYPES, PRIMITIVE_TYPES, ANSWER_TYPES, GENERATED_TASK_TYPES} = require("../Enums");
+const {EMSError, TASK_PROCESS_ERROR_CODES} = require("../EMSError");
+const {TASK_PROCESS_ERROR_MSGS} = require("../ErrorMessages");
 
 class ApplicationFacade{
     constructor() {
         this.userController = new UserController(userRepo);
-        this.taskController = new TaskController(this.userController);
-        this.metaQuestionController = new MetaQuestionController(metaQuestionsRepo, this.taskController, this.userController);
+        this.metaQuestionController = new MetaQuestionController(metaQuestionsRepo);
+        this.taskController = new TaskController(taskRepo, this.metaQuestionController);
         this.examController = new ExamController(this.taskController, this.userController)
     }
 
@@ -405,12 +407,26 @@ class ApplicationFacade{
         return;
     }
 
+    async generateTask(data) {
+        validateParameters(data, {taskType: PRIMITIVE_TYPES.STRING});
+        switch (data.taskType) {
+            case GENERATED_TASK_TYPES.TAG_ANSWER:
+                return await this.#generateTagAnswerTask(data)
+            default:
+                throw new EMSError(TASK_PROCESS_ERROR_MSGS.INVALID_TASK_TYPE(data.taskType), TASK_PROCESS_ERROR_CODES.INVALID_TASK_TYPE);
+        }
+    }
+
+    async completeGeneratedTask(data) {
+        return await this.taskController.completeGeneratedTask(data);
+    }
+
     async #mqBusinessToFE(bMQ) {
         return {
             id: bMQ.getId(),
             stem: bMQ.getStem(),
             keys: bMQ.getKeys().map(bKey => this.#answerBusinessToFE(bKey)),
-            distractors: bMQ.getKeys().map(bDistractor => this.#answerBusinessToFE(bDistractor)),
+            distractors: bMQ.getDistractors().map(bDistractor => this.#answerBusinessToFE(bDistractor)),
             keywords: bMQ.getKeywords(),
             ...(bMQ.getAppendixTag() && {appendix: this.#appendixBusinessToFE(
                 await this.metaQuestionController.getAppendix(bMQ.getAppendixTag()))}),
@@ -432,6 +448,22 @@ class ApplicationFacade{
             title: bAppendix.getTitle(),
             content: bAppendix.getContent(),
             keywords: bAppendix.getKeywords(),
+        }
+    }
+
+    /* returns
+    {
+        answer,
+        stem,
+        appendix?
+    }
+     */
+    async #generateTagAnswerTask(data) {
+        const taskBusinessData = await this.taskController.generateTask(data);
+        return {
+            answer: this.#answerBusinessToFE(taskBusinessData.answer),
+            stem: taskBusinessData.metaQuestion.getStem(),
+            ...(taskBusinessData.appendix && {appendix: this.#appendixBusinessToFE(taskBusinessData.appendix)}),
         }
     }
 }
