@@ -10,139 +10,188 @@ import { httpsMethod, requestServer, serverPath } from '../utils/rest-api-call';
 import { EXAMS_CATALOG } from '../constants';
 import ErrorMessage from '../components/errorMessage';
 
-const pastExams = {
-  questions:
-  [
-    {
-      "id": 1,
-      "stem": "what did Idan listen to when he was a kid",
-      "key": {
+const pastExams = [
+  {
+    questions: [
+      {
         "id": 1,
-        "tag": "key",
-        "text": "baby motzart",
-        "explanation": "explanation1"
-      },
-      "distractors": [
-        {
-          "id": 5,
-          "tag": "distractor",
-          "text": "Begins \"tzachtzachim\" speach",
-          "explanation": "explanation3"
+        "stem": "what did Idan listen to when he was a kid",
+        "key": {
+          "id": 1,
+          "tag": "key",
+          "text": "baby motzart",
+          "explanation": "explanation1"
         },
-        {
-          "id": 4,
-          "tag": "distractor",
-          "text": "zohar Argov",
-          "explanation": "explanation2"
-        }
-      ]
-    },
-    {
-      "id": 6,
-      "stem": "What is Roi's nickname",
-      "key": {
-      "id": 32,
-        "tag": "key",
-        "text": "The Tief",
-        "explanation": "explanation1"
-    },
-      "distractors": [
-      {
-        "id": 33,
-        "tag": "distractor",
-        "text": "Gali's soon to be husband",
-        "explanation": "explanation2"
+        "distractors": [
+          {
+            "id": 5,
+            "tag": "distractor",
+            "text": "Begins \"tzachtzachim\" speach",
+            "explanation": "explanation3"
+          },
+          {
+            "id": 4,
+            "tag": "distractor",
+            "text": "zohar Argov",
+            "explanation": "explanation2"
+          }
+        ]
       },
       {
-        "id": 34,
-        "tag": "distractor",
-        "text": "The Tief",
-        "explanation": "explanation1"
+        "id": 6,
+        "stem": "What is Roi's nickname",
+        "key": {
+          "id": 32,
+          "tag": "key",
+          "text": "The Tief",
+          "explanation": "explanation1"
+        },
+        "distractors": [
+          {
+            "id": 33,
+            "tag": "distractor",
+            "text": "Gali's soon to be husband",
+            "explanation": "explanation2"
+          },
+          {
+            "id": 34,
+            "tag": "distractor",
+            "text": "The Tief",
+            "explanation": "explanation1"
+          }
+        ],
+        "appendix": {
+          "tag": "new tag ",
+          "title": "just appendix",
+          "content": "content",
+          "keywords": []
+        }
       }
     ],
-      "appendix": {
-      "tag": "new tag ",
-        "title": "just appendix",
-        "content": "content",
-        "keywords": []
-    }
-    },
-    {
-      "id": 16,
-      "stem": "with a lot of key and distractors",
-      "key": {
-      "id": 46,
-        "tag": "key",
-        "text": "k2",
-        "explanation": ""
-    },
-      "distractors": [
+    numVersions: "2",
+    examReason: "2022 moed A"
+  },
+  {
+    questions: [
       {
-        "id": 49,
-        "tag": "distractor",
-        "text": "d1",
-        "explanation": ""
+        "id": 1,
+        "stem": "what did Idan listen to when he was a kid",
+        "key": {
+          "id": 1,
+          "tag": "key",
+          "text": "baby motzart",
+          "explanation": "explanation1"
+        },
+        "distractors": [
+          {
+            "id": 5,
+            "tag": "distractor",
+            "text": "Begins \"tzachtzachim\" speach",
+            "explanation": "explanation3"
+          },
+          {
+            "id": 4,
+            "tag": "distractor",
+            "text": "zohar Argov",
+            "explanation": "explanation2"
+          }
+        ]
       },
       {
-        "id": 52,
-        "tag": "distractor",
-        "text": "d4",
-        "explanation": ""
-      }
-    ]
-    },
-    {
-      "id": 16,
-      "stem": "with a lot of key and distractors",
-      "key": {
-      "id": 48,
-        "tag": "key",
-        "text": "k4",
-        "explanation": ""
-    },
-      "distractors": [
-      {
-        "id": 50,
-        "tag": "distractor",
-        "text": "d2",
-        "explanation": ""
+        "id": 6,
+        "stem": "What is Roi's nickname",
+        "key": {
+          "id": 32,
+          "tag": "key",
+          "text": "The Tief",
+          "explanation": "explanation1"
+        },
+        "distractors": [
+          {
+            "id": 33,
+            "tag": "distractor",
+            "text": "Gali's soon to be husband",
+            "explanation": "explanation2"
+          },
+          {
+            "id": 34,
+            "tag": "distractor",
+            "text": "The Tief",
+            "explanation": "explanation1"
+          }
+        ],
+        "appendix": {
+          "tag": "new tag ",
+          "title": "just appendix",
+          "content": "content",
+          "keywords": []
+        }
       },
       {
-        "id": 51,
-        "tag": "distractor",
-        "text": "d3",
-        "explanation": ""
-      }
-    ]
-    },
-    {
-      "id": 16,
-      "stem": "with a lot of key and distractors",
-      "key": {
-      "id": 45,
-        "tag": "key",
-        "text": "k1",
-        "explanation": ""
-    },
-      "distractors": [
-      {
-        "id": 56,
-        "tag": "distractor",
-        "text": "d8",
-        "explanation": ""
+        "id": 6,
+        "stem": "What is Roi's nickname",
+        "key": {
+          "id": 32,
+          "tag": "key",
+          "text": "The Tief",
+          "explanation": "explanation1"
+        },
+        "distractors": [
+          {
+            "id": 33,
+            "tag": "distractor",
+            "text": "Gali's soon to be husband",
+            "explanation": "explanation2"
+          },
+          {
+            "id": 34,
+            "tag": "distractor",
+            "text": "The Tief",
+            "explanation": "explanation1"
+          }
+        ],
+        "appendix": {
+          "tag": "new tag ",
+          "title": "just appendix",
+          "content": "content",
+          "keywords": []
+        }
       },
       {
-        "id": 55,
-        "tag": "distractor",
-        "text": "d7",
-        "explanation": ""
+        "id": 6,
+        "stem": "What is Roi's nickname",
+        "key": {
+          "id": 32,
+          "tag": "key",
+          "text": "The Tief",
+          "explanation": "explanation1"
+        },
+        "distractors": [
+          {
+            "id": 33,
+            "tag": "distractor",
+            "text": "Gali's soon to be husband",
+            "explanation": "explanation2"
+          },
+          {
+            "id": 34,
+            "tag": "distractor",
+            "text": "The Tief",
+            "explanation": "explanation1"
+          }
+        ],
+        "appendix": {
+          "tag": "new tag ",
+          "title": "just appendix",
+          "content": "content",
+          "keywords": []
+        }
       }
-      ]
-    }
-  ],
-  numVersions: "2",
-  examReason: "2022 moed A"
-}
+    ],
+    numVersions: "5",
+    examReason: "2022 moed B"
+  }
+]
 
 const ExamsPage = () => {
   const router = useRouter();
@@ -154,7 +203,8 @@ const ExamsPage = () => {
     async function fetchExams() {
       try {
         const { exams } = await requestServer(serverPath.GET_ALL_EXAMS, httpsMethod.GET);
-        setExams([pastExams]);
+        // setExams(exams);
+        setExams(pastExams)
         setErrorMessage(''); // Clear any previous error message
       } catch (error) {
         console.error('Error fetching exams:', error);
@@ -174,6 +224,7 @@ const ExamsPage = () => {
   }, [exams]);
 
   const handleSearch = (text) => {
+    console.log(exams)
     const filteredExams = exams.filter(exam =>
       exam.examReason.toLowerCase().includes(text.toLowerCase())
     );
@@ -194,7 +245,7 @@ const ExamsPage = () => {
               </Stack>
             </Stack>
             <ExamsSearch onSearch={handleSearch} /> {/* Render ExamsSearch */}
-            <ExamsTable data={filteredData} />
+            <ExamsTable data={filteredData} setErrorMessage={setErrorMessage} />
             <ErrorMessage message={errorMessage} />
           </Stack>
         </Container>

@@ -4,12 +4,26 @@ import { Scrollbar } from 'src/components/scrollbar';
 import React, { useState } from 'react';
 import { ExamPopup } from '../popUps/ExamPopup';
 import { EXAMS_CATALOG } from '../../constants';
+import { PdfLatexPopup } from '../popUps/QuestionPdfView';
+import { httpsMethod, latexServerPath, requestServer, serverPath } from '../../utils/rest-api-call';
 
-export const ExamsTable = ({ data }) => {
+export const ExamsTable = ({ data, setErrorMessage }) => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [selectedExam, setSelectedExam] = useState(null);
   const [showExamView, setShowExamView] = useState(false);
+  const [versionedExam, setVersionedExam] = useState(null);
+  const [showPdfView, setShowPdfView] = useState(false);
+
+  const showExamInPdf = async (version) => {
+    try {
+      const { versionExam } = await requestServer(serverPath.GET_VERSIONED_EXAM, httpsMethod.GET, { selectedExam, version });
+      setVersionedExam(versionExam)
+      setShowPdfView(true); // Show Exam view when row is clicked
+    } catch (err) {
+      setErrorMessage(err.message)
+    }
+  };
 
   const handleRowClick = (exam) => {
     setSelectedExam(exam);
@@ -68,7 +82,15 @@ export const ExamsTable = ({ data }) => {
         />
       </Card>
       {showExamView && (
-        <ExamPopup isOpen={showExamView} closePopup={closePopup} exam={selectedExam} />
+        <ExamPopup isOpen={showExamView} closePopup={closePopup} exam={selectedExam} setShowPdfView={showExamInPdf} />
+      )}
+      {showPdfView && (
+        <PdfLatexPopup
+          isOpen={showPdfView}
+          closePopup={() => setShowPdfView(false)}
+          content={versionedExam.questions}
+          type={latexServerPath.COMPILE_EXAM}
+        />
       )}
     </Stack>
   );

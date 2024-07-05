@@ -1,10 +1,32 @@
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { overlayStyle, popupStyle } from './popup-style';
-import { Box, Typography, Divider, Button } from '@mui/material';
-import React from 'react';
+import { Box, Typography, Divider, Button, TextField, Stack } from '@mui/material';
 import { EXAM } from '../../constants';
+import { PdfLatexPopup } from '../popUps/QuestionPdfView';
+import { latexServerPath } from '../../utils/rest-api-call';
 
-export const ExamPopup = ({ isOpen, closePopup, exam }) => {
+export const ExamPopup = ({ isOpen, closePopup, exam, setShowPdfView }) => {
+  const [selectedVersion, setSelectedVersion] = useState(1);
+
+  const handleVersionChange = (event) => {
+    const value = parseInt(event.target.value, 10);
+    if (value >= 1 && value <= exam.numVersions) {
+      setSelectedVersion(value);
+    }
+  };
+
+  const numberInputStyles = {
+    '& input[type=number]::-webkit-inner-spin-button': {
+      WebkitAppearance: 'inner-spin-button',
+      opacity: 1
+    },
+    '& input[type=number]::-webkit-outer-spin-button': {
+      WebkitAppearance: 'inner-spin-button',
+      opacity: 1
+    }
+  };
+
   return (
     isOpen ? (
       <div className="popup">
@@ -17,7 +39,7 @@ export const ExamPopup = ({ isOpen, closePopup, exam }) => {
             Number of Versions: {exam.numVersions}
           </Typography>
           {exam.questions.length > 0 && (
-            <Box mt={2} paddingY={3}>
+            <Box mt={2} paddingY={2}>
               {exam.questions.map((question, index) => (
                 <Box key={index} sx={{ mb: 2 }}>
                   <Box sx={{ display: 'flex', alignItems: 'center' }}>
@@ -67,6 +89,23 @@ export const ExamPopup = ({ isOpen, closePopup, exam }) => {
               ))}
             </Box>
           )}
+          <Stack direction="row" justifyContent="center" spacing={5} padding={2}>
+            <TextField
+              label="Version to show"
+              type="number"
+              inputProps={{ min: 1, max: exam.numVersions }}
+              value={selectedVersion}
+              onChange={handleVersionChange}
+              sx={{ width: 115, mr: 2, ...numberInputStyles }}
+            />
+            <Button
+              variant="outlined"
+              color="primary"
+              onClick={() => setShowPdfView(selectedVersion)}
+            >
+              Show as PDF
+            </Button>
+          </Stack>
         </div>
       </div>
     ) : null

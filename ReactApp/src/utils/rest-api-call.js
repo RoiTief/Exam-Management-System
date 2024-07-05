@@ -44,6 +44,7 @@ export const serverPath = {
   ADD_APPENDIX: 'addAppendix',
   REFRESH_TOKEN: 'refreshJWT',
   GET_ALL_EXAMS: 'getAllExams',
+  GET_VERSIONED_EXAM: 'getVersionedExam',
   GENERATE_TASK: 'generateTask',
   COMPLETE_GENERATED_TASK: 'completeGeneratedTask'
 };

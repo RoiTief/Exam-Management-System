@@ -252,6 +252,25 @@ function createServer(options) {
     // response: Appendix[]
     server.get('/getAllAppendices', service.getAllAppendices)
 
+    // request: {
+    //          exam:
+    //          version: num
+    //
+    // response:
+    //    versionExam:[
+    //   {
+    //      id: num
+    //       stem: str
+    //       appendix: {
+    //              title: str,
+    //              tag: str,
+    //              content: str
+    //        }
+    //       key: {answer: str, explanation: str },
+    //      distractors: [{answer: str, explanation: str }],
+    //     }]
+    server.get('/getVersionedExam', service.getVersionedExam)
+
     // request: Appendix
     // response: MetaQuestion[]
     server.post('/getMetaQuestionForAppendix', service.getMetaQuestionForAppendix)

@@ -602,6 +602,12 @@ function getAllExams(req, res, next){
     }
 }
 
+function getVersionedExam(req, res, next){
+    // todo - implement
+    res.send(200, {code:200})
+    next()
+}
+
 function editUser(req, res, next) {
     application.editUser(req.body).then(
         businessUser => {
@@ -674,6 +680,7 @@ module.exports = {
     editMetaQuestion: editMetaQuestion,
     createExam,
     getAllExams,
+    getVersionedExam,
     editUser: editUser,
     generateJWT,
     generateTask: generateTask,
