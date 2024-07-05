@@ -1,5 +1,5 @@
 const {DataTypes, } = require("sequelize");
-const {USER_TYPES, CREATED_TASK_TYPES} = require("../../Enums");
+const {USER_TYPES, CREATED_TASK_TYPES, ANSWER_TYPES, CREATED_TASK_SUPER_TYPES} = require("../../Enums");
 
 /**
  * Defines a 'Answer' model within the given database

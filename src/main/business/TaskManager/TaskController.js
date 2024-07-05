@@ -2,7 +2,7 @@ const { validateParameters } = require('../../validateParameters');
 var {Task} = require('./Task')
 var {TaskTypes} = require('./Task')
 const {PRIMITIVE_TYPES, GENERATED_TASK_TYPES, ANSWER_TYPES, USER_TYPES, CREATED_TASK_TYPES, CREATED_TASK_SUPER_TYPES} = require("../../Enums");
-const {EMSError, TASK_PROCESS_ERROR_CODES, USER_PROCESS_ERROR_CODES} = require("../../EMSError");
+const {EMSError, TASK_PROCESS_ERROR_CODES, USER_PROCESS_ERROR_CODES, MQ_PROCESS_ERROR_CODES} = require("../../EMSError");
 const {TASK_PROCESS_ERROR_MSGS} = require("../../ErrorMessages");
 
 class TaskController {
@@ -27,8 +27,10 @@ class TaskController {
         const callingUser = data.callingUser;
 
         const myDalRoleTasks = await this.#taskRepo.getTasksOfRole(callingUser.type);
-        const myRoleTasks = await Promise.all(myDalRoleTasks.map(async dalTask => await this.#createdTaskFactory(dalTask)));
-        myRoleTasks.forEach(roleTask => roleTask.superType = CREATED_TASK_SUPER_TYPES.ROLE_SPECIFIC);
+        const myRoleTasks = await Promise.all(
+            myDalRoleTasks.map(async dalTask => await this.#createdTaskFactory(dalTask, CREATED_TASK_SUPER_TYPES.ROLE_SPECIFIC))
+                .filter(t => t) //drops undefined tasks that were created due to errors
+        );
 
         // at a future point where user-specific tasks exist as well, concatenate the user-tasks and role-tasks
         return myRoleTasks;
@@ -101,6 +103,18 @@ class TaskController {
                 break;
             default:
                 throw new EMSError(TASK_PROCESS_ERROR_MSGS.INVALID_TASK_TYPE(data.type), TASK_PROCESS_ERROR_CODES.INVALID_TASK_TYPE);
+        }
+    }
+
+    async deleteTask(superType, taskId) {
+        switch (superType) {
+            case CREATED_TASK_SUPER_TYPES.ROLE_SPECIFIC:
+                await this.#taskRepo.deleteRoleTask(taskId);
+                break;
+            case CREATED_TASK_SUPER_TYPES.USER_SPECIFIC:
+                break;
+            default:
+                throw new EMSError(TASK_PROCESS_ERROR_MSGS.INVALID_TASK_SUPER_TYPE(superType), TASK_PROCESS_ERROR_CODES.INVALID_TASK_SUPER_TYPE);
         }
     }
 
@@ -197,9 +211,10 @@ class TaskController {
      * Converts a given created task to a filled object with all relevant business level data
      * @param dalTask
      */
-    async #createdTaskFactory(dalTask) {
+    async #createdTaskFactory(dalTask, superType) {
         const task = {
             taskId: dalTask.id,
+            superType: superType,
             type: dalTask.taskType,
             creatingUser: await this.#userController.getUser(dalTask.creatingUser),
         }
@@ -207,17 +222,33 @@ class TaskController {
         switch (task.type) {
 
             case CREATED_TASK_TYPES.EXPLANATION_COMPARISON:
-                task.answer = await this.#mqController.getAnswer(taskData.answerId);
+                try {
+                    task.answer = await this.#mqController.getAnswer(taskData.answerId);
+                } catch (err) {
+                    if (err instanceof EMSError && err.errorCode === MQ_PROCESS_ERROR_CODES.ANSWER_ID_DOESNT_EXIST){
+                        await this.deleteTask(superType, task.taskId);
+                        return;
+                    }
+                    throw err;
+                }
                 task.metaQuestion = await this.#mqController.getMetaQuestion(task.answer.getMetaQuestionId());
                 if (task.metaQuestion.getAppendixTag()) task.appendix = await this.#mqController.getAppendix(task.metaQuestion.getAppendixTag());
                 task.suggestedExplanation = taskData.suggestedExplanation;
                 break;
 
             case CREATED_TASK_TYPES.TAG_REVIEW:
-                task.suggestedTag = taskData.suggestedTag;
-                task.answer = await this.#mqController.getAnswer(taskData.answerId);
+                try {
+                    task.answer = await this.#mqController.getAnswer(taskData.answerId);
+                } catch (err) {
+                    if (err instanceof EMSError && err.errorCode === MQ_PROCESS_ERROR_CODES.ANSWER_ID_DOESNT_EXIST){
+                        await this.deleteTask(superType, task.taskId);
+                        return;
+                    }
+                    throw err;
+                }
                 task.metaQuestion = await this.#mqController.getMetaQuestion(task.answer.getMetaQuestionId());
                 if (task.metaQuestion.getAppendixTag()) task.appendix = await this.#mqController.getAppendix(task.metaQuestion.getAppendixTag());
+                task.suggestedTag = taskData.suggestedTag;
                 task.suggestedExplanation = taskData.suggestedExplanation;
                 break;
         }

@@ -93,6 +93,10 @@ class TaskRepository {
         return foundTask;
     }
 
+    async deleteRoleTask(taskId) {
+        await this.#RoleTask.destroy({where: {id: taskId}});
+    }
+
     async getTasksOfRole(role) {
         return await this.#RoleTask.findAll({ where : { role: role } });
     }
