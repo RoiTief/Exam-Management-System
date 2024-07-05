@@ -413,8 +413,8 @@ class ApplicationFacade{
     #userBusinessToFE(bUser) {
         return {
             username: bUser.getUsername(),
-            fname: bUser.getFirstName(),
-            lname: bUser.getLastName(),
+            firstName: bUser.getFirstName(),
+            lastName: bUser.getLastName(),
             email: bUser.getEmail(),
             type: bUser.getUserType(),
         }
