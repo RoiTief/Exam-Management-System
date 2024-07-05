@@ -60,6 +60,7 @@ export const TASK = {
   SUBMIT_BUTTON: "Submit",
   ENTER_ANSWER_PLACEHOLDER: "Enter your answer...",
   RESPONSE_MESSAGE: "Your response was: ",
+  NUM_ASSIGNED: (length) => {return length === 1 ? "1 task assigned" : `${length} tasks assigned`},
 };
 
 export const USERS = {
@@ -286,5 +287,6 @@ export const NewExplanation = {
   SURE: 'Yes I am sure',
   APPENDIX: "Appendix:",
   STEM: "Stem:",
-  ANSWER: "Answer:"
+  ANSWER: "Answer:",
+  SUBMIT: 'Submit',
 };

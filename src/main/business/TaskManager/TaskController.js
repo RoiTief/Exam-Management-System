@@ -65,7 +65,8 @@ class TaskController {
             {
                 role: PRIMITIVE_TYPES.STRING,
                 leaveOpen: PRIMITIVE_TYPES.BOOLEAN,
-                taskData: {taskType: PRIMITIVE_TYPES.STRING}
+                taskType: PRIMITIVE_TYPES.STRING,
+                taskData: {}
             });
         data.creatingUser = data.callingUser.username;
         await this.#taskRepo.createRoleTask(data);
