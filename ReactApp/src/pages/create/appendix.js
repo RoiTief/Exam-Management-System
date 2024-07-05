@@ -150,7 +150,7 @@ const Page = () => {
             <Stack justifyContent="center" display='flex' spacing={4} direction="row" width="80%">
               {appendix && (
                 <Container maxWidth="md" sx={{ backgroundColor: '#ffffff', borderRadius: 2, boxShadow: 3, p: 4, width: "50%" }}>
-                  <MetaQuestionTable data={relatedQuestions} />
+                  <MetaQuestionTable data={relatedQuestions} setErrorMessage={setErrorMessage} />
                 </Container>
               )}
               <Container maxWidth="md" sx={{ backgroundColor: '#ffffff', borderRadius: 2, boxShadow: 3, p: 4, width: "50%" }}>

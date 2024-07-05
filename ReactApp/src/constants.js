@@ -173,6 +173,9 @@ export const QUESTIONS_CATALOG = {
   SEARCH_PLACEHOLDER: (mode) => `Search question by ${mode}?`,
   ACTION: "Action",
   VIEW_PDF_BUTTON: "View PDF",
+  DELETE_APPENDIX_TITLE: "Delete Appendix",
+  DELETE_APPENDIX_BODY: "you left an appendix without a question. Do you want to delete it as well?",
+
 };
 
 export const APPENDICES_CATALOG = {

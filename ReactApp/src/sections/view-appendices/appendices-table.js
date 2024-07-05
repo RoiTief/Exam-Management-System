@@ -113,7 +113,7 @@ export const AppendicesTable = ({ appendices }) => {
                           {errorMessage==='' && relatedQuestions.length>0 && (
                             <Stack>
                               <Typography variant="h6" padding={2}>{APPENDICES_CATALOG.RELATED_QUESION}</Typography>
-                              <MetaQuestionTable data={relatedQuestions} />
+                              <MetaQuestionTable data={relatedQuestions} setErrorMessage={setErrorMessage} />
                             </Stack>
                           )}
                           {errorMessage==='' && relatedQuestions.length===0 &&(

@@ -430,6 +430,31 @@ function editAppendix(req, res, next) {
 }
 
 /**
+ *  request: {
+ id: str
+ }
+ @throws {Error} - if fail to delete
+ */
+function deleteQuestion(req, res, next) {
+    // todo- impelent
+    res.send(200, {code:200})
+    next();
+}
+
+/**
+ *  request: {
+ tag: str
+ }
+ @throws {Error} - if fail to delete
+ */
+function deleteAppendix(req, res, next) {
+    // todo- impelent
+    res.send(200, {code:200})
+    next();
+}
+
+
+/**
     request: {
            selectedMetaQuestion: MetaQuestion,
            selectedKey: {answer: str, explanation: str },
@@ -679,5 +704,7 @@ module.exports = {
     generateTask: generateTask,
     completeGeneratedTask: completeGeneratedTask,
     addAppendix,
-    editAppendix
+    editAppendix,
+    deleteQuestion,
+    deleteAppendix
 };

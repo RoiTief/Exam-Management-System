@@ -45,7 +45,9 @@ export const serverPath = {
   REFRESH_TOKEN: 'refreshJWT',
   GET_ALL_EXAMS: 'getAllExams',
   GENERATE_TASK: 'generateTask',
-  COMPLETE_GENERATED_TASK: 'completeGeneratedTask'
+  COMPLETE_GENERATED_TASK: 'completeGeneratedTask',
+  DELETE_QUESTION: 'deleteQuestion',
+  DELETE_APPENDIX: 'deleteAppendix'
 };
 
 

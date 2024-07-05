@@ -90,7 +90,7 @@ const Page = () => {
               </Stack>
             </Stack>
             <QuestionsSearch onSearch={handleKeySearch} onTextSearch={handleSearch} /> {/* Render QuestionsSearch */}
-            <MetaQuestionTable data={filteredData} />
+            <MetaQuestionTable data={filteredData} setErrorMessage={setErrorMessage} />
             <ErrorMessage message={errorMessage} />
           </Stack>
         </Container>

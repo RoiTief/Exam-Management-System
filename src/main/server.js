@@ -270,6 +270,12 @@ function createServer(options) {
     // request: work_type
     server.post('/completeGeneratedTask', service.completeGeneratedTask)
 
+    // request: id
+    server.post('/deleteQuestion', service.deleteQuestion)
+
+    // request: tag
+    server.post('/deleteAppendix', service.deleteAppendix)
+
 
     server.get('/', function root(req, res, next) {
         var routes = [
