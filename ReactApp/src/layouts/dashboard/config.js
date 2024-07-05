@@ -5,7 +5,7 @@ import {
   AdminPanelSettingsRounded,
   Newspaper,
   QuestionMark,
-  SchoolOutlined, Work
+  SchoolOutlined, Work, ContentPaste
 } from '@mui/icons-material';
 import { ACCOUNT, SIDE_BAR } from '../../constants';
 
@@ -114,6 +114,16 @@ export const items = [
     icon: (
       <SvgIcon fontSize="small">
         <Newspaper />
+      </SvgIcon>
+    ),
+    permissions: [types.LECTURER]
+  },
+  {
+    title: SIDE_BAR.PAST_EXAMS,
+    path: '/past-exams',
+    icon: (
+      <SvgIcon fontSize="small">
+        <ContentPaste />
       </SvgIcon>
     ),
     permissions: [types.LECTURER]

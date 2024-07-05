@@ -31,9 +31,10 @@ export const SIDE_BAR = {
   META_QUESTIONS: "Meta Questions",
   APPENDICES: "Appendices",
   MANAGE_COURSE_STAFF: "Manage Course Staff",
-  GENERATE_EXAM: "generate exams",
+  GENERATE_EXAM: "Generate Exams",
   ASK_FOR_WORK: "Ask for Work",
-  TAG_ANSWERS: "Tag Answers"
+  TAG_ANSWERS: "Tag Answers",
+  PAST_EXAMS: "Past Exams"
 }
 
 export const CALENDAR = {
@@ -271,4 +272,10 @@ export const TAG_ANSWERS = {
 export const QuestionView = {
   LOAD_PDF: "Failed to load PDF file",
   SERVER_UNREACHABLE: "Server Unreachable",
+};
+
+export const EXAMS_CATALOG = {
+  PAGE_TITLE: 'Exams Catalog',
+  HEADING: 'Exams Catalog',
+  REASON_HEADING: 'Exam Reason',
 };
