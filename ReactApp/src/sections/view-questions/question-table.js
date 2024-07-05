@@ -72,7 +72,7 @@ export const MetaQuestionTable = ({ data, setErrorMessage }) => {
     event.stopPropagation();
     setSelectedQuestion(metaquestion)
     try {
-      await requestServer(serverPath.DELETE_QUESTION, httpsMethod.POST, metaquestion.id);
+      await requestServer(serverPath.DELETE_QUESTION, httpsMethod.POST, { id: metaquestion.id });
       if (metaquestion.appendix && metaquestion.appendix.tag !== '') {
         const { metaQuestions } = await requestServer(serverPath.GET_META_QUESTIONS_FOR_APPENDIX, httpsMethod.POST, metaquestion.appendix);
         console.log(metaQuestions)
@@ -87,7 +87,7 @@ export const MetaQuestionTable = ({ data, setErrorMessage }) => {
 
   const handleDeleteAppendix = () => {
     try{
-      requestServer(serverPath.DELETE_APPENDIX, httpsMethod.POST, selectedQuestion.appendix.tag);
+      requestServer(serverPath.DELETE_APPENDIX, httpsMethod.POST, { tag: selectedQuestion.appendix.tag } );
       setDeleteAppendixDialog(false);
     } catch (err){
       setErrorMessage(err.message)

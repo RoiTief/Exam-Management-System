@@ -293,6 +293,11 @@ class ApplicationFacade{
         return await this.#mqBusinessToFE(businessMq);
     }
 
+    async deleteMetaQuestion(data) {
+        validateParameters(data, {id: PRIMITIVE_TYPES.NUMBER})
+        await this.metaQuestionController.deleteMetaQuestion(data);
+    }
+
     async addAppendix(data) {
         const businessAppendix = await this.metaQuestionController.createAppendix( {
             ...data.appendix,
@@ -307,6 +312,11 @@ class ApplicationFacade{
             callingUser: data.callingUser,
         });
         return this.#appendixBusinessToFE(businessAppendix)
+    }
+
+    async deleteAppendix(data) {
+        validateParameters(data, {tag: PRIMITIVE_TYPES.STRING})
+        await this.metaQuestionController.deleteAppendix(data);
     }
 
     /**
