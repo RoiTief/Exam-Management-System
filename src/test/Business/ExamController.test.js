@@ -69,7 +69,7 @@ describe('Happy-Path ExamController tests', () => {
         dalMqs = await (Promise.all(mqDataArr.map(mqData => mqRepo.addMetaQuestion(mqData, mqData.answers, emptyArr))))
         dalMq = dalMqs[0]
         addQData.mqId = dalMq.id
-        addQData.answersData = [{ id: dalMq.answers[0].id, ordinal: 1, permutation: 1 }]
+        addQData.answersData = [{ id: dalMq.answers[0].id, ordinal: 1, version: 1 }]
         addAutoQDataArr = addAutoQDataArr.map(data => ({ ...data, mqId: dalMq.id }))
 
 

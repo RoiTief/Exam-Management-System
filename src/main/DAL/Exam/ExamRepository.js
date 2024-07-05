@@ -79,7 +79,7 @@ class ExamRepository {
      * @param  examId 
      * @param  mQid : the metaQuestion id of the question
      * @param  questionData : {ordinal : the ordinal of the question in the exam}
-     * @param  answerData : an array of object, contains the answerId its ordinal and permutation in the question. type [{id, ordinal, permutation}]
+     * @param  answerData : an array of object, contains the answerId its ordinal and version in the question. type [{id, ordinal, version}]
      * @returns The new question
      */
     async addQuestionToExam(examId, mQid, questionData, answersData) {
@@ -114,17 +114,17 @@ class ExamRepository {
     /**
      * 
      * @param  qid : the question id of the question
-     * @param  answersData : an array of object, contains the answerId its ordinal and permutation in the question. type [{id, ordinal, permutation}]
+     * @param  answersData : an array of object, contains the answerId its ordinal and version in the question. type [{id, ordinal, version}]
      */
     async #setAnswersToQuestion(qid, answersData) {
-        validateParametersWithoutCallingUser(answersData, [{ id: PRIMITIVE_TYPES.NUMBER, ordinal: PRIMITIVE_TYPES.NUMBER, permutation: PRIMITIVE_TYPES.NUMBER }])
+        validateParametersWithoutCallingUser(answersData, [{ id: PRIMITIVE_TYPES.NUMBER, ordinal: PRIMITIVE_TYPES.NUMBER, version: PRIMITIVE_TYPES.NUMBER }])
 
         const question = await this.#Question.findByPk(qid);
         try {
             await Promise.all(
                 answersData.map(async answerData => {
                     const answer = await this.#Answer.findByPk(answerData.id);
-                    return await question.addAnswer(answer, { through: { answerId: answer.id, questionId: qid, ordinal: answerData.ordinal, permutation: answerData.permutation } });
+                    return await question.addAnswer(answer, { through: { answerId: answer.id, questionId: qid, ordinal: answerData.ordinal, version: answerData.version } });
                 }));
         } catch (e) {
             console.error(e);

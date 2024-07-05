@@ -26,7 +26,7 @@ class ExamController {
      * @param  examId 
      * @param  mqId : the metaQuestion id of the question
      * @param  questionData : {ordinal : the ordinal of the question in the exam}
-     * @param  answerData : an array of object, contains the answerId its ordinal and permutation in the question. type [{id, ordinal, permutation}]
+     * @param  answerData : an array of object, contains the answerId its ordinal and version in the question. type [{id, ordinal, version}]
      * @returns The new question
      */
     async addQuestionToExam(data) {
@@ -34,7 +34,7 @@ class ExamController {
             examId: PRIMITIVE_TYPES.NUMBER,
             mqId: PRIMITIVE_TYPES.NUMBER,
             questionData: { ordinal: PRIMITIVE_TYPES.NUMBER },
-            answersData: [{ id: PRIMITIVE_TYPES.NUMBER, ordinal: PRIMITIVE_TYPES.NUMBER, permutation: PRIMITIVE_TYPES.NUMBER }]
+            answersData: [{ id: PRIMITIVE_TYPES.NUMBER, ordinal: PRIMITIVE_TYPES.NUMBER, version: PRIMITIVE_TYPES.NUMBER }]
         })
 
         const dalQuestion = await this.#examRepo.addQuestionToExam(data.examId, data.mqId, data.questionData, data.answersData)
@@ -84,9 +84,9 @@ class ExamController {
                 distractors.push(distractor)
             }
             const answersData = [
-                // permutation 0 is for preview, therefore key ordinal is always 1.
-                { id: key.getId(), ordinal: 1, permutation: 0 },
-                ...distractors.map((distractor, index) => ({ id: distractor.getId(), ordinal: index + 2, permutation: 0 }))
+                // version 0 is for preview, therefore key ordinal is always 1.
+                { id: key.getId(), ordinal: 1, version: 0 },
+                ...distractors.map((distractor, index) => ({ id: distractor.getId(), ordinal: index + 2, version: 0 }))
             ]
             // add question to exam
             questionPromises.push(
