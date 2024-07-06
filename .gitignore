@@ -34,3 +34,5 @@ ReactApp/yarn-error.log*
 /src/coverage/
 .env
 .vscode
+id_rsa
+scripts.txt
