@@ -6,13 +6,13 @@ import ChevronDoubleDownIcon from '@heroicons/react/20/solid/ChevronDoubleDownIc
 import ChevronDoubleUpIcon from '@heroicons/react/20/solid/ChevronDoubleUpIcon';
 import EditIcon from '@mui/icons-material/Edit';
 import { QUESTIONS_CATALOG } from '../../constants';
-import { useRouter } from 'next/router';
+import useRouterOverride from '../../hooks/use-router';
 
 export const Question = (props) => {
   const { isOpen, closePopup, question } = props;
   const [showAllAnswers, setShowAllAnswers] = useState(false);
   const [showAllDistractors, setShowAllDistractors] = useState(false);
-  const router = useRouter();
+  const router = useRouterOverride();
 
   const toggleAnswers = () => {
     setShowAllAnswers(!showAllAnswers);

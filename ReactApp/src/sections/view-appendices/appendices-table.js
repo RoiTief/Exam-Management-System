@@ -21,11 +21,11 @@ import { APPENDICES_CATALOG } from '../../constants';
 import { MetaQuestionTable } from '../view-questions/question-table';
 import ErrorMessage from '../../components/errorMessage';
 import EditIcon from '@mui/icons-material/Edit';
-import { useRouter } from 'next/router';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
+import useRouterOverride from '../../hooks/use-router';
 
 export const AppendicesTable = ({ appendices, fetchAppendices }) => {
-  const router = useRouter();
+  const router = useRouterOverride();
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [expandedAppendix, setExpandedAppendix] = useState(null);
