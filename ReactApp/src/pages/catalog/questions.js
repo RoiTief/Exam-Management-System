@@ -3,31 +3,31 @@ import React, { useEffect, useState } from 'react';
 import { Layout as DashboardLayout } from '../../layouts/dashboard/layout';
 import Head from 'next/head';
 import PlusIcon from '@heroicons/react/24/solid/PlusIcon';
-import { useRouter } from 'next/navigation';
 import { MetaQuestionTable } from '../../sections/view-questions/question-table';
 import { QuestionsSearch } from '../../sections/view-questions/question-search';
 import { httpsMethod, requestServer, serverPath } from '../../utils/rest-api-call';
 import { QUESTIONS_CATALOG } from '../../constants';
 import ErrorMessage from '../../components/errorMessage';
+import useRouterOverride from '../../hooks/use-router';
 
 const Page = () => {
-  const router = useRouter();
+  const router = useRouterOverride();
   const [metaQuestions, setMetaQuestions] = useState([]);
   const [filteredData, setFilteredData] = useState(metaQuestions);
   const [errorMessage, setErrorMessage] = useState('');
 
-  useEffect(() => {
-    async function fetchMetaQuestions() {
-      try {
-        const { metaQuestions } = await requestServer(serverPath.GET_ALL_META_QUESTIONS, httpsMethod.GET);
-        setMetaQuestions(metaQuestions);
-        setErrorMessage(''); // Clear any previous error message
-      } catch (error) {
-        console.error('Error fetching meta questions:', error);
-        setErrorMessage(`Error fetching meta-questions: ${error.message}`)
-      }
+  const fetchMetaQuestions = async () => {
+    try {
+      const { metaQuestions } = await requestServer(serverPath.GET_ALL_META_QUESTIONS, httpsMethod.GET);
+      setMetaQuestions(metaQuestions);
+      setErrorMessage(''); // Clear any previous error message
+    } catch (error) {
+      console.error('Error fetching meta questions:', error);
+      setErrorMessage(`Error fetching meta-questions: ${error.message}`);
     }
+  };
 
+  useEffect(() => {
     fetchMetaQuestions();
   }, []);
 
@@ -89,8 +89,11 @@ const Page = () => {
                 </Button>
               </Stack>
             </Stack>
-            <QuestionsSearch onSearch={handleKeySearch} onTextSearch={handleSearch} /> {/* Render QuestionsSearch */}
-            <MetaQuestionTable data={filteredData} />
+            <QuestionsSearch onSearch={handleKeySearch}
+                             onTextSearch={handleSearch} />
+            <MetaQuestionTable data={filteredData}
+                               setErrorMessage={setErrorMessage}
+                               fetchMetaQuestions={fetchMetaQuestions} />
             <ErrorMessage message={errorMessage} />
           </Stack>
         </Container>

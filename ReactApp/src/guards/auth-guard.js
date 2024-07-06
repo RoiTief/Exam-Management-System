@@ -1,11 +1,11 @@
 import { useEffect, useRef, useState } from 'react';
-import { useRouter } from 'next/router';
 import PropTypes from 'prop-types';
 import { useAuthContext } from 'src/contexts/auth-context';
+import useRouterOverride from '../hooks/use-router';
 
 export const AuthGuard = (props) => {
   const { children } = props;
-  const router = useRouter();
+  const router = useRouterOverride();
   const { isAuthenticated } = useAuthContext();
   const ignore = useRef(false);
   const [checked, setChecked] = useState(false);

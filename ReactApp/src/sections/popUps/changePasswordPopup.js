@@ -10,11 +10,11 @@ import {
 import React, { useState } from 'react';
 import { LOGIN } from '../../constants';
 import ErrorMessage from '../../components/errorMessage';
-import { useRouter } from 'next/navigation';
 import { useAuth } from '../../hooks/use-auth';
+import useRouterOverride from '../../hooks/use-router';
 
 const ChangePasswordPopup = ({ user, isOpen, closePopup }) => {
-  const router = useRouter();
+  const router = useRouterOverride();
   const auth = useAuth();
   const [errorMessage, setErrorMessage] = useState('');
 

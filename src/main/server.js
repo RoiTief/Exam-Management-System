@@ -272,6 +272,11 @@ function createServer(options) {
 
     server.post('/completeCreatedTask', service.completeCreatedTask)
 
+    // request: id
+    server.post('/deleteQuestion', service.deleteQuestion)
+
+    // request: tag
+    server.post('/deleteAppendix', service.deleteAppendix)
 
 
     server.get('/', function root(req, res, next) {

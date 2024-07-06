@@ -10,7 +10,6 @@ import {
   Typography
 } from '@mui/material';
 import { Layout as DashboardLayout } from 'src/layouts/dashboard/layout';
-import { useRouter } from 'next/router';
 import { Formik, Form } from 'formik';
 import * as Yup from 'yup';
 
@@ -20,6 +19,7 @@ import { PdfLatexPopup } from '../../sections/popUps/QuestionPdfView';
 import ErrorMessage from '../../components/errorMessage';
 import AppendixSection from '../../sections/create-edit-meta-question/apendix-edit';
 import { MetaQuestionTable } from '../../sections/view-questions/question-table';
+import useRouterOverride from '../../hooks/use-router';
 
 const validationSchema = Yup.object().shape({
   appendix: Yup.object().shape({
@@ -30,7 +30,7 @@ const validationSchema = Yup.object().shape({
 });
 
 const Page = () => {
-  const router = useRouter();
+  const router = useRouterOverride();
   const [appendix, setAppendix] = useState(null);
   const [relatedQuestions, setRelatedQuestions] = useState([]);
   const [showPdfView, setShowPdfView] = useState(false);
@@ -39,23 +39,31 @@ const Page = () => {
   const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);
   const [formValues, setFormValues] = useState(null);
 
+  const fetchRelatedQuestions = async () => {
+    try {
+      const { metaQuestions } = await requestServer(serverPath.GET_META_QUESTIONS_FOR_APPENDIX, httpsMethod.POST, appendix);
+      setRelatedQuestions(metaQuestions);
+      setErrorMessage('')
+    } catch (error) {
+      setErrorMessage(`Error fetching related questions: ${error.message}`);
+    }
+  }
 
   useEffect(() => {
-    const fetchRelatedQuestions = async (editAppendix) => {
-      try {
-        const { metaQuestions } = await requestServer(serverPath.GET_META_QUESTIONS_FOR_APPENDIX, httpsMethod.POST, editAppendix);
-        setRelatedQuestions(metaQuestions);
-      } catch (error) {
-        setErrorMessage(`Error fetching related questions: ${error.message}`);
-      }
-    }
-
     if (router.query.appendix) {
       let editAppendix = JSON.parse(router.query.appendix)
       setAppendix(editAppendix);
-      fetchRelatedQuestions(editAppendix)
+    }
+    else{
+      setAppendix(null)
+      setRelatedQuestions([])
     }
   }, [router.query.appendix]);
+
+  useEffect(() => {
+    appendix &&
+    fetchRelatedQuestions()
+  }, [appendix]);
 
   const closePopup = () => {
     setShowPdfView(false)
@@ -95,7 +103,7 @@ const Page = () => {
       const newAppendix = createAppendix(values);
       let request = appendix ? serverPath.EDIT_APPENDIX : serverPath.ADD_APPENDIX
       await requestServer(request, httpsMethod.POST, {appendix : newAppendix});
-      await router.push('/');
+      await router.back();
     } catch (err) {
       setErrorMessage(err.message);
     }
@@ -150,7 +158,9 @@ const Page = () => {
             <Stack justifyContent="center" display='flex' spacing={4} direction="row" width="80%">
               {appendix && (
                 <Container maxWidth="md" sx={{ backgroundColor: '#ffffff', borderRadius: 2, boxShadow: 3, p: 4, width: "50%" }}>
-                  <MetaQuestionTable data={relatedQuestions} />
+                  <MetaQuestionTable data={relatedQuestions}
+                                     setErrorMessage={setErrorMessage}
+                                     fetchMetaQuestions={fetchRelatedQuestions}/>
                 </Container>
               )}
               <Container maxWidth="md" sx={{ backgroundColor: '#ffffff', borderRadius: 2, boxShadow: 3, p: 4, width: "50%" }}>

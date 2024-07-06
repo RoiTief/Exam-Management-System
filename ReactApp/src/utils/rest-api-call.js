@@ -47,6 +47,8 @@ export const serverPath = {
   GENERATE_TASK: 'generateTask',
   COMPLETE_GENERATED_TASK: 'completeGeneratedTask',
   COMPLETE_CREATED_TASK: 'completeCreatedTask',
+  DELETE_QUESTION: 'deleteQuestion',
+  DELETE_APPENDIX: 'deleteAppendix'
 };
 
 
