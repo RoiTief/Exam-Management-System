@@ -3,15 +3,15 @@ import React, { useEffect, useState } from 'react';
 import { Layout as DashboardLayout } from '../../layouts/dashboard/layout';
 import Head from 'next/head';
 import PlusIcon from '@heroicons/react/24/solid/PlusIcon';
-import { useRouter } from 'next/navigation';
 import { MetaQuestionTable } from '../../sections/view-questions/question-table';
 import { QuestionsSearch } from '../../sections/view-questions/question-search';
 import { httpsMethod, requestServer, serverPath } from '../../utils/rest-api-call';
 import { QUESTIONS_CATALOG } from '../../constants';
 import ErrorMessage from '../../components/errorMessage';
+import useRouterOverride from '../../hooks/use-router';
 
 const Page = () => {
-  const router = useRouter();
+  const router = useRouterOverride();
   const [metaQuestions, setMetaQuestions] = useState([]);
   const [filteredData, setFilteredData] = useState(metaQuestions);
   const [errorMessage, setErrorMessage] = useState('');

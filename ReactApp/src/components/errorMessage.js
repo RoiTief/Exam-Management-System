@@ -1,10 +1,10 @@
 import { Box, Typography } from '@mui/material';
-import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 import { ERROR_MESSAGES } from 'src/constants';
+import useRouterOverride from '../hooks/use-router';
 
 const ErrorMessage = ({ message }) => {
-  const router = useRouter();
+  const router = useRouterOverride();
   if (!message) {
     return null;
   }
