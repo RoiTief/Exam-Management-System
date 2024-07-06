@@ -373,7 +373,7 @@ class ApplicationFacade{
         data.appendixTag = data.tag;
         const businessMQs = await this.metaQuestionController.getMetaQuestionsForAppendix(data);
         return await Promise.all( businessMQs.map(async bMQ=>
-            this.#mqBusinessToFE(bMQ, await bMQ.getAppendixTag() ? this.metaQuestionController.getAppendix(bMQ.getAppendixTag()) : null)));
+            this.#mqBusinessToFE(bMQ, bMQ.getAppendixTag() ? await this.metaQuestionController.getAppendix(bMQ.getAppendixTag()) : null)));
     }
 
     async editUser(data){
