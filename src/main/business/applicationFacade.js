@@ -8,6 +8,7 @@ const { validateParameters } = require('../validateParameters.js');
 const {USER_TYPES, PRIMITIVE_TYPES, ANSWER_TYPES, GENERATED_TASK_TYPES} = require("../Enums");
 const {EMSError, TASK_PROCESS_ERROR_CODES} = require("../EMSError");
 const {TASK_PROCESS_ERROR_MSGS} = require("../ErrorMessages");
+const MetaQuestion = require('./MetaQuestions/MetaQuestion.js');
 
 class ApplicationFacade{
     constructor() {
@@ -155,9 +156,6 @@ class ApplicationFacade{
     }
 
 
-    getAllExams(getAllExamsProperties){
-        return this.examController.getAllExams(getAllExamsProperties)
-    }
 
     /**
      * view course statistics (per subject)
@@ -313,6 +311,12 @@ class ApplicationFacade{
         return businessMQs.map(bMQ => this.#mqBusinessToFE(bMQ));
     }
 
+    async getAllExams(getAllExamsProperties){
+        const blExams = await this.examController.getAllExams(getAllExamsProperties)
+
+        return await Promise.all(blExams.map(blExam => this.#examBusinessToFE(blExam)))
+    }
+    
     /**
      * return a list of meta question relevant to add to the new exam:
      * - each question has at least 1 key and 4 distractors that are not used yet in the exam
@@ -405,7 +409,10 @@ class ApplicationFacade{
     async completeGeneratedTask(data) {
         return await this.taskController.completeGeneratedTask(data);
     }
-
+    
+    /**
+     * @param {MetaQuestion} bMQ
+     */
     #mqBusinessToFE(bMQ) {
         return {
             id: bMQ.getId(),
@@ -434,6 +441,37 @@ class ApplicationFacade{
             keywords: bAppendix.getKeywords(),
         }
     }
+
+    #examAnswerBusinessToFE(bExamAnswer) {
+        return {
+            ...this.#answerBusinessToFE(bExamAnswer),
+            ordinal: bExamAnswer.getOrdinal(),
+        }
+    }
+
+    async #questionBusinessToFE(bQuestion){
+        const appendixTag = bQuestion.getMetaQuestion().getAppendixTag()
+        const appendix = await this.metaQuestionController.getAppendix(appendixTag);
+        return{
+            id: bQuestion.getId(),
+            mqId: bQuestion.getMetaQuestion().getId(),
+            stem: bQuestion.getStem(),
+            key: this.#examAnswerBusinessToFE(bQuestion.getKey()),
+            distractors: bQuestion.getDistractors().map(d=>this.#examAnswerBusinessToFE(d)),
+            ordinal: bQuestion.getOrdinal(),
+            ...(appendixTag || {appendix}),
+        }
+    }
+
+    async #examBusinessToFE(bExam){
+        const questions = await Promise.all(bExam.getQuestions().map(q=>this.#questionBusinessToFE(q)))
+        return{
+            examId: bExam.getId(),
+            questions,
+        }
+    }
+
+    
 
     /* returns
     {

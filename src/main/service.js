@@ -403,15 +403,14 @@ function addMetaQuestion(req, res, next) {
  * @throws {Error} - if fail to create
  */
 function addManualMetaQuestionToExam(req, res, next) {
-    try {
-        let examQuestion = application.addManualMetaQuestionToExam(req.body)
-        req.log.info("request to add manual question to exam");
-        res.send(200, {code: 200, examQuestion})
-        next()
-    } catch (err) {
-        req.log.warn(err.message, 'failed to add manual question to exam');
-        next(err);
-    }
+        application.addManualMetaQuestionToExam(req.body).then(examQuestion => {
+            req.log.info("request to add manual question to exam");
+            res.send(200, {code: 200, examQuestion})
+            next()
+        }, err =>{
+            req.log.warn(err.message, 'failed to add manual question to exam');
+            next(err);
+        })
 }
 
 /**
@@ -545,9 +544,8 @@ function createExam(req, res, next){
 }
 
 function getAllExams(req, res, next){
-    
         req.log.info("request to get all exams");
-        const exams = application.getAllExams(req.body).then(exams =>{
+        application.getAllExams(req.body).then(exams =>{
             res.send(200, {code:200,exams})
             next()
         }, err =>{

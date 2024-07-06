@@ -19,6 +19,17 @@ class Question {
     getAnswers() {
         return this.#ExamAnswers;
     }
+
+    getKey() {
+        return this.#ExamAnswers
+            .filter(a => a.getTag() === ANSWER_TYPES.KEY)[0]
+    }
+    
+    getDistractors() {
+        return this.#ExamAnswers
+            .filter(a => a.getTag() === ANSWER_TYPES.DISTRACTOR)
+    }
+    
     getMetaQuestion() {
         return this.#metaQuestion;
     }
