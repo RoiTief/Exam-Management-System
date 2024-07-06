@@ -61,6 +61,8 @@ export const TASK = {
   SUBMIT_BUTTON: "Submit",
   ENTER_ANSWER_PLACEHOLDER: "Enter your answer...",
   RESPONSE_MESSAGE: "Your response was: ",
+  NUM_ASSIGNED: (length) => {return length === 1 ? "1 task assigned" : `${length} tasks assigned`},
+  HEADLINE: (taskType) =>  {return taskType === 'tag-review' ? "Review Tag" : `Review Explanation`},
 };
 
 export const USERS = {
@@ -276,4 +278,31 @@ export const TAG_ANSWERS = {
 export const QuestionView = {
   LOAD_PDF: "Failed to load PDF file",
   SERVER_UNREACHABLE: "Server Unreachable",
+};
+
+export const UnmatchedTag = {
+  FOLLOWING_QUESTION: "Given the following question:",
+  FOLLOWING_ANSWER: "Tag the following answer:",
+  KEY: "Key",
+  DISTRACTOR: "Distractor",
+  SUBMIT: "Submit",
+  APPENDIX: "Appendix:",
+  STEM: "Stem:",
+  THINKS_SAME: (firstName, lastName) => `${firstName} ${lastName} thinks so too, here's the explanation he gave:`,
+  IS_CORRECT: 'Is this a correct explanation?',
+  THINKS_DIFFERENT: (firstName, lastName) => `${firstName} ${lastName} thinks otherwise, can you check again and make sure?`,
+  SURE: 'Yes I am sure',
+  APPROVE: 'Approve Explanation',
+  REJECT: 'Reject Explanation'
+};
+
+export const NewExplanation = {
+  REVIEW_EXPLANATION: "Review Explanation",
+  TAGGED: (tag) => `This answer is  tagged as a ${tag}, which of these explains it better:`,
+  IS_CORRECT: 'Is this a correct explanation?',
+  SURE: 'Yes I am sure',
+  APPENDIX: "Appendix:",
+  STEM: "Stem:",
+  ANSWER: "Answer:",
+  SUBMIT: 'Submit',
 };
