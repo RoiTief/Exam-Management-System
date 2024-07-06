@@ -4,6 +4,7 @@ const {ANSWER_TYPES, USER_TYPES} = require("../main/Enums");
 const MetaQuestionRepository = require("../main/DAL/MetaQuestion/MetaQuestionRepository");
 const defineMetaQuestionModel = require("../main/DAL/MetaQuestion/MetaQuestion");
 const defineAppendixModel = require("../main/DAL/MetaQuestion/Appendix");
+const defineAnswerModel = require("../main/DAL/MetaQuestion/Answer");
 
 const appendicesToAdd = [
     {
@@ -100,6 +101,7 @@ describe('Resets PresentationDb "Users" table', () => {
     let sequelize;
     let Appendix;
     let MetaQuestion;
+    let Answer;
     let metaQuestionRepo;
 
     beforeAll(async () => {
@@ -108,8 +110,10 @@ describe('Resets PresentationDb "Users" table', () => {
         metaQuestionRepo = new MetaQuestionRepository(sequelize);
         Appendix = defineAppendixModel(sequelize);
         MetaQuestion = defineMetaQuestionModel(sequelize);
+        Answer = defineAnswerModel(sequelize);
         await Appendix.sync({force: true}); // cleans the 'Appendixes' table
         await MetaQuestion.sync({force: true}); // cleans the 'MetaQuestions' table
+        await Answer.sync({force: true}); // cleans the 'MetaQuestions' table
     });
 
     afterAll(async () => {
