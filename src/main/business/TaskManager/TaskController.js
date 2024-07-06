@@ -85,7 +85,7 @@ class TaskController {
     }
 
     async completeCreatedTask(data) {
-        validateParameters(data, {taskId: PRIMITIVE_TYPES.NUMBER, type: PRIMITIVE_TYPES.STRING, superType: PRIMITIVE_TYPES.STRING});
+        validateParameters(data, {taskId: PRIMITIVE_TYPES.NUMBER, taskType: PRIMITIVE_TYPES.STRING, superType: PRIMITIVE_TYPES.STRING});
         switch (data.superType) {
             case CREATED_TASK_SUPER_TYPES.ROLE_SPECIFIC:
                 await this.#taskRepo.completeRoleTask(data.taskId);
@@ -95,7 +95,7 @@ class TaskController {
             default:
                 throw new EMSError(TASK_PROCESS_ERROR_MSGS.INVALID_TASK_SUPER_TYPE(data.superType), TASK_PROCESS_ERROR_CODES.INVALID_TASK_SUPER_TYPE);
         }
-        switch (data.type) {
+        switch (data.taskType) {
             case CREATED_TASK_TYPES.TAG_REVIEW:
                 await this.#completeTagAnswerTask(data);
                 break;
@@ -103,7 +103,7 @@ class TaskController {
                 await this.#completeExplanationComparisonTask(data);
                 break;
             default:
-                throw new EMSError(TASK_PROCESS_ERROR_MSGS.INVALID_TASK_TYPE(data.type), TASK_PROCESS_ERROR_CODES.INVALID_TASK_TYPE);
+                throw new EMSError(TASK_PROCESS_ERROR_MSGS.INVALID_TASK_TYPE(data.taskType), TASK_PROCESS_ERROR_CODES.INVALID_TASK_TYPE);
         }
     }
 
