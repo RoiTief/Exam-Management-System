@@ -5,23 +5,22 @@ import useRouterOverride from '../hooks/use-router';
 
 const ErrorMessage = ({ message }) => {
   const router = useRouterOverride();
+
+  useEffect(() => {
+    if (message && message.includes(ERROR_MESSAGES.INVALID_CREDENTIALS)) {
+      window.alert(ERROR_MESSAGES.NOT_AUTHENTICATE);
+      router
+        .replace({
+          pathname: '/auth/login',
+          query: router.asPath !== '/' ? { continueUrl: router.asPath } : undefined,
+        })
+        .catch(console.error);
+    }
+  }, [message, router]);
+
   if (!message) {
     return null;
   }
-
-  useEffect(() => {
-    if (message.includes(ERROR_MESSAGES.INVALID_CREDENTIALS)) {
-      
-        window.alert(ERROR_MESSAGES.NOT_AUTHENTICATE);
-        router
-          .replace({
-            pathname: '/auth/login',
-            query: router.asPath !== '/' ? { continueUrl: router.asPath } : undefined
-          })
-          .catch(console.error);
-    }
-  }, [message]);
-
 
   return (
     <Box
@@ -34,12 +33,10 @@ const ErrorMessage = ({ message }) => {
         padding: 2,
         marginTop: 3,
         width: '100%',
-        textAlign: 'center'
+        textAlign: 'center',
       }}
     >
-      <Typography variant="body2">
-        {message}
-      </Typography>
+      <Typography variant="body2">{message}</Typography>
     </Box>
   );
 };

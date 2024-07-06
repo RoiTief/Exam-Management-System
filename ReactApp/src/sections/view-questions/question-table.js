@@ -30,6 +30,8 @@ export const MetaQuestionTable = ({ data, setErrorMessage, fetchMetaQuestions })
   const [showQuestionView, setShowQuestionView] = useState(false);
   const [showPdfView, setShowPdfView] = useState(false);
   const [deleteAppendixDialog, setDeleteAppendixDialog] = useState(false)
+  const [deleteQuestionDialog, setDeleteQuestionDialog] = useState(false)
+
 
   const handleRowClick = (question) => {
     setSelectedQuestion(question);
@@ -68,18 +70,17 @@ export const MetaQuestionTable = ({ data, setErrorMessage, fetchMetaQuestions })
     router.push({ pathname, query });
   }
 
-  const handleDelete = async (event, metaquestion) => {
-    event.stopPropagation();
-    setSelectedQuestion(metaquestion)
+  const handleDelete = async () => {
     try {
-      await requestServer(serverPath.DELETE_QUESTION, httpsMethod.POST, { id: metaquestion.id });
-      if (metaquestion.appendix && metaquestion.appendix.tag !== '') {
-        const { metaQuestions } = await requestServer(serverPath.GET_META_QUESTIONS_FOR_APPENDIX, httpsMethod.POST, metaquestion.appendix);
+      await requestServer(serverPath.DELETE_QUESTION, httpsMethod.POST, { id: selectedQuestion.id });
+      if (selectedQuestion.appendix && selectedQuestion.appendix.tag !== '') {
+        const { metaQuestions } = await requestServer(serverPath.GET_META_QUESTIONS_FOR_APPENDIX, httpsMethod.POST, selectedQuestion.appendix);
         console.log(metaQuestions)
-        if (metaQuestions.length===0 || (metaQuestions.length===1 && metaQuestions[0].id===metaquestion.id)){
+        if (metaQuestions.length===0 || (metaQuestions.length===1 && metaQuestions[0].id===selectedQuestion.id)){
           setDeleteAppendixDialog(true)
         }
       }
+      setDeleteQuestionDialog(false)
       fetchMetaQuestions()
     } catch (err) {
       setErrorMessage(err.message)
@@ -134,7 +135,10 @@ export const MetaQuestionTable = ({ data, setErrorMessage, fetchMetaQuestions })
                       </IconButton>
                     </TableCell>
                     <TableCell>
-                      <IconButton onClick={(event) => handleDelete(event, metaquestion)}>
+                      <IconButton onClick={(event) => {
+                        event.stopPropagation();
+                        setSelectedQuestion(metaquestion);
+                        setDeleteQuestionDialog(true);}}>
                         <DeleteOutlineIcon/>
                       </IconButton>
                     </TableCell>
@@ -165,6 +169,30 @@ export const MetaQuestionTable = ({ data, setErrorMessage, fetchMetaQuestions })
                        content={selectedQuestion}
                        type={latexServerPath.COMPILE_MQ}/>
       )}
+      <Dialog
+        open={deleteQuestionDialog}
+        onClose={() => setDeleteQuestionDialog(false)}
+      >
+        <DialogTitle>{QUESTIONS_CATALOG.DELETE_QUESTION_TITLE}</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            {QUESTIONS_CATALOG.DELETE_QUESTION_BODY}
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setDeleteQuestionDialog(false)} color="primary">
+            Cancel
+          </Button>
+          <Button
+            onClick={() => {
+              handleDelete();
+            }}
+            color="primary"
+          >
+            Confirm
+          </Button>
+        </DialogActions>
+      </Dialog>
       <Dialog
         open={deleteAppendixDialog}
         onClose={() => setDeleteAppendixDialog(false)}

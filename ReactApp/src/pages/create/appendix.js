@@ -43,6 +43,7 @@ const Page = () => {
     try {
       const { metaQuestions } = await requestServer(serverPath.GET_META_QUESTIONS_FOR_APPENDIX, httpsMethod.POST, appendix);
       setRelatedQuestions(metaQuestions);
+      setErrorMessage('')
     } catch (error) {
       setErrorMessage(`Error fetching related questions: ${error.message}`);
     }
@@ -60,6 +61,7 @@ const Page = () => {
   }, [router.query.appendix]);
 
   useEffect(() => {
+    appendix &&
     fetchRelatedQuestions()
   }, [appendix]);
 

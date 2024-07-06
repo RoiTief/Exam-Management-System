@@ -12,12 +12,12 @@ import {
   TablePagination,
   TableRow,
   Collapse,
-  Typography, IconButton
+  Typography, IconButton, DialogTitle, DialogContent, DialogContentText, DialogActions, Dialog
 } from '@mui/material';
 import { Scrollbar } from 'src/components/scrollbar';
 import { PdfLatexPopup } from '../popUps/QuestionPdfView';
 import { httpsMethod, latexServerPath, requestServer, serverPath } from '../../utils/rest-api-call';
-import { APPENDICES_CATALOG } from '../../constants';
+import { APPENDICES_CATALOG, QUESTIONS_CATALOG } from '../../constants';
 import { MetaQuestionTable } from '../view-questions/question-table';
 import ErrorMessage from '../../components/errorMessage';
 import EditIcon from '@mui/icons-material/Edit';
@@ -33,6 +33,7 @@ export const AppendicesTable = ({ appendices, fetchAppendices }) => {
   const [selectedQuestion, setSelectedQuestion] = useState(null);
   const [showPdfView, setShowPdfView] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const [appendixToDelete, setAppendixToDelete] = useState(null)
 
   const fetchRelatedQuestions = async () => {
     try {
@@ -67,11 +68,10 @@ export const AppendicesTable = ({ appendices, fetchAppendices }) => {
     router.push({ pathname, query });
   }
 
-  const handleDelete = async (event, appendix) => {
-    event.stopPropagation();
-    setExpandedAppendix(appendix)
+  const handleDelete = async () => {
     try {
-      await requestServer(serverPath.DELETE_APPENDIX, httpsMethod.POST, { tag: appendix.tag });
+      await requestServer(serverPath.DELETE_APPENDIX, httpsMethod.POST, { tag: appendixToDelete.tag });
+      setAppendixToDelete(null)
       fetchAppendices()
     } catch (err) {
       setErrorMessage(err.message)
@@ -127,7 +127,9 @@ export const AppendicesTable = ({ appendices, fetchAppendices }) => {
                       </IconButton>
                     </TableCell>
                     <TableCell>
-                      <IconButton onClick={(event) => handleDelete(event, appendix)}
+                      <IconButton onClick={(event) => {
+                        event.stopPropagation();
+                        setAppendixToDelete(appendix);}}
                                   disabled={ !expandedAppendix || expandedAppendix.tag!==appendix.tag || relatedQuestions.length>0 }>
                         <DeleteOutlineIcon/>
                       </IconButton>
@@ -177,6 +179,32 @@ export const AppendicesTable = ({ appendices, fetchAppendices }) => {
                        content={selectedQuestion}
                        type={latexServerPath.COMPILE_MQ}/>
       )}
+
+      <Dialog
+        open={appendixToDelete}
+        onClose={() => setAppendixToDelete(null)}
+      >
+        <DialogTitle>{QUESTIONS_CATALOG.DELETE_APPENDIX_TITLE}</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            {QUESTIONS_CATALOG.CONFIRM_DELETE_APPENDIX}
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setAppendixToDelete(null)} color="primary">
+            Cancel
+          </Button>
+          <Button
+            onClick={() => {
+              handleDelete();
+            }}
+            color="primary"
+          >
+            Confirm
+          </Button>
+        </DialogActions>
+      </Dialog>
+
     </Card>
   );
 };
