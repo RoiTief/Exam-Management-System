@@ -28,37 +28,26 @@ const UnmatchedTags = () => {
   const router = useRouter();
   const { task } = router.query
   const [taskData, setTaskData] = useState({});
+  const [originalAnswer, setOriginalAnswer] = useState({})
   const [selectedTag, setSelectedTag] = useState('');
-  const [question, setQuestion] = useState({});
-  const [tag, setTag] = useState("");
-  const [explanation, setExplanation] = useState("");
-  const [generate, setGenerate] = useState(false);
   const [error, setError] = useState("");
   const [isFinished, setIsFinished] = useState(false);
-  const [taDetails, setTaDetails] = useState({
-    taTag: 'key',
-    taExplanation: 'because this is true',
-    firstName: 'Idan',
-    lastName: 'Aharoni'
-  });
 
   useEffect(() => {
       if (task) {
         try {
           const parsedTask = JSON.parse(decodeURIComponent(task));
           setTaskData(parsedTask);
-          setTaDetails({
-            taTag: taskData,
-            taExplanation: 'because this is true',
-            firstName: 'Idan',
-            lastName: 'Aharoni'
-          })
-          setError("")
-          return { success: true };
+          if (parsedTask.answer.tag === 'key') {
+            setOriginalAnswer(parsedTask.metaQuestion.keys.find(key => key.id === parsedTask.answer.id));
+          }
+          else {
+            setOriginalAnswer(parsedTask.metaQuestion.distractors.find(distractor => distractor.id === parsedTask.answer.id));
+          }
+          setError("");
         } catch (error) {
           console.error('Failed to fetch question:', error);
-          setError(error.message)
-          return { success: false, error: error };
+          setError(error.message);
         }
       }
   }, [task]);
@@ -71,19 +60,11 @@ const UnmatchedTags = () => {
     const handleFinishTask = async () => {
       if (isFinished) {
         try {
-          const changes = {
-            taskType: GENERATED_TASK_TYPES.TAG_ANSWER,
-            answerId: question?.answer?.id,
-            userTag: tag,
-            ...(explanation && { explanation: explanation })
-          };
-          await requestServer(serverPath.COMPLETE_GENERATED_TASK, httpsMethod.POST, changes);
+          await requestServer(serverPath.COMPLETE_CREATED_TASK, httpsMethod.POST, taskData);
           resetStates();
-          return { success: true };
         } catch (error) {
           console.error('Failed to finish task:', error);
           setError(error.message)
-          return { success: false, error: error };
         }
       }
     };
@@ -91,20 +72,18 @@ const UnmatchedTags = () => {
   }, [isFinished]);
 
   const resetStates = () => {
-    setGenerate(!generate);
-    setQuestion({});
-    setTag("");
-    setExplanation("");
     setError("");
     setIsFinished(false);
   };
 
   const handleSubmit = () => {
-    if (selectedTag === 'original') {
-      true;
-    } else {
-      true;
+    if (selectedTag === 'new') {
+      setTaskData((prevState) => ({
+        ...prevState,
+        metaQuestion: {...prevState.metaQuestion}
+      }));
     }
+    setIsFinished(true);
   };
 
   return (
@@ -113,19 +92,19 @@ const UnmatchedTags = () => {
         <Typography variant="h4" component="h1" gutterBottom>
           {NewExplanation.REVIEW_EXPLANATION}
         </Typography>
-        {question.appendix && (
+        {taskData?.metaQuestion?.appendixTag && (
           <Typography variant="h6" component="h1" gutterBottom>{NewExplanation.APPENDIX}</Typography>
         )}
-        {question.appendix && (
-          <QuestionPhotoView content={question.appendix} type={latexServerPath.COMPILE_APPENDIX}/>
+        {taskData?.metaQuestion?.appendixTag && (
+          <QuestionPhotoView content={taskData?.metaQuestion?.appendixTag} type={latexServerPath.COMPILE_APPENDIX}/>
         )}
         <Typography variant="h6" component="h1" gutterBottom>{NewExplanation.STEM}</Typography>
-        {question.stem && (
-          <QuestionPhotoView content={question.stem} type={latexServerPath.COMPILE_STEM}/>
+        {taskData?.metaQuestion?.stem && (
+          <QuestionPhotoView content={taskData?.metaQuestion?.stem} type={latexServerPath.COMPILE_STEM}/>
         )}
         <Typography variant="h6" component="h1" gutterBottom>{NewExplanation.ANSWER}</Typography>
-        {question.answer && (
-          <QuestionPhotoView content={question.answer} type={latexServerPath.COMPILE_ANSWER}/>
+        {originalAnswer && (
+          <QuestionPhotoView content={originalAnswer} type={latexServerPath.COMPILE_ANSWER}/>
         )}
         <FormControl component="fieldset" sx={{ mt: 2 }}>
           <FormLabel component="legend"></FormLabel>
@@ -135,13 +114,13 @@ const UnmatchedTags = () => {
             value={selectedTag}
             onChange={handleTagChange}
           >
-            <Typography variant="h5" component="h1" gutterBottom>{NewExplanation.TAGGED(question?.answer?.tag)}</Typography>
-            <FormControlLabel value="original" control={<Radio />} label={question?.answer?.explanation} />
-            <FormControlLabel value="new" control={<Radio />} label={taDetails?.taExplanation} />
+            <Typography variant="h5" component="h1" gutterBottom>{NewExplanation.TAGGED(originalAnswer?.tag)}</Typography>
+            <FormControlLabel value="original" control={<Radio />} label={originalAnswer?.explanation} />
+            <FormControlLabel value="new" control={<Radio />} label={taskData?.answer?.explanation} />
           </RadioGroup>
         </FormControl>
         <Box sx={{ mt: 2 }}>
-          <Button variant="contained" color="primary" onClick={handleSubmit} disabled={!selectedTag}>
+          <Button variant="contained" color="primary" onClick={handleSubmit} href={"/"} disabled={!selectedTag}>
             {NewExplanation.SUBMIT}
           </Button>
         </Box>

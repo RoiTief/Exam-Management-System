@@ -25,13 +25,17 @@ import { GENERATED_TASK_TYPES } from '../../../../src/main/Enums';
 import dynamic from 'next/dynamic';
 const QuestionPhotoView = dynamic(() => import('../../sections/popUps/QuestionPhotoView'), { ssr: false });
 import ErrorMessage from 'src/components/errorMessage';
+import { useRouter } from 'next/router';
 
 const UnmatchedTags = () => {
+  const router = useRouter();
+  const { task } = router.query
+  const [taskData, setTaskData] = useState({});
+  const [originalAnswer, setOriginalAnswer] = useState({})
   const [selectedTag, setSelectedTag] = useState('');
   const [isSameTagOpen, setIsSameTagOpen] = useState(false);
   const [isDifferentTagOpen, setIsDifferentTagOpen] = useState(false);
   const [isProvideExplanationOpen, setIsProvideExplanationOpen] = useState(false);
-  const [question, setQuestion] = useState({});
   const [tag, setTag] = useState("");
   const [explanation, setExplanation] = useState("");
   const [generate, setGenerate] = useState(false);
@@ -46,10 +50,16 @@ const UnmatchedTags = () => {
 
   useEffect(() => {
     const fetchRandomQuestion = async () => {
-      if (Object.keys(question).length === 0) {
+      if (task) {
         try {
-          const response = await requestServer(serverPath.GENERATE_TASK, httpsMethod.POST, {taskType: GENERATED_TASK_TYPES.TAG_ANSWER});
-          setQuestion(response.work);
+          const parsedTask = JSON.parse(decodeURIComponent(task));
+          setTaskData(parsedTask);
+          if (parsedTask.answer.tag === 'key') {
+            setOriginalAnswer(parsedTask.metaQuestion.keys.find(key => key.id === parsedTask.answer.id));
+          }
+          else {
+            setOriginalAnswer(parsedTask.metaQuestion.distractors.find(distractor => distractor.id === parsedTask.answer.id));
+          }
           setTaDetails({
             taTag: 'key',
             taExplanation: 'because this is true',
@@ -97,7 +107,6 @@ const UnmatchedTags = () => {
 
   const resetStates = () => {
     setGenerate(!generate);
-    setQuestion({});
     setTag("");
     setExplanation("");
     setError("");
@@ -123,21 +132,21 @@ const UnmatchedTags = () => {
         <Typography variant="h4" component="h1" gutterBottom>
           {UnmatchedTag.FOLLOWING_QUESTION}
         </Typography>
-        {question.appendix && (
+        {taskData?.metaQuestion?.appendixTag && (
           <Typography variant="h6" component="h1" gutterBottom>{UnmatchedTag.APPENDIX}</Typography>
         )}
-        {question.appendix && (
-          <QuestionPhotoView content={question.appendix} type={latexServerPath.COMPILE_APPENDIX}/>
+        {taskData?.metaQuestion?.appendixTag && (
+          <QuestionPhotoView content={taskData?.metaQuestion?.appendixTag} type={latexServerPath.COMPILE_APPENDIX}/>
         )}
         <Typography variant="h6" component="h1" gutterBottom>{UnmatchedTag.STEM}</Typography>
-        {question.stem && (
-          <QuestionPhotoView content={question.stem} type={latexServerPath.COMPILE_STEM}/>
+        {taskData?.metaQuestion?.stem && (
+          <QuestionPhotoView content={taskData?.metaQuestion?.stem} type={latexServerPath.COMPILE_STEM}/>
         )}
         <Typography variant="h4" component="h1" gutterBottom>
           {UnmatchedTag.FOLLOWING_ANSWER}
         </Typography>
-        {question.answer && (
-          <QuestionPhotoView content={question.answer} type={latexServerPath.COMPILE_ANSWER}/>
+        {originalAnswer && (
+          <QuestionPhotoView content={originalAnswer} type={latexServerPath.COMPILE_ANSWER}/>
         )}
         <FormControl component="fieldset" sx={{ mt: 2 }}>
           <FormLabel component="legend"></FormLabel>

@@ -55,11 +55,11 @@ export const OverviewAssignedTasks = () => {
         <List>
           {tasks.map((task) => {
             const href = task.type === "tag-review"
-              ? `/task/new-explanation?task=${encodeURIComponent(JSON.stringify(task))}`
-              : `/task/unmatched-tag?task=${encodeURIComponent(JSON.stringify(task))}`;
+              ? `/task/unmatched-tag?task=${encodeURIComponent(JSON.stringify(task))}`
+              : `/task/new-explanation?task=${encodeURIComponent(JSON.stringify(task))}`;
 
             return (
-              <NextLink key={task.taskId} href={href} passHref>
+              <NextLink key={task.taskId} href={href}>
                 <ListItem
                   component="a"
                   onClick={() => handleButtonClick(task)}
@@ -82,7 +82,7 @@ export const OverviewAssignedTasks = () => {
                     <ListItemText
                       primary={
                         <Typography variant="subtitle1" fontWeight="bold" color="black" sx={{ textDecoration: 'none' }}>
-                          {task.type}
+                          {TASK.HEADLINE(task.type)}
                         </Typography>
                       }
                       secondary={
