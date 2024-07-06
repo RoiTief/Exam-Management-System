@@ -1,7 +1,3 @@
-Here is a draft of the README file for your Exam Management System:
-
----
-
 # Exam Management System
 
 The Exam Management System is a comprehensive tool designed to create and maintain multiple-choice questions, including meta questions. It supports exam creation and provides a user-friendly catalog for viewing exams.
@@ -107,7 +103,3 @@ We welcome contributions to the Exam Management System. To contribute, follow th
 ## License
 
 This project is licensed under the MIT License. See the LICENSE file for details.
-
----
-
-If you need any more information or screenshots of the application, please provide them, and I can include those details in the README file.
