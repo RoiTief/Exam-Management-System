@@ -10,15 +10,18 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
-  TextField
+  TextField, Stack
 } from '@mui/material';
 import { EXAM } from '../../constants';
 import { QuestionsSearch } from '../view-questions/question-search';
+import ErrorMessage from '../../components/errorMessage';
 
 function StemSelection({ metaQuestions, onSelect, reselectStem, generateState, maxNumberOfQuestion, setRepeatValue, repeatValue }) {
   const [dialogContent, setDialogContent] = useState(null);
   const [selectedMetaQuestion, setSelectedMetaQuestion] = useState(null);
   const [filteredData, setFilteredData] = useState(metaQuestions);
+  const [maxValueErrorMessage, setMaxValueErrorMessage] = useState('');
+
   const handleCloseDialog = () => {
     setDialogContent(null);
   };
@@ -52,6 +55,17 @@ function StemSelection({ metaQuestions, onSelect, reselectStem, generateState, m
     );
     setFilteredData(filteredQuestions);
   };
+  const handleRepeatValueChange = (event) => {
+    const inputValue = Number(event.target.value);
+    if (!isNaN(inputValue) && inputValue >= 1 && Math.floor(inputValue) === inputValue) {
+      if (inputValue > maxNumberOfQuestion(selectedMetaQuestion)) {
+        setMaxValueErrorMessage(EXAM.MAXIMUM_REPEAT)
+      } else {
+        setRepeatValue(inputValue);
+        setMaxValueErrorMessage('')
+      }
+    }
+  }
 
   const numberInputStyles = {
     '& input[type=number]::-webkit-inner-spin-button': {
@@ -75,52 +89,60 @@ function StemSelection({ metaQuestions, onSelect, reselectStem, generateState, m
       )}
       <RadioGroup value={selectedMetaQuestion ? selectedMetaQuestion.stem : ''}>
         {filteredData.map((metaQuestion, index) => (
-          <Box
-            key={index}
-            sx={{
-              display:
-                selectedMetaQuestion === null || selectedMetaQuestion === metaQuestion ? 'flex' : 'none',
-              alignItems: 'center',
-              mb: 1
-            }}
-          >
-            <FormControlLabel
-              value={metaQuestion.stem}
-              control={<Radio />}
-              label={metaQuestion.stem}
-              sx={{ flexGrow: 1 }}
-              onClick={() => handleRadioClick(metaQuestion)}
-            />
-            {generateState && selectedMetaQuestion === metaQuestion && (
-              <TextField
-                type="number"
-                value={repeatValue}
-                onChange={(event) => {
-                  const inputValue = Number(event.target.value);
-                  if (!isNaN(inputValue) && inputValue >= 1 && Math.floor(inputValue) === inputValue) {
-                    setRepeatValue(inputValue);
-                  }
-                }}
-                inputProps={{ min: 1, max: maxNumberOfQuestion(selectedMetaQuestion) }}
-                variant="outlined"
-                label="repeted"  // Corrected spelling of 'label'
-                sx={{ width: 70, height: '45px', ...numberInputStyles }}  // Adjusted width for clarity
+            <Box
+              key={index}
+              sx={{
+                display:
+                  selectedMetaQuestion === null || selectedMetaQuestion === metaQuestion ? 'flex' : 'none',
+                alignItems: 'center',
+                mb: 1
+              }}
+            >
+              <FormControlLabel
+                value={metaQuestion.stem}
+                control={<Radio />}
+                label={metaQuestion.stem}
+                sx={{ flexGrow: 1 }}
+                onClick={() => handleRadioClick(metaQuestion)}
               />
-            )}
-            {metaQuestion.appendix && (
-              <Button
-                variant="outlined"
-                onClick={() => setDialogContent(metaQuestion.appendix)}
-                sx={{ marginLeft: generateState && selectedMetaQuestion === metaQuestion ? 2 : 0, minHeight: '40px' }}
-              >
-                {EXAM.APPENDIX_HEADING}
-              </Button>
-            )}
-          </Box>
-        ))}
-      </RadioGroup>
+              <Stack direction='column'>
+              <Box>
+                {generateState && selectedMetaQuestion === metaQuestion && (
+                  <TextField
+                    type="number"
+                    value={repeatValue}
+                    onChange={handleRepeatValueChange}
+                    variant="outlined"
+                    label="repeated"
+                    sx={{ width: 70, height: '45px', ...numberInputStyles }}  // Adjusted width for clarity
+                  />
+                )}
+                {metaQuestion.appendix && (
+                  <Button
+                    variant="outlined"
+                    onClick={() => setDialogContent(metaQuestion.appendix)}
+                    sx={{ marginLeft: generateState && selectedMetaQuestion === metaQuestion ? 2 : 0, minHeight: '40px' }}
+                  >
+                    {EXAM.APPENDIX_HEADING}
+                  </Button>
+                )}
+              </Box>
+                {generateState && selectedMetaQuestion === metaQuestion && maxValueErrorMessage && maxValueErrorMessage &&
+                  <div style={{
+                    color: 'red',
+                    marginTop: '8px',
+                    width: '200px',
+                    wordWrap: 'break-word',
+                    fontSize: '12px'
+                  }}>
+                    {maxValueErrorMessage}
+                  </div> }
+                  </Stack>
+                  </Box>
+                  ))}
+              </RadioGroup>
 
-      <Dialog open={dialogContent !== null} onClose={handleCloseDialog}>
+              <Dialog open={dialogContent !== null} onClose={handleCloseDialog}>
         {dialogContent && (
           <>
             <DialogTitle>{dialogContent.title}</DialogTitle>
