@@ -287,6 +287,8 @@ export const UnmatchedTag = {
   IS_CORRECT: 'Is this a correct explanation?',
   THINKS_DIFFERENT: (firstName, lastName) => `${firstName} ${lastName} thinks otherwise, can you check again and make sure?`,
   SURE: 'Yes I am sure',
+  APPROVE: 'Approve Explanation',
+  REJECT: 'Reject Explanation'
 };
 
 export const NewExplanation = {

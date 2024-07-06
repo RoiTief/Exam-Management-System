@@ -19,11 +19,7 @@ export const OverviewTasksProgress = () => {
   useEffect(() => {
    const fetchList = async () => {
      try {
-      const {tasks} = await requestServer(serverPath.VIEW_TASKS, httpsMethod.GET);
-      
-      var finishedTasks = tasks.filter(task => task.finished).length
-      var totalTasks = tasks.length
-      setValue(totalTasks!=0 ? (finishedTasks / totalTasks) * 100 : 0)
+      setValue(0)
      }
      catch(err){
        console.error('Error fetching task list:', err)

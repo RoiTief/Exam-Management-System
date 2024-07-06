@@ -15,7 +15,7 @@ export const DifferentTagPopup = ({ isOpen, closePopup, taDetails, finishTask })
 
   return (
     <Dialog open={isOpen} onClose={closePopup}>
-      <DialogTitle>{UnmatchedTag.THINKS_DIFFERENT(taDetails.firstName, taDetails.lastName)}</DialogTitle>
+      <DialogTitle>{UnmatchedTag.THINKS_DIFFERENT(taDetails?.firstName, taDetails?.lastName)}</DialogTitle>
       <DialogActions>
         <Button onClick={handleSubmit} color="primary">
           {UnmatchedTag.SURE}

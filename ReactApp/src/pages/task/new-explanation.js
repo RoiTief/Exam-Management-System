@@ -28,22 +28,16 @@ const UnmatchedTags = () => {
   const router = useRouter();
   const { task } = router.query
   const [taskData, setTaskData] = useState({});
-  const [originalAnswer, setOriginalAnswer] = useState({})
   const [selectedTag, setSelectedTag] = useState('');
   const [error, setError] = useState("");
   const [isFinished, setIsFinished] = useState(false);
+  const [explanation, setExplanation]= useState();
 
   useEffect(() => {
       if (task) {
         try {
           const parsedTask = JSON.parse(decodeURIComponent(task));
           setTaskData(parsedTask);
-          if (parsedTask.answer.tag === 'key') {
-            setOriginalAnswer(parsedTask.metaQuestion.keys.find(key => key.id === parsedTask.answer.id));
-          }
-          else {
-            setOriginalAnswer(parsedTask.metaQuestion.distractors.find(distractor => distractor.id === parsedTask.answer.id));
-          }
           setError("");
         } catch (error) {
           console.error('Failed to fetch question:', error);
@@ -60,8 +54,16 @@ const UnmatchedTags = () => {
     const handleFinishTask = async () => {
       if (isFinished) {
         try {
-          await requestServer(serverPath.COMPLETE_CREATED_TASK, httpsMethod.POST, taskData);
+          const changes = {
+            taskId: taskData?.taskId,
+            taskType: taskData?.type,
+            superType: taskData.superType,
+            answerId: taskData?.answer?.id,
+            ...(explanation && { explanation: explanation })
+          };
+          await requestServer(serverPath.COMPLETE_CREATED_TASK, httpsMethod.POST, changes);
           resetStates();
+          await router.push('/');
         } catch (error) {
           console.error('Failed to finish task:', error);
           setError(error.message)
@@ -78,10 +80,7 @@ const UnmatchedTags = () => {
 
   const handleSubmit = () => {
     if (selectedTag === 'new') {
-      setTaskData((prevState) => ({
-        ...prevState,
-        metaQuestion: {...prevState.metaQuestion}
-      }));
+      setExplanation(taskData?.suggestedExplanation);
     }
     setIsFinished(true);
   };
@@ -103,8 +102,8 @@ const UnmatchedTags = () => {
           <QuestionPhotoView content={taskData?.metaQuestion?.stem} type={latexServerPath.COMPILE_STEM}/>
         )}
         <Typography variant="h6" component="h1" gutterBottom>{NewExplanation.ANSWER}</Typography>
-        {originalAnswer && (
-          <QuestionPhotoView content={originalAnswer} type={latexServerPath.COMPILE_ANSWER}/>
+        {taskData?.answer && (
+          <QuestionPhotoView content={taskData?.answer} type={latexServerPath.COMPILE_ANSWER}/>
         )}
         <FormControl component="fieldset" sx={{ mt: 2 }}>
           <FormLabel component="legend"></FormLabel>
@@ -114,13 +113,13 @@ const UnmatchedTags = () => {
             value={selectedTag}
             onChange={handleTagChange}
           >
-            <Typography variant="h5" component="h1" gutterBottom>{NewExplanation.TAGGED(originalAnswer?.tag)}</Typography>
-            <FormControlLabel value="original" control={<Radio />} label={originalAnswer?.explanation} />
-            <FormControlLabel value="new" control={<Radio />} label={taskData?.answer?.explanation} />
+            <Typography variant="h5" component="h1" gutterBottom>{NewExplanation.TAGGED(taskData?.answer?.tag)}</Typography>
+            <FormControlLabel value="original" control={<Radio />} label={taskData?.answer?.explanation} />
+            <FormControlLabel value="new" control={<Radio />} label={taskData?.suggestedExplanation} />
           </RadioGroup>
         </FormControl>
         <Box sx={{ mt: 2 }}>
-          <Button variant="contained" color="primary" onClick={handleSubmit} href={"/"} disabled={!selectedTag}>
+          <Button variant="contained" color="primary" onClick={handleSubmit} disabled={!selectedTag}>
             {NewExplanation.SUBMIT}
           </Button>
         </Box>

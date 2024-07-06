@@ -87,7 +87,7 @@ class TaskRepository {
 
     async getRoleTask(taskId) {
         const foundTask = await this.#RoleTask.findByPk(taskId);
-        if (foundTask) {
+        if (!foundTask) {
             throw new EMSError(TASK_PROCESS_ERROR_MSGS.INVALID_TASK_ID, TASK_PROCESS_ERROR_CODES.INVALID_TASK_ID);
         }
         return foundTask;

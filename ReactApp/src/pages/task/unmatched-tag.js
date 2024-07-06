@@ -31,52 +31,27 @@ const UnmatchedTags = () => {
   const router = useRouter();
   const { task } = router.query
   const [taskData, setTaskData] = useState({});
-  const [originalAnswer, setOriginalAnswer] = useState({})
   const [selectedTag, setSelectedTag] = useState('');
   const [isSameTagOpen, setIsSameTagOpen] = useState(false);
   const [isDifferentTagOpen, setIsDifferentTagOpen] = useState(false);
   const [isProvideExplanationOpen, setIsProvideExplanationOpen] = useState(false);
   const [tag, setTag] = useState("");
   const [explanation, setExplanation] = useState("");
-  const [generate, setGenerate] = useState(false);
   const [error, setError] = useState("");
   const [isFinished, setIsFinished] = useState(false);
-  const [taDetails, setTaDetails] = useState({
-    taTag: 'key',
-    taExplanation: 'because this is true',
-    firstName: 'Idan',
-    lastName: 'Aharoni'
-  });
 
   useEffect(() => {
-    const fetchRandomQuestion = async () => {
-      if (task) {
-        try {
-          const parsedTask = JSON.parse(decodeURIComponent(task));
-          setTaskData(parsedTask);
-          if (parsedTask.answer.tag === 'key') {
-            setOriginalAnswer(parsedTask.metaQuestion.keys.find(key => key.id === parsedTask.answer.id));
-          }
-          else {
-            setOriginalAnswer(parsedTask.metaQuestion.distractors.find(distractor => distractor.id === parsedTask.answer.id));
-          }
-          setTaDetails({
-            taTag: 'key',
-            taExplanation: 'because this is true',
-            firstName: 'Idan',
-            lastName: 'Aharoni'
-          })
-          setError("")
-          return { success: true };
-        } catch (error) {
-          console.error('Failed to fetch question:', error);
-          setError(error.message)
-          return { success: false, error: error };
-        }
+    if (task) {
+      try {
+        const parsedTask = JSON.parse(decodeURIComponent(task));
+        setTaskData(parsedTask);
+        setError("");
+      } catch (error) {
+        console.error('Failed to fetch question:', error);
+        setError(error.message);
       }
-    };
-    fetchRandomQuestion();
-  }, [generate]);
+    }
+  }, [task]);
 
   const handleTagChange = (event) => {
     setSelectedTag(event.target.value);
@@ -87,18 +62,19 @@ const UnmatchedTags = () => {
       if (isFinished) {
         try {
           const changes = {
-            taskType: GENERATED_TASK_TYPES.TAG_ANSWER,
-            answerId: question?.answer?.id,
+            taskId: taskData?.taskId,
+            taskType: taskData?.type,
+            superType: taskData.superType,
+            answerId: taskData?.answer?.id,
             userTag: tag,
             ...(explanation && { explanation: explanation })
           };
-          await requestServer(serverPath.COMPLETE_GENERATED_TASK, httpsMethod.POST, changes);
+          await requestServer(serverPath.COMPLETE_CREATED_TASK, httpsMethod.POST, changes);
           resetStates();
-          return { success: true };
+          await router.push('/');
         } catch (error) {
           console.error('Failed to finish task:', error);
           setError(error.message)
-          return { success: false, error: error };
         }
       }
     };
@@ -106,15 +82,12 @@ const UnmatchedTags = () => {
   }, [isFinished]);
 
   const resetStates = () => {
-    setGenerate(!generate);
-    setTag("");
-    setExplanation("");
     setError("");
     setIsFinished(false);
   };
 
   const handleSubmit = () => {
-    if (selectedTag === taDetails?.taTag) {
+    if (selectedTag === taskData?.suggestedTag) {
       setIsSameTagOpen(true);
     } else {
       setIsDifferentTagOpen(true);
@@ -145,8 +118,8 @@ const UnmatchedTags = () => {
         <Typography variant="h4" component="h1" gutterBottom>
           {UnmatchedTag.FOLLOWING_ANSWER}
         </Typography>
-        {originalAnswer && (
-          <QuestionPhotoView content={originalAnswer} type={latexServerPath.COMPILE_ANSWER}/>
+        {taskData?.answer && (
+          <QuestionPhotoView content={taskData?.answer} type={latexServerPath.COMPILE_ANSWER}/>
         )}
         <FormControl component="fieldset" sx={{ mt: 2 }}>
           <FormLabel component="legend"></FormLabel>
@@ -171,14 +144,15 @@ const UnmatchedTags = () => {
       <SameTagPopup
         isOpen={isSameTagOpen}
         closePopup={() => setIsSameTagOpen(false)}
-        taDetails={taDetails}
+        taDetails={taskData?.creatingUser}
+        taExplanation={taskData?.suggestedExplanation}
         handleWrongExplanation={() => setIsProvideExplanationOpen(true)}
         finishTask={() => setIsFinished(true)}/>
 
       <DifferentTagPopup
         isOpen={isDifferentTagOpen}
         closePopup={() => setIsDifferentTagOpen(false)}
-        taDetails={taDetails}
+        taDetails={taskData?.creatingUser}
         finishTask={() => setIsFinished(true)}/>
 
       <ProvideExplanationPopup
