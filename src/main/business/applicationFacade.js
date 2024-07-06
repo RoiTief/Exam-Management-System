@@ -7,6 +7,7 @@ const { validateParameters } = require('../validateParameters.js');
 const {USER_TYPES, PRIMITIVE_TYPES, ANSWER_TYPES, GENERATED_TASK_TYPES, CREATED_TASK_TYPES} = require("../Enums");
 const {EMSError, TASK_PROCESS_ERROR_CODES} = require("../EMSError");
 const {TASK_PROCESS_ERROR_MSGS} = require("../ErrorMessages");
+const metaQuestionController = require("./MetaQuestions/MetaQuestionController");
 
 class ApplicationFacade{
     constructor() {
@@ -282,7 +283,8 @@ class ApplicationFacade{
         data.answers = data.keys.map(k => ({...k, content: k.text, tag: ANSWER_TYPES.KEY}))
             .concat(data.distractors.map(d => ({...d, content: d.text, tag: ANSWER_TYPES.DISTRACTOR})));
         const businessMQ = await this.metaQuestionController.createMetaQuestion(data);
-        return await this.#mqBusinessToFE(businessMQ);
+        const businessAppendix = businessMQ.getAppendixTag() ? await this.metaQuestionController.getAppendix(businessMQ.getAppendixTag()) : null;
+        return this.#mqBusinessToFE(businessMQ, businessAppendix);
     }
 
     async editMetaQuestion(data) {
@@ -290,8 +292,9 @@ class ApplicationFacade{
         const keys = data.keys ? data.keys.map(k => ({...k, content: k.text, tag: ANSWER_TYPES.KEY})) : [];
         const distractors = data.distractors ? data.distractors.map(distractor => ({...distractor, content: distractor.text, tag: ANSWER_TYPES.DISTRACTOR})) : [];
         data.answers = keys.concat(distractors);
-        const businessMq = await this.metaQuestionController.editMetaQuestion(data);
-        return await this.#mqBusinessToFE(businessMq);
+        const businessMQ = await this.metaQuestionController.editMetaQuestion(data);
+        const businessAppendix = businessMQ.getAppendixTag() ? await this.metaQuestionController.getAppendix(businessMQ.getAppendixTag()) : null;
+        return this.#mqBusinessToFE(businessMQ, businessAppendix);
     }
 
     async addAppendix(data) {
@@ -326,7 +329,8 @@ class ApplicationFacade{
      */
     async getAllMetaQuestions(data) {
         const businessMQs = await this.metaQuestionController.getAllMetaQuestions();
-        return await Promise.all(businessMQs.map(async bMQ => await this.#mqBusinessToFE(bMQ)));
+        return await Promise.all(businessMQs.map(async bMQ =>
+            this.#mqBusinessToFE(bMQ, bMQ.getAppendixTag() ? await this.metaQuestionController.getAppendix(bMQ.getAppendixTag()) : null)));
     }
 
     /**
@@ -358,7 +362,8 @@ class ApplicationFacade{
         validateParameters(data, {tag: PRIMITIVE_TYPES.STRING});
         data.appendixTag = data.tag;
         const businessMQs = await this.metaQuestionController.getMetaQuestionsForAppendix(data);
-        return await Promise.all( businessMQs.map(async bMQ=> await this.#mqBusinessToFE(bMQ)) );
+        return await Promise.all( businessMQs.map(async bMQ=>
+            this.#mqBusinessToFE(bMQ, await bMQ.getAppendixTag() ? this.metaQuestionController.getAppendix(bMQ.getAppendixTag()) : null)));
     }
 
     async editUser(data){
@@ -436,15 +441,14 @@ class ApplicationFacade{
         }
     }
 
-    async #mqBusinessToFE(bMQ) {
+    #mqBusinessToFE(bMQ, bAppendix) {
         return {
             id: bMQ.getId(),
             stem: bMQ.getStem(),
             keys: bMQ.getKeys().map(bKey => this.#answerBusinessToFE(bKey)),
             distractors: bMQ.getDistractors().map(bDistractor => this.#answerBusinessToFE(bDistractor)),
             keywords: bMQ.getKeywords(),
-            ...(bMQ.getAppendixTag() && {appendix: this.#appendixBusinessToFE(
-                await this.metaQuestionController.getAppendix(bMQ.getAppendixTag()))}),
+            ...(bAppendix && {appendix: this.#appendixBusinessToFE(bAppendix)}),
         }
     }
 
