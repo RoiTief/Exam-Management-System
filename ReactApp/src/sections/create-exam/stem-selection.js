@@ -10,15 +10,15 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
+  TextField
 } from '@mui/material';
 import { EXAM } from '../../constants';
 import { QuestionsSearch } from '../view-questions/question-search';
 
-function StemSelection({ metaQuestions, onSelect, reselectStem }) {
+function StemSelection({ metaQuestions, onSelect, reselectStem, generateState, maxNumberOfQuestion, setRepeatValue, repeatValue }) {
   const [dialogContent, setDialogContent] = useState(null);
   const [selectedMetaQuestion, setSelectedMetaQuestion] = useState(null);
   const [filteredData, setFilteredData] = useState(metaQuestions);
-
   const handleCloseDialog = () => {
     setDialogContent(null);
   };
@@ -53,6 +53,17 @@ function StemSelection({ metaQuestions, onSelect, reselectStem }) {
     setFilteredData(filteredQuestions);
   };
 
+  const numberInputStyles = {
+    '& input[type=number]::-webkit-inner-spin-button': {
+      WebkitAppearance: 'inner-spin-button',
+      opacity: 1
+    },
+    '& input[type=number]::-webkit-outer-spin-button': {
+      WebkitAppearance: 'inner-spin-button',
+      opacity: 1
+    }
+  };
+
   return (
     <Box sx={{ padding: 2 }}>
       <Typography variant="h5" component="h2" mb={2}>
@@ -61,7 +72,7 @@ function StemSelection({ metaQuestions, onSelect, reselectStem }) {
       {selectedMetaQuestion === null && (
         <QuestionsSearch onSearch={handleKeySearch}
                          onTextSearch={handleSearch} />
-        )}
+      )}
       <RadioGroup value={selectedMetaQuestion ? selectedMetaQuestion.stem : ''}>
         {filteredData.map((metaQuestion, index) => (
           <Box
@@ -80,8 +91,28 @@ function StemSelection({ metaQuestions, onSelect, reselectStem }) {
               sx={{ flexGrow: 1 }}
               onClick={() => handleRadioClick(metaQuestion)}
             />
+            {generateState && selectedMetaQuestion === metaQuestion && (
+              <TextField
+                type="number"
+                value={repeatValue}
+                onChange={(event) => {
+                  const inputValue = Number(event.target.value);
+                  if (!isNaN(inputValue) && inputValue >= 1 && Math.floor(inputValue) === inputValue) {
+                    setRepeatValue(inputValue);
+                  }
+                }}
+                inputProps={{ min: 1, max: maxNumberOfQuestion(selectedMetaQuestion) }}
+                variant="outlined"
+                label="repeted"  // Corrected spelling of 'label'
+                sx={{ width: 70, height: '45px', ...numberInputStyles }}  // Adjusted width for clarity
+              />
+            )}
             {metaQuestion.appendix && (
-              <Button variant="outlined" onClick={() => setDialogContent(metaQuestion.appendix)}>
+              <Button
+                variant="outlined"
+                onClick={() => setDialogContent(metaQuestion.appendix)}
+                sx={{ marginLeft: generateState && selectedMetaQuestion === metaQuestion ? 2 : 0, minHeight: '40px' }}
+              >
                 {EXAM.APPENDIX_HEADING}
               </Button>
             )}
@@ -104,7 +135,6 @@ function StemSelection({ metaQuestions, onSelect, reselectStem }) {
           </>
         )}
       </Dialog>
-
     </Box>
   );
 }

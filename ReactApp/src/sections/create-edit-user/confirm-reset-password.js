@@ -17,7 +17,7 @@ export const ConfirmResetPasswordPopup = ({user, isOpen, closePopup}) => {
       resetPassword(user.username);
       closePopup();
     } catch (err) {
-      setErrorMessage(err)
+      setErrorMessage(err.message)
     }
   };
   return (

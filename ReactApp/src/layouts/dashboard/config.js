@@ -5,7 +5,7 @@ import {
   AdminPanelSettingsRounded,
   Newspaper,
   QuestionMark,
-  SchoolOutlined, Work
+  SchoolOutlined, Work, ContentPaste
 } from '@mui/icons-material';
 import { ACCOUNT, SIDE_BAR } from '../../constants';
 
@@ -59,15 +59,15 @@ export const items = [
     children: [
       {
         title: SIDE_BAR.SIMPLE_META_QUESTION,
-        path: '/create/simple',
-      },
-      {
-        title: SIDE_BAR.APPENDIX_META_QUESTION,
         path: '/create/choose-appendix',
       },
       {
         title: SIDE_BAR.APPENDIX_PLUS_META_QUESTION,
         path: '/create/appendix-plus-question',
+      },
+      {
+        title: SIDE_BAR.APPENDIX,
+        path: '/create/appendix',
       }
     ]
   },
@@ -114,6 +114,16 @@ export const items = [
     icon: (
       <SvgIcon fontSize="small">
         <Newspaper />
+      </SvgIcon>
+    ),
+    permissions: [types.LECTURER]
+  },
+  {
+    title: SIDE_BAR.PAST_EXAMS,
+    path: '/past-exams',
+    icon: (
+      <SvgIcon fontSize="small">
+        <ContentPaste />
       </SvgIcon>
     ),
     permissions: [types.LECTURER]

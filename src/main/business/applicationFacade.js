@@ -280,7 +280,7 @@ class ApplicationFacade{
         data.answers = data.keys.map(k => ({...k, content: k.text, tag: ANSWER_TYPES.KEY}))
             .concat(data.distractors.map(d => ({...d, content: d.text, tag: ANSWER_TYPES.DISTRACTOR})));
         const businessMQ = await this.metaQuestionController.createMetaQuestion(data);
-        return this.#mqBusinessToFE(businessMQ);
+        return await this.#mqBusinessToFE(businessMQ);
     }
 
     async editMetaQuestion(data) {
@@ -289,7 +289,23 @@ class ApplicationFacade{
         const distractors = data.distractors ? data.distractors.map(distractor => ({...distractor, content: distractor.text, tag: ANSWER_TYPES.DISTRACTOR})) : [];
         data.answers = keys.concat(distractors);
         const businessMq = await this.metaQuestionController.editMetaQuestion(data);
-        return this.#mqBusinessToFE(businessMq);
+        return await this.#mqBusinessToFE(businessMq);
+    }
+
+    async addAppendix(data) {
+        const businessAppendix = await this.metaQuestionController.createAppendix( {
+            ...data.appendix,
+            callingUser: data.callingUser,
+        });
+        return this.#appendixBusinessToFE(businessAppendix)
+    }
+
+    async editAppendix(data) {
+        const businessAppendix = await this.metaQuestionController.editAppendix( {
+            ...data.appendix,
+            callingUser: data.callingUser,
+        });
+        return this.#appendixBusinessToFE(businessAppendix)
     }
 
     /**
@@ -308,7 +324,7 @@ class ApplicationFacade{
      */
     async getAllMetaQuestions(data) {
         const businessMQs = await this.metaQuestionController.getAllMetaQuestions();
-        return businessMQs.map(bMQ => this.#mqBusinessToFE(bMQ));
+        return await Promise.all(businessMQs.map(async bMQ => await this.#mqBusinessToFE(bMQ)));
     }
 
     async getAllExams(getAllExamsProperties){
@@ -346,7 +362,7 @@ class ApplicationFacade{
         validateParameters(data, {tag: PRIMITIVE_TYPES.STRING});
         data.appendixTag = data.tag;
         const businessMQs = await this.metaQuestionController.getMetaQuestionsForAppendix(data);
-        return businessMQs.map(bMQ => this.#mqBusinessToFE(bMQ));
+        return await Promise.all( businessMQs.map(async bMQ=> await this.#mqBusinessToFE(bMQ)) );
     }
 
     async editUser(data){
@@ -413,14 +429,15 @@ class ApplicationFacade{
     /**
      * @param {MetaQuestion} bMQ
      */
-    #mqBusinessToFE(bMQ) {
+    async #mqBusinessToFE(bMQ) {
         return {
             id: bMQ.getId(),
             stem: bMQ.getStem(),
             keys: bMQ.getKeys().map(bKey => this.#answerBusinessToFE(bKey)),
-            distractors: bMQ.getKeys().map(bDistractor => this.#answerBusinessToFE(bDistractor)),
+            distractors: bMQ.getDistractors().map(bDistractor => this.#answerBusinessToFE(bDistractor)),
             keywords: bMQ.getKeywords(),
-            ...(bMQ.getAppendixTag() || {appendixTag: bMQ.getAppendixTag()}),
+            ...(bMQ.getAppendixTag() && {appendix: this.#appendixBusinessToFE(
+                await this.metaQuestionController.getAppendix(bMQ.getAppendixTag()))}),
         }
     }
 

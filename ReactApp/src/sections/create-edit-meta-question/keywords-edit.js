@@ -13,7 +13,6 @@ const KeywordsSection = ({ values, handleChange, handleBlur, error, helperText }
   return (
     <Box sx={{ mb: 2 }}>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <Typography variant="h6" component="h3">{CREATE_QUESTION.KEYWORDS_TITLE}</Typography>
         <Typography variant="body2" color="textSecondary">
           {CREATE_QUESTION.KEYWORDS_INSTRUCTION}
         </Typography>
@@ -32,6 +31,7 @@ const KeywordsSection = ({ values, handleChange, handleBlur, error, helperText }
             <TextField
               error={error}
               helperText={helperText}
+              label={CREATE_QUESTION.KEYWORDS_TITLE}
               placeholder="Add Keyword To Describe The Question"
               onKeyDown={(e) => {
                 if (e.key === 'Enter' && e.target.value.trim() !== '') {

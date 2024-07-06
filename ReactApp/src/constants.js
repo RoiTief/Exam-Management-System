@@ -27,13 +27,15 @@ export const SIDE_BAR = {
   SIMPLE_META_QUESTION: "Simple Meta-Question",
   APPENDIX_META_QUESTION: "Appendix Meta-Question",
   APPENDIX_PLUS_META_QUESTION: "Appendix plus Meta-Question",
+  APPENDIX: "Appendix",
   META_QUESTIONS_CATALOG: "Questions Catalog",
   META_QUESTIONS: "Meta Questions",
   APPENDICES: "Appendices",
   MANAGE_COURSE_STAFF: "Manage Course Staff",
-  GENERATE_EXAM: "generate exams",
+  GENERATE_EXAM: "Generate Exams",
   ASK_FOR_WORK: "Ask for Work",
-  TAG_ANSWERS: "Tag Answers"
+  TAG_ANSWERS: "Tag Answers",
+  PAST_EXAMS: "Past Exams"
 }
 
 export const CALENDAR = {
@@ -110,13 +112,20 @@ export const LOGIN = {
 };
 
 export const EDIT_QUESTION = "Edit Question"
+export const EDIT_APPENDIX = {
+  EDIT_APPENDIX_TITLE:  "Edit Appendix",
+  CONFIRM_EDIT_TITLE: "Confirm edit appendix",
+  CONFIRM_EDIT_BODY: "Are you sure you want to submit this changes? \nThose changes will affect the appendix in all related questions."
+}
 
 export const CREATE_QUESTION = {
-  CREATE_SIMPLE_TITLE: "Create Simple Meta-Question",
+  CREATE_SIMPLE_TITLE: "Create Meta-Question",
   CREATE_APPENDIX_PLUS_TITLE: "Create Simple Meta-Question",
-  CREATE_APPENDIX_TITLE: "Create Meta-Question Based On Existing Appendix",
+  CREATE_CHOOSE_APPENDIX_TITLE: "Create Meta-Question Based On Existing Appendix",
+  CREATE_APPENDIX_TITLE: "Create Appendix",
   SUBMIT_BUTTON: "Submit",
   VIEW_PDF_BUTTON: "View Question As PDF",
+  VIEW_APPENDIX_PDF_BUTTON: "View Appendix As PDF",
   STEM_REQUIRED: "Stem is required",
   CORRECT_ANSWER_REQUIRED: "The key cannot be empty, please fill it or delete it",
   EXPLANATION_REQUIRED: "Explanation is required",
@@ -264,4 +273,10 @@ export const TAG_ANSWERS = {
 export const QuestionView = {
   LOAD_PDF: "Failed to load PDF file",
   SERVER_UNREACHABLE: "Server Unreachable",
+};
+
+export const EXAMS_CATALOG = {
+  PAGE_TITLE: 'Exams Catalog',
+  HEADING: 'Exams Catalog',
+  REASON_HEADING: 'Exam Reason',
 };

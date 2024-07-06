@@ -40,8 +40,11 @@ export const serverPath = {
   EDIT_USER: 'editUser',
   EDIT_META_QUESTION: 'editMetaQuestion',
   GET_META_QUESTIONS_FOR_APPENDIX: 'getMetaQuestionForAppendix',
+  EDIT_APPENDIX: 'editAppendix',
+  ADD_APPENDIX: 'addAppendix',
   REFRESH_TOKEN: 'refreshJWT',
   GET_ALL_EXAMS: 'getAllExams',
+  GET_VERSIONED_EXAM: 'getVersionedExam',
   GENERATE_TASK: 'generateTask',
   COMPLETE_GENERATED_TASK: 'completeGeneratedTask'
 };
@@ -58,7 +61,8 @@ export const latexServerPath = {
   COMPILE_MQ: 'metaQuestion',
   COMPILE_STEM: 'stem',
   COMPILE_APPENDIX: 'appendix',
-  COMPILE_ANSWER: 'answer'
+  COMPILE_ANSWER: 'answer',
+  APPENDIX: 'appendix'
 };
 
 export async function requestLatexServer(path, body) {

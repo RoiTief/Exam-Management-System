@@ -384,6 +384,52 @@ function addMetaQuestion(req, res, next) {
 }
 
 /**
+ *  request: {
+ appendix: {
+ title: str,
+ tag: str,
+ content: str
+ }
+ }
+ @throws {Error} - if fail to create
+ */
+function addAppendix(req, res, next) {
+    application.addAppendix(req.body).then(
+        appendix => {
+            req.log.info("request to create appendix");
+            res.send(200, {code: 200, appendix});
+            next();
+        },
+        err => {
+            req.log.warn(err.message, 'failed to create appendix');
+            next(err);
+        });
+}
+
+/**
+ *  request: {
+ appendix: {
+ title: str,
+ tag: str,
+ content: str
+ }
+ }
+ @throws {Error} - if fail to create
+ */
+function editAppendix(req, res, next) {
+    application.editAppendix(req.body).then(
+        appendix => {
+            req.log.info("request to create appendix");
+            res.send(200, {code: 200, appendix});
+            next();
+        },
+        err => {
+            req.log.warn(err.message, 'failed to create appendix');
+            next(err);
+        });
+}
+
+/**
     request: {
            selectedMetaQuestion: MetaQuestion,
            selectedKey: {answer: str, explanation: str },
@@ -554,6 +600,12 @@ function getAllExams(req, res, next){
         })
 }
 
+function getVersionedExam(req, res, next){
+    // todo - implement
+    res.send(200, {code:200})
+    next()
+}
+
 function editUser(req, res, next) {
     application.editUser(req.body).then(
         businessUser => {
@@ -626,8 +678,11 @@ module.exports = {
     editMetaQuestion: editMetaQuestion,
     createExam,
     getAllExams,
+    getVersionedExam,
     editUser: editUser,
     generateJWT,
     generateTask: generateTask,
     completeGeneratedTask: completeGeneratedTask,
+    addAppendix,
+    editAppendix
 };
