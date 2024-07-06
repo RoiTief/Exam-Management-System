@@ -167,18 +167,17 @@ function getAllStaff(req, res, next) {
  * view my tasks
  * @return {[Task]}
  */
-function viewMyTasks(req, res, next){
-    try{
-        application.viewMyTasks(req.body).then((tasks) => {
+function viewMyTasks(req, res, next) {
+    application.viewMyTasks(req.body).then(
+        tasks => {
             req.log.info("user viewed his tasks");
-            res.send(200, {code:200,tasks})
+            res.send(200, {code: 200, tasks})
             next()
+        },
+        err => {
+            req.log.warn(err.message, 'unable to view user tasks');
+            next(err);
         });
-    }
-    catch(err){
-        req.log.warn(err.message, 'unable to view user tasks');
-        next(err);
-    }
 }
 
 /**
@@ -430,6 +429,45 @@ function editAppendix(req, res, next) {
 }
 
 /**
+ *  request: {
+ id: str
+ }
+ @throws {Error} - if fail to delete
+ */
+function deleteQuestion(req, res, next) {
+    application.deleteMetaQuestion(req.body).then(
+        _ => {
+            req.log.info("request to delete Meta-Question");
+            res.send(200, {code: 200});
+            next();
+        },
+        err => {
+            req.log.warn(err.message, 'failed to delete Meta-Question');
+            next(err);
+        });
+}
+
+/**
+ *  request: {
+ tag: str
+ }
+ @throws {Error} - if fail to delete
+ */
+function deleteAppendix(req, res, next) {
+    application.deleteAppendix(req.body).then(
+        _ => {
+            req.log.info("request to delete Appendix");
+            res.send(200, {code: 200});
+            next();
+        },
+        err => {
+            req.log.warn(err.message, 'failed to delete Appendix');
+            next(err);
+        });
+}
+
+
+/**
     request: {
            selectedMetaQuestion: MetaQuestion,
            selectedKey: {answer: str, explanation: str },
@@ -640,6 +678,20 @@ function completeGeneratedTask(req, res, next) {
     );
 }
 
+function completeCreatedTask(req, res, next) {
+    application.completeCreatedTask(req.body).then(
+        _ => {
+            req.log.info(req.body.callingUser.username, 'completed created task');
+            res.send(200, {code: 200});
+            next();
+        },
+        err => {
+            req.log.warn(err.message, 'failed completing created task');
+            next(err);
+        }
+    );
+}
+
 module.exports = {
     signUp: signUp,
     signIn: signIn, 
@@ -669,6 +721,9 @@ module.exports = {
     generateJWT,
     generateTask: generateTask,
     completeGeneratedTask: completeGeneratedTask,
+    completeCreatedTask: completeCreatedTask,
     addAppendix,
-    editAppendix
+    editAppendix,
+    deleteQuestion,
+    deleteAppendix
 };

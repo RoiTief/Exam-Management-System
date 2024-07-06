@@ -3,14 +3,14 @@ import { httpsMethod, serverPath, requestServer, latexServerPath } from 'src/uti
 import { Box, Button, Container, Stack, Typography, Dialog, DialogTitle, DialogContent, DialogActions, TextField, Input } from '@mui/material';
 import QuestionList from '/src/sections/create-exam/question-list';
 import { Layout as DashboardLayout } from '../layouts/dashboard/layout';
-import { useRouter } from 'next/router';
 import { PdfLatexPopup } from '../sections/popUps/QuestionPdfView';
 import { EXAM } from '../constants';
 import ErrorMessage from '../components/errorMessage';
 import { AddQuestionToExamPopup } from '../sections/create-exam/add-question-to-exam-popup';
+import useRouterOverride from '../hooks/use-router';
 
 const Page = () => {
-  const router = useRouter();
+  const router = useRouterOverride();
   const [questions, setQuestions] = useState([]);
   const [metaQuestions, setMetaQuestions] = useState([]);
   const [isAddQuestionPopupOpen, setIsAddQuestionPopupOpen] = useState(false);

@@ -26,7 +26,7 @@ export const SIDE_BAR = {
   CREATE_META_QUESTION: "Create Meta-Question",
   SIMPLE_META_QUESTION: "Simple Meta-Question",
   APPENDIX_META_QUESTION: "Appendix Meta-Question",
-  APPENDIX_PLUS_META_QUESTION: "Appendix plus Meta-Question",
+  APPENDIX_PLUS_META_QUESTION: "Appendix + Meta-Question",
   APPENDIX: "Appendix",
   META_QUESTIONS_CATALOG: "Questions Catalog",
   META_QUESTIONS: "Meta Questions",
@@ -63,6 +63,8 @@ export const TASK = {
   SUBMIT_BUTTON: "Submit",
   ENTER_ANSWER_PLACEHOLDER: "Enter your answer...",
   RESPONSE_MESSAGE: "Your response was: ",
+  NUM_ASSIGNED: (length) => {return length === 1 ? "1 task assigned" : `${length} tasks assigned`},
+  HEADLINE: (taskType) =>  {return taskType === 'tag-review' ? "Review Tag" : `Review Explanation`},
 };
 
 export const USERS = {
@@ -175,6 +177,11 @@ export const QUESTIONS_CATALOG = {
   SEARCH_PLACEHOLDER: (mode) => `Search question by ${mode}?`,
   ACTION: "Action",
   VIEW_PDF_BUTTON: "View PDF",
+  DELETE_QUESTION_TITLE: "Delete Question",
+  DELETE_QUESTION_BODY: "are you sure you want to delete this question?",
+  DELETE_APPENDIX_TITLE: "Delete Appendix",
+  DELETE_APPENDIX_BODY: "you left an appendix without a question. Do you want to delete it as well?",
+  CONFIRM_DELETE_APPENDIX: "are you sure you want to delete this appendix?",
 };
 
 export const APPENDICES_CATALOG = {
@@ -274,6 +281,33 @@ export const TAG_ANSWERS = {
 export const QuestionView = {
   LOAD_PDF: "Failed to load PDF file",
   SERVER_UNREACHABLE: "Server Unreachable",
+};
+
+export const UnmatchedTag = {
+  FOLLOWING_QUESTION: "Given the following question:",
+  FOLLOWING_ANSWER: "Tag the following answer:",
+  KEY: "Key",
+  DISTRACTOR: "Distractor",
+  SUBMIT: "Submit",
+  APPENDIX: "Appendix:",
+  STEM: "Stem:",
+  THINKS_SAME: (firstName, lastName) => `${firstName} ${lastName} thinks so too, here's the explanation he gave:`,
+  IS_CORRECT: 'Is this a correct explanation?',
+  THINKS_DIFFERENT: (firstName, lastName) => `${firstName} ${lastName} thinks otherwise, can you check again and make sure?`,
+  SURE: 'Yes I am sure',
+  APPROVE: 'Approve Explanation',
+  REJECT: 'Reject Explanation'
+};
+
+export const NewExplanation = {
+  REVIEW_EXPLANATION: "Review Explanation",
+  TAGGED: (tag) => `This answer is  tagged as a ${tag}, which of these explains it better:`,
+  IS_CORRECT: 'Is this a correct explanation?',
+  SURE: 'Yes I am sure',
+  APPENDIX: "Appendix:",
+  STEM: "Stem:",
+  ANSWER: "Answer:",
+  SUBMIT: 'Submit',
 };
 
 export const EXAMS_CATALOG = {

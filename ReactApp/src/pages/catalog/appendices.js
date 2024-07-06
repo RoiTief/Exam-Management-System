@@ -3,32 +3,33 @@ import React, { useEffect, useState } from 'react';
 import { Layout as DashboardLayout } from '../../layouts/dashboard/layout';
 import Head from 'next/head';
 import PlusIcon from '@heroicons/react/24/solid/PlusIcon';
-import { useRouter } from 'next/navigation';
 import { httpsMethod, requestServer, serverPath } from '../../utils/rest-api-call';
 import { APPENDICES_CATALOG } from '../../constants';
 import { AppendicesTable } from '../../sections/view-appendices/appendices-table';
 import { AppendicesSearch } from '../../sections/view-appendices/appendices-search';
 import ErrorMessage from '../../components/errorMessage';
+import useRouterOverride from '../../hooks/use-router';
 
 const AppendicesPage = () => {
-  const router = useRouter();
+  const router = useRouterOverride();
   const [appendices, setAppendices] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
   const [errorMessage, setErrorMessage] = useState('');
 
-  useEffect(() => {
-    async function fetchAppendices() {
-      try {
-        const { appendices } = await requestServer(serverPath.GET_ALL_APPENDICES, httpsMethod.GET);
-        setAppendices(appendices);
-        setFilteredData(appendices);
-        setErrorMessage(''); // Clear any previous error message
-      } catch (error) {
-        console.error('Error fetching appendices:', error);
-        setErrorMessage(`Error fetching appendices: ${error.message}`)
-      }
+  const fetchAppendices = async () => {
+    try {
+      const { appendices } = await requestServer(serverPath.GET_ALL_APPENDICES, httpsMethod.GET);
+      setAppendices(appendices);
+      setFilteredData(appendices);
+      setErrorMessage(''); // Clear any previous error message
+    } catch (error) {
+      console.error('Error fetching appendices:', error);
+      setErrorMessage(`Error fetching appendices: ${error.message}`)
     }
+  }
 
+
+  useEffect(() => {
     fetchAppendices();
   }, []);
 
@@ -73,7 +74,8 @@ const AppendicesPage = () => {
               </Stack>
             </Stack>
             <AppendicesSearch onSearch={handleSearch} />
-            <AppendicesTable appendices={filteredData} />
+            <AppendicesTable appendices={filteredData}
+                             fetchAppendices={fetchAppendices}/>
             <ErrorMessage message={errorMessage} />
           </Stack>
         </Container>

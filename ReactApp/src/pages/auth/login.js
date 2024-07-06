@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import Head from 'next/head';
-import { useRouter } from 'next/navigation';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import {
@@ -19,9 +18,10 @@ import { Layout as AuthLayout } from 'src/layouts/auth/layout';
 import { LOGIN } from '../../constants';
 import ErrorMessage from 'src/components/errorMessage';
 import ChangePasswordPopup from '../../sections/popUps/changePasswordPopup';
+import useRouterOverride from '../../hooks/use-router';
 
 const Page = () => {
-  const router = useRouter();
+  const router = useRouterOverride();
   const auth = useAuth();
   const [method] = useState('username');
   const [changePasswordOpen, setChangePasswordOpen] = useState(false);

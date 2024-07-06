@@ -56,7 +56,9 @@ const MQ_PROCESS_ERROR_MSGS = {
 
 const TASK_PROCESS_ERROR_MSGS = {
     INVALID_TASK_TYPE: type => `Task-type '${type}' is invalid`,
+    INVALID_TASK_SUPER_TYPE: type => `Task Super-type '${type}' is invalid`,
     INSUFFICIENT_CONTENT_TO_GENERATE_TASK: `There is not enough content to generate a task of this type`,
+    INVALID_TASK_ID: `Task doesn't exist, closed or already completed`
 }
 
 const EXAM_PROCESS_ERROR_MSGS = {

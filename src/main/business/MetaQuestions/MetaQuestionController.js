@@ -45,6 +45,11 @@ class MetaQuestionController{
         return appendix;
     }
 
+    async deleteAppendix(data) {
+        validateParameters(data, {tag: PRIMITIVE_TYPES.STRING});
+        await this.#metaQuestionRepo.deleteAppendix(data.tag);
+    }
+
     async createMetaQuestion(data) {
         validateParameters(data, {
             keywords: [PRIMITIVE_TYPES.STRING],
@@ -72,6 +77,11 @@ class MetaQuestionController{
         await metaQuestion.setAppendix(data.appendixTag ? data.appendixTag : null);
 
         return metaQuestion;
+    }
+
+    async deleteMetaQuestion(data) {
+        validateParameters(data, {id: PRIMITIVE_TYPES.NUMBER});
+        await this.#metaQuestionRepo.deleteMetaQuestion(data.id);
     }
 
     async getAllMetaQuestions(){

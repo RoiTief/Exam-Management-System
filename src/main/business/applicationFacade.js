@@ -5,7 +5,7 @@ const ExamController = require('./ExamManager/ExamController.js');
 const userTypes = require('../Enums').USER_TYPES
 const { userRepo, metaQuestionsRepo, taskRepo, examRepo} = require("../DAL/Dal");
 const { validateParameters } = require('../validateParameters.js');
-const {USER_TYPES, PRIMITIVE_TYPES, ANSWER_TYPES, GENERATED_TASK_TYPES} = require("../Enums");
+const {USER_TYPES, PRIMITIVE_TYPES, ANSWER_TYPES, GENERATED_TASK_TYPES, CREATED_TASK_TYPES} = require("../Enums");
 const {EMSError, TASK_PROCESS_ERROR_CODES} = require("../EMSError");
 const {TASK_PROCESS_ERROR_MSGS} = require("../ErrorMessages");
 const MetaQuestion = require('./MetaQuestions/MetaQuestion.js');
@@ -14,12 +14,13 @@ const Question = require('./ExamManager/Question.js');
 const ExamAnswer = require('./ExamManager/ExamAnswer.js');
 const Answer = require('./MetaQuestions/Answer.js');
 const { EXAM_CONSTANTS } = require('../constants.js');
+const metaQuestionController = require("./MetaQuestions/MetaQuestionController");
 
 class ApplicationFacade{
     constructor() {
         this.userController = new UserController(userRepo);
         this.metaQuestionController = new MetaQuestionController(metaQuestionsRepo);
-        this.taskController = new TaskController(taskRepo, this.metaQuestionController);
+        this.taskController = new TaskController(taskRepo, this.userController, this.metaQuestionController);
         this.examController = new ExamController(this.metaQuestionController, examRepo);
     }
 
@@ -153,15 +154,15 @@ class ApplicationFacade{
      * @param { {
      * questions:[
      *  {
-        *  id:number, 
-        *  stem: string, 
+        *  id:number,
+        *  stem: string,
         *  appendix: SAppendix,
-        *  key: {id: number, answer: string, explanation: string }, 
+        *  key: {id: number, answer: string, explanation: string },
         *  distractors:{id: number, answer: string, explanation: string }[],
      *  }],
      * numVersions: number,
      * examReason: string  }} createExamProperties
-     * 
+     *
      * @throws {Error} - if there is no user with name @username
      *                 - if the user named username is not a lecturerUsername or is not assigned to a course
      *                 - if the course subject spread is not specified
@@ -219,11 +220,12 @@ class ApplicationFacade{
     /**
      * view my tasks
      * @param data - the user who tries to view his tasks
-     * @return {[Task]}
      * @throws {Error} - if there is no user logged in data
      */
-    async viewMyTasks(data){
-        return this.taskController.getTasksOf(data);
+    async viewMyTasks(data) {
+        const businessTasks = await this.taskController.getTasksOf(data);
+        const feTasks = businessTasks.map(bTask => this.#taskBusinessToFE(bTask));
+        return feTasks;
     }
 
     /**
@@ -296,7 +298,8 @@ class ApplicationFacade{
         data.answers = data.keys.map(k => ({...k, content: k.text, tag: ANSWER_TYPES.KEY}))
             .concat(data.distractors.map(d => ({...d, content: d.text, tag: ANSWER_TYPES.DISTRACTOR})));
         const businessMQ = await this.metaQuestionController.createMetaQuestion(data);
-        return await this.#mqBusinessToFE(businessMQ);
+        const businessAppendix = businessMQ.getAppendixTag() ? await this.metaQuestionController.getAppendix(businessMQ.getAppendixTag()) : null;
+        return this.#mqBusinessToFE(businessMQ, businessAppendix);
     }
 
     async editMetaQuestion(data) {
@@ -304,8 +307,14 @@ class ApplicationFacade{
         const keys = data.keys ? data.keys.map(k => ({...k, content: k.text, tag: ANSWER_TYPES.KEY})) : [];
         const distractors = data.distractors ? data.distractors.map(distractor => ({...distractor, content: distractor.text, tag: ANSWER_TYPES.DISTRACTOR})) : [];
         data.answers = keys.concat(distractors);
-        const businessMq = await this.metaQuestionController.editMetaQuestion(data);
-        return await this.#mqBusinessToFE(businessMq);
+        const businessMQ = await this.metaQuestionController.editMetaQuestion(data);
+        const businessAppendix = businessMQ.getAppendixTag() ? await this.metaQuestionController.getAppendix(businessMQ.getAppendixTag()) : null;
+        return this.#mqBusinessToFE(businessMQ, businessAppendix);
+    }
+
+    async deleteMetaQuestion(data) {
+        validateParameters(data, {id: PRIMITIVE_TYPES.NUMBER})
+        await this.metaQuestionController.deleteMetaQuestion(data);
     }
 
     async addAppendix(data) {
@@ -324,6 +333,11 @@ class ApplicationFacade{
         return this.#appendixBusinessToFE(businessAppendix)
     }
 
+    async deleteAppendix(data) {
+        validateParameters(data, {tag: PRIMITIVE_TYPES.STRING})
+        await this.metaQuestionController.deleteAppendix(data);
+    }
+
     /**
      * Delete a user from the system
      * @param data.username - The user we want to delete
@@ -340,7 +354,8 @@ class ApplicationFacade{
      */
     async getAllMetaQuestions(data) {
         const businessMQs = await this.metaQuestionController.getAllMetaQuestions();
-        return await Promise.all(businessMQs.map(async bMQ => await this.#mqBusinessToFE(bMQ)));
+        return await Promise.all(businessMQs.map(async bMQ =>
+            this.#mqBusinessToFE(bMQ, bMQ.getAppendixTag() ? await this.metaQuestionController.getAppendix(bMQ.getAppendixTag()) : null)));
     }
 
 
@@ -355,15 +370,15 @@ class ApplicationFacade{
     }
 
     /**
-     * 
-     * @param {{callingUser:CallingUser, examId:number , version:number}} data 
+     *
+     * @param {{callingUser:CallingUser, examId:number , version:number}} data
      * @returns {Promise<SExam>}
      */
     async getVersionedExam(data){
         const exam = await this.examController.getVersionedExam(data)
         return await this.#examBusinessToFE(exam)
     }
-    
+
     /**
      * return a list of meta question relevant to add to the new exam:
      * - each question has at least 1 key and 4 distractors that are not used yet in the exam
@@ -393,7 +408,8 @@ class ApplicationFacade{
         validateParameters(data, {tag: PRIMITIVE_TYPES.STRING});
         data.appendixTag = data.tag;
         const businessMQs = await this.metaQuestionController.getMetaQuestionsForAppendix(data);
-        return await Promise.all( businessMQs.map(async bMQ=> await this.#mqBusinessToFE(bMQ)) );
+        return await Promise.all( businessMQs.map(async bMQ=>
+            this.#mqBusinessToFE(bMQ, bMQ.getAppendixTag() ? await this.metaQuestionController.getAppendix(bMQ.getAppendixTag()) : null)));
     }
 
     async editUser(data){
@@ -456,19 +472,29 @@ class ApplicationFacade{
     async completeGeneratedTask(data) {
         return await this.taskController.completeGeneratedTask(data);
     }
-    
-    /**
-     * @param {MetaQuestion} bMQ
-     */
-    async #mqBusinessToFE(bMQ) {
+
+    async completeCreatedTask(data) {
+        return await this.taskController.completeCreatedTask(data);
+    }
+
+    #userBusinessToFE(bUser) {
+        return {
+            username: bUser.getUsername(),
+            firstName: bUser.getFirstName(),
+            lastName: bUser.getLastName(),
+            email: bUser.getEmail(),
+            type: bUser.getUserType(),
+        }
+    }
+
+    #mqBusinessToFE(bMQ, bAppendix) {
         return {
             id: bMQ.getId(),
             stem: bMQ.getStem(),
             keys: bMQ.getKeys().map(bKey => this.#answerBusinessToFE(bKey)),
             distractors: bMQ.getDistractors().map(bDistractor => this.#answerBusinessToFE(bDistractor)),
             keywords: bMQ.getKeywords(),
-            ...(bMQ.getAppendixTag() && {appendix: this.#appendixBusinessToFE(
-                await this.metaQuestionController.getAppendix(bMQ.getAppendixTag()))}),
+            ...(bAppendix && {appendix: this.#appendixBusinessToFE(bAppendix)}),
         }
     }
 
@@ -491,6 +517,32 @@ class ApplicationFacade{
             content: bAppendix.getContent(),
             keywords: bAppendix.getKeywords(),
         }
+    }
+
+    #taskBusinessToFE(bTask) {
+        // base
+        const task = {
+            taskId: bTask.taskId,
+            superType: bTask.superType,
+            type: bTask.type,
+            creatingUser: this.#userBusinessToFE(bTask.creatingUser),
+            ...(bTask.appendix && {appendix: this.#appendixBusinessToFE(bTask.appendix)}),
+            ...(bTask.metaQuestion && {metaQuestion: this.#mqBusinessToFE(bTask.metaQuestion)}),
+            ...(bTask.answer && {answer: this.#answerBusinessToFE(bTask.answer)}),
+        }
+
+        // specifics
+        switch (task.type) {
+            case CREATED_TASK_TYPES.EXPLANATION_COMPARISON:
+                task.suggestedExplanation = bTask.suggestedExplanation;
+                break;
+            case CREATED_TASK_TYPES.TAG_REVIEW:
+                task.suggestedExplanation = bTask.suggestedExplanation;
+                task.suggestedTag = bTask.suggestedTag;
+                break;
+        }
+
+        return task;
     }
 
     /**
@@ -521,7 +573,7 @@ class ApplicationFacade{
             answers: bQuestion.getAnswers().map(a=>this.#examAnswerBusinessToFE(a))
         }
     }
-    
+
     /**
      * @param { Exam } bExam
      * @returns {Promise<SExam>}
@@ -536,7 +588,7 @@ class ApplicationFacade{
         }
     }
 
-    
+
 
     /* returns
     {

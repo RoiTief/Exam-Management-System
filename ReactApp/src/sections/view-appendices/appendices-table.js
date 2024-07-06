@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import {
   Box,
@@ -12,19 +12,20 @@ import {
   TablePagination,
   TableRow,
   Collapse,
-  Typography, IconButton
+  Typography, IconButton, DialogTitle, DialogContent, DialogContentText, DialogActions, Dialog
 } from '@mui/material';
 import { Scrollbar } from 'src/components/scrollbar';
 import { PdfLatexPopup } from '../popUps/QuestionPdfView';
 import { httpsMethod, latexServerPath, requestServer, serverPath } from '../../utils/rest-api-call';
-import { APPENDICES_CATALOG } from '../../constants';
+import { APPENDICES_CATALOG, QUESTIONS_CATALOG } from '../../constants';
 import { MetaQuestionTable } from '../view-questions/question-table';
 import ErrorMessage from '../../components/errorMessage';
 import EditIcon from '@mui/icons-material/Edit';
-import { useRouter } from 'next/router';
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
+import useRouterOverride from '../../hooks/use-router';
 
-export const AppendicesTable = ({ appendices }) => {
-  const router = useRouter();
+export const AppendicesTable = ({ appendices, fetchAppendices }) => {
+  const router = useRouterOverride();
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [expandedAppendix, setExpandedAppendix] = useState(null);
@@ -32,22 +33,31 @@ export const AppendicesTable = ({ appendices }) => {
   const [selectedQuestion, setSelectedQuestion] = useState(null);
   const [showPdfView, setShowPdfView] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const [appendixToDelete, setAppendixToDelete] = useState(null)
+
+  const fetchRelatedQuestions = async () => {
+    try {
+      const { metaQuestions } = await requestServer(serverPath.GET_META_QUESTIONS_FOR_APPENDIX, httpsMethod.POST, expandedAppendix);
+      setRelatedQuestions(metaQuestions);
+      setErrorMessage(metaQuestions.length === 0 ? 'No related questions found.' : '');
+    } catch (error) {
+      setErrorMessage(`Error fetching related questions: ${error.message}`);
+    }
+  }
+
+  useEffect(() => {
+    if (expandedAppendix == null)
+      setRelatedQuestions([])
+    else
+      fetchRelatedQuestions()
+  }, [expandedAppendix]);
 
   const handleExpandAppendix = async (appendix) => {
     if (expandedAppendix === appendix) {
       setExpandedAppendix(null);
       return;
     }
-    try {
-      const { metaQuestions } = await requestServer(serverPath.GET_META_QUESTIONS_FOR_APPENDIX, httpsMethod.POST, appendix);
-      setRelatedQuestions(metaQuestions);
-      setErrorMessage(metaQuestions.length === 0 ? 'No related questions found.' : '');
-      setExpandedAppendix(appendix);
-    } catch (error) {
-      console.error('Error fetching related questions:', error);
-      setErrorMessage(`Error fetching related questions: ${error.message}`);
-      setExpandedAppendix(appendix);
-    }
+    setExpandedAppendix(appendix);
   };
 
   const handleEdit = (appendix) => {
@@ -56,6 +66,16 @@ export const AppendicesTable = ({ appendices }) => {
       appendix: JSON.stringify(appendix)
     };
     router.push({ pathname, query });
+  }
+
+  const handleDelete = async () => {
+    try {
+      await requestServer(serverPath.DELETE_APPENDIX, httpsMethod.POST, { tag: appendixToDelete.tag });
+      setAppendixToDelete(null)
+      fetchAppendices()
+    } catch (err) {
+      setErrorMessage(err.message)
+    }
   }
 
   const handlePdfButtonClick = (event, question) => {
@@ -90,7 +110,8 @@ export const AppendicesTable = ({ appendices }) => {
                 <TableCell>{APPENDICES_CATALOG.TITLE_HEADING}</TableCell>
                 <TableCell>{APPENDICES_CATALOG.TAG_HEADING}</TableCell>
                 <TableCell>{APPENDICES_CATALOG.CONTENT_HEADING}</TableCell>
-                <TableCell></TableCell>
+                <TableCell/>
+                <TableCell/>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -105,6 +126,14 @@ export const AppendicesTable = ({ appendices }) => {
                         <EditIcon />
                       </IconButton>
                     </TableCell>
+                    <TableCell>
+                      <IconButton onClick={(event) => {
+                        event.stopPropagation();
+                        setAppendixToDelete(appendix);}}
+                                  disabled={ !expandedAppendix || expandedAppendix.tag!==appendix.tag || relatedQuestions.length>0 }>
+                        <DeleteOutlineIcon/>
+                      </IconButton>
+                    </TableCell>
                   </TableRow>
                   <TableRow>
                     <TableCell colSpan={3} style={{ paddingBottom: 0, paddingTop: 0 }}>
@@ -113,7 +142,9 @@ export const AppendicesTable = ({ appendices }) => {
                           {errorMessage==='' && relatedQuestions.length>0 && (
                             <Stack>
                               <Typography variant="h6" padding={2}>{APPENDICES_CATALOG.RELATED_QUESION}</Typography>
-                              <MetaQuestionTable data={relatedQuestions} />
+                              <MetaQuestionTable data={relatedQuestions}
+                                                 setErrorMessage={setErrorMessage}
+                                                 fetchMetaQuestions={fetchRelatedQuestions}/>
                             </Stack>
                           )}
                           {errorMessage==='' && relatedQuestions.length===0 &&(
@@ -148,6 +179,32 @@ export const AppendicesTable = ({ appendices }) => {
                        content={selectedQuestion}
                        type={latexServerPath.COMPILE_MQ}/>
       )}
+
+      <Dialog
+        open={appendixToDelete}
+        onClose={() => setAppendixToDelete(null)}
+      >
+        <DialogTitle>{QUESTIONS_CATALOG.DELETE_APPENDIX_TITLE}</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            {QUESTIONS_CATALOG.CONFIRM_DELETE_APPENDIX}
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setAppendixToDelete(null)} color="primary">
+            Cancel
+          </Button>
+          <Button
+            onClick={() => {
+              handleDelete();
+            }}
+            color="primary"
+          >
+            Confirm
+          </Button>
+        </DialogActions>
+      </Dialog>
+
     </Card>
   );
 };
