@@ -13,7 +13,6 @@ It supports exam creation and provides a user-friendly catalog for viewing exams
 - [Installation](#installation)
 - [Usage](#usage)
 - [Contributing](#contributing)
-- [License](#license)
 
 ## Overview
 
@@ -137,7 +136,7 @@ compiled quesrtion
 ![img_26.png](img_26.png)
 ![img_27.png](img_27.png)
 ![img_28.png](img_28.png)
-8. view the exams the past exams tab
+8. view the exams the past exams tab 
 
 ## Contributing
 
