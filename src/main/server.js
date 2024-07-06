@@ -232,6 +232,26 @@ function createServer(options) {
     //   }
     server.post('/createExam', service.createExam)
 
+    /*
+    response:
+    [{
+    //  examid: num
+    //  questions:[
+    //   {
+    //      id: num
+    //       stem: str
+    //       appendix: {
+    //              title: str,
+    //              tag: str,
+    //              content: str
+    //        }
+    //       key: {answer: str, explanation: str },
+    //      distractors: [{answer: str, explanation: str }],
+    //     }]
+    //     numVersions: num,
+    //     examReason: str
+    //   }]
+     */
     server.get('/getAllExams',service.getAllExams)
 
     // response: MetaQuestion[]
@@ -253,7 +273,7 @@ function createServer(options) {
     server.get('/getAllAppendices', service.getAllAppendices)
 
     // request: {
-    //          exam:
+    //          examid: num
     //          version: num
     //
     // response:
@@ -266,8 +286,7 @@ function createServer(options) {
     //              tag: str,
     //              content: str
     //        }
-    //       key: {answer: str, explanation: str },
-    //      distractors: [{answer: str, explanation: str }],
+    //       answers: [{text, explanation, ordinal, tag}]
     //     }]
     server.get('/getVersionedExam', service.getVersionedExam)
 
