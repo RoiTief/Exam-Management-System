@@ -146,6 +146,7 @@ const UnmatchedTags = () => {
         taDetails={taskData?.creatingUser}
         taExplanation={taskData?.suggestedExplanation}
         handleWrongExplanation={() => setIsProvideExplanationOpen(true)}
+        handleSetExplanation={handleSetExplanation}
         finishTask={() => setIsFinished(true)}/>
 
       <DifferentTagPopup

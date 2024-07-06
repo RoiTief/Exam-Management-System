@@ -8,11 +8,12 @@ import {
 } from '@mui/material';
 import { UnmatchedTag } from '../../constants';
 
-export const SameTagPopup = ({ isOpen, closePopup, taDetails, taExplanation, handleWrongExplanation, finishTask }) => {
+export const SameTagPopup = ({ isOpen, closePopup, taDetails, taExplanation, handleWrongExplanation, handleSetExplanation, finishTask }) => {
   const handleOptionClick = (option) => {
     if (option === 'no') {
       handleWrongExplanation();
     } else {
+      handleSetExplanation(taExplanation);
       finishTask();
     }
     closePopup();
@@ -33,9 +34,6 @@ export const SameTagPopup = ({ isOpen, closePopup, taDetails, taExplanation, han
         <Button onClick={() => handleOptionClick('no')} color="primary">
           {UnmatchedTag.REJECT}
         </Button>
-        {/*<Button onClick={closePopup} color="primary">*/}
-        {/*  {UnmatchedTag.CLOSE}*/}
-        {/*</Button>*/}
       </DialogActions>
     </Dialog>
   );
