@@ -27,10 +27,9 @@ class TaskController {
         const callingUser = data.callingUser;
 
         const myDalRoleTasks = await this.#taskRepo.getTasksOfRole(callingUser.type);
-        const myRoleTasks = await Promise.all(
-            myDalRoleTasks.map(async dalTask => await this.#createdTaskFactory(dalTask, CREATED_TASK_SUPER_TYPES.ROLE_SPECIFIC))
-                .filter(t => t) //drops undefined tasks that were created due to errors
-        );
+        const myRoleTasks = (await Promise.all(
+            myDalRoleTasks.map(async dalTask => await this.#createdTaskFactory(dalTask, CREATED_TASK_SUPER_TYPES.ROLE_SPECIFIC)))
+        ).filter(t => t); //drops undefined tasks that were created due to errors
 
         // at a future point where user-specific tasks exist as well, concatenate the user-tasks and role-tasks
         return myRoleTasks;
