@@ -245,7 +245,8 @@ export const EXAM = {
     return `You have selected the maximum number of distractors (${this.MAX_DISTRACTOR_NUMBER}).`;
   },
   NUMBER_VERSIONS: "Number of Versions",
-  EXAM_REASON: "Reason for Exam"
+  EXAM_REASON: "Reason for Exam",
+  MAXIMUM_REPEAT: "This is the max number of questions you can make based on the number of answers and distractors for the question"
 
 };
 
