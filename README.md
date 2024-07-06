@@ -1,6 +1,7 @@
 # Exam Management System
 
-The Exam Management System is a comprehensive tool designed to create and maintain multiple-choice questions, including meta questions. It supports exam creation and provides a user-friendly catalog for viewing exams.
+The Exam Management System is a comprehensive tool designed to create and maintain multiple-choice meta questions. 
+It supports exam creation and provides a user-friendly catalog for viewing exams.
 
 ## Table of Contents
 - [Overview](#overview)
@@ -12,18 +13,41 @@ The Exam Management System is a comprehensive tool designed to create and mainta
 - [Installation](#installation)
 - [Usage](#usage)
 - [Contributing](#contributing)
-- [License](#license)
 
 ## Overview
 
-The system is responsible for creating and maintaining multiple-answer meta questions. Each question consists of:
+### Users
+
+The Exam Management System includes three types of users:
+
+Lecturer: Responsible for the exams and has the final say on changes to meta questions.
+Teaching Assistant (TA): Responsible for validating and creating meta questions.
+Admin: Responsible for maintaining user accounts.
+
+### Meta Questions
+
+The system is responsible for creating and maintaining multiple-answer meta questions. 
+Each question consists of:
 - **Stem**: The main body of the question.
 - **Keys**: The correct answers.
 - **Distractors**: The incorrect answers.
-- **Keywords**: Tags that help filter meta questions.
+- **Keywords**: Tags that help filter meta questions for easy filtering.
 - **Appendix**: Additional information or resources (optional).
 
+### Exams 
 The system also facilitates the creation of exams and saves them in a catalog that is easy to navigate.
+
+The Exam Management System streamlines the process of exam creation:
+
+- **Select Stems**: The user selects stems from the pool of questions.
+- **Generate Questions**: The system automatically rolls out distinct keys (correct answers) and distractors (incorrect answers) from the pool to create exam questions.
+- **Multiple Variations**: The system generates multiple variations of the exam, shuffling the answers in each variation to ensure uniqueness and reduce the chances of cheating.
+
+### Tasks
+The Exam Management System includes a tasks feature that allows Teaching Assistants (TAs) to request tasks:
+
+- **Task Requests**: TAs can ask for work through the system.
+- **Task Assignment**: The system assigns tasks to TAs, which may include validating existing meta questions or creating new questions based on a given keyword or keywords.
 
 ## Architecture
 
@@ -69,9 +93,10 @@ The React client provides a user interface for interacting with the system. It i
 - Create and manage multiple-answer meta questions.
 - Generate and manage exams.
 - Convert LaTeX code to PDF for professional exam documents.
-- User-friendly catalog for viewing past exams.
+- User-friendly catalog for viewing meta-questions and past exams.
 - Comprehensive user management for administrators.
-- Tagging system for efficient question management.
+- Tasks feature for assigning work to Teaching Assistants.
+
 
 ## Installation
 
@@ -84,12 +109,34 @@ To install the Exam Management System, follow these steps:
 
 ## Usage
 
-1. Navigate to the home page.
-2. Log in with your credentials.
-3. Use the course-staff page to manage exams and questions.
-4. Generate new exams using the generate-exam page.
-5. View past exams in the past-exams catalog.
-6. Administrators can manage users from the admin page.
+1. Log in with your credentials (you may need to update your password).
+![img.png](UI-screenshots/img.png)
+2. Navigate to the home page. Use the side Bar to navigate the system:
+![img_5.png](UI-screenshots/img_5.png)
+3. create new Meta Questions:
+![img_6.png](UI-screenshots/img_6.png)
+![img_7.png](UI-screenshots/img_7.png)
+4. view your meta-questions in the catalog - do notice you can edit and delete each question as well as viewing the
+compiled quesrtion
+![img_8.png](UI-screenshots/img_8.png)
+5. view your appendixes - pressing one of the rows will show you the questions related to he appendix
+![img_10.png](UI-screenshots/img_10.png)
+![img_11.png](UI-screenshots/img_11.png)
+6. ask for work tagging an answer as key or distractor
+![img_12.png](UI-screenshots/img_12.png)
+7. generate exam
+![img_13.png](UI-screenshots/img_13.png)
+![img_19.png](UI-screenshots/img_19.png)
+![img_20.png](UI-screenshots/img_20.png)
+![img_21.png](UI-screenshots/img_21.png)
+![img_22.png](UI-screenshots/img_22.png)
+![img_23.png](UI-screenshots/img_23.png)
+![img_24.png](UI-screenshots/img_24.png)
+![img_25.png](UI-screenshots/img_25.png)
+![img_26.png](UI-screenshots/img_26.png)
+![img_27.png](UI-screenshots/img_27.png)
+![img_28.png](UI-screenshots/img_28.png)
+8. view the exams the past exams tab 
 
 ## Contributing
 
@@ -99,7 +146,3 @@ We welcome contributions to the Exam Management System. To contribute, follow th
 2. Create a new branch.
 3. Make your changes.
 4. Submit a pull request.
-
-## License
-
-This project is licensed under the MIT License. See the LICENSE file for details.
