@@ -270,6 +270,8 @@ function createServer(options) {
     // request: work_type
     server.post('/completeGeneratedTask', service.completeGeneratedTask)
 
+    server.post('/completeCreatedTask', service.completeCreatedTask)
+
     // request: id
     server.post('/deleteQuestion', service.deleteQuestion)
 
