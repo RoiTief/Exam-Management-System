@@ -7,7 +7,6 @@ import {
   Divider, Stack
 } from '@mui/material';
 import { Layout as DashboardLayout } from 'src/layouts/dashboard/layout';
-import { useRouter } from 'next/router';
 import { Formik, Form } from 'formik';
 import * as Yup from 'yup';
 
@@ -20,6 +19,7 @@ import { httpsMethod, latexServerPath, requestServer, serverPath } from '../../u
 import { CREATE_QUESTION } from '../../constants';
 import { PdfLatexPopup } from '../../sections/popUps/QuestionPdfView';
 import ErrorMessage from '../../components/errorMessage';
+import useRouterOverride from '../../hooks/use-router';
 
 const validationSchema = Yup.object().shape({
   keywords: Yup.array().of(Yup.string()),
@@ -44,7 +44,7 @@ const validationSchema = Yup.object().shape({
 });
 
 const Page = () => {
-  const router = useRouter();
+  const router = useRouterOverride();
   const [showPdfView, setShowPdfView] = useState(false);
   const [showQuestionView, setShowQuestionView] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
@@ -87,7 +87,7 @@ const Page = () => {
       const metaQuestion = createMetaQuestion(values)
       console.log(metaQuestion);
       await requestServer(serverPath.ADD_META_QUESTION, httpsMethod.POST, metaQuestion);
-      await router.push('/');
+      await router.back();
     } catch (err){
       setErrorMessage(err.message)
     }

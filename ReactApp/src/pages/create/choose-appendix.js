@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Box, Button, Container, Stack, Typography } from '@mui/material';
 import { Layout as DashboardLayout } from 'src/layouts/dashboard/layout';
-import { useRouter } from 'next/router';
 import { Formik, Form } from 'formik';
 import * as Yup from 'yup';
 
@@ -14,6 +13,7 @@ import { httpsMethod, latexServerPath, requestServer, serverPath } from '../../u
 import { CREATE_QUESTION, EDIT_QUESTION } from '../../constants';
 import { PdfLatexPopup } from '../../sections/popUps/QuestionPdfView';
 import ErrorMessage from '../../components/errorMessage';
+import useRouterOveride from '../../hooks/use-router';
 
 const validationSchema = Yup.object().shape({
   keywords: Yup.array().of(Yup.string()),
@@ -38,7 +38,7 @@ const validationSchema = Yup.object().shape({
 });
 
 const Page = () => {
-  const router = useRouter();
+  const router = useRouterOveride();
   const [question, setQuestion] = useState(null);
   const [showPdfView, setShowPdfView] = useState(false);
   const [showQuestionView, setShowQuestionView] = useState(false)
@@ -97,7 +97,7 @@ const Page = () => {
       let request =  question? serverPath.EDIT_META_QUESTION : serverPath.ADD_META_QUESTION
       console.log(`${request} ${metaQuestion}`);
       await requestServer(request, httpsMethod.POST, metaQuestion);
-      await router.push('/');
+      await router.back();
     } catch (err){
       setErrorMessage(err.message)
     }

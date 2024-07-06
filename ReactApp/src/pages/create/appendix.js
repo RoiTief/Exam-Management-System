@@ -10,7 +10,6 @@ import {
   Typography
 } from '@mui/material';
 import { Layout as DashboardLayout } from 'src/layouts/dashboard/layout';
-import { useRouter } from 'next/router';
 import { Formik, Form } from 'formik';
 import * as Yup from 'yup';
 
@@ -20,6 +19,7 @@ import { PdfLatexPopup } from '../../sections/popUps/QuestionPdfView';
 import ErrorMessage from '../../components/errorMessage';
 import AppendixSection from '../../sections/create-edit-meta-question/apendix-edit';
 import { MetaQuestionTable } from '../../sections/view-questions/question-table';
+import useRouterOverride from '../../hooks/use-router';
 
 const validationSchema = Yup.object().shape({
   appendix: Yup.object().shape({
@@ -30,7 +30,7 @@ const validationSchema = Yup.object().shape({
 });
 
 const Page = () => {
-  const router = useRouter();
+  const router = useRouterOverride();
   const [appendix, setAppendix] = useState(null);
   const [relatedQuestions, setRelatedQuestions] = useState([]);
   const [showPdfView, setShowPdfView] = useState(false);
@@ -95,7 +95,7 @@ const Page = () => {
       const newAppendix = createAppendix(values);
       let request = appendix ? serverPath.EDIT_APPENDIX : serverPath.ADD_APPENDIX
       await requestServer(request, httpsMethod.POST, {appendix : newAppendix});
-      await router.push('/');
+      await router.back();
     } catch (err) {
       setErrorMessage(err.message);
     }
