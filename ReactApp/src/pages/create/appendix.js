@@ -55,6 +55,10 @@ const Page = () => {
       setAppendix(editAppendix);
       fetchRelatedQuestions(editAppendix)
     }
+    else{
+      setAppendix(null)
+      setRelatedQuestions([])
+    }
   }, [router.query.appendix]);
 
   const closePopup = () => {

@@ -48,6 +48,9 @@ const Page = () => {
     if (router.query.question) {
       setQuestion(JSON.parse(router.query.question));
     }
+    else{
+      setQuestion(null)
+    }
   }, [router.query.question]);
 
   const closePopup = () => {
