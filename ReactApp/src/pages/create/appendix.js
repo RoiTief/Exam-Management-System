@@ -39,27 +39,31 @@ const Page = () => {
   const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);
   const [formValues, setFormValues] = useState(null);
 
+  const fetchRelatedQuestions = async () => {
+    try {
+      const { metaQuestions } = await requestServer(serverPath.GET_META_QUESTIONS_FOR_APPENDIX, httpsMethod.POST, appendix);
+      setRelatedQuestions(metaQuestions);
+      setErrorMessage('')
+    } catch (error) {
+      setErrorMessage(`Error fetching related questions: ${error.message}`);
+    }
+  }
 
   useEffect(() => {
-    const fetchRelatedQuestions = async (editAppendix) => {
-      try {
-        const { metaQuestions } = await requestServer(serverPath.GET_META_QUESTIONS_FOR_APPENDIX, httpsMethod.POST, editAppendix);
-        setRelatedQuestions(metaQuestions);
-      } catch (error) {
-        setErrorMessage(`Error fetching related questions: ${error.message}`);
-      }
-    }
-
     if (router.query.appendix) {
       let editAppendix = JSON.parse(router.query.appendix)
       setAppendix(editAppendix);
-      fetchRelatedQuestions(editAppendix)
     }
     else{
       setAppendix(null)
       setRelatedQuestions([])
     }
   }, [router.query.appendix]);
+
+  useEffect(() => {
+    appendix &&
+    fetchRelatedQuestions()
+  }, [appendix]);
 
   const closePopup = () => {
     setShowPdfView(false)
@@ -154,7 +158,9 @@ const Page = () => {
             <Stack justifyContent="center" display='flex' spacing={4} direction="row" width="80%">
               {appendix && (
                 <Container maxWidth="md" sx={{ backgroundColor: '#ffffff', borderRadius: 2, boxShadow: 3, p: 4, width: "50%" }}>
-                  <MetaQuestionTable data={relatedQuestions} />
+                  <MetaQuestionTable data={relatedQuestions}
+                                     setErrorMessage={setErrorMessage}
+                                     fetchMetaQuestions={fetchRelatedQuestions}/>
                 </Container>
               )}
               <Container maxWidth="md" sx={{ backgroundColor: '#ffffff', borderRadius: 2, boxShadow: 3, p: 4, width: "50%" }}>
