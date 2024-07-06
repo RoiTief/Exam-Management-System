@@ -18,7 +18,6 @@ import {
   requestServer,
   serverPath
 } from '../../utils/rest-api-call';
-import { GENERATED_TASK_TYPES } from '../../../../src/main/Enums';
 import dynamic from 'next/dynamic';
 const QuestionPhotoView = dynamic(() => import('../../sections/popUps/QuestionPhotoView'), { ssr: false });
 import ErrorMessage from 'src/components/errorMessage';
