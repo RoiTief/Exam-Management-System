@@ -13,7 +13,6 @@ It supports exam creation and provides a user-friendly catalog for viewing exams
 - [Installation](#installation)
 - [Usage](#usage)
 - [Contributing](#contributing)
-- [License](#license)
 
 ## Overview
 
@@ -111,33 +110,33 @@ To install the Exam Management System, follow these steps:
 ## Usage
 
 1. Log in with your credentials (you may need to update your password).
-![img.png](img.png)
+![img.png](UI-screenshots/img.png)
 2. Navigate to the home page. Use the side Bar to navigate the system:
-![img_5.png](img_5.png)
+![img_5.png](UI-screenshots/img_5.png)
 3. create new Meta Questions:
-![img_6.png](img_6.png)
-![img_7.png](img_7.png)
+![img_6.png](UI-screenshots/img_6.png)
+![img_7.png](UI-screenshots/img_7.png)
 4. view your meta-questions in the catalog - do notice you can edit and delete each question as well as viewing the
 compiled quesrtion
-![img_8.png](img_8.png)
+![img_8.png](UI-screenshots/img_8.png)
 5. view your appendixes - pressing one of the rows will show you the questions related to he appendix
-![img_10.png](img_10.png)
-![img_11.png](img_11.png)
+![img_10.png](UI-screenshots/img_10.png)
+![img_11.png](UI-screenshots/img_11.png)
 6. ask for work tagging an answer as key or distractor
-![img_12.png](img_12.png)
+![img_12.png](UI-screenshots/img_12.png)
 7. generate exam
-![img_13.png](img_13.png)
-![img_19.png](img_19.png)
-![img_20.png](img_20.png)
-![img_21.png](img_21.png)
-![img_22.png](img_22.png)
-![img_23.png](img_23.png)
-![img_24.png](img_24.png)
-![img_25.png](img_25.png)
-![img_26.png](img_26.png)
-![img_27.png](img_27.png)
-![img_28.png](img_28.png)
-8. view the exams the past exams tab
+![img_13.png](UI-screenshots/img_13.png)
+![img_19.png](UI-screenshots/img_19.png)
+![img_20.png](UI-screenshots/img_20.png)
+![img_21.png](UI-screenshots/img_21.png)
+![img_22.png](UI-screenshots/img_22.png)
+![img_23.png](UI-screenshots/img_23.png)
+![img_24.png](UI-screenshots/img_24.png)
+![img_25.png](UI-screenshots/img_25.png)
+![img_26.png](UI-screenshots/img_26.png)
+![img_27.png](UI-screenshots/img_27.png)
+![img_28.png](UI-screenshots/img_28.png)
+8. view the exams the past exams tab 
 
 ## Contributing
 
