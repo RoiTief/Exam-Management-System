@@ -383,6 +383,52 @@ function addMetaQuestion(req, res, next) {
 }
 
 /**
+ *  request: {
+ appendix: {
+ title: str,
+ tag: str,
+ content: str
+ }
+ }
+ @throws {Error} - if fail to create
+ */
+function addAppendix(req, res, next) {
+    application.addAppendix(req.body).then(
+        appendix => {
+            req.log.info("request to create appendix");
+            res.send(200, {code: 200, appendix});
+            next();
+        },
+        err => {
+            req.log.warn(err.message, 'failed to create appendix');
+            next(err);
+        });
+}
+
+/**
+ *  request: {
+ appendix: {
+ title: str,
+ tag: str,
+ content: str
+ }
+ }
+ @throws {Error} - if fail to create
+ */
+function editAppendix(req, res, next) {
+    application.editAppendix(req.body).then(
+        appendix => {
+            req.log.info("request to create appendix");
+            res.send(200, {code: 200, appendix});
+            next();
+        },
+        err => {
+            req.log.warn(err.message, 'failed to create appendix');
+            next(err);
+        });
+}
+
+/**
     request: {
            selectedMetaQuestion: MetaQuestion,
            selectedKey: {answer: str, explanation: str },
@@ -646,4 +692,6 @@ module.exports = {
     generateTask: generateTask,
     completeGeneratedTask: completeGeneratedTask,
     completeCreatedTask: completeCreatedTask,
+    addAppendix,
+    editAppendix
 };

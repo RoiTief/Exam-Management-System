@@ -17,7 +17,7 @@ export const ConfirmDeleteUserPopup = ({user, isOpen, closePopup}) => {
       deleteUser(user.username);
       closePopup();
     } catch (err) {
-      setErrorMessage(err)
+      setErrorMessage(err.message)
     }
   };
   return (

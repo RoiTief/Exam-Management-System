@@ -89,7 +89,7 @@ const Page = () => {
       await requestServer(serverPath.ADD_META_QUESTION, httpsMethod.POST, metaQuestion);
       await router.push('/');
     } catch (err){
-      setErrorMessage(err)
+      setErrorMessage(err.message)
     }
   };
 
@@ -100,7 +100,7 @@ const Page = () => {
       setShowQuestionView(metaQuestion)
       setShowPdfView(true); // Show PDF view when button is clicked
     } catch (err) {
-      setErrorMessage(err)
+      setErrorMessage(err.message)
     }
   };
 
