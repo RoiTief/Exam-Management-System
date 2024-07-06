@@ -4,7 +4,7 @@ const MetaQuestionController = require('./MetaQuestions/MetaQuestionController.j
 const ExamController = require('./ExamManager/ExamController.js');
 const { userRepo, metaQuestionsRepo, taskRepo} = require("../DAL/Dal");
 const { validateParameters } = require('../validateParameters.js');
-const {USER_TYPES, PRIMITIVE_TYPES, ANSWER_TYPES, GENERATED_TASK_TYPES} = require("../Enums");
+const {USER_TYPES, PRIMITIVE_TYPES, ANSWER_TYPES, GENERATED_TASK_TYPES, CREATED_TASK_TYPES} = require("../Enums");
 const {EMSError, TASK_PROCESS_ERROR_CODES} = require("../EMSError");
 const {TASK_PROCESS_ERROR_MSGS} = require("../ErrorMessages");
 
@@ -450,7 +450,8 @@ class ApplicationFacade{
     }
 
     #taskBusinessToFE(bTask) {
-        return {
+        // base
+        const task = {
             taskId: bTask.taskId,
             superType: bTask.superType,
             type: bTask.type,
@@ -459,6 +460,19 @@ class ApplicationFacade{
             ...(bTask.metaQuestion && {metaQuestion: this.#mqBusinessToFE(bTask.metaQuestion)}),
             ...(bTask.answer && {answer: this.#answerBusinessToFE(bTask.answer)}),
         }
+
+        // specifics
+        switch (task.type) {
+            case CREATED_TASK_TYPES.EXPLANATION_COMPARISON:
+                task.suggestedExplanation = bTask.suggestedExplanation;
+                break;
+            case CREATED_TASK_TYPES.TAG_REVIEW:
+                task.suggestedExplanation = bTask.suggestedExplanation;
+                task.suggestedTag = bTask.suggestedTag;
+                break;
+        }
+
+        return task;
     }
 
     /* returns
