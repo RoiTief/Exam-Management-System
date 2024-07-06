@@ -5,6 +5,7 @@ import { Box, Typography, Divider, Button, TextField, Stack } from '@mui/materia
 import { EXAM } from '../../constants';
 import { PdfLatexPopup } from '../popUps/QuestionPdfView';
 import { latexServerPath } from '../../utils/rest-api-call';
+import { ANSWER_TYPES } from '../../../../src/main/Enums';
 
 export const ExamPopup = ({ isOpen, closePopup, exam, setShowPdfView }) => {
   const [selectedVersion, setSelectedVersion] = useState(1);
@@ -15,7 +16,6 @@ export const ExamPopup = ({ isOpen, closePopup, exam, setShowPdfView }) => {
       setSelectedVersion(value);
     }
   };
-
   const numberInputStyles = {
     '& input[type=number]::-webkit-inner-spin-button': {
       WebkitAppearance: 'inner-spin-button',
@@ -67,7 +67,7 @@ export const ExamPopup = ({ isOpen, closePopup, exam, setShowPdfView }) => {
                           {EXAM.ANSWER_HEADING}:
                         </Typography>
                         <Typography variant="body2">
-                          - {question.key.text}
+                          - {question.answers.find(a => a.tag === ANSWER_TYPES.KEY).text}
                         </Typography>
                       </Box>
                       <Box sx={{ display: 'flex', alignItems: 'baseline', mt: 1 }}>
@@ -75,11 +75,12 @@ export const ExamPopup = ({ isOpen, closePopup, exam, setShowPdfView }) => {
                           {EXAM.DISTRACTORS_HEADING}:
                         </Typography>
                         <Box>
-                          {question.distractors.map((distractor, idx) => (
-                            <Typography key={idx} variant="body2">
-                              - {distractor.text}
-                            </Typography>
-                          ))}
+                          {question.answers.filter(a => a.tag === ANSWER_TYPES.DISTRACTOR).
+                            map((distractor, idx) => (
+                              <Typography key={idx} variant="body2">
+                                - {distractor.text}
+                              </Typography>
+                            ))}
                         </Box>
                       </Box>
                     </Box>

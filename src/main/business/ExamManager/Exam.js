@@ -2,11 +2,17 @@ const Question = require("./Question");
 
 class Exam {
     #dalExam
+    /**@type {Question[]?} */
     #questions
     constructor(dalExam) {
         this.#dalExam = dalExam;
-        this.#questions = dalExam.questions ? dalExam.questions.map(dalQ => new Question(dalQ)) : []
+        this.#questions = dalExam.questions ? dalExam.questions.map(dalQ => new Question(dalQ)) : []        
     }
+    
+    /**
+     * 
+     * @returns {number}
+     */
     getId() {
         return this.#dalExam.id;
     }
@@ -14,8 +20,19 @@ class Exam {
     getQuestions() {
         return this.#questions
     }
-    getTitle() {
-        return this.#dalExam.title;
+
+
+    /**
+     * 
+     * @returns {string}
+     */
+    getExamReason(){
+        return this.#dalExam.examReason;
+    }
+
+    /**@returns {number} number of versions in the exam */
+    getNumVersions() {
+        return this.#dalExam.numVersions
     }
 }
 

@@ -131,7 +131,7 @@ export async function requestServer(path, method, body) {
           const {newToken} = await extractDataFromResponse(refreshTokenResponse)
           Cookies.set(TOKEN_FIELD_NAME, newToken, {expires: 1 / 96});
          }).catch(console.error)
-      
+         
     }
     else{
       responsePromise = fetch(SERVER_ROOT_URL + path,

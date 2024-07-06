@@ -1,4 +1,4 @@
-const {DataTypes} = require("sequelize");
+const { DataTypes } = require("sequelize");
 
 /**
  * Defines a 'Question' model within the given database
@@ -7,16 +7,16 @@ function defineQuestionAnswerModel(sequelize) {
     return sequelize.modelManager.models.some(model => model.name === "QuestionAnswer") ?
         sequelize.models.QuestionAnswer :
         sequelize.define("QuestionAnswer", {
-            version:{
+            version: {
                 primaryKey: true,
                 type: DataTypes.INTEGER,
             },
-            answerId:{
+            AnswerId: {
                 type: DataTypes.INTEGER,
                 primaryKey: true,
                 foreignKey: true
             },
-            questionId: {
+            QuestionId: {
                 type: DataTypes.INTEGER,
                 primaryKey: true,
                 foreignKey: true
@@ -25,6 +25,14 @@ function defineQuestionAnswerModel(sequelize) {
                 type: DataTypes.INTEGER,
                 allowNull: false
             }
+        }, {
+            tableName: 'QuestionAnswer',
+            indexes: [
+                {
+                    unique: true,
+                    fields: ['AnswerId', 'QuestionId', 'version'],
+                }
+            ]
         });
 }
 

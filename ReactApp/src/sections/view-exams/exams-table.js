@@ -17,7 +17,7 @@ export const ExamsTable = ({ data, setErrorMessage }) => {
 
   const showExamInPdf = async (version) => {
     try {
-      const { versionExam } = await requestServer(serverPath.GET_VERSIONED_EXAM, httpsMethod.GET, { selectedExam, version });
+      const { versionExam } = await requestServer(serverPath.GET_VERSIONED_EXAM, httpsMethod.POST, { examId: selectedExam.examId, version });
       setVersionedExam(versionExam)
       setShowPdfView(true); // Show Exam view when row is clicked
     } catch (err) {

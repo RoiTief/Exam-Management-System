@@ -560,33 +560,15 @@ function editMetaQuestion(req, res, next) {
 }
 
 
-/**
- * creates an Exam
- * @param - req.body = [{
- *     //       stem: str,
- *     //       answer: str,
- *     //       distractors: [str],
- *     //      appendix: {
- *     //          title: str,
- *     //          tag: str,
- *     //          content: str
- *     //       }
- *     //     }]
- *     //
- *     appendix could be null
- * @throws {Error} - if fail to create
- */
 function createExam(req, res, next){
-    try{
-        req.log.info("request to create Exam");
-        const exam = application.createExam(req.body)
+    req.log.info("request to create Exam");
+    application.createExam(req.body).then(exam =>{
         res.send(200, {code:200,exam})
         next()
-    }
-    catch(err){
+    }, err => {
         req.log.warn(err.message, 'failed to create meta questions');
         next(err);
-    }
+    })
 }
 
 function getAllExams(req, res, next){
@@ -601,9 +583,13 @@ function getAllExams(req, res, next){
 }
 
 function getVersionedExam(req, res, next){
-    // todo - implement
-    res.send(200, {code:200})
-    next()
+    application.getVersionedExam(req.body).then(versionExam =>{
+        res.send(200, {code:200, versionExam})
+        next()
+    }, err =>{
+        req.log.warn(err.message, `failed to get versioned exam. id:${req.body.examId} version:${req.body.version}`);
+        next(err);
+    })
 }
 
 function editUser(req, res, next) {

@@ -3,7 +3,8 @@ const Answer = require("./Answer");
 
 class MetaQuestion {
     #dalMQ
-    #Answers
+    /**@type {Answer[]} */
+    #Answers 
 
     constructor(dalMQ) {
         this.#dalMQ = dalMQ;
@@ -23,6 +24,10 @@ class MetaQuestion {
         return this.#Answers;
     }
 
+    /**
+     * 
+     * @returns {Answer[]}
+     */
     getKeys() {
         return this.#Answers
             .filter(a => a.getTag() === ANSWER_TYPES.KEY)
@@ -32,7 +37,10 @@ class MetaQuestion {
         return this.#Answers
             .filter(a => a.getTag() === ANSWER_TYPES.DISTRACTOR)
     }
-    
+    /**
+     * 
+     * @returns {string?}
+     */
     getAppendixTag() {
         return this.#dalMQ.appendixTag;
     }

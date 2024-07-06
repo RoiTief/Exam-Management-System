@@ -6,7 +6,8 @@ const EXAM_CONSTANTS = {
     DEFAULT_QUESTIONS_QUANTITY_OCCURRENCES: 1,
     get NUMBER_OF_QUESTIONS() {
         return this.MAX_DISTRACTOR_NUMBER + 1
-    }
+    },
+    PREVIEW_VERSION: 0
 }
 
 module.exports = {

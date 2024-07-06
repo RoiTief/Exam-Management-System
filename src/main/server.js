@@ -213,45 +213,8 @@ function createServer(options) {
 
     server.post('/editAppendix', service.editAppendix);
 
-    // request:
-    //  {
-    //  questions:[
-    //   {
-    //      id: num
-    //       stem: str
-    //       appendix: {
-    //              title: str,
-    //              tag: str,
-    //              content: str
-    //        }
-    //       key: {answer: str, explanation: str },
-    //      distractors: [{answer: str, explanation: str }],
-    //     }]
-    //     numVersions: num,
-    //     examReason: str
-    //   }
     server.post('/createExam', service.createExam)
 
-    /*
-    response:
-    [{
-    //  examid: num
-    //  questions:[
-    //   {
-    //      id: num
-    //       stem: str
-    //       appendix: {
-    //              title: str,
-    //              tag: str,
-    //              content: str
-    //        }
-    //       key: {answer: str, explanation: str },
-    //      distractors: [{answer: str, explanation: str }],
-    //     }]
-    //     numVersions: num,
-    //     examReason: str
-    //   }]
-     */
     server.get('/getAllExams',service.getAllExams)
 
     // response: MetaQuestion[]
@@ -272,23 +235,7 @@ function createServer(options) {
     // response: Appendix[]
     server.get('/getAllAppendices', service.getAllAppendices)
 
-    // request: {
-    //          examid: num
-    //          version: num
-    //
-    // response:
-    //    versionExam:[
-    //   {
-    //      id: num
-    //       stem: str
-    //       appendix: {
-    //              title: str,
-    //              tag: str,
-    //              content: str
-    //        }
-    //       answers: [{text, explanation, ordinal, tag}]
-    //     }]
-    server.get('/getVersionedExam', service.getVersionedExam)
+    server.post('/getVersionedExam', service.getVersionedExam)
 
     // request: Appendix
     // response: MetaQuestion[]

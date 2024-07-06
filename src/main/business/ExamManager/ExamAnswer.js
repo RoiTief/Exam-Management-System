@@ -12,6 +12,10 @@ class ExamAnswer extends Answer{
     getOrdinal(){
         return this.#dalExamAnswer.QuestionAnswer.ordinal
     }
+    /**@returns {number} */
+    getVersion(){
+        return this.#dalExamAnswer.QuestionAnswer.version
+    }
 }
 
 module.exports = ExamAnswer

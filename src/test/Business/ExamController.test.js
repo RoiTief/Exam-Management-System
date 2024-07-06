@@ -18,7 +18,9 @@ const callingUser = {
 }
 const examDataArr = Array.from({ length: EXAM_NUM }, (_, i) => ({
     callingUser,
-    title: `title ${i}`
+    examReason: `title ${i}`,
+    numVersions: 1, 
+    examReason: `reason ${i}`
 }));
 const mqDataArr = Array.from({ length: MQ_NUM }, (_, i) => ({
     stem: `stem ${i}`,
@@ -79,7 +81,7 @@ describe('Happy-Path ExamController tests', () => {
     test('create exam', async () => {
         try {
             const exam = await examController.createExam(examDataArr[0])
-            expect(exam.getTitle()).toBe(examDataArr[0].title);
+            expect(exam.getExamReason()).toBe(examDataArr[0].examReason);
         } catch (e) {
             console.log(e)
             expect(false).toBeTruthy()
@@ -141,87 +143,4 @@ describe('Happy-Path ExamController tests', () => {
         }
     })
 
-    // test('edit appendix', async () => {
-    //     await mqController.createAppendix({
-    //         ...appendixData,
-    //         callingUser: lecturerCallingDetails
-    //     })
-
-    //     // edit keywords only
-    //     const editData = {
-    //         callingUser: lecturerCallingDetails,
-    //         tag: appendixData.tag,
-    //         keywords: [],
-    //     }
-    //     await mqController.editAppendix(editData);
-    //     let updatedAppendix = await mqController.getAppendix(editData.tag);
-    //     expect(updatedAppendix.getTag()).toBe(appendixData.tag);
-    //     expect(updatedAppendix.getTitle()).toBe(appendixData.title);
-    //     expect(updatedAppendix.getContent()).toBe(appendixData.content);
-    //     expect(updatedAppendix.getKeywords()).toStrictEqual(editData.keywords);
-
-    //     // edit title
-    //     editData.title = 'new title';
-    //     await mqController.editAppendix(editData);
-    //     updatedAppendix = await mqController.getAppendix(editData.tag);
-    //     expect(updatedAppendix.getTag()).toBe(appendixData.tag);
-    //     expect(updatedAppendix.getTitle()).toBe(editData.title);
-    //     expect(updatedAppendix.getContent()).toBe(appendixData.content);
-    //     expect(updatedAppendix.getKeywords()).toStrictEqual(editData.keywords);
-
-    //     // edit content
-    //     editData.content = 'new content';
-    //     await mqController.editAppendix(editData);
-    //     updatedAppendix = await mqController.getAppendix(editData.tag);
-    //     expect(updatedAppendix.getTag()).toBe(appendixData.tag);
-    //     expect(updatedAppendix.getTitle()).toBe(editData.title);
-    //     expect(updatedAppendix.getContent()).toBe(editData.content);
-    //     expect(updatedAppendix.getKeywords()).toStrictEqual(editData.keywords);
-    // })
-
-    // afterAll(async () => {
-    //     await sequelize.close();
-    // });
-
-    // test('add simple MQ', async () => {
-    //     try {
-    //         await mqController.getMetaQuestion(1);
-    //         expect(false).toBeTruthy();
-    //     } catch (e) {
-    //         expect(e instanceof EMSError).toBeTruthy();
-    //         expect(e.errorCode).toBe(MQ_PROCESS_ERROR_CODES.MQ_ID_DOESNT_EXIST)
-    //     }
-
-    //     await mqController.createMetaQuestion({
-    //         ...(structuredClone(simpleMQData)),
-    //         callingUser: lecturerCallingDetails
-    //     })
-    //     let mq;
-    //     try {
-    //         mq = await mqController.getMetaQuestion(1);
-    //     } catch (e) {
-    //         expect(false).toBeTruthy();
-    //     }
-    //     expect(mq.getStem()).toBe(simpleMQData.stem);
-    //     expect(mq.getKeywords().sort())
-    //         .toStrictEqual(appendixData.keywords.sort());
-    //     expect(mq.getAnswers()
-    //         .map(a => ({content: a.getContent(), tag: a.getTag(), ...(a.getExplanation() && {explanation: a.getExplanation()})}))
-    //         .sort((a,b) => a.content.localeCompare(b.content)))
-    //         .toStrictEqual(simpleMQData.answers.sort((a, b) => a.content.localeCompare(b.content)));
-    //     expect(mq.getKeys()
-    //         .map(k => ({content: k.getContent(), tag: k.getTag(), ...(k.getExplanation() && {explanation: k.getExplanation()})}))
-    //         .sort((a,b) => a.content.localeCompare(b.content)))
-    //         .toStrictEqual(simpleMQData.answers
-    //             .filter(a => a.tag === ANSWER_TYPES.KEY)
-    //             .sort((a, b) => a.content.localeCompare(b.content)));
-    //     expect(mq.getDistractors()
-    //         .map(d => ({content: d.getContent(), tag: d.getTag(), ...(d.getExplanation() && {explanation: d.getExplanation()})}))
-    //         .sort((a,b) => a.content.localeCompare(b.content)))
-    //         .toStrictEqual(simpleMQData.answers
-    //             .filter(a => a.tag === ANSWER_TYPES.DISTRACTOR)
-    //             .sort((a, b) => a.content.localeCompare(b.content)));
-    //     if (mq.getAppendixTag())
-    //         expect(false).toBeTruthy();
-    // })
 });

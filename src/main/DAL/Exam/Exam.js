@@ -7,10 +7,14 @@ function defineExamModel(sequelize) {
     return sequelize.modelManager.models.some(model => model.name === "Exam") ?
         sequelize.models.Exam :
         sequelize.define("Exam", {
-            title: {
+            examReason: {
                 type: DataTypes.STRING,
                 allowNull: false
-            }
+            },
+            numVersions: {
+                type: DataTypes.INTEGER,
+                allowNull: false
+            },
         });
 }
 

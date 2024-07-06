@@ -9,6 +9,11 @@ const {USER_TYPES, PRIMITIVE_TYPES, ANSWER_TYPES, GENERATED_TASK_TYPES} = requir
 const {EMSError, TASK_PROCESS_ERROR_CODES} = require("../EMSError");
 const {TASK_PROCESS_ERROR_MSGS} = require("../ErrorMessages");
 const MetaQuestion = require('./MetaQuestions/MetaQuestion.js');
+const Exam = require('./ExamManager/Exam.js');
+const Question = require('./ExamManager/Question.js');
+const ExamAnswer = require('./ExamManager/ExamAnswer.js');
+const Answer = require('./MetaQuestions/Answer.js');
+const { EXAM_CONSTANTS } = require('../constants.js');
 
 class ApplicationFacade{
     constructor() {
@@ -145,14 +150,25 @@ class ApplicationFacade{
      * creates an Exam for the course {@username} is Admin of
      * export it as a pdf and as a word file
      * adds the test to pastExams
-     * @return {Exam}
+     * @param { {
+     * questions:[
+     *  {
+        *  id:number, 
+        *  stem: string, 
+        *  appendix: SAppendix,
+        *  key: {id: number, answer: string, explanation: string }, 
+        *  distractors:{id: number, answer: string, explanation: string }[],
+     *  }],
+     * numVersions: number,
+     * examReason: string  }} createExamProperties
+     * 
      * @throws {Error} - if there is no user with name @username
      *                 - if the user named username is not a lecturerUsername or is not assigned to a course
      *                 - if the course subject spread is not specified
      *                 - if there is not enough questions for a subject
      */
-    createExam(createExamProperties){
-        return this.examController.createExam(createExamProperties)
+    async createExam(createExamProperties){
+        await this.examController.createExamWithQuestions(createExamProperties)
     }
 
 
@@ -327,10 +343,25 @@ class ApplicationFacade{
         return await Promise.all(businessMQs.map(async bMQ => await this.#mqBusinessToFE(bMQ)));
     }
 
-    async getAllExams(getAllExamsProperties){
-        const blExams = await this.examController.getAllExams(getAllExamsProperties)
 
-        return await Promise.all(blExams.map(blExam => this.#examBusinessToFE(blExam)))
+    /**
+     * return all preview exams (version 0)
+     * @param {{callingUser:CallingUser}} getAllExamsProperties
+     * @returns {Promise<SExam[]>}
+     */
+    async getAllExams(getAllExamsProperties){
+        const bExams = await this.examController.getAllExams(getAllExamsProperties)
+        return await Promise.all(bExams.map(bExam => this.#examBusinessToFE(bExam)))
+    }
+
+    /**
+     * 
+     * @param {{callingUser:CallingUser, examId:number , version:number}} data 
+     * @returns {Promise<SExam>}
+     */
+    async getVersionedExam(data){
+        const exam = await this.examController.getVersionedExam(data)
+        return await this.#examBusinessToFE(exam)
     }
     
     /**
@@ -441,6 +472,9 @@ class ApplicationFacade{
         }
     }
 
+    /**
+     * @param {Answer} bAnswer
+     */
     #answerBusinessToFE(bAnswer){
         return {
             id: bAnswer.getId(),
@@ -459,32 +493,46 @@ class ApplicationFacade{
         }
     }
 
+    /**
+     * @param {ExamAnswer} bExamAnswer
+     * @returns {SExamAnswer}
+     */
     #examAnswerBusinessToFE(bExamAnswer) {
         return {
             ...this.#answerBusinessToFE(bExamAnswer),
             ordinal: bExamAnswer.getOrdinal(),
+            version: bExamAnswer.getVersion(),
         }
     }
 
+    /**
+     * @param {Question} bQuestion
+     * @returns {Promise<SQuestion>}
+     */
     async #questionBusinessToFE(bQuestion){
         const appendixTag = bQuestion.getMetaQuestion().getAppendixTag()
-        const appendix = await this.metaQuestionController.getAppendix(appendixTag);
+        const bAppendix = appendixTag ? await this.metaQuestionController.getAppendix(appendixTag) : null;
         return{
             id: bQuestion.getId(),
             mqId: bQuestion.getMetaQuestion().getId(),
             stem: bQuestion.getStem(),
-            key: this.#examAnswerBusinessToFE(bQuestion.getKey()),
-            distractors: bQuestion.getDistractors().map(d=>this.#examAnswerBusinessToFE(d)),
             ordinal: bQuestion.getOrdinal(),
-            ...(appendixTag || {appendix}),
+            ...(appendixTag && {appendix: this.#appendixBusinessToFE(bAppendix)}),
+            answers: bQuestion.getAnswers().map(a=>this.#examAnswerBusinessToFE(a))
         }
     }
-
+    
+    /**
+     * @param { Exam } bExam
+     * @returns {Promise<SExam>}
+     */
     async #examBusinessToFE(bExam){
         const questions = await Promise.all(bExam.getQuestions().map(q=>this.#questionBusinessToFE(q)))
         return{
             examId: bExam.getId(),
             questions,
+            examReason: bExam.getExamReason(),
+            numVersions: bExam.getNumVersions(),
         }
     }
 

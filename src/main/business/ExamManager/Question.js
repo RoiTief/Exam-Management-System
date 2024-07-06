@@ -1,10 +1,11 @@
-const Answer = require("../MetaQuestions/Answer");
+const { ANSWER_TYPES } = require("../../Enums");
 const MetaQuestion = require("../MetaQuestions/MetaQuestion");
 const ExamAnswer = require("./ExamAnswer");
-
 class Question {
     #dalQuestion
+    /**@type {MetaQuestion} */
     #metaQuestion
+    /**@type {ExamAnswer[]} */
     #ExamAnswers
     constructor(dalQuestion) {
         this.#dalQuestion = dalQuestion;

@@ -7,6 +7,7 @@ const { EMSError, EXAM_PROCESS_ERROR_CODES } = require("../../EMSError");
 const { EXAM_PROCESS_ERROR_MSGS } = require("../../ErrorMessages");
 const { PRIMITIVE_TYPES } = require("../../Enums");
 const { validateParametersWithoutCallingUser } = require("../../validateParameters");
+const { EXAM_CONSTANTS } = require("../../constants");
 
 class ExamRepository {
     #MetaQuestion
@@ -34,12 +35,12 @@ class ExamRepository {
         this.#Question.belongsTo(this.#MetaQuestion, { as: 'metaQuestion', foreignKey: 'metaQuestionId' });
 
         // Question - Answer, many to many
-        this.#Question.belongsToMany(this.#Answer, { as: 'answers', through: this.#QuestionAnswer });
-        this.#Answer.belongsToMany(this.#Question, { as: 'questions', through: this.#QuestionAnswer });
+        this.#Question.belongsToMany(this.#Answer, { as: 'answers', through: { model: this.#QuestionAnswer, unique: false } });
+        this.#Answer.belongsToMany(this.#Question, { as: 'questions', through: { model: this.#QuestionAnswer, unique: false } });
     }
     /**
      * 
-     * @param  examData { title:string }
+     * @param  {{examReason: string, numVersions:number}} examData
      * @returns New Dal exam promise
      */
     async createExam(examData) {
@@ -106,7 +107,7 @@ class ExamRepository {
             });
         } catch (e) {
             console.error(e);
-            throw new EMSError(EXAM_PROCESS_ERROR_MSGS.ADD_QUESTION_TO_EXAM(examId, mQid, questionData, answerData), EXAM_PROCESS_ERROR_CODES.ADD_QUESTION_TO_EXAM)
+            throw new EMSError(EXAM_PROCESS_ERROR_MSGS.ADD_QUESTION_TO_EXAM(examId, mQid, questionData, answersData), EXAM_PROCESS_ERROR_CODES.ADD_QUESTION_TO_EXAM)
         }
     }
 
@@ -133,6 +134,33 @@ class ExamRepository {
 
     }
 
+    /**
+     * 
+     * @param {number} examId 
+     * @param {number} version 
+     * @returns 
+     */
+    async getVersionedExam(examId, version) {
+        return await this.#Exam.findOne(
+            {
+                include: [
+                    {
+                        model: this.#Question, as: 'questions',
+                        include: [
+                            {
+                                model: this.#MetaQuestion, as: 'metaQuestion'
+                            },
+                            {
+                                model: this.#Answer, as: 'answers',
+                                through: { where: { version: version } }
+                            }
+                        ]
+                    }
+                ],
+                where: { id: examId }
+            });
+    }
+
     async getAllExams() {
         return await this.#Exam.findAll(
             {
@@ -144,7 +172,9 @@ class ExamRepository {
                                 model: this.#MetaQuestion, as: 'metaQuestion'
                             },
                             {
-                                model: this.#Answer, as: 'answers'
+                                model: this.#Answer, as: 'answers',
+                                through: { where: { version: EXAM_CONSTANTS.PREVIEW_VERSION } }
+
                             }
                         ]
                     }
