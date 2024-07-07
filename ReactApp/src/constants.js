@@ -37,7 +37,7 @@ export const SIDE_BAR = {
 }
 
 export const CALENDAR = {
-  CALENDAR: "Calender"
+  CALENDAR: "Calendar"
 }
 
 export const FAQ = {
