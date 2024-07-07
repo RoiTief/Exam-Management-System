@@ -39,6 +39,11 @@ app.post('/exam', upload.none(), (req, res) => {
     latexCompiler.compileExam(test, compileCallback(res));
 });
 
+app.post('/exam_version', upload.none(), (req, res) => {
+    const exam = req.body.content;
+    latexCompiler.compileExamVersion(exam, compileCallback(res));
+});
+
 app.post('/metaQuestion', upload.none(), (req, res) => {
     const metaQuestion = req.body.content;
     latexCompiler.compileMetaQuestion(metaQuestion, compileCallback(res));

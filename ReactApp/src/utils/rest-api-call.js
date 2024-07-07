@@ -61,6 +61,7 @@ const pathToReturnTypeMap={
 export const latexServerPath = {
   COMPILE: 'compile',
   COMPILE_EXAM: 'exam',
+  COMPILE_EXAM_VERSION: 'exam_version',
   COMPILE_MQ: 'metaQuestion',
   COMPILE_STEM: 'stem',
   COMPILE_APPENDIX: 'appendix',

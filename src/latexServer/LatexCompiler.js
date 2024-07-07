@@ -3,6 +3,7 @@ const fs = require("fs");
 const {exec} = require("child_process");
 const { DEFAULT_LATEX_CONFIG  }= require('./config')
 const ExamCompiler = require("./ExamCompiler");
+const ExamVersionCompiler = require("./ExamVersionCompiler");
 
 const PDF_DIR = 'pdfs';
 
@@ -157,6 +158,32 @@ class LatexCompiler {
         );
 
         examCompiler.compile(exam, () => {
+            this.#compile(filename, callback)
+        });
+    }
+
+    /**
+     * Compiles given exam version JSON to test format and sends the pdf to the callback.
+     * @param exam JSON holding all information needed to generate the test.
+     * @param callback Callback that handles failure/success of the compilation
+     */
+    compileExamVersion(exam, callback) {
+        const timestamp = Date.now();
+        const filename = timestamp;
+        const texPath = path.join(this.#pdfDirPath, filename + EXTENSIONS.TEX);
+
+        const examVersionCompiler = new ExamVersionCompiler(texPath,
+            {
+                PREAMBLE: `${this.#preamble}\n${DEFAULT_LATEX_CONFIG.EXAM_PREAMBLE}`,
+                OPENING: this.#opening,
+                QUESTION_COMMANDS: DEFAULT_LATEX_CONFIG.QUESTION_COMMANDS,
+                ANSWER_SHEET_COMMANDS: DEFAULT_LATEX_CONFIG.ANSWER_SHEET_COMMANDS,
+                SOLVED_QUESTIONS_COMMANDS: DEFAULT_LATEX_CONFIG.SOLVED_QUESTIONS_COMMANDS,
+                CLOSING: this.#closing,
+            }
+        );
+
+        examVersionCompiler.compile(exam, () => {
             this.#compile(filename, callback)
         });
     }

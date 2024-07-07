@@ -89,7 +89,7 @@ export const ExamsTable = ({ data, setErrorMessage }) => {
           isOpen={showPdfView}
           closePopup={() => setShowPdfView(false)}
           content={versionedExam.questions}
-          type={latexServerPath.COMPILE_EXAM}
+          type={latexServerPath.COMPILE_EXAM_VERSION}
         />
       )}
     </Stack>
