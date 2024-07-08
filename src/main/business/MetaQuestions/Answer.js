@@ -35,6 +35,24 @@ class Answer {
     getMetaQuestionId() {
         return this.#dalAnswer.metaQuestionId;
     }
+
+    async setContentOrientation(isRTL) {
+        this.#dalAnswer.isContentRTL = isRTL;
+        await this.#dalAnswer.save();
+    }
+
+    isContentRTL() {
+        return this.#dalAnswer.isContentRTL;
+    }
+
+    async setExplanationOrientation(isRTL) {
+        this.#dalAnswer.isExplanationRTL = isRTL;
+        await this.#dalAnswer.save();
+    }
+
+    isExplanationRTL() {
+        return this.#dalAnswer.isExplanationRTL;
+    }
 }
 
 module.exports = Answer;
