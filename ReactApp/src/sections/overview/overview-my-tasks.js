@@ -55,8 +55,8 @@ export const OverviewAssignedTasks = () => {
         <List>
           {tasks.map((task) => {
             const href = task.type === "tag-review"
-              ? `/task/unmatched-tag?task=${encodeURIComponent(JSON.stringify(task))}`
-              : `/task/new-explanation?task=${encodeURIComponent(JSON.stringify(task))}`;
+              ? `/task/unmatched-tag?task=${btoa(encodeURIComponent(JSON.stringify(task)))}`
+              : `/task/new-explanation?task=${btoa(encodeURIComponent(JSON.stringify(task)))}`;
 
             return (
               <NextLink key={task.taskId} href={href}>
