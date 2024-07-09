@@ -21,6 +21,16 @@ function defineAnswerModel(sequelize) {
                     type: DataTypes.STRING,
                     allowNull: true
                 },
+                isContentRTL: {
+                    type: DataTypes.BOOLEAN,
+                    allowNull: false,
+                    defaultValue: false,
+                },
+                isExplanationRTL: {
+                    type: DataTypes.BOOLEAN,
+                    allowNull: false,
+                    defaultValue: false,
+                },
             }
         );
 }

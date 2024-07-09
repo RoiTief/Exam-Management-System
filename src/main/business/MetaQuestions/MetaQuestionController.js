@@ -53,8 +53,9 @@ class MetaQuestionController{
     async createMetaQuestion(data) {
         validateParameters(data, {
             keywords: [PRIMITIVE_TYPES.STRING],
-            answers: [{content: PRIMITIVE_TYPES.STRING, tag: PRIMITIVE_TYPES.STRING}],
+            answers: [{content: PRIMITIVE_TYPES.STRING, tag: PRIMITIVE_TYPES.STRING, isContentRTL: PRIMITIVE_TYPES.BOOLEAN, isExplanationRTL: PRIMITIVE_TYPES.BOOLEAN}],
             stem: PRIMITIVE_TYPES.STRING,
+            isStemRTL: PRIMITIVE_TYPES.BOOLEAN,
         });
 
         const dalMQ = await this.#metaQuestionRepo.addMetaQuestion(data, data.answers, data.keywords);
@@ -66,14 +67,16 @@ class MetaQuestionController{
         validateParameters(data, {
             id: PRIMITIVE_TYPES.NUMBER,
             keywords: [PRIMITIVE_TYPES.STRING],
-            answers: [{content: PRIMITIVE_TYPES.STRING, tag: PRIMITIVE_TYPES.STRING}],
+            answers: [{content: PRIMITIVE_TYPES.STRING, tag: PRIMITIVE_TYPES.STRING, isContentRTL: PRIMITIVE_TYPES.BOOLEAN, isExplanationRTL: PRIMITIVE_TYPES.BOOLEAN}],
             stem: PRIMITIVE_TYPES.STRING,
+            isStemRTL: PRIMITIVE_TYPES.BOOLEAN,
         });
         await this.#metaQuestionRepo.setKeywordsToQuestion(data.id, data.keywords);
         await this.#metaQuestionRepo.deleteAnswersOfMq(data.id)
         await this.#metaQuestionRepo.addAnswersToQuestion(data.id, data.answers);
         const metaQuestion = await this.getMetaQuestion(data.id);
         await metaQuestion.setStem(data.stem);
+        await metaQuestion.setStemOrientation(data.isStemRTL);
         await metaQuestion.setAppendix(data.appendixTag ? data.appendixTag : null);
 
         return metaQuestion;

@@ -19,6 +19,10 @@ class MetaQuestion {
         return this.#dalMQ.stem
     }
 
+    isStemRTL() {
+        return this.#dalMQ.isStemRTL;
+    }
+
     getAnswers() {
         return this.#Answers;
     }
@@ -48,6 +52,11 @@ class MetaQuestion {
 
     async setAppendix(appendixTag) {
         this.#dalMQ.appendixTag = appendixTag;
+        await this.#dalMQ.save();
+    }
+
+    async setStemOrientation(isStemRTL) {
+        this.#dalMQ.isStemRTL = isStemRTL;
         await this.#dalMQ.save();
     }
 }

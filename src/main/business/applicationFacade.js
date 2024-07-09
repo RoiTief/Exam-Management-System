@@ -268,8 +268,8 @@ class ApplicationFacade{
     async addMetaQuestion(data) {
         validateParameters(data, {
             keywords: [PRIMITIVE_TYPES.STRING],
-            keys: [{text: PRIMITIVE_TYPES.STRING}],
-            distractors: [{text: PRIMITIVE_TYPES.STRING}],
+            keys: [{text: PRIMITIVE_TYPES.STRING, isTextRTL: PRIMITIVE_TYPES.BOOLEAN, isExplanationRTL: PRIMITIVE_TYPES.BOOLEAN}],
+            distractors: [{text: PRIMITIVE_TYPES.STRING, isTextRTL: PRIMITIVE_TYPES.BOOLEAN, isExplanationRTL: PRIMITIVE_TYPES.BOOLEAN}],
             stem: PRIMITIVE_TYPES.STRING,
         });
         // case where an appendix is being created alongside the MQ
@@ -280,18 +280,23 @@ class ApplicationFacade{
             });
             data.appendixTag = businessAppendix.getTag();
         }
-        data.answers = data.keys.map(k => ({...k, content: k.text, tag: ANSWER_TYPES.KEY}))
-            .concat(data.distractors.map(d => ({...d, content: d.text, tag: ANSWER_TYPES.DISTRACTOR})));
+        data.answers = data.keys.map(k => ({...k, content: k.text, isContentRTL: k.isTextRTL, tag: ANSWER_TYPES.KEY}))
+            .concat(data.distractors.map(d => ({...d, content: d.text, isContentRTL: d.isTextRTL, tag: ANSWER_TYPES.DISTRACTOR})));
         const businessMQ = await this.metaQuestionController.createMetaQuestion(data);
         const businessAppendix = businessMQ.getAppendixTag() ? await this.metaQuestionController.getAppendix(businessMQ.getAppendixTag()) : null;
         return this.#mqBusinessToFE(businessMQ, businessAppendix);
     }
 
     async editMetaQuestion(data) {
-        validateParameters(data, {id: PRIMITIVE_TYPES.NUMBER})
-        const keys = data.keys ? data.keys.map(k => ({...k, content: k.text, tag: ANSWER_TYPES.KEY})) : [];
-        const distractors = data.distractors ? data.distractors.map(distractor => ({...distractor, content: distractor.text, tag: ANSWER_TYPES.DISTRACTOR})) : [];
-        data.answers = keys.concat(distractors);
+        validateParameters(data, {
+            id: PRIMITIVE_TYPES.NUMBER,
+            keywords: [PRIMITIVE_TYPES.STRING],
+            keys: [{text: PRIMITIVE_TYPES.STRING, isTextRTL: PRIMITIVE_TYPES.BOOLEAN, isExplanationRTL: PRIMITIVE_TYPES.BOOLEAN}],
+            distractors: [{text: PRIMITIVE_TYPES.STRING, isTextRTL: PRIMITIVE_TYPES.BOOLEAN, isExplanationRTL: PRIMITIVE_TYPES.BOOLEAN}],
+            stem: PRIMITIVE_TYPES.STRING,
+        })
+        data.answers = data.keys.map(k => ({...k, content: k.text, isContentRTL: k.isTextRTL, tag: ANSWER_TYPES.KEY}))
+            .concat(data.distractors.map(d => ({...d, content: d.text, isContentRTL: d.isTextRTL, tag: ANSWER_TYPES.DISTRACTOR})));
         const businessMQ = await this.metaQuestionController.editMetaQuestion(data);
         const businessAppendix = businessMQ.getAppendixTag() ? await this.metaQuestionController.getAppendix(businessMQ.getAppendixTag()) : null;
         return this.#mqBusinessToFE(businessMQ, businessAppendix);
@@ -455,6 +460,7 @@ class ApplicationFacade{
         return {
             id: bMQ.getId(),
             stem: bMQ.getStem(),
+            isStemRTL: bMQ.isStemRTL(),
             keys: bMQ.getKeys().map(bKey => this.#answerBusinessToFE(bKey)),
             distractors: bMQ.getDistractors().map(bDistractor => this.#answerBusinessToFE(bDistractor)),
             keywords: bMQ.getKeywords(),
@@ -468,6 +474,8 @@ class ApplicationFacade{
             tag: bAnswer.getTag(),
             text: bAnswer.getContent(),
             explanation: (bAnswer.getExplanation() || ''),
+            isTextRTL: bAnswer.isContentRTL(),
+            isExplanationRTL: bAnswer.isExplanationRTL(),
         }
     }
 

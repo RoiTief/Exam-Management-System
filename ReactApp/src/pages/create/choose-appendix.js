@@ -60,19 +60,9 @@ const Page = () => {
   const initialValues= {
     keywords: question?.keywords || [],
     stem: question?.stem || '',
-    isStemRTL: true,
-    keys: question?.keys.map((item) => ({
-      text: item.text,
-      explanation: item.explanation,
-      isTextRTL: true,
-      isExplanationRTL: true,
-    })) || [{ text: '', explanation: '', isTextRTL: true, isExplanationRTL: true }],
-    distractors: question?.distractors.map((item) => ({
-      text: item.text,
-      explanation: item.explanation,
-      isTextRTL: true,
-      isExplanationRTL: true,
-    })) || [{ text: '', explanation: '', isTextRTL: true, isExplanationRTL: true }],
+    isStemRTL: question ? question.isStemRTL : true,
+    keys: structuredClone(question?.keys || [{ text: '', explanation: '', isTextRTL: true, isExplanationRTL: true }]),
+    distractors: structuredClone(question?.distractors || [{ text: '', explanation: '', isTextRTL: true, isExplanationRTL: true }]),
     appendix: question?.appendix || { title: '', tag: '', content: '' },
   }
 
@@ -81,15 +71,10 @@ const Page = () => {
       id: question?.id || null,
       keywords: values.keywords,
       stem: values.stem,
-      keys: values.keys.map((item) => ({
-        text: item.text,
-        explanation: item.explanation
-      })),
-      distractors: values.distractors.map((item) => ({
-        text: item.text,
-        explanation: item.explanation
-      })),
-      ...(values.appendix.tag!='' && { appendixTag: values.appendix.tag })
+      isStemRTL: values.isStemRTL,
+      keys: structuredClone(values.keys),
+      distractors: structuredClone(values.distractors),
+      ...(values.appendix.tag !== '' && { appendixTag: values.appendix.tag })
     };
   }
 

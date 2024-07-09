@@ -67,14 +67,9 @@ const Page = () => {
       id: null,
       keywords: values.keywords,
       stem: values.stem,
-      keys: values.keys.map((item) => ({
-        text: item.text,
-        explanation: item.explanation
-      })),
-      distractors: values.distractors.map((item) => ({
-        text: item.text,
-        explanation: item.explanation
-      })),
+      isStemRTL: values.isStemRTL,
+      keys: structuredClone(values.keys),
+      distractors: structuredClone(values.distractors),
       appendix: {
         ...values.appendix,
         keywords: [],

@@ -11,7 +11,12 @@ function defineMetaQuestionModel(sequelize) {
             stem: {
                 type: DataTypes.STRING,
                 allowNull: false
-            }
+            },
+            isStemRTL: {
+                type: DataTypes.BOOLEAN,
+                allowNull: false,
+                defaultValue: false,
+            },
         });
 }
 
