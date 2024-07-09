@@ -35,7 +35,7 @@ const UnmatchedTags = () => {
   useEffect(() => {
       if (task) {
         try {
-          const parsedTask = JSON.parse(decodeURIComponent(task));
+          const parsedTask = JSON.parse(decodeURIComponent(atob(task)));
           setTaskData(parsedTask);
           setError("");
         } catch (error) {
@@ -90,11 +90,11 @@ const UnmatchedTags = () => {
         <Typography variant="h4" component="h1" gutterBottom>
           {NewExplanation.REVIEW_EXPLANATION}
         </Typography>
-        {taskData?.metaQuestion?.appendixTag && (
+        {taskData?.appendix && (
           <Typography variant="h6" component="h1" gutterBottom>{NewExplanation.APPENDIX}</Typography>
         )}
-        {taskData?.metaQuestion?.appendixTag && (
-          <QuestionPhotoView content={taskData?.metaQuestion?.appendixTag} type={latexServerPath.COMPILE_APPENDIX}/>
+        {taskData?.appendix && (
+          <QuestionPhotoView content={taskData?.appendix} type={latexServerPath.COMPILE_APPENDIX}/>
         )}
         <Typography variant="h6" component="h1" gutterBottom>{NewExplanation.STEM}</Typography>
         {taskData?.metaQuestion?.stem && (
