@@ -71,15 +71,39 @@ class MetaQuestionController{
             stem: PRIMITIVE_TYPES.STRING,
             isStemRTL: PRIMITIVE_TYPES.BOOLEAN,
         });
-        await this.#metaQuestionRepo.setKeywordsToQuestion(data.id, data.keywords);
-        await this.#metaQuestionRepo.deleteAnswersOfMq(data.id)
-        await this.#metaQuestionRepo.addAnswersToQuestion(data.id, data.answers);
-        const metaQuestion = await this.getMetaQuestion(data.id);
-        await metaQuestion.setStem(data.stem);
-        await metaQuestion.setStemOrientation(data.isStemRTL);
-        await metaQuestion.setAppendix(data.appendixTag ? data.appendixTag : null);
+        const answersToAdd = data.answers.filter(a => !a.id); // answers without ID are new answer
+        const answersToUpdate = data.answers.filter(a => a.id); // answers with ID are answers that may have been updated
 
-        return metaQuestion;
+        await this.#metaQuestionRepo.setKeywordsToQuestion(data.id, data.keywords);
+
+        let metaQuestion = await this.getMetaQuestion(data.id);
+        if (data.stem !== metaQuestion.getStem() || data.appendixTag !== metaQuestion.getAppendixTag()) {
+            // since the stem/appendix was changed the answers' tagging by other users are no longer relevant
+            // easiest way to clean those tags is to delete those answers
+            await this.#metaQuestionRepo.deleteAnswersOfMq(data.id);
+            answersToAdd.push(...answersToUpdate.splice(0));
+
+            if (data.stem !== metaQuestion.getStem()) await metaQuestion.setStem(data.stem);
+            if (data.appendixTag !== metaQuestion.getAppendixTag()) await metaQuestion.setAppendix(data.appendixTag);
+        }
+        if (data.isStemRTL !== metaQuestion.isStemRTL()) await metaQuestion.setStemOrientation(data.isStemRTL);
+
+        await Promise.all(answersToUpdate.map(async answerData => {
+            let answer = await this.getAnswer(answerData.id);
+            if (answerData.content !== answer.getContent()) {
+                // content of answer has changed means tagging by other users are no longer relevant...
+                await this.#metaQuestionRepo.deleteAnswer(answerData.id);
+                answersToAdd.push(answerData);
+                return;
+            }
+            if (answerData.explanation !== answer.getExplanation()) await answer.setExplanation(answerData.explanation);
+            if (answerData.tag !== answer.getTag()) await answer.setTag(answerData.tag);
+            if (answerData.isContentRTL !== answer.isContentRTL()) await answer.setContentOrientation(answerData.isContentRTL);
+            if (answerData.isExplanationRTL !== answer.isExplanationRTL()) await answer.setExplanationOrientation(answerData.isExplanationRTL);
+        }))
+        await this.#metaQuestionRepo.addAnswersToQuestion(data.id, answersToAdd);
+
+        return await this.getMetaQuestion(data.id);
     }
 
     async deleteMetaQuestion(data) {

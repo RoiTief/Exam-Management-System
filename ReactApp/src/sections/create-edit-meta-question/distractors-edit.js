@@ -53,7 +53,7 @@ const DistractorsSection = ({ values, handleChange, handleBlur, setFieldValue, t
               </IconButton>
             </Box>
           ))}
-          <IconButton onClick={() => push({ text: '', explanation: '' })}>
+          <IconButton onClick={() => push({ text: '', explanation: '', isTextRTL: true, isExplanationRTL: true })}>
             <AddCircleOutline />
           </IconButton>
         </>
