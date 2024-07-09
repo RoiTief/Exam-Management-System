@@ -53,7 +53,7 @@ const KeysSection = ({ values, handleChange, handleBlur, setFieldValue, touched,
               </IconButton>
             </Box>
           ))}
-          <IconButton onClick={() => push({ text: '', explanation: '' })}>
+          <IconButton onClick={() => push({ text: '', explanation: '', isTextRTL: true, isExplanationRTL: true })}>
             <AddCircleOutline />
           </IconButton>
         </>

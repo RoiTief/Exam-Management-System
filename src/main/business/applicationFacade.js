@@ -297,6 +297,7 @@ class ApplicationFacade{
         })
         data.answers = data.keys.map(k => ({...k, content: k.text, isContentRTL: k.isTextRTL, tag: ANSWER_TYPES.KEY}))
             .concat(data.distractors.map(d => ({...d, content: d.text, isContentRTL: d.isTextRTL, tag: ANSWER_TYPES.DISTRACTOR})));
+        data.appendixTag = (data.appendixTag || null);
         const businessMQ = await this.metaQuestionController.editMetaQuestion(data);
         const businessAppendix = businessMQ.getAppendixTag() ? await this.metaQuestionController.getAppendix(businessMQ.getAppendixTag()) : null;
         return this.#mqBusinessToFE(businessMQ, businessAppendix);
