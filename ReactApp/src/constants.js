@@ -1,3 +1,4 @@
+import {EXAM_CONSTANTS} from "../../src/main/constants"
 export const APP_NAME = "Exam Management System";
 
 export const APP_HEADER = "Exam Management";
@@ -31,9 +32,10 @@ export const SIDE_BAR = {
   META_QUESTIONS: "Meta Questions",
   APPENDICES: "Appendices",
   MANAGE_COURSE_STAFF: "Manage Course Staff",
-  GENERATE_EXAM: "generate exams",
+  GENERATE_EXAM: "Generate Exams",
   ASK_FOR_WORK: "Ask for Work",
-  TAG_ANSWERS: "Tag Answers"
+  TAG_ANSWERS: "Tag Answers",
+  PAST_EXAMS: "Past Exams"
 }
 
 export const CALENDAR = {
@@ -243,7 +245,7 @@ export const EXAM = {
   DISTRACTOR_TITLE: "Distractors: ",
   NEXT: "Next",
   DESELECT_QUESTION: "Deselect Question",
-  MAX_DISTRACTOR_NUMBER: 2,
+  MAX_DISTRACTOR_NUMBER: EXAM_CONSTANTS.MAX_DISTRACTOR_NUMBER,
   get SELECT_DISTRACTORS_BODY() {
     return `Please select up to ${this.MAX_DISTRACTOR_NUMBER} distractors`;
   },
@@ -251,7 +253,8 @@ export const EXAM = {
     return `You have selected the maximum number of distractors (${this.MAX_DISTRACTOR_NUMBER}).`;
   },
   NUMBER_VERSIONS: "Number of Versions",
-  EXAM_REASON: "Reason for Exam"
+  EXAM_REASON: "Reason for Exam",
+  MAXIMUM_REPEAT: "This is the max number of questions you can make based on the number of answers and distractors for the question"
 
 };
 
@@ -305,4 +308,10 @@ export const NewExplanation = {
   STEM: "Stem:",
   ANSWER: "Answer:",
   SUBMIT: 'Submit',
+};
+
+export const EXAMS_CATALOG = {
+  PAGE_TITLE: 'Exams Catalog',
+  HEADING: 'Exams Catalog',
+  REASON_HEADING: 'Exam Reason',
 };

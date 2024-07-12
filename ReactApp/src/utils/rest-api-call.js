@@ -44,6 +44,7 @@ export const serverPath = {
   ADD_APPENDIX: 'addAppendix',
   REFRESH_TOKEN: 'refreshJWT',
   GET_ALL_EXAMS: 'getAllExams',
+  GET_VERSIONED_EXAM: 'getVersionedExam',
   GENERATE_TASK: 'generateTask',
   COMPLETE_GENERATED_TASK: 'completeGeneratedTask',
   COMPLETE_CREATED_TASK: 'completeCreatedTask',
@@ -60,6 +61,7 @@ const pathToReturnTypeMap={
 export const latexServerPath = {
   COMPILE: 'compile',
   COMPILE_EXAM: 'exam',
+  COMPILE_EXAM_VERSION: 'exam_version',
   COMPILE_MQ: 'metaQuestion',
   COMPILE_STEM: 'stem',
   COMPILE_APPENDIX: 'appendix',
@@ -133,7 +135,7 @@ export async function requestServer(path, method, body) {
           const {newToken} = await extractDataFromResponse(refreshTokenResponse)
           Cookies.set(TOKEN_FIELD_NAME, newToken, {expires: 1 / 96});
          }).catch(console.error)
-      
+         
     }
     else{
       responsePromise = fetch(SERVER_ROOT_URL + path,

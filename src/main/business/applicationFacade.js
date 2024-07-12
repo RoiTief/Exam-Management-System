@@ -2,11 +2,18 @@ const UserController  = require('./UserManager/UserController.js' );
 const TaskController = require('./TaskManager/TaskController.js');
 const MetaQuestionController = require('./MetaQuestions/MetaQuestionController.js');
 const ExamController = require('./ExamManager/ExamController.js');
-const { userRepo, metaQuestionsRepo, taskRepo} = require("../DAL/Dal");
+const userTypes = require('../Enums').USER_TYPES
+const { userRepo, metaQuestionsRepo, taskRepo, examRepo} = require("../DAL/Dal");
 const { validateParameters } = require('../validateParameters.js');
 const {USER_TYPES, PRIMITIVE_TYPES, ANSWER_TYPES, GENERATED_TASK_TYPES, CREATED_TASK_TYPES} = require("../Enums");
 const {EMSError, TASK_PROCESS_ERROR_CODES} = require("../EMSError");
 const {TASK_PROCESS_ERROR_MSGS} = require("../ErrorMessages");
+const MetaQuestion = require('./MetaQuestions/MetaQuestion.js');
+const Exam = require('./ExamManager/Exam.js');
+const Question = require('./ExamManager/Question.js');
+const ExamAnswer = require('./ExamManager/ExamAnswer.js');
+const Answer = require('./MetaQuestions/Answer.js');
+const { EXAM_CONSTANTS } = require('../constants.js');
 const metaQuestionController = require("./MetaQuestions/MetaQuestionController");
 
 class ApplicationFacade{
@@ -14,7 +21,7 @@ class ApplicationFacade{
         this.userController = new UserController(userRepo);
         this.metaQuestionController = new MetaQuestionController(metaQuestionsRepo);
         this.taskController = new TaskController(taskRepo, this.userController, this.metaQuestionController);
-        this.examController = new ExamController(this.taskController, this.userController)
+        this.examController = new ExamController(this.metaQuestionController, examRepo);
     }
 
     /**
@@ -144,20 +151,28 @@ class ApplicationFacade{
      * creates an Exam for the course {@username} is Admin of
      * export it as a pdf and as a word file
      * adds the test to pastExams
-     * @return {Exam}
+     * @param { {
+     * questions:[
+     *  {
+        *  id:number,
+        *  stem: string,
+        *  appendix: SAppendix,
+        *  key: {id: number, answer: string, explanation: string },
+        *  distractors:{id: number, answer: string, explanation: string }[],
+     *  }],
+     * numVersions: number,
+     * examReason: string  }} createExamProperties
+     *
      * @throws {Error} - if there is no user with name @username
      *                 - if the user named username is not a lecturerUsername or is not assigned to a course
      *                 - if the course subject spread is not specified
      *                 - if there is not enough questions for a subject
      */
-    createExam(createExamProperties){
-        return this.examController.createExam(createExamProperties)
+    async createExam(createExamProperties){
+        await this.examController.createExamWithQuestions(createExamProperties)
     }
 
 
-    getAllExams(getAllExamsProperties){
-        return this.examController.getAllExams(getAllExamsProperties)
-    }
 
     /**
      * view course statistics (per subject)
@@ -349,6 +364,27 @@ class ApplicationFacade{
             this.#mqBusinessToFE(bMQ, bMQ.getAppendixTag() ? await this.metaQuestionController.getAppendix(bMQ.getAppendixTag()) : null)));
     }
 
+
+    /**
+     * return all preview exams (version 0)
+     * @param {{callingUser:CallingUser}} getAllExamsProperties
+     * @returns {Promise<SExam[]>}
+     */
+    async getAllExams(getAllExamsProperties){
+        const bExams = await this.examController.getAllExams(getAllExamsProperties)
+        return await Promise.all(bExams.map(bExam => this.#examBusinessToFE(bExam)))
+    }
+
+    /**
+     *
+     * @param {{callingUser:CallingUser, examId:number , version:number}} data
+     * @returns {Promise<SExam>}
+     */
+    async getVersionedExam(data){
+        const exam = await this.examController.getVersionedExam(data)
+        return await this.#examBusinessToFE(exam)
+    }
+
     /**
      * return a list of meta question relevant to add to the new exam:
      * - each question has at least 1 key and 4 distractors that are not used yet in the exam
@@ -469,6 +505,9 @@ class ApplicationFacade{
         }
     }
 
+    /**
+     * @param {Answer} bAnswer
+     */
     #answerBusinessToFE(bAnswer){
         return {
             id: bAnswer.getId(),
@@ -514,6 +553,51 @@ class ApplicationFacade{
 
         return task;
     }
+
+    /**
+     * @param {ExamAnswer} bExamAnswer
+     * @returns {SExamAnswer}
+     */
+    #examAnswerBusinessToFE(bExamAnswer) {
+        return {
+            ...this.#answerBusinessToFE(bExamAnswer),
+            ordinal: bExamAnswer.getOrdinal(),
+            version: bExamAnswer.getVersion(),
+        }
+    }
+
+    /**
+     * @param {Question} bQuestion
+     * @returns {Promise<SQuestion>}
+     */
+    async #questionBusinessToFE(bQuestion){
+        const appendixTag = bQuestion.getMetaQuestion().getAppendixTag()
+        const bAppendix = appendixTag ? await this.metaQuestionController.getAppendix(appendixTag) : null;
+        return{
+            id: bQuestion.getId(),
+            mqId: bQuestion.getMetaQuestion().getId(),
+            stem: bQuestion.getStem(),
+            ordinal: bQuestion.getOrdinal(),
+            ...(appendixTag && {appendix: this.#appendixBusinessToFE(bAppendix)}),
+            answers: bQuestion.getAnswers().map(a=>this.#examAnswerBusinessToFE(a))
+        }
+    }
+
+    /**
+     * @param { Exam } bExam
+     * @returns {Promise<SExam>}
+     */
+    async #examBusinessToFE(bExam){
+        const questions = await Promise.all(bExam.getQuestions().map(q=>this.#questionBusinessToFE(q)))
+        return{
+            examId: bExam.getId(),
+            questions,
+            examReason: bExam.getExamReason(),
+            numVersions: bExam.getNumVersions(),
+        }
+    }
+
+
 
     /* returns
     {

@@ -213,23 +213,6 @@ function createServer(options) {
 
     server.post('/editAppendix', service.editAppendix);
 
-    // request:
-    //  {
-    //  questions:[
-    //   {
-    //      id: num
-    //       stem: str
-    //       appendix: {
-    //              title: str,
-    //              tag: str,
-    //              content: str
-    //        }
-    //       key: {answer: str, explanation: str },
-    //      distractors: [{answer: str, explanation: str }],
-    //     }]
-    //     numVersions: num,
-    //     examReason: str
-    //   }
     server.post('/createExam', service.createExam)
 
     server.get('/getAllExams',service.getAllExams)
@@ -251,6 +234,8 @@ function createServer(options) {
 
     // response: Appendix[]
     server.get('/getAllAppendices', service.getAllAppendices)
+
+    server.post('/getVersionedExam', service.getVersionedExam)
 
     // request: Appendix
     // response: MetaQuestion[]
