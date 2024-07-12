@@ -30,7 +30,7 @@ const UnmatchedTags = () => {
   const [selectedTag, setSelectedTag] = useState('');
   const [error, setError] = useState("");
   const [isFinished, setIsFinished] = useState(false);
-  const [explanation, setExplanation]= useState();
+  const [explanation, setExplanation] = useState("");
 
   useEffect(() => {
       if (task) {
@@ -58,7 +58,7 @@ const UnmatchedTags = () => {
             taskType: taskData?.type,
             superType: taskData.superType,
             answerId: taskData?.answer?.id,
-            ...(explanation && { explanation: explanation })
+            explanation: explanation
           };
           await requestServer(serverPath.COMPLETE_CREATED_TASK, httpsMethod.POST, changes);
           resetStates();
@@ -80,6 +80,9 @@ const UnmatchedTags = () => {
   const handleSubmit = () => {
     if (selectedTag === 'new') {
       setExplanation(taskData?.suggestedExplanation);
+    }
+    else {
+      setExplanation(taskData?.answer?.explanation);
     }
     setIsFinished(true);
   };
