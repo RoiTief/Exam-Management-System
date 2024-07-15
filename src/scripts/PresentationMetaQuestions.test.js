@@ -12,7 +12,7 @@ const appendicesToAdd = [
         tag: "euler identity",
         content: "\\setlength{\\fboxsep}{10pt} % Set the padding (default is 3pt)\n"
             + "\\fbox{\\huge $e^{i\\theta} = \\cos{\\theta} + i\\sin{\\theta}$}",
-    },
+    }, /*
     {
         title: "Mor's ID",
         tag: "morID",
@@ -23,6 +23,7 @@ const appendicesToAdd = [
         tag: "roiPic",
         content: "an embarrassing picture of roi"
     },
+    */
 ];
 
 const questionsToAdd = [
@@ -52,6 +53,69 @@ const questionsToAdd = [
         ],
         keywords: ['key1', 'key2', 'key3'],
     },
+    {
+        stem: 'which of the following statements is true?',
+        answers: [
+            {
+                content: 'The sky is blue.',
+                tag: ANSWER_TYPES.KEY,
+            },
+            {
+                content: 'Water is wet.',
+                tag: ANSWER_TYPES.KEY,
+            },
+            {
+                content: 'The Earth orbits the Sun.',
+                tag: ANSWER_TYPES.KEY,
+            },
+            {
+                content: 'Fire is hot.',
+                tag: ANSWER_TYPES.KEY,
+            },
+            {
+                content: 'The Earth is flat.',
+                tag: ANSWER_TYPES.DISTRACTOR,
+            },
+            {
+                content: 'Fish can fly.',
+                tag: ANSWER_TYPES.DISTRACTOR,
+            },
+            {
+                content: 'The sun is cold.',
+                tag: ANSWER_TYPES.DISTRACTOR,
+            },
+            {
+                content: 'Humans can breathe underwater without equipment.',
+                tag: ANSWER_TYPES.DISTRACTOR,
+            },
+            {
+                content: 'Pigs can talk.',
+                tag: ANSWER_TYPES.DISTRACTOR,
+            },
+            {
+                content: 'Rocks are soft.',
+                tag: ANSWER_TYPES.DISTRACTOR,
+            },
+            {
+                content: 'Ice is hot.',
+                tag: ANSWER_TYPES.DISTRACTOR,
+            },
+            {
+                content: 'The moon is made of cheese.',
+                tag: ANSWER_TYPES.DISTRACTOR,
+            },
+            {
+                content: 'Trees can walk.',
+                tag: ANSWER_TYPES.DISTRACTOR,
+            },
+            {
+                content: 'Elephants are smaller than ants.',
+                tag: ANSWER_TYPES.DISTRACTOR,
+            },
+        ],
+        keywords: ['key1', 'key2', 'key3'],
+    },
+    /*
     {
         stem: 'what did Idan listen to when he was a kid',
         keys: [{content:'baby motzart', explanation: 'explanation1'}, {content:'baby bethoven', explanation: 'explanation2'}],
@@ -95,6 +159,7 @@ const questionsToAdd = [
             {content:'riding bike in the fields', explanation: 'explanation2'}, {content:"in may's house", explanation: 'explanation3'}],
         keywords: ['key1', 'key2', 'key3'],
     }
+     */
 ];
 
 describe('Resets PresentationDb "Users" table', () => {
