@@ -12,6 +12,24 @@ const appendicesToAdd = [
         tag: "euler identity",
         content: "\\setlength{\\fboxsep}{10pt} % Set the padding (default is 3pt)\n"
             + "\\fbox{\\huge $e^{i\\theta} = \\cos{\\theta} + i\\sin{\\theta}$}",
+    },
+    {
+        title: "Drawings: ",
+        tag: "SquareCircle",
+        content: "\\begin{tikzpicture}\n" +
+            "    % Draw the outer square border\n" +
+            "    \\draw[thick] (-0.5, 1) rectangle (3, -3);\n" +
+            "\n" +
+            "    % Drawing of a square with equation\n" +
+            "    \\node at (0, 0) {\\(S = \\)};\n" +
+            "    \\draw (0.5, -0.5) rectangle (1.5, 0.5);\n" +
+            "    \\node at (2, 0) {\\(= 3\\)};\n" +
+            "    \n" +
+            "    % Drawing of a circle with equation\n" +
+            "    \\node at (0, -2) {\\(C = \\)};\n" +
+            "    \\draw (1, -2) circle (0.5);\n" +
+            "    \\node at (2, -2) {\\(= 5\\)};\n" +
+            "\\end{tikzpicture}",
     }, /*
     {
         title: "Mor's ID",
@@ -51,7 +69,96 @@ const questionsToAdd = [
                 tag: ANSWER_TYPES.DISTRACTOR,
             }
         ],
-        keywords: ['key1', 'key2', 'key3'],
+        keywords: ['key1', 'key2', 'euler'],
+    },
+    {
+        stem: '$ C + S = \\underline{\\hspace{1cm}} $\n',
+        appendixTag: 'SquareCircle',
+        answers: [
+            {
+                content: '8',
+                explanation: '',
+                tag: ANSWER_TYPES.KEY,
+            },
+            {
+                content: '$10 - 2$',
+                explanation: '',
+                tag: ANSWER_TYPES.KEY,
+            },
+            {
+                content: '1',
+                explanation: '',
+                tag: ANSWER_TYPES.DISTRACTOR,
+            },
+            {
+                content: '2',
+                explanation: '',
+                tag: ANSWER_TYPES.DISTRACTOR,
+            },
+            {
+                content: '3',
+                explanation: '',
+                tag: ANSWER_TYPES.DISTRACTOR,
+            },
+            {
+                content: '4',
+                explanation: '',
+                tag: ANSWER_TYPES.DISTRACTOR,
+            },
+            {
+                content: '5',
+                explanation: '',
+                tag: ANSWER_TYPES.DISTRACTOR,
+            },
+            {
+                content: '6',
+                explanation: '',
+                tag: ANSWER_TYPES.DISTRACTOR,
+            },
+        ],
+        keywords: ['key1', 'computation', 'SquareCircle'],
+    },
+    {
+        stem: 'Which of these shapes can you see in the picture?\n',
+        appendixTag: 'SquareCircle',
+        answers: [
+            {
+                content: 'Square',
+                explanation: '',
+                tag: ANSWER_TYPES.KEY,
+            },
+            {
+                content: 'Circle',
+                explanation: '',
+                tag: ANSWER_TYPES.KEY,
+            },
+            {
+                content: 'Triangle',
+                explanation: '',
+                tag: ANSWER_TYPES.DISTRACTOR,
+            },
+            {
+                content: 'Hexagon',
+                explanation: '',
+                tag: ANSWER_TYPES.DISTRACTOR,
+            },
+            {
+                content: 'Dodecahedron',
+                explanation: '',
+                tag: ANSWER_TYPES.DISTRACTOR,
+            },
+            {
+                content: 'Sphere',
+                explanation: '',
+                tag: ANSWER_TYPES.DISTRACTOR,
+            },
+            {
+                content: 'All answers are correct.',
+                explanation: '',
+                tag: ANSWER_TYPES.DISTRACTOR,
+            },
+        ],
+        keywords: ['key1', 'computation', 'SquareCircle'],
     },
     {
         stem: 'which of the following statements is true?',
@@ -70,6 +177,18 @@ const questionsToAdd = [
             },
             {
                 content: 'Fire is hot.',
+                tag: ANSWER_TYPES.KEY,
+            },
+            {
+                content: 'Honey Never Spoils.',
+                tag: ANSWER_TYPES.KEY,
+            },
+            {
+                content: 'Bananas are Berries.',
+                tag: ANSWER_TYPES.KEY,
+            },
+            {
+                content: 'Octopuses Have Three Hearts.',
                 tag: ANSWER_TYPES.KEY,
             },
             {
@@ -110,6 +229,46 @@ const questionsToAdd = [
             },
             {
                 content: 'Elephants are smaller than ants.',
+                tag: ANSWER_TYPES.DISTRACTOR,
+            },
+            {
+                content: 'The Great Wall of China is Visible from Space.',
+                tag: ANSWER_TYPES.DISTRACTOR,
+            },
+            {
+                content: 'Goldfish Have a Three-Second Memory.',
+                tag: ANSWER_TYPES.DISTRACTOR,
+            },
+            {
+                content: 'Humans Only Use 10% of Their Brain.',
+                tag: ANSWER_TYPES.DISTRACTOR,
+            },
+            {
+                content: 'Ostriches Bury Their Heads in the Sand.',
+                tag: ANSWER_TYPES.DISTRACTOR,
+            },
+            {
+                content: 'Shaving Hair Makes It Grow Back Thicker.',
+                tag: ANSWER_TYPES.DISTRACTOR,
+            },
+            {
+                content: 'You Swallow Eight Spiders a Year in Your Sleep.',
+                tag: ANSWER_TYPES.DISTRACTOR,
+            },
+            {
+                content: 'Elephants can fly.',
+                tag: ANSWER_TYPES.DISTRACTOR,
+            },
+            {
+                content: 'Cats can read human minds.',
+                tag: ANSWER_TYPES.DISTRACTOR,
+            },
+            {
+                content: 'Trees can talk.',
+                tag: ANSWER_TYPES.DISTRACTOR,
+            },
+            {
+                content: 'Rocks can grow like plants.',
                 tag: ANSWER_TYPES.DISTRACTOR,
             },
         ],
